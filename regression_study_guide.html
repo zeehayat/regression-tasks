@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KP Regression Study Studio</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-main: #0b0f19;
+            --bg-card: #151d30;
+            --bg-sidebar: #0f1524;
+            --border-color: #223150;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --primary: #06b6d4;
+            --primary-glow: rgba(6, 182, 212, 0.15);
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.15);
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --font-main: 'Outfit', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --sidebar-width: 300px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- Sidebar Navigation --- */
+        aside {
+            width: var(--sidebar-width);
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            z-index: 100;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, var(--primary), var(--success));
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            box-shadow: 0 4px 12px var(--primary-glow);
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-sections {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .nav-item a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-item a:hover {
+            color: var(--primary);
+            background-color: rgba(6, 182, 212, 0.05);
+        }
+
+        .nav-item.active a {
+            color: var(--primary);
+            background-color: var(--primary-glow);
+            border-left: 3px solid var(--primary);
+        }
+
+        /* --- Progress Tracker Widget --- */
+        .progress-widget {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: auto;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: var(--bg-main);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* --- Main Content Area --- */
+        main {
+            margin-left: var(--sidebar-width);
+            flex-grow: 1;
+            padding: 2.5rem;
+            max-width: 1200px;
+            width: calc(100% - var(--sidebar-width));
+        }
+
+        header {
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .header-badge {
+            background-color: var(--primary-glow);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            margin-bottom: 12px;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+        }
+
+        h1 {
+            font-size: 2.75rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #fff 30%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        /* --- Section Styling --- */
+        section {
+            margin-bottom: 4rem;
+            scroll-margin-top: 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+        }
+
+        .section-icon {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        p {
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 1.25rem;
+            font-size: 1.05rem;
+        }
+
+        /* --- Custom Cards --- */
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(6, 182, 212, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* --- Math Formula Boxes --- */
+        .formula-box {
+            background-color: rgba(11, 15, 25, 0.5);
+            border-left: 4px solid var(--primary);
+            padding: 1.25rem;
+            border-radius: 0 12px 12px 0;
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            color: var(--text-main);
+            margin: 1rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .formula-latex {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* --- Highlight Box/Alerts --- */
+        .alert-box {
+            background-color: rgba(16, 185, 129, 0.05);
+            border: 1px dashed var(--success);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            color: var(--text-main);
+        }
+
+        .alert-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            color: var(--success);
+            margin-bottom: 6px;
+        }
+
+        /* --- Interactive Code Block Tabs --- */
+        .code-playground {
+            background-color: #080c14;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-top: 1.5rem;
+        }
+
+        .code-tabs {
+            display: flex;
+            background-color: #0f1524;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .code-tab {
+            padding: 12px 20px;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .code-tab:hover {
+            color: var(--primary);
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        .code-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background-color: #080c14;
+        }
+
+        .code-content-wrapper {
+            position: relative;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background-color: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .copy-btn:hover {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        pre {
+            padding: 1.5rem;
+            overflow-x: auto;
+            max-height: 500px;
+        }
+
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #e2e8f0;
+        }
+
+        /* --- Interactive Checklist --- */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 1rem;
+        }
+
+        .task-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px;
+            background-color: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .task-row:hover {
+            border-color: var(--primary);
+            background-color: rgba(6, 182, 212, 0.02);
+        }
+
+        .task-checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-top: 3px;
+        }
+
+        .task-checkbox {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            outline: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .task-checkbox:checked {
+            background-color: var(--success);
+            border-color: var(--success);
+        }
+
+        .task-checkbox:checked::after {
+            content: "\f00c";
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            color: white;
+            font-size: 10px;
+        }
+
+        .task-row.checked {
+            opacity: 0.65;
+            text-decoration: line-through;
+            border-color: rgba(34, 49, 80, 0.5);
+        }
+
+        .task-text {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .task-title {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 1rem;
+        }
+
+        .task-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* --- Interactive Regression Lab Widget --- */
+        .simulator-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .simulator-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .canvas-container {
+            position: relative;
+            background-color: #080c14;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 320px;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+            max-height: 400px;
+            border-radius: 12px;
+        }
+
+        .sim-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .control-label span.val {
+            color: var(--primary);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            outline: none;
+            appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 0 8px var(--primary);
+        }
+
+        .sim-metrics {
+            margin-top: 1rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .metric-badge {
+            background-color: rgba(15, 21, 36, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--success);
+            font-family: var(--font-mono);
+        }
+
+        /* --- Footer --- */
+        footer {
+            margin-top: 5rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        footer p a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside>
+        <div class="logo-area">
+            <div class="logo-icon"><i class="fa-solid fa-square-root-variable"></i></div>
+            <div class="logo-text">KP Regression Lab</div>
+        </div>
+        
+        <ul class="nav-sections">
+            <li class="nav-item active" data-target="introduction"><a href="#introduction"><i class="fa-solid fa-graduation-cap"></i> Theory Basics</a></li>
+            <li class="nav-item" data-target="eda"><a href="#eda"><i class="fa-solid fa-magnifying-glass-chart"></i> Phase 1: EDA</a></li>
+            <li class="nav-item" data-target="preprocessing"><a href="#preprocessing"><i class="fa-solid fa-sliders"></i> Phase 2: Processing</a></li>
+            <li class="nav-item" data-target="models"><a href="#models"><i class="fa-solid fa-network-wired"></i> Phase 3: Models</a></li>
+            <li class="nav-item" data-target="tuning"><a href="#tuning"><i class="fa-solid fa-gauge-high"></i> Phase 4: Tuning</a></li>
+            <li class="nav-item" data-target="visualizer"><a href="#visualizer"><i class="fa-solid fa-chart-line"></i> Interactive Lab</a></li>
+            <li class="nav-item" data-target="study-tasks"><a href="#study-tasks"><i class="fa-solid fa-clipboard-list"></i> Study Tasks</a></li>
+            <li class="nav-item" data-target="templates"><a href="#templates"><i class="fa-solid fa-code"></i> Python Templates</a></li>
+            <li class="nav-item" data-target="resources"><a href="#resources"><i class="fa-solid fa-book-open"></i> Reading Resources</a></li>
+        </ul>
+
+        <!-- Task Completion Widget -->
+        <div class="progress-widget">
+            <div class="progress-header">
+                <span>Task Tracker Progress</span>
+                <span id="tracker-text">0/9 Complete</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill" id="tracker-fill"></div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main>
+        <header>
+            <span class="header-badge"><i class="fa-solid fa-bolt"></i> Interactive Learning Portal</span>
+            <h1>Regression in Machine Learning</h1>
+            <p>A hands-on, project-based studio guide using the Khyber Pakhtunkhwa Developmental Landscape datasets.</p>
+        </header>
+
+        <!-- SECTION 1: THEORY -->
+        <section id="introduction">
+            <div class="section-header">
+                <i class="fa-solid fa-graduation-cap section-icon"></i>
+                <h2>1. The Theoretical Foundation of Regression</h2>
+            </div>
+            <div class="card">
+                <p>Regression is a supervised learning task designed to predict continuous numeric outputs. Instead of predicting categories (e.g., spam vs. safe), regression models output variables on a real scale, such as agricultural crop yield (tons/acre), financial expenditures (PKR), or development index scores.</p>
+                
+                <div class="card-title"><i class="fa-solid fa-circle-info"></i> The Basic Linear Equation</div>
+                <p>In standard Linear Regression, the relationship between features $X$ and target $y$ is expressed mathematically as:</p>
+                <div class="formula-box">
+                    <span class="formula-latex">y = β₀ + β₁X₁ + β₂X₂ + ... + βₙXₙ + ε</span>
+                    <span>β₀ = Intercept | βᵢ = Feature Coefficients | ε = Noise (Unexplained Variance)</span>
+                </div>
+
+                <div class="card-title"><i class="fa-solid fa-calculator"></i> Loss Functions & Optimization</div>
+                <p>Models are optimized by minimizing a specific loss function during training:</p>
+                <ul>
+                    <li style="margin-left: 20px; margin-bottom: 8px;"><strong>Mean Squared Error (MSE)</strong>: Heavily penalizes larger errors by squaring deviations. Perfect for capturing model failures but highly sensitive to outliers.</li>
+                    <li style="margin-left: 20px; margin-bottom: 8px;"><strong>Mean Absolute Error (MAE)</strong>: Absolute average error distance. Extremely robust to outliers.</li>
+                    <li style="margin-left: 20px; margin-bottom: 8px;"><strong>Huber Loss</strong>: Smoothly transitions between MSE (for small errors) and MAE (for larger deviations).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SECTION 2: EDA -->
+        <section id="eda">
+            <div class="section-header">
+                <i class="fa-solid fa-magnifying-glass-chart section-icon"></i>
+                <h2>2. Phase 1: Exploratory Data Analysis (EDA)</h2>
+            </div>
+            <div class="card">
+                <p>Exploratory Data Analysis is the most critical starting step in machine learning. It gives you an intuitive understanding of feature distributions, collinearity, and anomalies before building your models.</p>
+                
+                <div class="alert-box">
+                    <div class="alert-title"><i class="fa-solid fa-triangle-exclamation"></i> Outliers & Skewness Warning</div>
+                    <p>Highly skewed features (like infrastructure project costs or populations) degrade linear model performance. Always analyze distributions using density curves and histograms before choosing linear models.</p>
+                </div>
+                
+                <p>Your primary objectives in this phase are analyzing target histograms, identifying multicollinearity (correlation matrices), and mapping feature-target scatter plots to spot non-linear curves.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 3: PREPROCESSING -->
+        <section id="preprocessing">
+            <div class="section-header">
+                <i class="fa-solid fa-sliders section-icon"></i>
+                <h2>3. Phase 2: Data Preprocessing & Feature Engineering</h2>
+            </div>
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-gears"></i> Feature Preparation Workflow</div>
+                <p>Raw files cannot be directly fed to most algorithms. You must process them systematically:</p>
+                
+                <p><strong>Categorical Encoding:</strong> Convert object categories (like district names) to numbers using One-Hot Encoding for nominal items, or Target Encoding for high-cardinality values.</p>
+                
+                <p><strong>Feature Scaling:</strong> Rescale numerical columns so algorithms do not bias toward features with larger absolute values. Use <strong>Standardization</strong> (transforms to mean 0, variance 1) or <strong>Robust Scaling</strong> (handles extreme outliers by using medians and Interquartile Ranges).</p>
+
+                <p><strong>Transformations:</strong> Apply log transforms (<code>np.log1p</code>) to stabilize variance and linearize exponential curves in right-skewed variables.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 4: MODELS -->
+        <section id="models">
+            <div class="section-header">
+                <i class="fa-solid fa-network-wired section-icon"></i>
+                <h2>4. Phase 3: Model Selection & Training</h2>
+            </div>
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-layer-group"></i> Linear vs. Non-linear Regressors</div>
+                <p>Always start training with basic linear models to set a performance benchmark, then move to complex tree-based ensembles:</p>
+                <ul>
+                    <li style="margin-left: 20px; margin-bottom: 8px;"><strong>OLS Linear Regression</strong>: Baseline model. Fits coefficients to minimize squared residuals.</li>
+                    <li style="margin-left: 20px; margin-bottom: 8px;"><strong>Ridge (L2 Penalty)</strong>: Regularized regression that penalizes the square of coefficient sizes. Protects models against multicollinearity.</li>
+                    <li style="margin-left: 20px; margin-bottom: 8px;"><strong>Lasso (L1 Penalty)</strong>: Regularized regression that penalizes absolute coefficients. Zeroes out weak features, performing automated feature selection.</li>
+                    <li style="margin-left: 20px; margin-bottom: 8px;"><strong>Random Forest Regressor</strong>: Non-linear bagging algorithm. Combines multiple random trees to reduce variance and naturally handles non-linear rules without scaling.</li>
+                    <li style="margin-left: 20px; margin-bottom: 8px;"><strong>XGBoost / LightGBM</strong>: State-of-the-art gradient boosting frameworks that train decision trees sequentially to minimize residual error.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SECTION 5: TUNING -->
+        <section id="tuning">
+            <div class="section-header">
+                <i class="fa-solid fa-gauge-high section-icon"></i>
+                <h2>5. Phase 4: Validation & Hyperparameter Tuning</h2>
+            </div>
+            <div class="card">
+                <p>Tuning hyperparameters is what turns a decent model into a highly accurate, deployable pipeline. But tuning is useless without a reliable validation strategy to protect against overfitting.</p>
+                
+                <div class="card-title"><i class="fa-solid fa-shuffle"></i> Cross-Validation (K-Fold)</div>
+                <p>Never rely on a single train-test split. Instead, split the training data into $K$ equal segments (folds). Train on $K-1$ folds and validate on the remaining fold, rotating this sequence $K$ times. This yields a highly generalized metric output.</p>
+                
+                <div class="card-title"><i class="fa-solid fa-toolbox"></i> Optimization Methods</div>
+                <p>Find the best hyperparameter settings using <strong>RandomizedSearchCV</strong> (fast, random sweeps) or <strong>GridSearchCV</strong> (exhaustive grid check), or program robust optimization algorithms like <strong>Optuna</strong> (Bayesian optimization).</p>
+            </div>
+        </section>
+
+        <!-- INTERACTIVE LAB WIDGET -->
+        <section id="visualizer">
+            <div class="section-header">
+                <i class="fa-solid fa-chart-line section-icon"></i>
+                <h2>6. The Interactive Regression Lab</h2>
+            </div>
+            <div class="card">
+                <p>Play with the parameters below to generate synthetic data points and watch the Ordinary Least Squares (OLS) regression line fit live on the canvas. Adjust the sliders to see how size, slope, and noise impact the model error metrics!</p>
+                
+                <div class="simulator-layout">
+                    <!-- Canvas Drawing Area -->
+                    <div class="canvas-container">
+                        <canvas id="simCanvas"></canvas>
+                    </div>
+
+                    <!-- Sliders & Control Elements -->
+                    <div class="sim-controls">
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>Slope (True β₁)</span>
+                                <span class="val" id="slopeVal">1.0</span>
+                            </div>
+                            <input type="range" id="paramSlope" min="-2.0" max="2.0" step="0.1" value="1.0">
+                        </div>
+
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>Intercept (True β₀)</span>
+                                <span class="val" id="interceptVal">10</span>
+                            </div>
+                            <input type="range" id="paramIntercept" min="-40" max="40" step="1" value="10">
+                        </div>
+
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>Noise Level (Std Dev ε)</span>
+                                <span class="val" id="noiseVal">15</span>
+                            </div>
+                            <input type="range" id="paramNoise" min="0" max="40" step="1" value="15">
+                        </div>
+
+                        <div class="control-group">
+                            <div class="control-label">
+                                <span>Number of Points</span>
+                                <span class="val" id="pointsVal">80</span>
+                            </div>
+                            <input type="range" id="paramPoints" min="10" max="200" step="5" value="80">
+                        </div>
+
+                        <div class="sim-metrics">
+                            <div class="metric-badge">
+                                <div class="metric-label">Mean Squared Error (MSE)</div>
+                                <div class="metric-value" id="metricsMse">0.00</div>
+                            </div>
+                            <div class="metric-badge">
+                                <div class="metric-label">R² Score (Variance Explained)</div>
+                                <div class="metric-value" id="metricsR2">0.00</div>
+                            </div>
+                        </div>
+                        <div class="metric-badge" style="grid-column: span 2; margin-top: 10px;">
+                            <div class="metric-label">Fitted Regression Model</div>
+                            <div class="metric-value" id="metricsEq" style="color: var(--primary); font-size: 1.1rem;">y = 0.00x + 0.00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- INTERACTIVE STUDY TASKS CHECKLIST -->
+        <section id="study-tasks">
+            <div class="section-header">
+                <i class="fa-solid fa-clipboard-list section-icon"></i>
+                <h2>7. Hands-on Study Tasks Checklist</h2>
+            </div>
+            <div class="card">
+                <p>Check the tasks below as you complete them in your ML models. Your study progress will be saved automatically in this browser session.</p>
+                
+                <div class="task-list">
+                    <!-- Task 1 -->
+                    <div class="task-row" data-task-id="t1">
+                        <div class="task-checkbox-wrapper">
+                            <input type="checkbox" class="task-checkbox" id="chk-t1">
+                        </div>
+                        <div class="task-text">
+                            <span class="task-title">Generate the full KP Datasets</span>
+                            <span class="task-desc">Execute 'python generate_data.py' or run 'generate_data.bat' to generate the 300,000 records.</span>
+                        </div>
+                    </div>
+                    <!-- Task 2 -->
+                    <div class="task-row" data-task-id="t2">
+                        <div class="task-checkbox-wrapper">
+                            <input type="checkbox" class="task-checkbox" id="chk-t2">
+                        </div>
+                        <div class="task-text">
+                            <span class="task-title">Check Target Skewness</span>
+                            <span class="task-desc">Plot histograms of development score, crop yield, and project budgets. Note which variables are highly skewed.</span>
+                        </div>
+                    </div>
+                    <!-- Task 3 -->
+                    <div class="task-row" data-task-id="t3">
+                        <div class="task-checkbox-wrapper">
+                            <input type="checkbox" class="task-checkbox" id="chk-t3">
+                        </div>
+                        <div class="task-text">
+                            <span class="task-title">Run Multicollinearity Check</span>
+                            <span class="task-desc">Generate correlation heatmaps and identify highly correlated variables like literacy rate vs school enrollment.</span>
+                        </div>
+                    </div>
+                    <!-- Task 4 -->
+                    <div class="task-row" data-task-id="t4">
+                        <div class="task-checkbox-wrapper">
+                            <input type="checkbox" class="task-checkbox" id="chk-t4">
+                        </div>
+                        <div class="task-text">
+                            <span class="task-title">Build a Preprocessing Pipeline</span>
+                            <span class="task-desc">Implement Scikit-Learn's ColumnTransformer to standard scale numbers and one-hot encode categorical features.</span>
+                        </div>
+                    </div>
+                    <!-- Task 5 -->
+                    <div class="task-row" data-task-id="t5">
+                        <div class="task-checkbox-wrapper">
+                            <input type="checkbox" class="task-checkbox" id="chk-t5">
+                        </div>
+                        <div class="task-text">
+                            <span class="task-title">Fit a Baseline OLS Model</span>
+                            <span class="task-desc">Train a simple LinearRegression model on the subdistrict index and print out the R² and MAE.</span>
+                        </div>
+                    </div>
+                    <!-- Task 6 -->
+                    <div class="task-row" data-task-id="t6">
+                        <div class="task-checkbox-wrapper">
+                            <input type="checkbox" class="task-checkbox" id="chk-t6">
+                        </div>
+                        <div class="task-text">
+                            <span class="task-title">Investigate Lasso Sparsity</span>
+                            <span class="task-desc">Run Lasso regression on various alpha levels (e.g. 0.001 to 10.0) and monitor which coefficients shrink to zero.</span>
+                        </div>
+                    </div>
+                    <!-- Task 7 -->
+                    <div class="task-row" data-task-id="t7">
+                        <div class="task-checkbox-wrapper">
+                            <input type="checkbox" class="task-checkbox" id="chk-t7">
+                        </div>
+                        <div class="task-text">
+                            <span class="task-title">Train a Random Forest Regressor</span>
+                            <span class="task-desc">Train a non-linear tree model on the agriculture yields dataset and compare R² to your linear models.</span>
+                        </div>
+                    </div>
+                    <!-- Task 8 -->
+                    <div class="task-row" data-task-id="t8">
+                        <div class="task-checkbox-wrapper">
+                            <input type="checkbox" class="task-checkbox" id="chk-t8">
+                        </div>
+                        <div class="task-text">
+                            <span class="task-title">Apply Log Transformation</span>
+                            <span class="task-desc">Log-transform approved_cost_million_pkr in the infrastructure dataset and observe the boost in linear regression R².</span>
+                        </div>
+                    </div>
+                    <!-- Task 9 -->
+                    <div class="task-row" data-task-id="t9">
+                        <div class="task-checkbox-wrapper">
+                            <input type="checkbox" class="task-checkbox" id="chk-t9">
+                        </div>
+                        <div class="task-text">
+                            <span class="task-title">Conduct K-Fold Cross Validation</span>
+                            <span class="task-desc">Run KFold (K=5) to get a robust evaluation range of your Random Forest model.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PYTHON CODE TEMPLATES -->
+        <section id="templates">
+            <div class="section-header">
+                <i class="fa-solid fa-code section-icon"></i>
+                <h2>8. Complete Python Code Templates</h2>
+            </div>
+            <p>Use these complete templates inside your codebase to load, visualize, and train regression algorithms on the synthetic data.</p>
+            
+            <div class="code-playground">
+                <div class="code-tabs">
+                    <div class="code-tab active" id="tab-eda">run_eda.py</div>
+                    <div class="code-tab" id="tab-modeling">run_modeling.py</div>
+                </div>
+                <div class="code-content-wrapper">
+                    <button class="copy-btn" id="copy-code-btn"><i class="fa-regular fa-copy"></i> Copy Code</button>
+                    <pre><code id="code-display"># Template code will be displayed here dynamically...</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- READING RESOURCES -->
+        <section id="resources">
+            <div class="section-header">
+                <i class="fa-solid fa-book-open section-icon"></i>
+                <h2>9. Recommended Reading & Learning Resources</h2>
+            </div>
+            <div class="card">
+                <p>For each task in the study plan, here are highly curated, free external resources to deepen your understanding:</p>
+                
+                <div class="card-title" style="margin-top: 1.5rem;"><i class="fa-solid fa-chart-pie" style="color: var(--primary)"></i> Tasks 2 & 8: Target Skewness & Log Transformations</div>
+                <p>
+                    <strong>Reading:</strong> <a href="https://scikit-learn.org/stable/modules/compose.html#transformed-target-regressor" target="_blank" style="color: var(--primary); text-decoration: none;">Transforming the Target in Regression (Scikit-Learn Manual)</a><br>
+                    Explains how to automatically log-transform targets and exp-transform predictions back.
+                </p>
+                <p>
+                    <strong>Guide:</strong> <a href="https://towardsdatascience.com/types-of-transformations-for-better-normal-distribution-61c226ad0209" target="_blank" style="color: var(--primary); text-decoration: none;">A Guide to Data Transformation Techniques (Towards Data Science)</a><br>
+                    Deep dive into Log, Box-Cox, and Yeo-Johnson transforms.
+                </p>
+
+                <div class="card-title" style="margin-top: 1.5rem;"><i class="fa-solid fa-magnifying-glass" style="color: var(--primary)"></i> Task 3: Correlation & Multicollinearity</div>
+                <p>
+                    <strong>Reading:</strong> <a href="https://blog.minitab.com/en/adventurous-analyst-guide-to-regression-analyses/multicollinearity-in-regression-analysis-problems-detection-and-fixes" target="_blank" style="color: var(--primary); text-decoration: none;">Multicollinearity in Regression: Detection & Diagnostics (Minitab Blog)</a><br>
+                    Covers what multicollinearity is, why it ruins regression coefficients, and how to detect it using VIF.
+                </p>
+                <p>
+                    <strong>Video:</strong> <a href="https://www.youtube.com/watch?v=0yI0-r6LyI0" target="_blank" style="color: var(--primary); text-decoration: none;">StatQuest: Multicollinearity and VIF Explained (YouTube)</a><br>
+                    A clear, visual explanation of the math behind Variance Inflation Factors.
+                </p>
+
+                <div class="card-title" style="margin-top: 1.5rem;"><i class="fa-solid fa-gears" style="color: var(--primary)"></i> Task 4: Preprocessing Pipelines (Scaling & Encoding)</div>
+                <p>
+                    <strong>Reading:</strong> <a href="https://scikit-learn.org/stable/auto_examples/compose/plot_column_transformer_mixed_types.html" target="_blank" style="color: var(--primary); text-decoration: none;">Column Transformer for Heterogeneous Data (Scikit-Learn Examples)</a><br>
+                    Best practice pipeline templates to mix categorical encoding and numerical scaling.
+                </p>
+                <p>
+                    <strong>Guide:</strong> <a href="https://www.analyticsvidhya.com/blog/2020/04/feature-scaling-machine-learning-normalization-standardization/" target="_blank" style="color: var(--primary); text-decoration: none;">StandardScaler vs MinMaxScaler in Practice (Analytics Vidhya)</a><br>
+                    Highlights when to use Z-score scaling vs standard Min-Max normalization.
+                </p>
+
+                <div class="card-title" style="margin-top: 1.5rem;"><i class="fa-solid fa-compass-drafting" style="color: var(--primary)"></i> Task 5: Ordinary Least Squares (OLS) Regression</div>
+                <p>
+                    <strong>Reading:</strong> <a href="https://online.stat.psu.edu/stat462/node/81/" target="_blank" style="color: var(--primary); text-decoration: none;">Applied Regression Analysis Course Notes (Penn State University)</a><br>
+                    High-quality university lecture notes on linear regression assumptions and residual diagnostic plots.
+                </p>
+                <p>
+                    <strong>Video:</strong> <a href="https://www.youtube.com/watch?v=PaFPbb66DxQ" target="_blank" style="color: var(--primary); text-decoration: none;">StatQuest: Linear Regression Step-by-Step (YouTube)</a><br>
+                    Demystifies the math of fitting a straight line and calculating residuals.
+                </p>
+
+                <div class="card-title" style="margin-top: 1.5rem;"><i class="fa-solid fa-sliders" style="color: var(--primary)"></i> Task 6: Regularized Models (Ridge & Lasso)</div>
+                <p>
+                    <strong>Reading:</strong> <a href="https://scikit-learn.org/stable/modules/linear_model.html" target="_blank" style="color: var(--primary); text-decoration: none;">Generalized Linear Models Documentation (Scikit-Learn)</a><br>
+                    The official documentation describing the mathematical penalty equations of Ridge, Lasso, and ElasticNet.
+                </p>
+                <p>
+                    <strong>Guide:</strong> <a href="https://www.kaggle.com/code/tentotheminus9/linear-ridge-and-lasso-regression-tutorial" target="_blank" style="color: var(--primary); text-decoration: none;">Ridge and Lasso Regression Tutorial (Kaggle Notebooks)</a><br>
+                    Interactive coding notebook demonstrating L1 and L2 coefficient shrinkage.
+                </p>
+
+                <div class="card-title" style="margin-top: 1.5rem;"><i class="fa-solid fa-tree" style="color: var(--primary)"></i> Task 7: Tree-Based Models & Random Forests</div>
+                <p>
+                    <strong>Reading:</strong> <a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html" target="_blank" style="color: var(--primary); text-decoration: none;">Random Forest Regressor Manual (Scikit-Learn)</a><br>
+                    Technical parameters list for Random Forest trees.
+                </p>
+                <p>
+                    <strong>Video:</strong> <a href="https://www.youtube.com/watch?v=J4Wdy0Wc_xQ" target="_blank" style="color: var(--primary); text-decoration: none;">StatQuest: Random Forests Explained (YouTube)</a><br>
+                    A visual breakdown of bootstrapping, bagging, and forest ensemble aggregation.
+                </p>
+
+                <div class="card-title" style="margin-top: 1.5rem;"><i class="fa-solid fa-arrows-spin" style="color: var(--primary)"></i> Task 9: Cross-Validation & Hyperparameter Tuning</div>
+                <p>
+                    <strong>Reading:</strong> <a href="https://scikit-learn.org/stable/modules/cross_validation.html" target="_blank" style="color: var(--primary); text-decoration: none;">Cross-Validation: Evaluating Estimator Performance (Scikit-Learn Guide)</a><br>
+                    Detailed diagrams of K-Fold, Stratified K-Fold, and TimeSeries splits.
+                </p>
+                <p>
+                    <strong>Guide:</strong> <a href="https://www.kaggle.com/code/dansbecker/cross-validation" target="_blank" style="color: var(--primary); text-decoration: none;">Cross-Validation Tutorial (Kaggle Learn)</a><br>
+                    Practical, bite-sized coding tutorial on validation splits.
+                </p>
+            </div>
+        </section>
+
+        <footer>
+            <p>KP Regression Study Lab. Developed for pairing session in ML. Workspace path: [Regression-Tasks](file:///E:/Programming/ML/Regression-Tasks/)</p>
+        </footer>
+    </main>
+
+    <script>
+        // --- Code templates ---
+        const edaCode = `import os
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Set style
+sns.set_theme(style="whitegrid")
+
+# Load data
+data_path = os.path.join("data", "kp_subdistrict_development_index.csv")
+if not os.path.exists(data_path):
+    print("Please run python generate_data.py first to create the data.")
+    exit()
+
+df = pd.read_csv(data_path)
+
+print("=== Dataset Information ===")
+print(df.info())
+print("\\n=== Missing Values ===")
+print(df.isnull().sum())
+print("\\n=== Descriptive Statistics ===")
+print(df.describe().T)
+
+# 1. Distribution of the Target variable
+plt.figure(figsize=(10, 5))
+sns.histplot(df["development_score"], kde=True, color="teal")
+plt.title("Distribution of Development Score (Target)")
+plt.xlabel("Development Score")
+plt.ylabel("Count")
+plt.savefig("target_distribution.png")
+print("\\n Saved target distribution plot to target_distribution.png")
+
+# 2. Correlation Matrix of Numerical Features
+plt.figure(figsize=(12, 10))
+numerical_cols = df.select_dtypes(include=[np.number]).columns
+correlation_matrix = df[numerical_cols].corr()
+sns.heatmap(correlation_matrix, annot=True, cmap="coolwarm", fmt=".2f", linewidths=0.5)
+plt.title("Numerical Feature Correlation Heatmap")
+plt.tight_layout()
+plt.savefig("correlation_heatmap.png")
+print(" Saved correlation heatmap to correlation_heatmap.png")
+
+# 3. Categorical Boxplot
+plt.figure(figsize=(10, 6))
+sns.boxplot(x="terrain_type", y="development_score", data=df, palette="Set2")
+plt.title("Development Score by Terrain Type")
+plt.savefig("terrain_comparison.png")
+print(" Saved terrain boxplot to terrain_comparison.png")`;
+
+        const modelingCode = `import os
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split, KFold, cross_val_score
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.linear_model import Ridge, Lasso
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+
+# 1. Setup Data
+data_path = os.path.join("data", "kp_subdistrict_development_index.csv")
+df = pd.read_csv(data_path)
+
+# Drop ID columns and target
+X = df.drop(columns=["community_id", "development_score"])
+y = df["development_score"]
+
+# Define feature classes
+categorical_cols = ["district", "division", "terrain_type"]
+numerical_cols = [col for col in X.columns if col not in categorical_cols]
+
+# 2. Construct Preprocessing Pipeline
+# Continuous features scaled to mean=0, std=1. Categoricals one-hot encoded.
+preprocessor = ColumnTransformer(
+    transformers=[
+        ("num", StandardScaler(), numerical_cols),
+        ("cat", OneHotEncoder(drop="first", handle_unknown="ignore"), categorical_cols)
+    ]
+)
+
+# 3. Define Models to Test
+models = {
+    "Ridge Regression": Ridge(alpha=1.0),
+    "Lasso Regression": Lasso(alpha=0.1),
+    "Random Forest": RandomForestRegressor(n_estimators=50, max_depth=12, random_state=42, n_jobs=-1)
+}
+
+# Train-test split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+results = {}
+
+# 4. Training and Evaluation Loop
+for name, model in models.items():
+    print(f"\\nTraining Model: {name}...")
+    
+    # Bundle preprocessing and modeling in a clean pipeline
+    pipeline = Pipeline(steps=[
+        ("preprocessor", preprocessor),
+        ("regressor", model)
+    ])
+    
+    # Train the pipeline
+    pipeline.fit(X_train, y_train)
+    
+    # Make predictions
+    y_pred = pipeline.predict(X_test)
+    
+    # Calculate performance metrics
+    mae = mean_absolute_error(y_test, y_pred)
+    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+    r2 = r2_score(y_test, y_pred)
+    
+    results[name] = {"MAE": mae, "RMSE": rmse, "R2": r2}
+    
+    print(f"  {name} Evaluated:")
+    print(f"    MAE : {mae:.4f}")
+    print(f"    RMSE: {rmse:.4f}")
+    print(f"    R²  : {r2:.4f}")
+
+print("\\n=== Final Comparison Table ===")
+results_df = pd.DataFrame(results).T
+print(results_df.to_markdown())`;
+
+        // Code view display controls
+        const codeDisplay = document.getElementById("code-display");
+        const tabEda = document.getElementById("tab-eda");
+        const tabModeling = document.getElementById("tab-modeling");
+        let activeTab = "eda";
+
+        function updateCodeView() {
+            if (activeTab === "eda") {
+                codeDisplay.textContent = edaCode;
+                tabEda.classList.add("active");
+                tabModeling.classList.remove("active");
+            } else {
+                codeDisplay.textContent = modelingCode;
+                tabEda.classList.remove("active");
+                tabModeling.classList.add("active");
+            }
+        }
+        updateCodeView();
+
+        tabEda.addEventListener("click", () => { activeTab = "eda"; updateCodeView(); });
+        tabModeling.addEventListener("click", () => { activeTab = "modeling"; updateCodeView(); });
+
+        // Copy button trigger
+        document.getElementById("copy-code-btn").addEventListener("click", () => {
+            const codeText = activeTab === "eda" ? edaCode : modelingCode;
+            navigator.clipboard.writeText(codeText).then(() => {
+                const btn = document.getElementById("copy-code-btn");
+                btn.innerHTML = '<i class="fa-solid fa-check" style="color: var(--success)"></i> Copied!';
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy Code';
+                }, 2000);
+            });
+        });
+
+        // --- Task Tracker LocalStorage Logic ---
+        const checkboxes = document.querySelectorAll(".task-checkbox");
+        const progressFill = document.getElementById("tracker-fill");
+        const progressText = document.getElementById("tracker-text");
+
+        function updateProgress() {
+            let total = checkboxes.length;
+            let checked = 0;
+            checkboxes.forEach(chk => {
+                const row = chk.closest(".task-row");
+                if (chk.checked) {
+                    checked++;
+                    row.classList.add("checked");
+                } else {
+                    row.classList.remove("checked");
+                }
+            });
+            let percentage = (checked / total) * 100;
+            progressFill.style.width = percentage + "%";
+            progressText.textContent = `${checked}/${total} Complete`;
+        }
+
+        checkboxes.forEach(chk => {
+            chk.addEventListener("change", (e) => {
+                const row = e.target.closest(".task-row");
+                const taskId = row.dataset.taskId;
+                localStorage.setItem(`task_${taskId}`, e.target.checked ? "1" : "0");
+                updateProgress();
+            });
+
+            // Make clicking the row trigger the checkbox
+            const row = chk.closest(".task-row");
+            row.addEventListener("click", (e) => {
+                if (e.target !== chk && !e.target.classList.contains("task-checkbox")) {
+                    chk.checked = !chk.checked;
+                    chk.dispatchEvent(new Event('change'));
+                }
+            });
+        });
+
+        // Load saved state
+        document.addEventListener("DOMContentLoaded", () => {
+            checkboxes.forEach(chk => {
+                const row = chk.closest(".task-row");
+                const taskId = row.dataset.taskId;
+                const saved = localStorage.getItem(`task_${taskId}`);
+                if (saved === "1") {
+                    chk.checked = true;
+                }
+            });
+            updateProgress();
+        });
+
+        // --- Interactive Regression Lab Script (Canvas) ---
+        const canvas = document.getElementById("simCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // UI Sliders
+        const sliderSlope = document.getElementById("paramSlope");
+        const sliderIntercept = document.getElementById("paramIntercept");
+        const sliderNoise = document.getElementById("paramNoise");
+        const sliderPoints = document.getElementById("paramPoints");
+
+        // Live Values
+        const lblSlope = document.getElementById("slopeVal");
+        const lblIntercept = document.getElementById("interceptVal");
+        const lblNoise = document.getElementById("noiseVal");
+        const lblPoints = document.getElementById("pointsVal");
+
+        const valMse = document.getElementById("metricsMse");
+        const valR2 = document.getElementById("metricsR2");
+        const valEq = document.getElementById("metricsEq");
+
+        // Generate data & draw loop
+        let xData = [];
+        let yData = [];
+
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth;
+            canvas.height = 360;
+        }
+
+        function generateData() {
+            const numPoints = parseInt(sliderPoints.value);
+            const slope = parseFloat(sliderSlope.value);
+            const intercept = parseFloat(sliderIntercept.value);
+            const noise = parseFloat(sliderNoise.value);
+
+            xData = [];
+            yData = [];
+
+            // Random seed logic in JS (simple LCG or random gauss helper)
+            for(let i=0; i<numPoints; i++) {
+                // x goes from -100 to 100
+                let x = -100 + (200 / (numPoints - 1)) * i;
+                // Gaussian noise helper
+                let u = 0, v = 0;
+                while(u === 0) u = Math.random(); 
+                while(v === 0) v = Math.random();
+                let numGauss = Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+                
+                let y = slope * x + intercept + numGauss * noise;
+                xData.push(x);
+                yData.push(y);
+            }
+        }
+
+        function fitLinearRegression() {
+            const n = xData.length;
+            let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0, sumYY = 0;
+            
+            for(let i=0; i<n; i++) {
+                sumX += xData[i];
+                sumY += yData[i];
+                sumXY += xData[i] * yData[i];
+                sumXX += xData[i] * xData[i];
+                sumYY += yData[i] * yData[i];
+            }
+
+            // OLS Formulas
+            const meanX = sumX / n;
+            const meanY = sumY / n;
+            
+            let num = 0;
+            let den = 0;
+            for(let i=0; i<n; i++) {
+                num += (xData[i] - meanX) * (yData[i] - meanY);
+                den += (xData[i] - meanX) * (xData[i] - meanX);
+            }
+
+            const fittedSlope = den === 0 ? 0 : num / den;
+            const fittedIntercept = meanY - fittedSlope * meanX;
+
+            // Compute MSE and R2
+            let totalResidualSq = 0;
+            let totalActualVarianceSq = 0;
+            
+            for(let i=0; i<n; i++) {
+                const predY = fittedSlope * xData[i] + fittedIntercept;
+                const residual = yData[i] - predY;
+                totalResidualSq += residual * residual;
+                totalActualVarianceSq += (yData[i] - meanY) * (yData[i] - meanY);
+            }
+
+            const mse = totalResidualSq / n;
+            const r2 = totalActualVarianceSq === 0 ? 1 : 1 - (totalResidualSq / totalActualVarianceSq);
+
+            return {
+                slope: fittedSlope,
+                intercept: fittedIntercept,
+                mse: mse,
+                r2: r2
+            };
+        }
+
+        function drawPlot() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const fit = fitLinearRegression();
+
+            // Display metrics in panel
+            valMse.textContent = fit.mse.toFixed(2);
+            valR2.textContent = fit.r2.toFixed(3);
+            valEq.textContent = `y = ${fit.slope.toFixed(2)}x + ${fit.intercept >= 0 ? '+' : ''}${fit.intercept.toFixed(2)}`;
+
+            // Mapping coords from simulation space (-110, 110) to canvas space
+            function mapX(x) {
+                return ((x + 110) / 220) * canvas.width;
+            }
+            function mapY(y) {
+                // Invert Y axis for canvas drawing
+                return canvas.height - ((y + 250) / 500) * canvas.height;
+            }
+
+            // Draw Axes
+            ctx.strokeStyle = "#223150";
+            ctx.lineWidth = 1.5;
+            
+            // X-axis
+            ctx.beginPath();
+            ctx.moveTo(0, mapY(0));
+            ctx.lineTo(canvas.width, mapY(0));
+            ctx.stroke();
+
+            // Y-axis
+            ctx.beginPath();
+            ctx.moveTo(mapX(0), 0);
+            ctx.lineTo(mapX(0), canvas.height);
+            ctx.stroke();
+
+            // Draw Scatter Points
+            ctx.fillStyle = "#0ea5e9";
+            for(let i=0; i<xData.length; i++) {
+                ctx.beginPath();
+                ctx.arc(mapX(xData[i]), mapY(yData[i]), 4.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Draw Fitted Regression Line
+            ctx.strokeStyle = "#10b981";
+            ctx.lineWidth = 3;
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = "rgba(16, 185, 129, 0.4)";
+            
+            ctx.beginPath();
+            ctx.moveTo(mapX(-110), mapY(fit.slope * -110 + fit.intercept));
+            ctx.lineTo(mapX(110), mapY(fit.slope * 110 + fit.intercept));
+            ctx.stroke();
+            
+            // Reset shadow
+            ctx.shadowBlur = 0;
+
+            // Draw True Line (for reference)
+            ctx.strokeStyle = "rgba(245, 158, 11, 0.45)";
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([5, 5]);
+            
+            ctx.beginPath();
+            ctx.moveTo(mapX(-110), mapY(parseFloat(sliderSlope.value) * -110 + parseFloat(sliderIntercept.value)));
+            ctx.lineTo(mapX(110), mapY(parseFloat(sliderSlope.value) * 110 + parseFloat(sliderIntercept.value)));
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        function updateSliders() {
+            lblSlope.textContent = parseFloat(sliderSlope.value).toFixed(1);
+            lblIntercept.textContent = sliderIntercept.value;
+            lblNoise.textContent = sliderNoise.value;
+            lblPoints.textContent = sliderPoints.value;
+        }
+
+        function updateAll() {
+            updateSliders();
+            generateData();
+            drawPlot();
+        }
+
+        // Add listeners
+        [sliderSlope, sliderIntercept, sliderNoise, sliderPoints].forEach(slider => {
+            slider.addEventListener("input", updateAll);
+        });
+
+        window.addEventListener("resize", () => {
+            resizeCanvas();
+            drawPlot();
+        });
+
+        // Initialize Canvas
+        resizeCanvas();
+        updateAll();
+
+        // --- Sidebar Link Highlighting during Scrolling ---
+        window.addEventListener("scroll", () => {
+            let current = "";
+            const sections = document.querySelectorAll("section");
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 120) {
+                    current = section.getAttribute("id");
+                }
+            });
+
+            document.querySelectorAll(".nav-item").forEach(li => {
+                li.classList.remove("active");
+                if (li.dataset.target === current) {
+                    li.classList.add("active");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
