@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 3: Level 3 Practitioner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-[#0b0f19] text-[#f1f5f9] font-sans antialiased">
+    <div id="content" class="max-w-4xl mx-auto px-6 py-12 space-y-12">
+        <!-- Header -->
+        <header class="border-b border-[#223150] pb-8">
+            <span class="inline-block px-3 py-1 text-xs font-semibold tracking-wider text-cyan-400 bg-cyan-400/10 rounded-full border border-cyan-400/20 mb-4">LEVEL 3</span>
+            <h1 class="text-4xl font-extrabold tracking-tight text-white mb-2">Chapter 3: Level 3 Practitioner — Preprocessing, Engineering, and Diagnostics</h1>
+            <p class="text-lg text-[#cbd5e1]">Master pipelines, engineer features, verify OLS assumptions, and apply regularization.</p>
+        </header>
+
+        <!-- Section 11 -->
+        <section id="preprocessing" class="space-y-6">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">11. Data Preprocessing</h2>
+            
+            <div id="scaling" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-3">
+                <h3 class="text-xl font-bold text-white">11.1 Numeric Scaling</h3>
+                <p class="text-base text-[#cbd5e1]">Linear models with regularization and SVMs require scaling. Otherwise, features with larger magnitudes dominate the coefficients.</p>
+                <ul class="text-sm text-[#cbd5e1] list-disc list-inside space-y-1">
+                    <li><strong>StandardScaler:</strong> Center to mean 0, variance 1. Good default.</li>
+                    <li><strong>MinMaxScaler:</strong> Bounded scale between 0 and 1.</li>
+                    <li><strong>RobustScaler:</strong> Uses median and IQR. Ideal when data has extreme outliers.</li>
+                </ul>
+            </div>
+
+            <div id="encoding" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-3">
+                <h3 class="text-xl font-bold text-white">11.2 Categorical Encoding</h3>
+                <p class="text-base text-[#cbd5e1]">Convert text labels into model-ready numbers.</p>
+                <ul class="text-sm text-[#cbd5e1] list-disc list-inside space-y-1">
+                    <li><strong>One-Hot Encoding:</strong> Creates binary dummy variables. Drop the first column to prevent collinearity.</li>
+                    <li><strong>Target Encoding:</strong> Replaces categories with target mean. Risk of severe data leak unless managed inside CV loop.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Section 12 -->
+        <section id="feature-engineering" class="space-y-6">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">12. Feature Engineering</h2>
+            <p class="text-[#cbd5e1] leading-relaxed">Domain-specific adjustments to improve linear models.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div id="interactions" class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2">
+                    <h3 class="text-lg font-bold text-white">Interactions</h3>
+                    <p class="text-sm text-[#cbd5e1]">Multiply features when their effects are interdependent (e.g. <code>fertilizer</code> $\times$ <code>irrigation</code>).</p>
+                </div>
+                <div id="polynomials" class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2">
+                    <h3 class="text-lg font-bold text-white">Polynomials</h3>
+                    <p class="text-sm text-[#cbd5e1]">Add squared terms ($X^2$) to fit simple curves like optimal soil pH ranges.</p>
+                </div>
+                <div id="ratios" class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2">
+                    <h3 class="text-lg font-bold text-white">Ratios</h3>
+                    <p class="text-sm text-[#cbd5e1]">Calculate ratios like public funding per capita to represent scale-free variables.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 13 -->
+        <section id="linear-regression-depth" class="space-y-6">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">13. Linear Regression in Depth</h2>
+            
+            <div id="multicollinearity" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-3">
+                <h3 class="text-xl font-bold text-white">13.1 Coefficients and Reference Categories</h3>
+                <p class="text-base text-[#cbd5e1]">When interpreting coefficients, remember: continuous variables represent the change in target per 1-unit increase, holding all other features constant. Dummy variables show the difference relative to the dropped reference class.</p>
+            </div>
+
+            <div id="vif" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-3">
+                <h3 class="text-xl font-bold text-white">13.2 Variance Inflation Factor (VIF)</h3>
+                <p class="text-base text-[#cbd5e1]">Measures how much the variance of an OLS coefficient is inflated by multicollinearity. Calculated as $1/(1 - R_j^2)$. VIF values above 10 indicate severe collinearity that renders parameter significance estimates unstable.</p>
+            </div>
+        </section>
+
+        <!-- Section 14 -->
+        <section id="diagnostics" class="space-y-6">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">14. Assumptions and Diagnostics</h2>
+            
+            <div id="heteroscedasticity" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-3">
+                <h3 class="text-xl font-bold text-white">14.1 Heteroscedasticity</h3>
+                <p class="text-base text-[#cbd5e1]">Heteroscedasticity occurs when residual variance is not constant across fitted predictions (visualized as a funnel shape). To fix it, log-transform the target, use weighted least squares, or apply robust standard errors like <code>HC3</code> in statsmodels.</p>
+            </div>
+        </section>
+
+        <!-- Section 15 -->
+        <section id="regularization" class="space-y-6">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">15. Regularized Linear Models</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Ridge -->
+                <div id="regularization-ridge" class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2">
+                    <h3 class="text-lg font-bold text-white">Ridge (L2)</h3>
+                    <p class="text-sm text-[#cbd5e1]">Adds squared penalty ($\alpha \sum \beta_j^2$). Shrinks weights but keeps all features. Best when dealing with severe multicollinearity.</p>
+                </div>
+                <!-- Lasso -->
+                <div id="regularization-lasso" class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2">
+                    <h3 class="text-lg font-bold text-white">Lasso (L1)</h3>
+                    <p class="text-sm text-[#cbd5e1]">Adds absolute value penalty ($\alpha \sum |\beta_j|$). Can force weights to exactly 0, performing automatic feature selection.</p>
+                </div>
+                <!-- ElasticNet -->
+                <div id="regularization-elasticnet" class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2">
+                    <h3 class="text-lg font-bold text-white">ElasticNet</h3>
+                    <p class="text-sm text-[#cbd5e1]">Combines L1 and L2 penalties using <code>l1_ratio</code>. Best of both worlds for sparse systems with correlated inputs.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exercises -->
+        <section id="exercises" class="space-y-6">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">Chapter 3 Exercises</h2>
+            
+            <div class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-4">
+                <h3 class="text-lg font-semibold text-white">Exercise 3.1: Preprocessing & Leakage Audit</h3>
+                <p class="text-base text-[#cbd5e1]">Build a scikit-learn pipeline for the agricultural yields dataset. Scale numbers, one-hot encode crop types, and fit a Ridge regressor. Validate via cross-validation to ensure scaling is inside the loop.</p>
+            </div>
+
+            <div class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-4">
+                <h3 class="text-lg font-semibold text-white">Exercise 3.2: Feature Engineering Challenge</h3>
+                <p class="text-base text-[#cbd5e1]">Add <code>soil_ph^2</code> and a <code>fertilizer_used</code> $\times$ <code>irrigation_type</code> interaction. Compare validation scores of models with and without these engineered features.</p>
+            </div>
+
+            <div class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-4">
+                <h3 class="text-lg font-semibold text-white">Exercise 3.3: Diagnosing OLS via statsmodels</h3>
+                <p class="text-base text-[#cbd5e1]">Use statsmodels to calculate the VIF of literacy and enrollment rates. Plot residual plots, run a Breusch-Pagan test, and compare standard errors against HC3 robust covariance.</p>
+            </div>
+        </section>
+
+        <!-- YouTube Video Links -->
+        <section class="bg-red-500/5 border border-red-500/10 rounded-xl p-6 space-y-4">
+            <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+                <span class="text-red-500">▶</span> Quick Video Reference
+            </h3>
+            <p class="text-base text-[#cbd5e1]">Watch a quick explanation of regularization techniques (Lasso, Ridge, Elastic Net).</p>
+            <a href="https://www.youtube.com/embed/dQw4w9WgXcQ" class="yt-link inline-flex items-center gap-2 text-xs font-semibold text-red-400 hover:text-red-300 transition-colors">
+                <span>🎥</span> Watch: Regularization and Diagnostics: Ridge, Lasso, and Residual Checks
+            </a>
+        </section>
+    </div>
+</body>
+</html>

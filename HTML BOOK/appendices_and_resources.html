@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 7: Appendices and Resources</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-[#0b0f19] text-[#f1f5f9] font-sans antialiased">
+    <div id="content" class="max-w-4xl mx-auto px-6 py-12 space-y-12">
+        <!-- Header -->
+        <header class="border-b border-[#223150] pb-8">
+            <span class="inline-block px-3 py-1 text-xs font-semibold tracking-wider text-cyan-400 bg-cyan-400/10 rounded-full border border-cyan-400/20 mb-4">RESOURCES</span>
+            <h1 class="text-4xl font-extrabold tracking-tight text-white mb-2">Chapter 7: Appendices and Resources</h1>
+            <p class="text-lg text-[#cbd5e1]">Copy production templates and access recommended reading lists.</p>
+        </header>
+
+        <!-- Code Templates -->
+        <section id="code-templates" class="space-y-6">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">Code Templates</h2>
+
+            <!-- Template 1 -->
+            <div id="pipeline-template" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-4">
+                <h3 class="text-xl font-bold text-white">Pipeline Template</h3>
+                <p class="text-base text-[#cbd5e1]">General preprocessor and model training pipeline boilerplate code:</p>
+                <pre class="bg-[#0b0f19] border border-[#223150] rounded-lg p-4 font-mono text-sm text-cyan-400 overflow-x-auto"><code>from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+def build_pipeline(X, model):
+    cat_cols = X.select_dtypes(include=["object"]).columns.tolist()
+    num_cols = X.select_dtypes(include=[np.number]).columns.tolist()
+
+    preprocessor = ColumnTransformer(transformers=[
+        ("num", StandardScaler(), num_cols),
+        ("cat", OneHotEncoder(handle_unknown="ignore", drop="first"), cat_cols)
+    ])
+
+    return Pipeline([
+        ("preprocess", preprocessor),
+        ("model", model)
+    ])</code></pre>
+            </div>
+
+            <!-- Template 2 -->
+            <div id="group-cv-template" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-4">
+                <h3 class="text-xl font-bold text-white">GroupKFold Cross-Validation Template</h3>
+                <p class="text-base text-[#cbd5e1]">Clean code to validate models across unseen regional groups:</p>
+                <pre class="bg-[#0b0f19] border border-[#223150] rounded-lg p-4 font-mono text-sm text-cyan-400 overflow-x-auto"><code>from sklearn.model_selection import GroupKFold
+from sklearn.base import clone
+
+def evaluate_group_cv(X, y, groups, pipeline, n_splits=5):
+    cv = GroupKFold(n_splits=n_splits)
+    scores = []
+
+    for train_idx, test_idx in cv.split(X, y, groups):
+        model = clone(pipeline)
+        model.fit(X.iloc[train_idx], y.iloc[train_idx])
+        preds = model.predict(X.iloc[test_idx])
+        scores.append(evaluate_metrics(y.iloc[test_idx], preds))
+    return scores</code></pre>
+            </div>
+
+            <!-- Template 3 -->
+            <div id="robust-ols-template" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-4">
+                <h3 class="text-xl font-bold text-white">Robust statsmodels OLS Template</h3>
+                <p class="text-base text-[#cbd5e1]">Check VIF and fit OLS models with robust standard errors:</p>
+                <pre class="bg-[#0b0f19] border border-[#223150] rounded-lg p-4 font-mono text-sm text-cyan-400 overflow-x-auto"><code>import statsmodels.api as sm
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+
+# Calculate VIF values
+vifs = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
+
+# Fit robust OLS
+model = sm.OLS(y, sm.add_constant(X)).fit(cov_type="HC3")
+print(model.summary())</code></pre>
+            </div>
+
+            <!-- Template 4 -->
+            <div id="conformal-template" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-4">
+                <h3 class="text-xl font-bold text-white">Split Conformal Prediction Interval Template</h3>
+                <p class="text-base text-[#cbd5e1]">Calibrate prediction intervals from scratch using proper split splits:</p>
+                <pre class="bg-[#0b0f19] border border-[#223150] rounded-lg p-4 font-mono text-sm text-cyan-400 overflow-x-auto"><code># 1. Fit model on training set
+model.fit(X_train, y_train)
+
+# 2. Predict on calibration set
+cal_preds = model.predict(X_cal)
+residuals = np.abs(y_cal - cal_preds)
+
+# 3. Find quantile threshold
+q = np.quantile(residuals, (1 - alpha) * (1 + 1/len(X_cal)))
+
+# 4. Construct intervals for test set
+test_preds = model.predict(X_test)
+lower, upper = test_preds - q, test_preds + q</code></pre>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 4: Level 4 Advanced Modeler</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-[#0b0f19] text-[#f1f5f9] font-sans antialiased">
+    <div id="content" class="max-w-4xl mx-auto px-6 py-12 space-y-12">
+        <!-- Header -->
+        <header class="border-b border-[#223150] pb-8">
+            <span class="inline-block px-3 py-1 text-xs font-semibold tracking-wider text-cyan-400 bg-cyan-400/10 rounded-full border border-cyan-400/20 mb-4">LEVEL 4</span>
+            <h1 class="text-4xl font-extrabold tracking-tight text-white mb-2">Chapter 4: Level 4 Advanced Modeler — Ensembles and Interpretability</h1>
+            <p class="text-lg text-[#cbd5e1]">Deploy non-linear splines, tree ensembles, target transformations, and explain black-box models.</p>
+        </header>
+
+        <!-- Section 16 -->
+        <section id="nonlinear-models" class="space-y-6">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">16. Nonlinear Models & GAMs</h2>
+            
+            <div id="gams" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-3">
+                <h3 class="text-xl font-bold text-white">16.1 Generalized Additive Models (GAMs)</h3>
+                <p class="text-base text-[#cbd5e1]">GAMs assume that features have smooth, additive non-linear relationships with the target: $y = \beta_0 + f_1(x_1) + f_2(x_2) + \dots$. They use splines to learn local curves without sacrificing global model interpretability.</p>
+            </div>
+        </section>
+
+        <!-- Section 17 -->
+        <section id="tree-based-models" class="space-y-6">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">17. Tree-Based Models</h2>
+            
+            <div id="tree-extrapolation" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-3">
+                <h3 class="text-xl font-bold text-white">17.1 The Extrapolation Limit</h3>
+                <p class="text-base text-[#cbd5e1]">Tree-based regressors (Decision Trees, Random Forests, Gradient Boosting) predict targets by averaging leaf samples. Consequently, they **cannot extrapolate** beyond the range of targets seen in the training data.</p>
+                <div class="bg-amber-500/10 border border-amber-500/20 text-[#f59e0b] rounded-lg p-4 text-xs">
+                    <strong>⚠️ Math Fact:</strong> If maximum crop yield in training is 30 tons/acre, the forest will predict 30 even if you give it optimal temperature and 100 bags of fertilizer. Linear models (like <a href="level_1_data_explorer.html#ols-derivation" class="text-cyan-400 underline font-semibold">OLS</a>) do not suffer this limit.
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 18 -->
+        <section id="gradient-boosting" class="space-y-4">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">18. Gradient Boosting for Tabular Regression</h2>
+            <p class="text-[#cbd5e1] leading-relaxed">
+                Gradient Boosting constructs trees sequentially, where each new tree is fit to predict the negative gradients (residuals) of the loss function calculated in the preceding step. Boosted trees represent the state-of-the-art for structured tabular data.
+            </p>
+        </section>
+
+        <!-- Section 20 -->
+        <section id="target-transforms" class="space-y-6">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">20. Target Transformations & Skewed Targets</h2>
+            <div class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-3">
+                <p class="text-base text-[#cbd5e1]">For targets with long right tails (like infrastructure costs), OLS is dominated by extreme points. Applying <code>log1p</code> ($y_{\text{new}} = \log(1+y)$) stabilizes the variance. Revert predictions using <code>expm1</code> ($y = \exp(\hat{y}_{\text{new}}) - 1$) to prevent exponential bias.</p>
+            </div>
+        </section>
+
+        <!-- Section 21 & 22 -->
+        <section id="tuning" class="space-y-6">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">21 & 22. Multi-Output & Hyperparameter Tuning</h2>
+            <div class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-3">
+                <p class="text-base text-[#cbd5e1]">Optimize parameters with Bayesian Optimization (e.g. <code>Optuna</code>). For multiple related targets (like infrastructure cost and duration), use <code>RegressorChain</code> to predict duration first, then use predicted duration to help forecast cost. This avoids leakage during inference.</p>
+            </div>
+        </section>
+
+        <!-- Section 24 -->
+        <section id="interpretation" class="space-y-6">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">24. Model Interpretation</h2>
+            
+            <div id="shap" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-3">
+                <h3 class="text-xl font-bold text-white">24.1 SHAP (Shapley Additive exPlanations)</h3>
+                <p class="text-base text-[#cbd5e1]">Based on cooperative game theory. SHAP measures how much each feature pushes a prediction away from the global base value. It satisfies properties like local accuracy and consistency, providing reliable local explanations.</p>
+            </div>
+        </section>
+
+        <!-- Exercises -->
+        <section id="exercises" class="space-y-6">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">Chapter 4 Exercises</h2>
+            
+            <div class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-4">
+                <h3 class="text-lg font-semibold text-white">Exercise 4.1: Tree Extrapolation Experiment</h3>
+                <p class="text-base text-[#cbd5e1]">Train a Random Forest and a Linear regression model on farms under 1500m elevation. Predict on farms over 1500m. Plot both predictions. Observe the flatline behavior in the forest model.</p>
+            </div>
+
+            <div class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-4">
+                <h3 class="text-lg font-semibold text-white">Exercise 4.2: Target Transformation with Skewed Costs</h3>
+                <p class="text-base text-[#cbd5e1]">Fit a HistGradientBoostingRegressor on raw costs, and another on log-transformed costs. Compute RMSLE and compare residual plots. Notice if the log model predicts normal projects better.</p>
+            </div>
+
+            <div class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-4">
+                <h3 class="text-lg font-semibold text-white">Exercise 4.3: Tuning and Explaining with Optuna and SHAP</h3>
+                <p class="text-base text-[#cbd5e1]">Write an Optuna script to tune LightGBM parameters on the agriculture file. Fit the best configuration and generate a SHAP summary plot explaining the predictions.</p>
+            </div>
+        </section>
+
+        <!-- YouTube Video Links -->
+        <section class="bg-red-500/5 border border-red-500/10 rounded-xl p-6 space-y-4">
+            <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+                <span class="text-red-500">▶</span> Quick Video Reference
+            </h3>
+            <p class="text-base text-[#cbd5e1]">Watch how Random Forests and Shapley values work inside complex regression modeling pipelines.</p>
+            <a href="https://www.youtube.com/embed/dQw4w9WgXcQ" class="yt-link inline-flex items-center gap-2 text-xs font-semibold text-red-400 hover:text-red-300 transition-colors">
+                <span>🎥</span> Watch: Decision Trees, Random Forests, and SHAP Interpretation
+            </a>
+        </section>
+    </div>
+</body>
+</html>

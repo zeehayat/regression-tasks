@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 2: Level 2 Beginner Modeler</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-[#0b0f19] text-[#cbd5e1] font-sans antialiased">
+    <div id="content" class="max-w-4xl mx-auto px-6 py-12 space-y-12">
+        <!-- Header -->
+        <header class="border-b border-[#223150] pb-8">
+            <span class="inline-block px-3 py-1 text-xs font-semibold tracking-wider text-cyan-400 bg-cyan-400/10 rounded-full border border-cyan-400/20 mb-4">LEVEL 2</span>
+            <h1 class="text-4xl font-extrabold tracking-tight text-white mb-2">Chapter 2: Level 2 Beginner Modeler — Your First Models and Honest Evaluation</h1>
+            <p class="text-lg text-[#94a3b8]">Build basic models and learn proper data splitting mechanics.</p>
+        </header>
+
+        <!-- Intro -->
+        <section class="prose prose-invert max-w-none text-[#cbd5e1] leading-relaxed space-y-4">
+            <p>
+                Welcome back! You've generated the data and explored it in Chapter 1. Now, it's time to build your first models.
+            </p>
+            <p>
+                Wait, don't get too excited. We aren't building a deep neural network that burns through GPUs yet. We are going to start with the humblest, most honest models possible. Why? Because if you don't know how well a dumb model performs, you won't know if your fancy model is actually smart or just expensive.
+            </p>
+            <div class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2">
+                <span class="text-xs font-bold text-cyan-400 font-mono">Suggested Pacing: One Topic Per Day</span>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-[#223150] text-sm mt-2 text-left">
+                        <thead>
+                            <tr class="text-white font-semibold">
+                                <th class="py-2 pr-4">Day</th>
+                                <th class="py-2 px-4">Title</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-[#223150] text-[#cbd5e1]">
+                            <tr>
+                                <td class="py-2 pr-4 font-semibold text-cyan-400">Day 11</td>
+                                <td class="py-2 px-4"><a href="#day-11" class="hover:text-white transition-colors">First Regression Models — Building the Baselines</a></td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 pr-4 font-semibold text-cyan-400">Day 12</td>
+                                <td class="py-2 px-4"><a href="#day-12" class="hover:text-white transition-colors">Model Training, Validation, and Testing</a></td>
+                            </tr>
+                            <tr>
+                                <td class="py-2 pr-4 font-semibold text-cyan-400">Day 13</td>
+                                <td class="py-2 px-4"><a href="#day-13" class="hover:text-white transition-colors">Evaluation Metrics — How to Judge a Model</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Day 11 -->
+        <section id="day-11" class="space-y-4">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">Day 11: First Regression Models — Building the Baselines</h2>
+            <p class="text-base text-[#cbd5e1] leading-relaxed">
+                Suppose someone collected data from communities in KP ($X$, containing attributes like population, utilities access, etc.) and they want to predict the <code>development_score</code> ($y$). We start with three baseline choices:
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+                <div class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2">
+                    <span class="text-xs font-bold text-cyan-400 font-mono">DUMMY REGRESSOR</span>
+                    <h3 class="text-lg font-semibold text-white">Dummy baseline</h3>
+                    <p class="text-sm text-[#cbd5e1]">Always predicts the training mean target. If your ML model can't beat this, something is wrong.</p>
+                </div>
+                <div class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2">
+                    <span class="text-xs font-bold text-cyan-400 font-mono">LINEAR REGRESSION</span>
+                    <h3 class="text-lg font-semibold text-white">The classic line</h3>
+                    <p class="text-sm text-[#cbd5e1]">Fits an additive linear model: $\hat{y} = \beta_0 + \beta_1 x_1 + \dots$. Read about the mathematical <a href="level_1_data_explorer.html#day-5" class="text-cyan-400 underline font-semibold">Ordinary Least Squares Derivation</a>.</p>
+                </div>
+                <div class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2">
+                    <span class="text-xs font-bold text-cyan-400 font-mono">DECISION TREE</span>
+                    <h3 class="text-lg font-semibold text-white">First curves</h3>
+                    <p class="text-sm text-[#cbd5e1]">Splits data into boxes (e.g. population > 5000) and predicts the mean in each box.</p>
+                </div>
+            </div>
+            
+            <div class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2">
+                <h4 class="text-sm font-semibold text-white">Day 11 Recap</h4>
+                <ul class="text-sm text-[#cbd5e1] list-disc list-inside space-y-1">
+                    <li>Always build a baseline first to establish a performance floor.</li>
+                    <li>DummyRegressor predicts a constant target mean or median.</li>
+                    <li>LinearRegression models linear, additive relationships.</li>
+                    <li>Shallow DecisionTreeRegressor partitions features into region averages.</li>
+                </ul>
+            </div>
+
+            <div class="bg-[#0b0f19] border border-[#223150] rounded-lg p-4 text-sm space-y-1">
+                <p class="font-bold text-cyan-400 text-xs">Exercise 11.1 — Training the Baselines</p>
+                <p class="text-[#cbd5e1]">
+                    Write a script <code>train_baselines.py</code> to load the subdistrict dataset, set up a pipeline scaling numeric features and one-hot encoding categorical features, fit the three baselines, and report test metrics.
+                </p>
+            </div>
+        </section>
+
+        <!-- Day 12 -->
+        <section id="day-12" class="space-y-4">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">Day 12: Model Training, Validation, and Testing</h2>
+            <p class="text-base text-[#cbd5e1] leading-relaxed">
+                How do we evaluate if our model is ready for deployment? Testing on training data is cheating. We split our data into roles:
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+                <div class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2">
+                    <span class="text-xs font-bold text-cyan-400 font-mono">TRAIN SET (60%)</span>
+                    <h3 class="text-lg font-semibold text-white">Parameter fitting</h3>
+                    <p class="text-sm text-[#cbd5e1]">Used to fit parameters (e.g., learn OLS coefficients or decision tree splits).</p>
+                </div>
+                <div class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2">
+                    <span class="text-xs font-bold text-cyan-400 font-mono">VALIDATION SET (20%)</span>
+                    <h3 class="text-lg font-semibold text-white">Hyperparameter tuning</h3>
+                    <p class="text-sm text-[#cbd5e1]">Used to compare models, select features, and tune hyperparameters (e.g., max_depth).</p>
+                </div>
+                <div class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2">
+                    <span class="text-xs font-bold text-cyan-400 font-mono">TEST SET (20%)</span>
+                    <h3 class="text-lg font-semibold text-white">Honest evaluation</h3>
+                    <p class="text-sm text-[#cbd5e1]">Locked in a vault. Used exactly once at the very end to evaluate true generalization.</p>
+                </div>
+            </div>
+
+            <div id="data-leakage" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-3">
+                <h3 class="text-xl font-bold text-white">12.1 The Danger of Test Set Leakage</h3>
+                <p class="text-base text-[#cbd5e1]">
+                    Information leaks when test set patterns influence model parameters, hyperparameter tuning, or preprocessing (e.g., fitting StandardScaler on the entire dataset). Keep your test set locked away.
+                </p>
+            </div>
+
+            <div id="group-split" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-3">
+                <h3 class="text-xl font-bold text-white">12.2 Group Splits (Spatial Generalization)</h3>
+                <p class="text-base text-[#cbd5e1]">
+                    If villages in the same district share unobserved similarities, random splits leak district biases. To check how a model generalizes to a new district, we must hold out entire districts using <code>GroupKFold</code>.
+                </p>
+            </div>
+
+            <div id="time-split" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-3">
+                <h3 class="text-xl font-bold text-white">12.3 Time Splits (Temporal Generalization)</h3>
+                <p class="text-base text-[#cbd5e1]">
+                    For infrastructure projects or other time-series data, random splitting leaks the future. We must train on past years (e.g. 2015-2022) and test on future years (e.g. 2023-2025).
+                </p>
+            </div>
+
+            <div class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2">
+                <h4 class="text-sm font-semibold text-white">Day 12 Recap</h4>
+                <ul class="text-sm text-[#cbd5e1] list-disc list-inside space-y-1">
+                    <li>Separate data into Train (fit weights), Validation (tune settings), and Test (final score).</li>
+                    <li>Test leakage occurs when test information sneaks into training pipelines or tuning loops.</li>
+                    <li>Group splits test spatial generalization to unseen geographic regions.</li>
+                    <li>Temporal splits test chronological forecasting and prevent future-to-past leakage.</li>
+                </ul>
+            </div>
+
+            <div class="bg-[#0b0f19] border border-[#223150] rounded-lg p-4 text-sm space-y-1">
+                <p class="font-bold text-cyan-400 text-xs">Exercise 12.1 — Breaking the Random Split (Group Split)</p>
+                <p class="text-[#cbd5e1]">
+                    Modify your training script to use <code>GroupKFold(n_splits=5)</code> on the <code>district</code> column. Compare results with the random split to see why generalization is harder.
+                </p>
+            </div>
+        </section>
+
+        <!-- Day 13 -->
+        <section id="day-13" class="space-y-4">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">Day 13: Evaluation Metrics — How to Judge a Model</h2>
+            <p class="text-base text-[#cbd5e1] leading-relaxed">
+                How do we quantify error? Different metrics punish errors in different ways:
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2">
+                    <h3 class="text-lg font-bold text-white">Mean Absolute Error (MAE)</h3>
+                    <p class="text-xs text-cyan-400 font-mono">mean(|y - ŷ|)</p>
+                    <p class="text-sm text-[#cbd5e1]">Average absolute prediction error. Easy to explain, scale-linear, robust to outliers.</p>
+                </div>
+                <div class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2">
+                    <h3 class="text-lg font-bold text-white">Root Mean Squared Error (RMSE)</h3>
+                    <p class="text-xs text-cyan-400 font-mono">sqrt(mean((y - ŷ)²))</p>
+                    <p class="text-sm text-[#cbd5e1]">Squares errors before averaging. Punishes larger errors heavily. Ideal when big errors are catastrophic.</p>
+                </div>
+                <div class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2">
+                    <h3 class="text-lg font-bold text-white">R-squared ($R^2$)</h3>
+                    <p class="text-xs text-cyan-400 font-mono">1 - (RSS/TSS)</p>
+                    <p class="text-sm text-[#cbd5e1]">The proportion of variance explained. 1.0 is perfect, 0.0 is dummy mean prediction, and negative is worse than dummy.</p>
+                </div>
+            </div>
+
+            <div class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2">
+                <h4 class="text-sm font-semibold text-white">Day 13 Recap</h4>
+                <ul class="text-sm text-[#cbd5e1] list-disc list-inside space-y-1">
+                    <li>MAE measures average absolute error scaling linearly.</li>
+                    <li>RMSE squares errors, making it highly sensitive to outliers.</li>
+                    <li>R-squared measures performance relative to predicting the training mean.</li>
+                </ul>
+            </div>
+
+            <div class="bg-[#0b0f19] border border-[#223150] rounded-lg p-4 text-sm space-y-1">
+                <p class="font-bold text-cyan-400 text-xs">Exercise 13.1 — Evaluating Skewed Cost Metrics</p>
+                <p class="text-[#cbd5e1]">
+                    Fit a linear model on the infrastructure projects dataset. Calculate the MAE separately for small projects (cost &lt; 22M) and mega projects (cost &gt; 520M). Analyze if a single global MAE is misleading.
+                </p>
+            </div>
+        </section>
+
+        <!-- Chapter 2 Capstone -->
+        <section id="capstone" class="space-y-4">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">Chapter 2 Capstone: The Temporal Forecasting Pipeline</h2>
+            <div class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-4">
+                <p class="text-base text-[#cbd5e1]">
+                    Combine baselines, splitting, and metrics in a single script <code>duration_capstone.py</code>:
+                </p>
+                <ol class="text-sm text-[#cbd5e1] list-decimal list-inside space-y-2">
+                    <li>Load <code>data/kp_infrastructure_projects.csv</code>. Drop <code>project_id</code> and <code>actual_cost_million_pkr</code>.</li>
+                    <li>Split chronologically by <code>year_of_initiation</code>: Train (&le; 2021), Val (2022), Test (2023–2025). Drop the year column as a feature.</li>
+                    <li>Create a preprocessing pipeline (StandardScaler for numerics, OneHotEncoder for categoricals).</li>
+                    <li>Fit <code>DummyRegressor</code>, <code>LinearRegression</code>, and <code>DecisionTreeRegressor(max_depth=6)</code> on the train split.</li>
+                    <li>Evaluate validation and test metrics (MAE, RMSE, $R^2$), print the table, and explain temporal generalization.</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- Chapter 2 Recap -->
+        <section id="recap" class="space-y-4">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">Chapter 2 Recap: Setting the Standards</h2>
+            <div class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-3 text-[#cbd5e1]">
+                <ul class="list-disc list-inside space-y-2 text-sm">
+                    <li><strong>Baseline is the Floor:</strong> Always fit a Dummy Regressor first to establish a minimum performance floor.</li>
+                    <li><strong>Splitting prevents memorization:</strong> Train/Val/Test splits, Group splits, and Temporal splits check spatial and temporal generalization.</li>
+                    <li><strong>Leakage is cheating:</strong> Ensure preprocessing parameters are fit solely on the training split to keep tests honest.</li>
+                    <li><strong>Metric Selection:</strong> Choose MAE for robust linear scaling; choose RMSE to quadratically punish outliers.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Formula Cheat Sheet -->
+        <section id="cheat-sheet" class="space-y-4">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">Formula Cheat Sheet</h2>
+            <div class="bg-[#151d30] border border-[#223150] rounded-xl p-6 overflow-x-auto">
+                <table class="min-w-full divide-y divide-[#223150] text-sm text-left">
+                    <thead>
+                        <tr class="text-white font-semibold">
+                            <th class="py-2 pr-4">Concept</th>
+                            <th class="py-2 px-4">Formula / Rule</th>
+                            <th class="py-2 pl-4">Day</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#223150] text-[#cbd5e1]">
+                        <tr>
+                            <td class="py-3 pr-4 font-semibold text-cyan-400">Dummy Prediction (Mean)</td>
+                            <td class="py-3 px-4 font-mono">$\hat{y}_i = \bar{y} = \frac{1}{n}\sum y_j$</td>
+                            <td class="py-3 pl-4">11</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 pr-4 font-semibold text-cyan-400">Linear Prediction</td>
+                            <td class="py-3 px-4 font-mono">$\hat{y}_i = x_i^T\beta = \beta_0 + \beta_1 x_{i1} + \dots$</td>
+                            <td class="py-3 pl-4">11</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 pr-4 font-semibold text-cyan-400">Mean Absolute Error (MAE)</td>
+                            <td class="py-3 px-4 font-mono">$\text{MAE} = \frac{1}{n}\sum_{i=1}^n \vert y_i - \hat{y}_i\vert$</td>
+                            <td class="py-3 pl-4">13</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 pr-4 font-semibold text-cyan-400">Root Mean Squared Error (RMSE)</td>
+                            <td class="py-3 px-4 font-mono">$\text{RMSE} = \sqrt{\frac{1}{n}\sum_{i=1}^n (y_i - \hat{y}_i)^2}$</td>
+                            <td class="py-3 pl-4">13</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 pr-4 font-semibold text-cyan-400">R-squared ($R^2$)</td>
+                            <td class="py-3 px-4 font-mono">$R^2 = 1 - \frac{\sum (y_i - \hat{y}_i)^2}{\sum (y_i - \bar{y})^2}$</td>
+                            <td class="py-3 pl-4">13</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- References -->
+        <section id="references" class="space-y-4">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">References</h2>
+            <ol class="text-sm text-[#cbd5e1] list-decimal list-inside space-y-2">
+                <li><strong>scikit-learn Pipelines:</strong> <a href="https://scikit-learn.org/stable/modules/compose.html" class="text-cyan-400 underline hover:text-cyan-300">Pipeline Tutorial</a> - Standard compose API guide.</li>
+                <li><strong>Cross-Validation Guide:</strong> <a href="https://scikit-learn.org/stable/modules/cross_validation.html" class="text-cyan-400 underline hover:text-cyan-300">sklearn CV User Guide</a> - Details on GroupKFold, KFold, and TimeSeriesSplit.</li>
+                <li><strong>Evaluating Regression Models:</strong> <a href="https://scikit-learn.org/stable/modules/model_evaluation.html#regression-metrics" class="text-cyan-400 underline hover:text-cyan-300">Evaluation Metrics Overview</a> - Standard API documentation on regression losses.</li>
+                <li><strong>Generalization & Splitting Theory:</strong> Hastie, T., Tibshirani, R., & Friedman, J. (2009). <em>The Elements of Statistical Learning</em>. Springer. Chapter 7.</li>
+            </ol>
+        </section>
+
+        <!-- YouTube Video Links -->
+        <section class="bg-red-500/5 border border-red-500/10 rounded-xl p-6 space-y-4">
+            <h3 class="text-lg font-semibold text-white flex items-center gap-2">
+                <span class="text-red-500">▶</span> Quick Video Reference
+            </h3>
+            <p class="text-base text-[#cbd5e1]">Learn about the math and logic behind train/test splits and cross-validation.</p>
+            <a href="https://www.youtube.com/embed/dQw4w9WgXcQ" class="yt-link inline-flex items-center gap-2 text-xs font-semibold text-red-400 hover:text-red-300 transition-colors">
+                <span>🎥</span> Watch: Train Test Splits and Cross-Validation Explained
+            </a>
+        </section>
+    </div>
+</body>
+</html>

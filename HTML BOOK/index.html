@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KP Regression Study Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- MathJax for rendering equations -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-[#0b0f19] text-[#f1f5f9] font-sans antialiased min-h-screen flex">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-[320px] bg-[#0f1524] border-r border-[#223150] fixed top-0 bottom-0 left-0 p-6 flex flex-col justify-between z-40">
+        <div class="space-y-8 overflow-y-auto flex-1 pb-6 pr-2">
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-400 to-emerald-400 flex items-center justify-center font-extrabold text-white text-lg shadow-lg shadow-cyan-500/20">
+                    KP
+                </div>
+                <div>
+                    <h2 class="text-md font-bold leading-tight text-white">Regression Studio</h2>
+                    <span class="text-sm text-[#cbd5e1] tracking-widest font-mono">ZERO TO RESEARCH</span>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="space-y-1.5" aria-label="Course chapters">
+                <span class="block text-xs font-semibold tracking-wider text-[#475569] uppercase mb-3">CURRICULUM</span>
+                <a href="#/chapter0" id="nav-chapter0" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-[#cbd5e1] hover:text-cyan-400 hover:bg-[#151d30]/50 transition-all border border-transparent">
+                    <span class="text-lg">🚀</span>
+                    <div class="text-sm font-semibold">Ch 0: Level 0 Orientation</div>
+                </a>
+                <a href="#/chapter1" id="nav-chapter1" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-[#cbd5e1] hover:text-cyan-400 hover:bg-[#151d30]/50 transition-all border border-transparent">
+                    <span class="text-lg">🔍</span>
+                    <div class="text-sm font-semibold">Ch 1: Level 1 Data Explorer</div>
+                </a>
+                <a href="#/chapter1-5" id="nav-chapter1-5" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-[#cbd5e1] hover:text-amber-400 hover:bg-[#151d30]/50 transition-all border border-transparent">
+                    <span class="text-lg">⚡</span>
+                    <div class="text-sm font-semibold">Ch 1.5: Adaptive Optimizers <span class="text-[10px] text-amber-400 font-normal">(optional)</span></div>
+                </a>
+                <a href="#/chapter2" id="nav-chapter2" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-[#cbd5e1] hover:text-cyan-400 hover:bg-[#151d30]/50 transition-all border border-transparent">
+                    <span class="text-lg">🧪</span>
+                    <div class="text-sm font-semibold">Ch 2: Level 2 Beginner</div>
+                </a>
+                <a href="#/chapter3" id="nav-chapter3" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-[#cbd5e1] hover:text-cyan-400 hover:bg-[#151d30]/50 transition-all border border-transparent">
+                    <span class="text-lg">🛠️</span>
+                    <div class="text-sm font-semibold">Ch 3: Level 3 Practitioner</div>
+                </a>
+                <a href="#/chapter4" id="nav-chapter4" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-[#cbd5e1] hover:text-cyan-400 hover:bg-[#151d30]/50 transition-all border border-transparent">
+                    <span class="text-lg">🌲</span>
+                    <div class="text-sm font-semibold">Ch 4: Level 4 Advanced</div>
+                </a>
+                <a href="#/chapter5" id="nav-chapter5" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-[#cbd5e1] hover:text-cyan-400 hover:bg-[#151d30]/50 transition-all border border-transparent">
+                    <span class="text-lg">🎓</span>
+                    <div class="text-sm font-semibold">Ch 5: Level 5 Apprentice</div>
+                </a>
+                <a href="#/chapter6" id="nav-chapter6" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-[#cbd5e1] hover:text-cyan-400 hover:bg-[#151d30]/50 transition-all border border-transparent">
+                    <span class="text-lg">🏆</span>
+                    <div class="text-sm font-semibold">Ch 6: Level 6 Master</div>
+                </a>
+                <a href="#/chapter7" id="nav-chapter7" class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-[#cbd5e1] hover:text-cyan-400 hover:bg-[#151d30]/50 transition-all border border-transparent">
+                    <span class="text-lg">🗄️</span>
+                    <div class="text-sm font-semibold">Ch 7: Reference Vault</div>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Progress Widget -->
+        <div class="bg-[#151d30] border border-[#223150] rounded-2xl p-4 mt-6 space-y-3">
+            <div class="flex items-center justify-between text-xs font-semibold">
+                <span class="text-[#cbd5e1]">COURSE PROGRESS</span>
+                <span id="progress-percent" class="text-cyan-400 font-mono">0%</span>
+            </div>
+            <div class="w-full h-2 bg-[#0b0f19] rounded-full overflow-hidden border border-[#223150]">
+                <div id="progress-bar" class="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 w-0 transition-all duration-500"></div>
+            </div>
+            <p class="text-[10px] text-[#94a3b8] leading-tight">Read chapters and solve exercises to level up.</p>
+        </div>
+    </aside>
+
+    <!-- Main Content Panel -->
+    <main class="ml-[320px] flex-1 min-h-screen p-10 flex flex-col relative z-10">
+        <!-- Floating active loader -->
+        <div id="page-loader" class="absolute inset-0 bg-[#0b0f19] flex items-center justify-center z-50 transition-opacity duration-300 opacity-0 pointer-events-none">
+            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-400"></div>
+        </div>
+
+        <!-- Main Dynamic content injection zone -->
+        <div id="main-content" class="flex-1 opacity-100 transition-opacity duration-300">
+            <!-- Content loaded here -->
+        </div>
+    </main>
+
+    <!-- Modal Backdrop -->
+    <div id="modal-backdrop" class="fixed inset-0 bg-black/60 backdrop-blur-md hidden items-center justify-center z-50 p-6 transition-all duration-300 opacity-0">
+        <!-- Modal Card Container -->
+        <div id="modal-card" class="bg-[#151d30]/95 border border-[#223150] shadow-2xl rounded-2xl max-w-3xl w-full max-h-[85vh] flex flex-col p-6 overflow-hidden transform scale-95 transition-all duration-300">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between border-b border-[#223150] pb-4">
+                <div class="flex items-center gap-2">
+                    <span id="modal-badge" class="px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider text-cyan-400 bg-cyan-400/10 rounded-md border border-cyan-400/20 uppercase">CONCEPT EXPLANATION</span>
+                    <h3 id="modal-title" class="text-lg font-bold text-white leading-tight">Concept Title</h3>
+                </div>
+                <button id="modal-close" class="text-[#cbd5e1] hover:text-white transition-colors p-1" aria-label="Close modal">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Modal Body (Content container) -->
+            <div id="modal-body" class="overflow-y-auto mt-4 text-[#cbd5e1] leading-relaxed pr-2 space-y-4 text-sm prose prose-invert max-w-none">
+                <!-- Concept content dynamically loaded -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Router, Modal, and UI Scripts -->
+    <script>
+        // Track completed chapters in LocalStorage
+        const totalChapters = 9;
+        let completedChapters = JSON.parse(localStorage.getItem('completed_chapters')) || [];
+
+        // Route mapping
+        const routes = {
+            '': 'level_0_orientation.html',
+            '#/chapter0': 'level_0_orientation.html',
+            '#/chapter1': 'level_1_data_explorer.html',
+            '#/chapter1-5': 'level_1_5_adaptive_optimizers.html',
+            '#/chapter2': 'level_2_beginner_modeler.html',
+            '#/chapter3': 'level_3_practitioner.html',
+            '#/chapter4': 'level_4_advanced_modeler.html',
+            '#/chapter5': 'level_5_research_apprentice.html',
+            '#/chapter6': 'level_6_research_practitioner.html',
+            '#/chapter7': 'appendices_and_resources.html',
+        };
+
+        const activeNavItemId = {
+            '': 'nav-chapter0',
+            '#/chapter0': 'nav-chapter0',
+            '#/chapter1': 'nav-chapter1',
+            '#/chapter1-5': 'nav-chapter1-5',
+            '#/chapter2': 'nav-chapter2',
+            '#/chapter3': 'nav-chapter3',
+            '#/chapter4': 'nav-chapter4',
+            '#/chapter5': 'nav-chapter5',
+            '#/chapter6': 'nav-chapter6',
+            '#/chapter7': 'nav-chapter7',
+        };
+
+        // DOM elements
+        const mainContent = document.getElementById('main-content');
+        const loader = document.getElementById('page-loader');
+        const modalBackdrop = document.getElementById('modal-backdrop');
+        const modalCard = document.getElementById('modal-card');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+        const modalBadge = document.getElementById('modal-badge');
+        const modalClose = document.getElementById('modal-close');
+        const progressBar = document.getElementById('progress-bar');
+        const progressPercent = document.getElementById('progress-percent');
+
+        // Update progress bar
+        function updateProgress() {
+            const percent = Math.round((completedChapters.length / totalChapters) * 100);
+            progressBar.style.width = `${percent}%`;
+            progressPercent.textContent = `${percent}%`;
+        }
+
+        // Add current route to completed list
+        function markRouteCompleted(hash) {
+            const chapterKey = hash || '#/chapter0';
+            if (!completedChapters.includes(chapterKey)) {
+                completedChapters.push(chapterKey);
+                localStorage.setItem('completed_chapters', JSON.stringify(completedChapters));
+                updateProgress();
+            }
+        }
+
+        // Show/hide loader
+        function showLoader(show) {
+            if (show) {
+                loader.classList.remove('opacity-0', 'pointer-events-none');
+                mainContent.classList.add('opacity-30');
+            } else {
+                loader.classList.add('opacity-0', 'pointer-events-none');
+                mainContent.classList.remove('opacity-30');
+            }
+        }
+
+        // Route dispatcher
+        async function navigate() {
+            const hash = window.location.hash;
+            const file = routes[hash] || 'level_0_orientation.html';
+
+            showLoader(true);
+
+            try {
+                const response = await fetch(file);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const text = await response.text();
+
+                // Extract contents within body, or target element if specified
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text, 'text/html');
+                const pageContent = doc.getElementById('content');
+
+                if (pageContent) {
+                    mainContent.innerHTML = pageContent.innerHTML;
+                } else {
+                    mainContent.innerHTML = text; // fallback
+                }
+
+                // Update active state in nav menu
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.classList.remove('text-cyan-400', 'bg-[#151d30]/80', 'border-cyan-500/20');
+                    btn.classList.add('text-[#cbd5e1]', 'border-transparent');
+                });
+
+                const activeId = activeNavItemId[hash] || 'nav-chapter0';
+                const activeBtn = document.getElementById(activeId);
+                if (activeBtn) {
+                    activeBtn.classList.remove('text-[#cbd5e1]', 'border-transparent');
+                    activeBtn.classList.add('text-cyan-400', 'bg-[#151d30]/80', 'border-cyan-500/20');
+                }
+
+                markRouteCompleted(hash);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+                // Trigger MathJax re-render
+                if (window.MathJax && MathJax.typesetPromise) {
+                    MathJax.typesetPromise([mainContent]);
+                }
+
+            } catch (err) {
+                console.error("Router error loading page: ", err);
+                mainContent.innerHTML = `
+                    <div class="bg-red-500/10 border border-red-500/20 text-[#ef4444] rounded-2xl p-6 text-center max-w-md mx-auto mt-20">
+                        <i class="fa-solid fa-triangle-exclamation text-4xl mb-3"></i>
+                        <h3 class="text-lg font-bold text-white">Failed to load content</h3>
+                        <p class="text-sm mt-1 text-[#cbd5e1]">Please ensure you are serving this directory using a local web server.</p>
+                        <pre class="bg-black/30 text-xs rounded-lg p-3 font-mono mt-3 text-left overflow-x-auto">${err.message}</pre>
+                    </div>
+                `;
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        // Intercept link clicks
+        document.addEventListener('click', async (e) => {
+            const link = e.target.closest('a');
+            if (!link) return;
+
+            const href = link.getAttribute('href');
+            if (!href) return;
+
+            // Handle YouTube links
+            if (href.includes('youtube.com') || href.includes('youtu.be')) {
+                e.preventDefault();
+                openYoutubeModal(href);
+                return;
+            }
+
+            // Handle Concept/Backlink modals
+            if (href.includes('.html#') || (href.startsWith('#') && !href.startsWith('#/'))) {
+                e.preventDefault();
+                
+                const parts = href.split('#');
+                const file = parts[0] || routes[window.location.hash] || 'level_0_orientation.html';
+                const elementId = parts[1];
+
+                openConceptModal(file, elementId);
+            }
+        });
+
+        // Open YouTube video in Modal
+        function openYoutubeModal(url) {
+            let videoId = "";
+            if (url.includes('youtube.com/embed/')) {
+                videoId = url.split('youtube.com/embed/')[1].split('?')[0];
+            } else if (url.includes('youtube.com/watch?v=')) {
+                videoId = url.split('watch?v=')[1].split('&')[0];
+            } else if (url.includes('youtu.be/')) {
+                videoId = url.split('youtu.be/')[1].split('?')[0];
+            }
+
+            if (!videoId) return;
+
+            modalBadge.textContent = "VIDEO REFERENCE";
+            modalBadge.className = "px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider text-red-400 bg-red-400/10 rounded-md border border-red-400/20 uppercase";
+            modalTitle.textContent = "Topic Video Explainer";
+            
+            modalBody.innerHTML = `
+                <div class="relative w-full pb-[56.25%] h-0 rounded-xl overflow-hidden border border-[#223150] shadow-lg">
+                    <iframe class="absolute top-0 left-0 w-full h-full" 
+                        src="https://www.youtube.com/embed/${videoId}?autoplay=1" 
+                        title="YouTube video player" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            `;
+            
+            showModal(true);
+        }
+
+        // Fetch concept and show in Modal
+        async function openConceptModal(file, id) {
+            modalBadge.textContent = "CONCEPT EXPLANATION";
+            modalBadge.className = "px-2 py-0.5 text-[10px] font-mono font-bold tracking-wider text-cyan-400 bg-cyan-400/10 rounded-md border border-cyan-400/20 uppercase";
+            modalTitle.textContent = "Loading concept explanation...";
+            modalBody.innerHTML = `
+                <div class="flex items-center justify-center py-10">
+                    <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-cyan-400"></div>
+                </div>
+            `;
+            showModal(true);
+
+            try {
+                // Fetch target page
+                const response = await fetch(file);
+                if (!response.ok) throw new Error(`Failed to load target file: ${file}`);
+                const text = await response.text();
+
+                // Parse target section
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(text, 'text/html');
+                const targetElement = doc.getElementById(id);
+
+                if (!targetElement) throw new Error(`Concept element with ID "${id}" not found.`);
+
+                // Extract titles and cleanup content
+                const header = targetElement.querySelector('h1, h2, h3, h4');
+                const headerText = header ? header.textContent : "Concept Explanation";
+                
+                // Copy node to remove title inside modal body if present
+                const clone = targetElement.cloneNode(true);
+                const cloneHeader = clone.querySelector('h1, h2, h3, h4');
+                if (cloneHeader) cloneHeader.remove();
+
+                modalTitle.textContent = headerText;
+                modalBody.innerHTML = clone.innerHTML;
+
+                // Render math inside modal content
+                if (window.MathJax && MathJax.typesetPromise) {
+                    MathJax.typesetPromise([modalBody]);
+                }
+
+            } catch (err) {
+                console.error("Failed to load modal concept: ", err);
+                modalTitle.textContent = "Error";
+                modalBody.innerHTML = `
+                    <div class="bg-red-500/10 border border-red-500/20 text-[#ef4444] rounded-xl p-4 text-sm">
+                        <i class="fa-solid fa-circle-exclamation mr-2"></i> Failed to retrieve concept link: ${err.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Show/hide modal helpers
+        function showModal(show) {
+            if (show) {
+                modalBackdrop.classList.remove('hidden');
+                modalBackdrop.classList.add('flex');
+                setTimeout(() => {
+                    modalBackdrop.classList.add('opacity-100');
+                    modalCard.classList.remove('scale-95');
+                    modalCard.classList.add('scale-100');
+                }, 10);
+            } else {
+                modalBackdrop.classList.remove('opacity-100');
+                modalCard.classList.remove('scale-100');
+                modalCard.classList.add('scale-95');
+                setTimeout(() => {
+                    modalBackdrop.classList.remove('flex');
+                    modalBackdrop.classList.add('hidden');
+                    modalBody.innerHTML = ""; // clean iframe/contents
+                }, 300);
+            }
+        }
+
+        // Modal event listeners
+        modalClose.addEventListener('click', () => showModal(false));
+        modalBackdrop.addEventListener('click', (e) => {
+            if (e.target === modalBackdrop) showModal(false);
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') showModal(false);
+        });
+
+        // Initialize Router
+        window.addEventListener('hashchange', navigate);
+        window.addEventListener('load', () => {
+            navigate();
+            updateProgress();
+        });
+    </script>
+</body>
+</html>

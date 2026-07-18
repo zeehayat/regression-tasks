@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 1: Level 1 Data Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- MathJax support -->
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }
+      };
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-[#0b0f19] text-[#cbd5e1] font-sans antialiased">
+    <div id="content" class="max-w-4xl mx-auto px-6 py-12">
+        <header class="border-b border-[#223150] pb-8 mb-8">
+            <span class="inline-block px-3 py-1 text-xs font-semibold tracking-wider text-cyan-400 bg-cyan-400/10 rounded-full border border-cyan-400/20 mb-4">LEVEL 1</span>
+            <h1 class="text-4xl font-extrabold tracking-tight text-white mb-2">Chapter 1 — From a Question to Ordinary Least Squares</h1>
+            <p class="text-lg text-[#94a3b8]">Level 1 Data Explorer: Week 1 of the MHP Cost Estimator</p>
+        </header>
+
+        <blockquote class='border-l-4 border-cyan-500 bg-cyan-950/20 text-[#94a3b8] italic my-6 p-4 rounded-r-lg text-sm leading-relaxed'><strong class="text-white font-semibold">Central promise.</strong> By the end of this chapter, you will not merely be able to call a regression function. You will be able to state the question a regression can answer, represent the data correctly, derive ordinary least squares (OLS) in scalar and matrix form, implement it without a machine-learning library, diagnose when it fails, and explain the result to a decision-maker responsible for public infrastructure.</blockquote>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>This chapter uses a running case: estimating the cost of microhydro power (MHP) projects in Khyber Pakhtunkhwa (KP). The projects are fictional but realistic. Their geography, procurement problems, transport constraints, and management decisions are grounded in the kinds of conditions infrastructure teams encounter in Chitral, Dir, Swat, and other mountainous districts.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The case is deliberately high-stakes. A regression coefficient is not just a number on a screen. If misunderstood, it can lead to an unrealistic budget, an unfair judgement about a field team, or a decision to withdraw a service from a remote community.</p>
+<hr class='border-[#223150] my-8'>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>The pedagogical contract</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>This book asks the learner and the author to keep the same contract.</p>
+<ol class='list-decimal list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4' style='list-style-type: decimal;'><li class='leading-relaxed'><strong class="text-white font-semibold">One central concept per day.</strong> Each lesson has a single intellectual centre. Supporting ideas are introduced only when that centre requires them.</li><li class='leading-relaxed'><strong class="text-white font-semibold">No mathematical hand-waving.</strong> A displayed equation is unpacked symbol by symbol and connected to numbers.</li><li class='leading-relaxed'><strong class="text-white font-semibold">Code as proof.</strong> Important equations are verified with NumPy and, where useful, with plain loops. We do not use <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">scikit-learn</code> in Week 1.</li><li class='leading-relaxed'><strong class="text-white font-semibold">Geometry before memorisation.</strong> Vectors, projections, residuals, and error surfaces are drawn or plotted.</li><li class='leading-relaxed'><strong class="text-white font-semibold">Build, break, rebuild.</strong> Every day adds to the <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">MHPCostEstimator</code>, then deliberately creates a failure that the learner must diagnose.</li><li class='leading-relaxed'><strong class="text-white font-semibold">Interpretation in context.</strong> Every mathematical result is translated back into a budget, engineering, or management statement.</li><li class='leading-relaxed'><strong class="text-white font-semibold">Cognitive load is managed, not intelligence underestimated.</strong> New notation is introduced gradually, but no essential reasoning is hidden.</li></ol>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>What “from scratch” means here</h3>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>We will use Python, NumPy, and Matplotlib as basic tools. We will not ask a library to fit a regression model for us. NumPy stores arrays and performs arithmetic; the learner still constructs the design matrix, objective function, normal equations, parameter estimates, predictions, residuals, and diagnostics.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Later chapters can remove even more scaffolding—for example, by implementing matrix decomposition manually—but doing that now would bury the statistical idea under numerical bookkeeping.</p>
+<hr class='border-[#223150] my-8'>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>Week 1 learning outcomes</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>At the end of five days, you should be able to:</p>
+<ul class='list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4'><li class='leading-relaxed'>distinguish prediction, explanation, and causal inference;</li><li class='leading-relaxed'>identify a target, features, observations, parameters, and hyperparameters;</li><li class='leading-relaxed'>read and verify the shapes of vectors and matrices;</li><li class='leading-relaxed'>explain why a column of ones creates an intercept;</li><li class='leading-relaxed'>calculate residuals, SSR, MSE, RMSE, and MAE by hand and in code;</li><li class='leading-relaxed'>describe OLS as both error minimisation and orthogonal projection;</li><li class='leading-relaxed'>derive the scalar and matrix OLS solutions;</li><li class='leading-relaxed'>explain when the OLS solution is unique;</li><li class='leading-relaxed'>detect perfect multicollinearity and other common failures;</li><li class='leading-relaxed'>fit and evaluate a small regression model without a machine-learning library; and</li><li class='leading-relaxed'>separate a mathematically correct calculation from a defensible policy conclusion.</li></ul>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>The five-day route</h2>
+<pre class='mermaid bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 text-[#cbd5e1] text-xs overflow-x-auto'>flowchart TD
+    D1["Day 1: Define the question"] --> D2["Day 2: Represent the data"]
+    D2 --> D3["Day 3: Build linear predictions"]
+    D3 --> D4["Day 4: Measure and project error"]
+    D4 --> D5["Day 5: Derive and fit OLS"]</pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Each day follows the same rhythm:</p>
+<ol class='list-decimal list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4' style='list-style-type: decimal;'><li class='leading-relaxed'><strong class="text-white font-semibold">Orient:</strong> connect the concept to a decision;</li><li class='leading-relaxed'><strong class="text-white font-semibold">Construct:</strong> develop the mathematics carefully;</li><li class='leading-relaxed'><strong class="text-white font-semibold">Prove:</strong> test the mathematics with raw code;</li><li class='leading-relaxed'><strong class="text-white font-semibold">See:</strong> create a diagram or figure;</li><li class='leading-relaxed'><strong class="text-white font-semibold">Build:</strong> add one working part to the application;</li><li class='leading-relaxed'><strong class="text-white font-semibold">Break:</strong> produce a predictable failure;</li><li class='leading-relaxed'><strong class="text-white font-semibold">Reflect:</strong> decide what the result does and does not justify.</li></ol>
+<hr class='border-[#223150] my-8'>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>Running case and units</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The MHP Cost Estimator will eventually use multiple project features. During the first four days, we also use very small datasets so that every number can be inspected.</p>
+<div class='overflow-x-auto my-6 bg-[#151d30] border border-[#223150] rounded-xl p-4'><table class='w-full text-sm text-left text-[#cbd5e1] divide-y divide-[#223150]'><thead><tr class='text-cyan-400 font-semibold'><th class='py-3 px-4'>Field</th><th class='py-3 px-4'>Symbol</th><th class='py-3 px-4'>Unit</th><th class='py-3 px-4'>Meaning</th></tr></thead><tbody class='divide-y divide-[#223150]/60'><tr><td class='py-3 px-4'>Project count</td><td class='py-3 px-4'>$n$</td><td class='py-3 px-4'>projects</td><td class='py-3 px-4'>Number of observations</td></tr><tr><td class='py-3 px-4'>Feature count</td><td class='py-3 px-4'>$p$</td><td class='py-3 px-4'>features</td><td class='py-3 px-4'>Number of explanatory columns before the intercept</td></tr><tr><td class='py-3 px-4'>Cable length</td><td class='py-3 px-4'>$x_1$</td><td class='py-3 px-4'>km</td><td class='py-3 px-4'>Length of distribution cable</td></tr><tr><td class='py-3 px-4'>Hydraulic head</td><td class='py-3 px-4'>$x_2$</td><td class='py-3 px-4'>m</td><td class='py-3 px-4'>Vertical fall available to drive the turbine</td></tr><tr><td class='py-3 px-4'>Road distance</td><td class='py-3 px-4'>$x_3$</td><td class='py-3 px-4'>km</td><td class='py-3 px-4'>Distance from an all-weather road to the site</td></tr><tr><td class='py-3 px-4'>Terrain difficulty</td><td class='py-3 px-4'>$x_4$</td><td class='py-3 px-4'>index 1–5</td><td class='py-3 px-4'>Ordered field assessment of access difficulty</td></tr><tr><td class='py-3 px-4'>Planned capacity</td><td class='py-3 px-4'>$x_5$</td><td class='py-3 px-4'>kW</td><td class='py-3 px-4'>Intended generating capacity</td></tr><tr><td class='py-3 px-4'>Actual project cost</td><td class='py-3 px-4'>$y$</td><td class='py-3 px-4'>million PKR</td><td class='py-3 px-4'>Target to be estimated</td></tr></tbody></table></div>
+<blockquote class='border-l-4 border-cyan-500 bg-cyan-950/20 text-[#94a3b8] italic my-6 p-4 rounded-r-lg text-sm leading-relaxed'><strong class="text-white font-semibold">Unit discipline:</strong> A coefficient is meaningless without its units. If cost is recorded in million PKR and cable length in kilometres, the cable coefficient has units of “million PKR per kilometre,” holding the other included features constant.</blockquote>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The data in this chapter are <strong class="text-white font-semibold">synthetic</strong>. They are for learning, not for judging a real district, contractor, community, or organisation.</p>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Minimal software setup</h3>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The code assumes Python 3.11 or later. In a terminal, create an isolated environment and install the two numerical packages used in this chapter:</p>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-bash'>python -m venv .venv
+source .venv/bin/activate        # Windows PowerShell: .venv\Scripts\Activate.ps1
+python -m pip install numpy matplotlib</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Use a plain <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">.py</code> file, a Jupyter notebook, or an editor with an interactive Python terminal. Keep every day’s experiments. A failed calculation with a short note about why it failed is part of the learning record, not clutter to erase.</p>
+<hr class='border-[#223150] my-8'>
+<h1 class='text-3xl font-extrabold tracking-tight text-white mt-12 mb-6 border-b border-[#223150] pb-4'>Day 1 — What Question Are We Asking?</h1>
+<blockquote class='border-l-4 border-cyan-500 bg-cyan-950/20 text-[#94a3b8] italic my-6 p-4 rounded-r-lg text-sm leading-relaxed'><strong class="text-white font-semibold">Today’s central idea:</strong> Prediction, explanation, and causation are different jobs. A regression calculation does not decide which job you meant.</blockquote>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>1.1 Regression in one sentence</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Regression constructs a numerical relationship between a target variable $y$ and one or more observed features $X$.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>That sentence describes the mechanism but not the purpose. The same regression equation can be used for three very different purposes.</p>
+<div class='overflow-x-auto my-6 bg-[#151d30] border border-[#223150] rounded-xl p-4'><table class='w-full text-sm text-left text-[#cbd5e1] divide-y divide-[#223150]'><thead><tr class='text-cyan-400 font-semibold'><th class='py-3 px-4'>Job</th><th class='py-3 px-4'>Question</th><th class='py-3 px-4'>What success looks like</th><th class='py-3 px-4'>Main danger</th></tr></thead><tbody class='divide-y divide-[#223150]/60'><tr><td class='py-3 px-4'>Prediction</td><td class='py-3 px-4'>“How accurately can we estimate the cost of a new project?”</td><td class='py-3 px-4'>Low error on genuinely new projects</td><td class='py-3 px-4'>A model may fail when conditions change</td></tr><tr><td class='py-3 px-4'>Explanation</td><td class='py-3 px-4'>“How is road distance associated with cost after accounting for included features?”</td><td class='py-3 px-4'>Stable, interpretable coefficients with uncertainty</td><td class='py-3 px-4'>Omitted variables and correlated features distort interpretation</td></tr><tr><td class='py-3 px-4'>Causal inference</td><td class='py-3 px-4'>“How much would cost change if we improved road access?”</td><td class='py-3 px-4'>Credible estimate of an intervention</td><td class='py-3 px-4'>Association is mistaken for the effect of an action</td></tr></tbody></table></div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The distinction is not philosophical decoration. It changes the data you need, the assumptions you must defend, and the way the result may be used.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>1.2 Prediction: estimating an unknown outcome</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>For prediction, we want a function $f$ that converts the observed features of project $i$ into an estimate:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \hat{y}_i = f(x_{i1},x_{i2},\ldots,x_{ip}). $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Read the symbols slowly:</p>
+<ul class='list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4'><li class='leading-relaxed'>$i$ identifies one project;</li><li class='leading-relaxed'>$x_{ij}$ is feature $j$ for project $i$;</li><li class='leading-relaxed'>$f$ is the fitted prediction rule;</li><li class='leading-relaxed'>$y_i$ is the actual cost; and</li><li class='leading-relaxed'>$\hat{y}_i$, pronounced “y-hat,” is the estimated cost.</li></ul>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>A predictor may be useful even when a feature is not causal. For instance, the number of difficult river crossings may predict transport cost because it summarises remoteness. A planning unit can use that signal to improve a contingency estimate without claiming that a river crossing, by itself, causes every extra rupee.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Prediction must be evaluated on data not used to fit the model. A rule that memorises completed projects can appear perfect and still fail on the next valley.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>1.3 Explanation: describing conditional association</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>For explanation, attention shifts from the prediction alone to the model’s parameters. Consider:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \hat{y}_i = \beta_0 + \beta_1\,\text{road\_distance}_i + \beta_2\,\text{capacity}_i. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Here $\beta_1$ describes the estimated difference in cost associated with one additional kilometre of road distance <strong class="text-white font-semibold">among projects with the same included capacity</strong>.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The phrase in bold is essential. In multiple regression, a coefficient is conditional on the other included features. It does not automatically control for variables that are absent, poorly measured, or structurally different across districts.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>An explanatory analysis also needs uncertainty. A coefficient of 0.8 million PKR per kilometre is not equally persuasive if it comes from 6 projects or 600 projects. Standard errors and confidence intervals arrive later; Week 1 first establishes what is being estimated.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>1.4 Causation: estimating an intervention</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>A causal question asks about a change we could make:</p>
+<blockquote class='border-l-4 border-cyan-500 bg-cyan-950/20 text-[#94a3b8] italic my-6 p-4 rounded-r-lg text-sm leading-relaxed'>If an all-weather access road were constructed before the MHP works began, how would the final project cost differ from what it would otherwise have been?</blockquote>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>This question compares two potential outcomes for the same project:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \text{causal effect}_i = Y_i(\text{road improved}) - Y_i(\text{road not improved}). $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>We can observe only one of those outcomes for a given project. The unobserved alternative is the <strong class="text-white font-semibold">counterfactual</strong>. Causal inference is therefore a problem of constructing a credible comparison, not merely fitting a line.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Ordinary regression can be part of a causal design, but the regression output is causal only when the research design and assumptions make it so. Random assignment, natural experiments, careful matching, panel designs, and defensible causal graphs can help. A high $R^2$ cannot turn an associational design into a causal one.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>1.5 Confounding: the hidden common cause</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Suppose projects in rugged terrain are more likely to require helicopter transport, and rugged terrain independently increases excavation delays and labour costs.</p>
+<pre class='mermaid bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 text-[#cbd5e1] text-xs overflow-x-auto'>flowchart TD
+    T["Rugged terrain"] --> H["Helicopter transport"]
+    T --> C["Cost overrun"]
+    H -. "association may not equal effect" .-> C</pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Figure 1.1 — A confounding structure.</strong> Terrain is a common cause of the selected transport method and the cost overrun. The dotted arrow is the relationship we might estimate naively.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>If terrain is ignored, projects using helicopters will look more expensive even if helicopter transport reduced cost relative to the feasible alternative—weeks of manual carriage or an unfinished project.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>A variable is a confounder when it is causally related to both the exposure or decision and the outcome, and is not itself a consequence of that exposure. The precise definition depends on the full causal structure; “control for everything available” is not a safe rule because controlling for mediators or colliders can introduce new bias.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>1.6 Simpson’s paradox: when aggregation reverses a pattern</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Imagine eight projects, four in relatively accessible terrain and four in remote mountain terrain. Within each terrain group, longer cable raises cost. Yet remote projects happen to use shorter cable and start from a much higher cost base.</p>
+<div class='overflow-x-auto my-6 bg-[#151d30] border border-[#223150] rounded-xl p-4'><table class='w-full text-sm text-left text-[#cbd5e1] divide-y divide-[#223150]'><thead><tr class='text-cyan-400 font-semibold'><th class='py-3 px-4'>Terrain group</th><th class='py-3 px-4'>Cable length (km)</th><th class='py-3 px-4'>Cost (million PKR)</th></tr></thead><tbody class='divide-y divide-[#223150]/60'><tr><td class='py-3 px-4'>Accessible</td><td class='py-3 px-4'>4</td><td class='py-3 px-4'>18</td></tr><tr><td class='py-3 px-4'>Accessible</td><td class='py-3 px-4'>5</td><td class='py-3 px-4'>20</td></tr><tr><td class='py-3 px-4'>Accessible</td><td class='py-3 px-4'>6</td><td class='py-3 px-4'>22</td></tr><tr><td class='py-3 px-4'>Accessible</td><td class='py-3 px-4'>7</td><td class='py-3 px-4'>24</td></tr><tr><td class='py-3 px-4'>Remote</td><td class='py-3 px-4'>1</td><td class='py-3 px-4'>30</td></tr><tr><td class='py-3 px-4'>Remote</td><td class='py-3 px-4'>2</td><td class='py-3 px-4'>33</td></tr><tr><td class='py-3 px-4'>Remote</td><td class='py-3 px-4'>3</td><td class='py-3 px-4'>36</td></tr><tr><td class='py-3 px-4'>Remote</td><td class='py-3 px-4'>4</td><td class='py-3 px-4'>39</td></tr></tbody></table></div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Within accessible projects, one more kilometre is associated with about 2 million PKR more cost. Within remote projects, it is associated with about 3 million PKR more cost. But in the combined data, low cable lengths are concentrated among costly remote projects, so the overall line slopes downward.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>For one feature, the OLS slope can be written as:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \hat{\beta}_1 = \frac{\sum_{i=1}^{n}(x_i-\bar{x})(y_i-\bar{y})} {\sum_{i=1}^{n}(x_i-\bar{x})^2}. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The numerator measures how $x$ and $y$ move together. The denominator measures how much $x$ varies. Day 5 derives this formula; today we use it as a diagnostic.</p>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Code proof: calculate all three slopes</h3>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>import numpy as np
+
+def slope_from_sums(x, y):
+    &quot;&quot;&quot;One-feature OLS slope, written directly from the equation.&quot;&quot;&quot;
+    x = np.asarray(x, dtype=float)
+    y = np.asarray(y, dtype=float)
+    x_centered = x - x.mean()
+    y_centered = y - y.mean()
+    numerator = np.sum(x_centered * y_centered)
+    denominator = np.sum(x_centered ** 2)
+    return numerator / denominator
+
+x_accessible = np.array([4, 5, 6, 7], dtype=float)
+y_accessible = np.array([18, 20, 22, 24], dtype=float)
+
+x_remote = np.array([1, 2, 3, 4], dtype=float)
+y_remote = np.array([30, 33, 36, 39], dtype=float)
+
+x_all = np.concatenate([x_accessible, x_remote])
+y_all = np.concatenate([y_accessible, y_remote])
+
+print(&quot;Accessible slope:&quot;, slope_from_sums(x_accessible, y_accessible))
+print(&quot;Remote slope:    &quot;, slope_from_sums(x_remote, y_remote))
+print(&quot;Combined slope:  &quot;, slope_from_sums(x_all, y_all))
+
+# Expected, approximately:
+# Accessible slope:  2.0
+# Remote slope:      3.0
+# Combined slope:   -2.0</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The code does not “prove” which relationship is causal. It proves the numerical reversal and forces us to explain it using geography and the data-generating process.</p>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Figure lab: make the reversal visible</h3>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>import matplotlib.pyplot as plt
+
+def line_for(x, y, grid):
+    b1 = slope_from_sums(x, y)
+    b0 = y.mean() - b1 * x.mean()
+    return b0 + b1 * grid
+
+grid = np.linspace(0.5, 7.5, 100)
+
+plt.figure(figsize=(8, 5))
+plt.scatter(x_accessible, y_accessible, label=&quot;Accessible terrain&quot;, s=70)
+plt.scatter(x_remote, y_remote, label=&quot;Remote terrain&quot;, s=70)
+plt.plot(grid, line_for(x_accessible, y_accessible, grid), linewidth=2)
+plt.plot(grid, line_for(x_remote, y_remote, grid), linewidth=2)
+plt.plot(
+    grid,
+    line_for(x_all, y_all, grid),
+    color=&quot;black&quot;,
+    linestyle=&quot;--&quot;,
+    label=&quot;Misleading combined line&quot;,
+)
+plt.xlabel(&quot;Cable length (km)&quot;)
+plt.ylabel(&quot;Actual cost (million PKR)&quot;)
+plt.title(&quot;Simpson&#x27;s paradox in synthetic MHP projects&quot;)
+plt.legend()
+plt.tight_layout()
+plt.show()</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Figure 1.2 — Group-specific and aggregated regression lines.</strong> The dashed combined line answers a different—and substantively misleading—question.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>1.7 A decision protocol before touching code</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Use this sequence whenever someone asks for “a regression.”</p>
+<pre class='mermaid bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 text-[#cbd5e1] text-xs overflow-x-auto'>flowchart TD
+    Q["What decision or claim is required?"] --> P{"Prediction, explanation, or causation?"}
+    P -->|Prediction| V["Define future cases and validation data"]
+    P -->|Explanation| A["Define coefficient and conditioning set"]
+    P -->|Causation| G["Define intervention, counterfactual, and design"]</pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Before analysis, write a one-sentence <strong class="text-white font-semibold">estimand</strong>—the exact quantity to be estimated. Examples:</p>
+<ul class='list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4'><li class='leading-relaxed'>Prediction: “The expected final cost, in million PKR, of an approved project at the design stage.”</li><li class='leading-relaxed'>Explanation: “The adjusted difference in final cost associated with one additional kilometre from an all-weather road, conditional on planned capacity and measured terrain difficulty.”</li><li class='leading-relaxed'>Causation: “The average change in final MHP cost caused by completing an access road before civil works, among currently approved remote projects.”</li></ul>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>If the sentence is vague, the model will not rescue it.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>1.8 Build: start the application with a question contract</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Create <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">mhp_estimator.py</code>:</p>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>from dataclasses import dataclass
+from typing import Literal
+
+import numpy as np
+
+
+AnalysisPurpose = Literal[&quot;prediction&quot;, &quot;explanation&quot;, &quot;causation&quot;]
+
+
+@dataclass(frozen=True)
+class AnalysisContract:
+    purpose: AnalysisPurpose
+    target_name: str
+    target_unit: str
+    unit_of_observation: str
+    intended_use: str
+
+    def __post_init__(self):
+        if self.purpose not in {&quot;prediction&quot;, &quot;explanation&quot;, &quot;causation&quot;}:
+            raise ValueError(&quot;purpose must be prediction, explanation, or causation&quot;)
+        for name, value in vars(self).items():
+            if not str(value).strip():
+                raise ValueError(f&quot;{name} cannot be empty&quot;)
+
+
+class MHPCostEstimator:
+    &quot;&quot;&quot;OLS estimator built progressively during Week 1.&quot;&quot;&quot;
+
+    def __init__(self, contract: AnalysisContract):
+        self.contract = contract
+        self.parameters_ = None
+        self.feature_names_ = None
+        self.rank_ = None
+        self.is_fitted_ = False
+
+    def __repr__(self):
+        status = &quot;fitted&quot; if self.is_fitted_ else &quot;unfitted&quot;
+        return f&quot;MHPCostEstimator(purpose={self.contract.purpose!r}, {status})&quot;
+
+
+if __name__ == &quot;__main__&quot;:
+    contract = AnalysisContract(
+        purpose=&quot;prediction&quot;,
+        target_name=&quot;actual_project_cost&quot;,
+        target_unit=&quot;million PKR&quot;,
+        unit_of_observation=&quot;one completed MHP project&quot;,
+        intended_use=&quot;early budget review for approved projects&quot;,
+    )
+    print(MHPCostEstimator(contract))</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The class begins with a contract because a technically correct model can still be unfit for its intended use.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>1.9 Break it deliberately</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Change <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">purpose="prediction"</code> to <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">purpose="forecasting"</code>. The program should reject the unrecognised purpose. Then leave the purpose valid but make <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">intended_use=""</code>. It should reject the empty field.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The lesson is small but important: silent ambiguity is a data-quality problem.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>1.10 Day 1 practice</h2>
+<ol class='list-decimal list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4' style='list-style-type: decimal;'><li class='leading-relaxed'>A finance unit wants next year’s total contingency allocation. Is its first task prediction, explanation, or causation?</li><li class='leading-relaxed'>A director asks whether contractor type “causes” delay because its regression coefficient is positive. What additional question must you ask?</li><li class='leading-relaxed'>Draw a DAG in which flood damage affects both the decision to redesign a headrace channel and final cost.</li><li class='leading-relaxed'>In the Simpson dataset, add 10 million PKR to every accessible project. Recalculate the three slopes. Which slopes change, and why?</li><li class='leading-relaxed'>Write an estimand for a real infrastructure decision you know.</li></ol>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Day 1 exit check</h3>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>You are ready to continue if you can complete this sentence without hesitation:</p>
+<blockquote class='border-l-4 border-cyan-500 bg-cyan-950/20 text-[#94a3b8] italic my-6 p-4 rounded-r-lg text-sm leading-relaxed'>“A regression coefficient is a causal effect only when __________.”</blockquote>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>A defensible completion is: “the design and assumptions make the comparison equivalent to the relevant intervention and counterfactual.”</p>
+<hr class='border-[#223150] my-8'>
+<h1 class='text-3xl font-extrabold tracking-tight text-white mt-12 mb-6 border-b border-[#223150] pb-4'>Day 2 — Regression Vocabulary and the Shape of Data</h1>
+<blockquote class='border-l-4 border-cyan-500 bg-cyan-950/20 text-[#94a3b8] italic my-6 p-4 rounded-r-lg text-sm leading-relaxed'><strong class="text-white font-semibold">Today’s central idea:</strong> Data have roles, shapes, units, and provenance. Most early modeling errors are representation errors before they are statistical errors.</blockquote>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>2.1 The vocabulary of one project table</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Suppose the rows of a table are completed MHP projects.</p>
+<div class='overflow-x-auto my-6 bg-[#151d30] border border-[#223150] rounded-xl p-4'><table class='w-full text-sm text-left text-[#cbd5e1] divide-y divide-[#223150]'><thead><tr class='text-cyan-400 font-semibold'><th class='py-3 px-4'>Term</th><th class='py-3 px-4'>Meaning</th><th class='py-3 px-4'>MHP example</th></tr></thead><tbody class='divide-y divide-[#223150]/60'><tr><td class='py-3 px-4'>Observation</td><td class='py-3 px-4'>One unit represented by one row</td><td class='py-3 px-4'>One completed MHP project</td></tr><tr><td class='py-3 px-4'>Feature</td><td class='py-3 px-4'>An input measured before the target is known</td><td class='py-3 px-4'>Planned capacity in kW</td></tr><tr><td class='py-3 px-4'>Target</td><td class='py-3 px-4'>The outcome to estimate</td><td class='py-3 px-4'>Actual project cost</td></tr><tr><td class='py-3 px-4'>Parameter</td><td class='py-3 px-4'>A value learned from data</td><td class='py-3 px-4'>Cost coefficient for road distance</td></tr><tr><td class='py-3 px-4'>Hyperparameter</td><td class='py-3 px-4'>A setting chosen outside the fitting calculation</td><td class='py-3 px-4'>Whether to include an intercept</td></tr><tr><td class='py-3 px-4'>Prediction</td><td class='py-3 px-4'>Model output for an observation</td><td class='py-3 px-4'>Estimated cost of 42 million PKR</td></tr><tr><td class='py-3 px-4'>Residual</td><td class='py-3 px-4'>Actual minus predicted target</td><td class='py-3 px-4'>$45-42=3$ million PKR</td></tr><tr><td class='py-3 px-4'>Loss</td><td class='py-3 px-4'>A rule for penalising errors during fitting</td><td class='py-3 px-4'>Squared residual</td></tr><tr><td class='py-3 px-4'>Metric</td><td class='py-3 px-4'>A summary used to evaluate performance</td><td class='py-3 px-4'>RMSE in million PKR</td></tr><tr><td class='py-3 px-4'>Estimator</td><td class='py-3 px-4'>The procedure that learns parameters</td><td class='py-3 px-4'>OLS</td></tr><tr><td class='py-3 px-4'>Fitted model</td><td class='py-3 px-4'>Estimator plus learned parameter values</td><td class='py-3 px-4'>Intercept and slopes after fitting</td></tr></tbody></table></div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Parameter</strong> and <strong class="text-white font-semibold">hyperparameter</strong> should not be explained through a loose physical analogy. The reliable distinction is procedural: the fitting algorithm learns parameters from the training data; the analyst sets hyperparameters or design choices.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>2.2 Scalars, vectors, matrices, and tensors</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>A <strong class="text-white font-semibold">scalar</strong> is one number. A <strong class="text-white font-semibold">vector</strong> is an ordered one-dimensional array. A <strong class="text-white font-semibold">matrix</strong> is a two-dimensional rectangular array. A <strong class="text-white font-semibold">tensor</strong> is the general term for an array with any number of axes.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The number of tensor axes is sometimes called its order or tensor rank. Do not confuse that usage with <strong class="text-white font-semibold">matrix rank</strong>, introduced on Day 5, which counts independent directions in a matrix.</p>
+<pre class='mermaid bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 text-[#cbd5e1] text-xs overflow-x-auto'>flowchart LR
+    S["Scalar: one cost"] --> V["Vector: costs for n projects"]
+    V --> M["Matrix: n projects × p features"]
+    M --> T["Tensor: projects × months × sensors"]</pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Figure 2.1 — The dimensional ladder.</strong> Regression in this chapter mainly uses vectors and matrices; “tensor” is useful as the general family name.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The mathematical objects are:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ X \in \mathbb{R}^{n\times p}, \qquad y \in \mathbb{R}^{n}, \qquad \beta \in \mathbb{R}^{p}. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Read them as:</p>
+<ul class='list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4'><li class='leading-relaxed'>$X$ is a real-valued matrix with $n$ rows and $p$ feature columns;</li><li class='leading-relaxed'>$y$ is a real-valued target vector with $n$ entries; and</li><li class='leading-relaxed'>$\beta$ is a parameter vector with one entry per feature.</li></ul>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Once an intercept column is added, $X$ has $p+1$ columns and $\beta$ has $p+1$ entries.</p>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>A concrete shape example</h3>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Three projects with two features—road distance and capacity—can be represented as:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ X = \begin{bmatrix} 12 & 100\\ 25 & 150\\ 8 & 80 \end{bmatrix}, \qquad y = \begin{bmatrix} 28\\ 44\\ 22 \end{bmatrix}. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Then $X$ has shape $3\times2$ and $y$ has length 3. Row 2 means that the second project is 25 km from an all-weather road, has planned capacity 150 kW, and actually cost 44 million PKR.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>2.3 Shape is part of meaning</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>These arrays contain the same three numbers but do not have the same shape:</p>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>import numpy as np
+
+a = np.array([28.0, 44.0, 22.0])          # shape (3,)
+b = np.array([[28.0], [44.0], [22.0]])    # shape (3, 1)
+c = np.array([[28.0, 44.0, 22.0]])        # shape (1, 3)
+
+print(a.shape, b.shape, c.shape)
+# (3,) (3, 1) (1, 3)</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>In NumPy, <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">(3,)</code> is a one-dimensional vector. <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">(3, 1)</code> is a two-dimensional column matrix. <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">(1, 3)</code> is a two-dimensional row matrix. They can behave differently under multiplication and broadcasting.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Our application will accept a one-dimensional target vector <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">y.shape == (n,)</code>. It will convert a single feature from <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">(n,)</code> to a two-dimensional matrix <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">(n, 1)</code>.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>2.4 The design matrix and row alignment</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The feature matrix used in a regression is called the <strong class="text-white font-semibold">design matrix</strong>. “Design” here refers to the arrangement of predictor columns; it does not mean the projects were experimentally assigned.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The $i$th row of $X$ and the $i$th entry of $y$ must refer to the same project.</p>
+<pre class='mermaid bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 text-[#cbd5e1] text-xs overflow-x-auto'>flowchart LR
+    R["Raw project records"] --> C["Clean and order fields"]
+    C --> X["Feature matrix X"]
+    C --> Y["Target vector y"]
+    X --> V["Validate row identity and shape"]
+    Y --> V</pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Figure 2.2 — Data assembly.</strong> Matching row counts are necessary but not sufficient: row identities must also match.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>If <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">X</code> is accidentally sorted by district while <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">y</code> remains sorted by project ID, the shapes still match. The code may run and the model may be nonsense. Preserve a project identifier during preparation, even if it is not used as a numerical feature.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>2.5 A data dictionary is part of the model</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>A usable dataset needs more than column names.</p>
+<div class='overflow-x-auto my-6 bg-[#151d30] border border-[#223150] rounded-xl p-4'><table class='w-full text-sm text-left text-[#cbd5e1] divide-y divide-[#223150]'><thead><tr class='text-cyan-400 font-semibold'><th class='py-3 px-4'>Field</th><th class='py-3 px-4'>Data type</th><th class='py-3 px-4'>Unit / categories</th><th class='py-3 px-4'>Timing</th><th class='py-3 px-4'>Missing-value rule</th></tr></thead><tbody class='divide-y divide-[#223150]/60'><tr><td class='py-3 px-4'><code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">project_id</code></td><td class='py-3 px-4'>string</td><td class='py-3 px-4'>unique ID</td><td class='py-3 px-4'>approval</td><td class='py-3 px-4'>never missing</td></tr><tr><td class='py-3 px-4'><code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">road_distance_km</code></td><td class='py-3 px-4'>float</td><td class='py-3 px-4'>km</td><td class='py-3 px-4'>design survey</td><td class='py-3 px-4'>verify from GIS if missing</td></tr><tr><td class='py-3 px-4'><code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">planned_capacity_kw</code></td><td class='py-3 px-4'>float</td><td class='py-3 px-4'>kW</td><td class='py-3 px-4'>approved design</td><td class='py-3 px-4'>never impute casually</td></tr><tr><td class='py-3 px-4'><code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">terrain_index</code></td><td class='py-3 px-4'>integer</td><td class='py-3 px-4'>1, 2, 3, 4, 5</td><td class='py-3 px-4'>pre-construction</td><td class='py-3 px-4'>document assessor</td></tr><tr><td class='py-3 px-4'><code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">actual_cost_m_pkr</code></td><td class='py-3 px-4'>float</td><td class='py-3 px-4'>million PKR, stated price basis</td><td class='py-3 px-4'>completion</td><td class='py-3 px-4'>target; exclude incomplete projects</td></tr></tbody></table></div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Timing prevents <strong class="text-white font-semibold">target leakage</strong>. A feature recorded after cost escalation—for example, “number of contract amendments”—might predict final cost extremely well. It is unavailable when the original budget is prepared and may partly be a consequence of the overrun. It should not be used in an early-stage prediction model without redefining the intended use.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>2.6 Parsing one nested project record</h2>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>import json
+import numpy as np
+
+raw_json = &quot;&quot;&quot;
+{
+  &quot;project_id&quot;: &quot;MHP-CH-003&quot;,
+  &quot;design&quot;: {
+    &quot;road_distance_km&quot;: 18.5,
+    &quot;planned_capacity_kw&quot;: 120.0,
+    &quot;terrain_index&quot;: 4
+  },
+  &quot;completion&quot;: {
+    &quot;actual_cost_m_pkr&quot;: 39.2
+  }
+}
+&quot;&quot;&quot;
+
+record = json.loads(raw_json)
+
+X_one = np.array([[  # two brackets: one row, three columns
+    record[&quot;design&quot;][&quot;road_distance_km&quot;],
+    record[&quot;design&quot;][&quot;planned_capacity_kw&quot;],
+    record[&quot;design&quot;][&quot;terrain_index&quot;],
+]], dtype=float)
+
+y_one = np.array([
+    record[&quot;completion&quot;][&quot;actual_cost_m_pkr&quot;]
+], dtype=float)
+
+print(&quot;X:&quot;, X_one, &quot;shape:&quot;, X_one.shape)
+print(&quot;y:&quot;, y_one, &quot;shape:&quot;, y_one.shape)
+
+assert X_one.shape == (1, 3)
+assert y_one.shape == (1,)</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">assert</code> statements are executable claims. If the parser stops satisfying the intended mathematical shape, the program fails at the boundary instead of producing a later mystery.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>2.7 Code proof: matrix–vector multiplication by loops</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The linear prediction without an intercept is:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \hat{y}_i = \sum_{j=1}^{p}x_{ij}\beta_j. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>For every project $i$, multiply each feature $x_{ij}$ by its corresponding parameter $\beta_j$, then add the products.</p>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>X = np.array([
+    [12.0, 100.0],
+    [25.0, 150.0],
+    [8.0, 80.0],
+])
+beta = np.array([0.6, 0.20])
+
+# Proof using explicit loops
+y_hat_loop = np.zeros(X.shape[0])
+for i in range(X.shape[0]):
+    total = 0.0
+    for j in range(X.shape[1]):
+        total += X[i, j] * beta[j]
+    y_hat_loop[i] = total
+
+# The same operation in matrix notation
+y_hat_matrix = X @ beta
+
+print(y_hat_loop)
+print(y_hat_matrix)
+assert np.allclose(y_hat_loop, y_hat_matrix)</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">@</code> operator is compact, but it is not magic. The loops show exactly what it does.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>2.8 Build: robust input validation</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Add these methods inside <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">MHPCostEstimator</code>:</p>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>    @staticmethod
+    def _validate_inputs(X, y=None):
+        &quot;&quot;&quot;Return finite float arrays with predictable regression shapes.&quot;&quot;&quot;
+        X = np.asarray(X, dtype=float)
+
+        if X.ndim == 1:
+            X = X.reshape(-1, 1)
+        if X.ndim != 2:
+            raise ValueError(f&quot;X must be 2D after conversion; got shape {X.shape}&quot;)
+        if X.shape[0] == 0 or X.shape[1] == 0:
+            raise ValueError(&quot;X must contain at least one row and one feature&quot;)
+        if not np.isfinite(X).all():
+            raise ValueError(&quot;X contains NaN or infinite values&quot;)
+
+        if y is None:
+            return X
+
+        y = np.asarray(y, dtype=float)
+        if y.ndim == 2 and y.shape[1] == 1:
+            y = y.reshape(-1)
+        if y.ndim != 1:
+            raise ValueError(f&quot;y must be 1D; got shape {y.shape}&quot;)
+        if X.shape[0] != y.shape[0]:
+            raise ValueError(
+                f&quot;row mismatch: X has {X.shape[0]} rows but y has {y.shape[0]}&quot;
+            )
+        if not np.isfinite(y).all():
+            raise ValueError(&quot;y contains NaN or infinite values&quot;)
+
+        return X, y</code></pre>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Why each check exists</h3>
+<ul class='list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4'><li class='leading-relaxed'><code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">dtype=float</code> prevents accidental string arithmetic.</li><li class='leading-relaxed'>A 1D <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">X</code> is interpreted as one feature observed for many projects.</li><li class='leading-relaxed'>Regression requires a 2D design matrix even when $p=1$.</li><li class='leading-relaxed'>Empty arrays have mathematically valid-looking shapes but no estimable relationship.</li><li class='leading-relaxed'><code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">NaN</code> and infinity propagate through calculations and can silently destroy results.</li><li class='leading-relaxed'>A one-column target matrix is flattened to the application’s chosen convention.</li><li class='leading-relaxed'>Matching row counts are enforced, though project-ID alignment must be checked earlier.</li></ul>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>2.9 Break it deliberately</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Run each case and predict the error message before reading it.</p>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>contract = AnalysisContract(
+    purpose=&quot;prediction&quot;,
+    target_name=&quot;actual_cost_m_pkr&quot;,
+    target_unit=&quot;million PKR&quot;,
+    unit_of_observation=&quot;completed MHP project&quot;,
+    intended_use=&quot;design-stage budget review&quot;,
+)
+model = MHPCostEstimator(contract)
+
+bad_cases = [
+    (np.ones((10, 3)), np.ones(8)),       # row mismatch
+    (np.array([[1.0, np.nan]]), [2.0]),   # missing feature
+    (np.empty((0, 2)), np.empty(0)),      # no observations
+    (np.ones((2, 2, 2)), np.ones(2)),     # three-dimensional X
+]
+
+for X_bad, y_bad in bad_cases:
+    try:
+        model._validate_inputs(X_bad, y_bad)
+    except ValueError as error:
+        print(type(error).__name__, &quot;-&gt;&quot;, error)</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Then construct the more dangerous failure: create <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">X</code> and <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">y</code> with the same number of rows but place <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">y</code> in reverse project order. Validation cannot detect the mistake unless project identifiers are checked during data assembly.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>2.10 Day 2 practice</h2>
+<ol class='list-decimal list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4' style='list-style-type: decimal;'><li class='leading-relaxed'>State the shape of a dataset containing 70 projects and 5 features.</li><li class='leading-relaxed'>After adding an intercept, what are the shapes of $X$ and $\beta$?</li><li class='leading-relaxed'>Why is <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">project_id</code> important even when it is not a numerical feature?</li><li class='leading-relaxed'>Give one example of target leakage in an MHP cost model.</li><li class='leading-relaxed'>Extend <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">_validate_inputs</code> to reject a constant target vector, but explain why a constant target is not mathematically invalid in every context.</li></ol>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Day 2 exit check</h3>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Given <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">X.shape == (40, 6)</code> and <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">beta.shape == (5,)</code>, you should immediately say: “Multiplication is impossible because the inner dimensions, 6 and 5, do not match.”</p>
+<hr class='border-[#223150] my-8'>
+<h1 class='text-3xl font-extrabold tracking-tight text-white mt-12 mb-6 border-b border-[#223150] pb-4'>Day 3 — Linear Algebra as a System of Predictions</h1>
+<blockquote class='border-l-4 border-cyan-500 bg-cyan-950/20 text-[#94a3b8] italic my-6 p-4 rounded-r-lg text-sm leading-relaxed'><strong class="text-white font-semibold">Today’s central idea:</strong> A linear model forms each prediction by adding weighted features. Matrix notation performs that same operation for every project at once.</blockquote>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>3.1 From a verbal rule to a linear equation</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Suppose a deliberately simple budget rule uses only cable length:</p>
+<blockquote class='border-l-4 border-cyan-500 bg-cyan-950/20 text-[#94a3b8] italic my-6 p-4 rounded-r-lg text-sm leading-relaxed'>Begin with a fixed base cost of 8 million PKR, then add 4 million PKR for each kilometre of cable.</blockquote>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>For project $i$:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \hat{y}_i = 8 + 4x_i. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The general one-feature linear model is:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \hat{y}_i = \beta_0 + \beta_1x_i. $$</div>
+<ul class='list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4'><li class='leading-relaxed'>$\beta_0$ is the <strong class="text-white font-semibold">intercept</strong>: the model’s predicted target when $x_i=0$.</li><li class='leading-relaxed'>$\beta_1$ is the <strong class="text-white font-semibold">slope</strong>: the predicted change in $y$ associated with a one-unit increase in $x$.</li></ul>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>If $y$ is million PKR and $x$ is km, the slope’s units are million PKR per km.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The intercept may be necessary for good predictions without having a useful physical interpretation. “A project with zero cable” may lie outside the scope of the data. An intercept is an algebraic baseline, not automatically the price of a literal zero-feature project.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>3.2 Multiple features are still a weighted sum</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>With road distance, capacity, and terrain difficulty:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \hat{y}_i = \beta_0 + \beta_1\,\text{road\_distance}_i + \beta_2\,\text{capacity}_i + \beta_3\,\text{terrain}_i. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>For one project, this is a dot product between a row of feature values and a vector of parameters. For every project, it becomes matrix–vector multiplication:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \hat{y} = X\beta. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The apparent simplicity of the matrix equation is earned by carefully constructing $X$.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>3.3 Why a column of ones creates an intercept</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>For three projects and one measured feature, start with:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ X_{\text{raw}} = \begin{bmatrix} x_1\\x_2\\x_3 \end{bmatrix}. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Prepend a column of ones:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ X = \begin{bmatrix} 1 & x_1\\ 1 & x_2\\ 1 & x_3 \end{bmatrix}, \qquad \beta = \begin{bmatrix} \beta_0\\ \beta_1 \end{bmatrix}. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Now multiply row by column:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ X\beta = \begin{bmatrix} 1\beta_0+x_1\beta_1\\ 1\beta_0+x_2\beta_1\\ 1\beta_0+x_3\beta_1 \end{bmatrix}. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The same $\beta_0$ is added to every project because every first-column entry is 1.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Without the column of ones, the one-feature model is $\hat{y}=\beta_1x$. At $x=0$, it must pass through the origin. With the ones column, the model is <strong class="text-white font-semibold">affine</strong>: a linear transformation plus a translation. In everyday statistics it is still called a linear regression because it is linear in the parameters.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>3.4 Code proof: expand <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">X @ beta</code> by hand</h2>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>import numpy as np
+
+x = np.array([1.0, 2.0, 3.0])
+X = np.column_stack([np.ones(x.size), x])
+beta = np.array([8.0, 4.0])
+
+y_hat_matrix = X @ beta
+y_hat_manual = np.array([
+    1.0 * 8.0 + 1.0 * 4.0,
+    1.0 * 8.0 + 2.0 * 4.0,
+    1.0 * 8.0 + 3.0 * 4.0,
+])
+
+print(X)
+print(y_hat_matrix)
+assert np.array_equal(y_hat_matrix, y_hat_manual)
+assert np.array_equal(y_hat_matrix, np.array([12.0, 16.0, 20.0]))</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Every multiplication in the displayed equation appears explicitly in the code.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>3.5 Shape algebra before numerical algebra</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>If:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ X \in \mathbb{R}^{n\times(p+1)} \quad\text{and}\quad \beta \in \mathbb{R}^{p+1}, $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>then:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ X\beta \in \mathbb{R}^{n}. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The inner dimensions must agree:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ (n\times(p+1))\,(p+1\times1) = n\times1. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>This is not a software convention. It follows from the dot product: each row of $X$ needs exactly one parameter for each column.</p>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Symbol-to-Python map</h3>
+<div class='overflow-x-auto my-6 bg-[#151d30] border border-[#223150] rounded-xl p-4'><table class='w-full text-sm text-left text-[#cbd5e1] divide-y divide-[#223150]'><thead><tr class='text-cyan-400 font-semibold'><th class='py-3 px-4'>Mathematics</th><th class='py-3 px-4'>Meaning</th><th class='py-3 px-4'>NumPy</th></tr></thead><tbody class='divide-y divide-[#223150]/60'><tr><td class='py-3 px-4'>$X\beta$</td><td class='py-3 px-4'>Matrix–vector product</td><td class='py-3 px-4'><code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">X @ beta</code></td></tr><tr><td class='py-3 px-4'>$X^T$</td><td class='py-3 px-4'>Transpose</td><td class='py-3 px-4'><code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">X.T</code></td></tr><tr><td class='py-3 px-4'>$x^Ty$</td><td class='py-3 px-4'>Dot product</td><td class='py-3 px-4'><code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">x @ y</code> or <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">np.dot(x, y)</code></td></tr><tr><td class='py-3 px-4'>$I$</td><td class='py-3 px-4'>Identity matrix</td><td class='py-3 px-4'><code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">np.eye(p)</code></td></tr><tr><td class='py-3 px-4'>$\mathbf{1}$</td><td class='py-3 px-4'>Vector of ones</td><td class='py-3 px-4'><code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">np.ones(n)</code></td></tr><tr><td class='py-3 px-4'>$\lVert v\rVert_2$</td><td class='py-3 px-4'>Euclidean length</td><td class='py-3 px-4'><code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">np.linalg.norm(v)</code></td></tr></tbody></table></div>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>3.6 Matrices as transformations—and the limit of the analogy</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>A matrix can transform geometric coordinates by stretching, shrinking, rotating, reflecting, or shearing vectors. That view is useful for understanding linear algebra. In regression, however, the most immediate interpretation of $X\beta$ is slightly different: the columns of $X$ are building blocks, and $\beta$ chooses how much of each column to combine.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>If $X$ has columns $x_0,x_1,\ldots,x_p$, then:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ X\beta = \beta_0x_0+\beta_1x_1+\cdots+\beta_px_p. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Because $x_0$ is the column of ones, $\beta_0x_0$ adds the same amount to every prediction.</p>
+<pre class='mermaid bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 text-[#cbd5e1] text-xs overflow-x-auto'>flowchart TD
+    B["Parameter vector β"] --> W["Weight each column of X"]
+    X["Design-matrix columns"] --> W
+    W --> S["Add weighted columns"]
+    S --> Y["Prediction vector ŷ in the column space of X"]</pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Figure 3.1 — Column-combination view of regression.</strong> The prediction vector is not an arbitrary vector; it must be built from the columns available in $X$.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>3.7 Figure lab: with and without an intercept</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Use four synthetic projects:</p>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>import matplotlib.pyplot as plt
+import numpy as np
+
+x_cable_km = np.array([1.0, 2.0, 3.0, 4.0])
+y_cost_m_pkr = np.array([12.0, 19.0, 29.0, 38.0])
+
+# OLS through the origin: minimise ||y - xb||²
+b_origin = (x_cable_km @ y_cost_m_pkr) / (x_cable_km @ x_cable_km)
+
+# OLS with an intercept: solve the normal equations
+X = np.column_stack([np.ones(x_cable_km.size), x_cable_km])
+beta = np.linalg.solve(X.T @ X, X.T @ y_cost_m_pkr)
+
+grid = np.linspace(0, 5, 100)
+
+plt.figure(figsize=(8, 5))
+plt.scatter(x_cable_km, y_cost_m_pkr, color=&quot;navy&quot;, s=70, label=&quot;Projects&quot;)
+plt.plot(grid, b_origin * grid, &quot;--&quot;, color=&quot;firebrick&quot;, label=&quot;Forced through origin&quot;)
+plt.plot(grid, beta[0] + beta[1] * grid, color=&quot;darkgreen&quot;, label=&quot;With intercept&quot;)
+plt.axhline(0, color=&quot;grey&quot;, linewidth=0.6)
+plt.axvline(0, color=&quot;grey&quot;, linewidth=0.6)
+plt.xlabel(&quot;Cable length (km)&quot;)
+plt.ylabel(&quot;Actual cost (million PKR)&quot;)
+plt.title(&quot;The intercept translates the fitted line&quot;)
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+print(&quot;Through-origin slope:&quot;, b_origin)
+print(&quot;Intercept and slope:&quot;, beta)</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Figure 3.2 — The effect of the intercept.</strong> The through-origin model is required to predict zero cost at zero cable length. The intercept model is allowed to fit the observed baseline.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Notice that the code uses <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">np.linalg.solve(A, b)</code> for $A\beta=b$, not <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">np.linalg.inv(A) @ b</code>. The inverse formula is useful for derivation, but directly solving the linear system is clearer and usually more numerically stable.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>3.8 Scaling and units</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Suppose cable is changed from kilometres to metres:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ x_{\text{metres}}=1000x_{\text{km}}. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>To preserve the same prediction:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \beta_{\text{metres}}=\frac{\beta_{\text{km}}}{1000}. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Then:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \beta_{\text{metres}}x_{\text{metres}} =\frac{\beta_{\text{km}}}{1000}(1000x_{\text{km}}) =\beta_{\text{km}}x_{\text{km}}. $$</div>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Code proof: changing units changes the coefficient, not the prediction</h3>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>x_km = np.array([1.0, 2.0, 3.0])
+x_m = 1000.0 * x_km
+
+beta_km = 4.0       # million PKR per km
+beta_m = beta_km / 1000.0
+
+assert np.allclose(beta_km * x_km, beta_m * x_m)</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>This is why comparing coefficient magnitudes across differently scaled features is misleading. A smaller numerical coefficient need not represent a less important variable.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>3.9 Build: intercept construction and prediction</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Add these methods inside <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">MHPCostEstimator</code>:</p>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>    @staticmethod
+    def _add_intercept_column(X):
+        &quot;&quot;&quot;Prepend one constant column; X must already be validated and 2D.&quot;&quot;&quot;
+        ones = np.ones((X.shape[0], 1), dtype=float)
+        return np.hstack([ones, X])
+
+    def predict(self, X):
+        &quot;&quot;&quot;Return predictions for new feature rows.&quot;&quot;&quot;
+        if not self.is_fitted_:
+            raise RuntimeError(&quot;fit the estimator before calling predict&quot;)
+
+        X = np.asarray(X, dtype=float)
+        if X.ndim == 1:
+            X = X.reshape(1, -1)  # one new project with p features
+        X = self._validate_inputs(X)
+        if X.shape[1] != len(self.feature_names_):
+            raise ValueError(
+                f&quot;expected {len(self.feature_names_)} features, got {X.shape[1]}&quot;
+            )
+
+        X_design = self._add_intercept_column(X)
+        return X_design @ self.parameters_</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">predict</code> cannot yet succeed because <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">fit</code> has not been built. This is intentional. We have defined the behaviour of a fitted application before learning how to estimate the parameters.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The context resolves a genuine shape ambiguity: during fitting, a one-dimensional <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">X</code> means one feature observed across many projects; during prediction, a one-dimensional <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">X</code> means one new project containing several features. Passing an explicit two-dimensional array remains safest.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>3.10 Break it deliberately: broadcasting is not matrix multiplication</h2>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>X = np.array([
+    [1.0, 12.0, 100.0],
+    [1.0, 25.0, 150.0],
+])
+beta = np.array([5.0, 0.6, 0.2])
+
+correct = X @ beta
+print(&quot;correct shape:&quot;, correct.shape, &quot;values:&quot;, correct)
+
+elementwise = X * beta
+print(&quot;elementwise shape:&quot;, elementwise.shape)
+print(elementwise)</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">X * beta</code> broadcasts the parameter vector across rows and multiplies element by element. It returns a matrix of products, not a prediction vector. The expression runs without an error, which makes it more dangerous than a crash.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Also try multiplying the same <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">X</code> by <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">np.array([5.0, 0.6])</code>. Matrix multiplication should fail because the number of parameters does not equal the number of columns.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>3.11 Day 3 practice</h2>
+<ol class='list-decimal list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4' style='list-style-type: decimal;'><li class='leading-relaxed'>Expand one row of $X\beta$ for an intercept plus three features.</li><li class='leading-relaxed'>Explain why a column of twos would not estimate the conventional intercept. What would its coefficient represent?</li><li class='leading-relaxed'>If cost changes from million PKR to PKR, how do the coefficients change?</li><li class='leading-relaxed'>Write a <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">matvec_with_loops(X, beta)</code> function that rejects incompatible dimensions.</li><li class='leading-relaxed'>Plot a dataset for which the intercept has a strong effect on fit and another for which it has little effect.</li></ol>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Day 3 exit check</h3>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>You should be able to explain both statements:</p>
+<ul class='list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4'><li class='leading-relaxed'>“$X\beta$ is one dot product per project.”</li><li class='leading-relaxed'>“$X\beta$ is a weighted combination of the columns of $X$.”</li></ul>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>They are two views of the same operation.</p>
+<hr class='border-[#223150] my-8'>
+<h1 class='text-3xl font-extrabold tracking-tight text-white mt-12 mb-6 border-b border-[#223150] pb-4'>Day 4 — Residuals, Loss, and the Geometry of OLS</h1>
+<blockquote class='border-l-4 border-cyan-500 bg-cyan-950/20 text-[#94a3b8] italic my-6 p-4 rounded-r-lg text-sm leading-relaxed'><strong class="text-white font-semibold">Today’s central idea:</strong> OLS chooses the attainable prediction vector closest to the observed target vector in squared Euclidean distance.</blockquote>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>4.1 A prediction becomes testable through its residual</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>For project $i$:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ e_i = y_i-\hat{y}_i. $$</div>
+<ul class='list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4'><li class='leading-relaxed'>$e_i>0$: actual cost exceeded predicted cost; the model underpredicted.</li><li class='leading-relaxed'>$e_i<0$: actual cost was below predicted cost; the model overpredicted.</li><li class='leading-relaxed'>$e_i=0$: prediction matched the observed target.</li></ul>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The sign convention matters. This chapter uses <strong class="text-white font-semibold">actual minus predicted</strong>.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>For all projects:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ e = y-\hat{y}=y-X\beta. $$</div>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Code proof: the vector equation and the elementwise equation agree</h3>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>import numpy as np
+
+y = np.array([12.0, 19.0, 29.0])
+y_hat = np.array([10.5, 20.0, 27.5])
+
+e_vector = y - y_hat
+e_manual = np.array([
+    12.0 - 10.5,
+    19.0 - 20.0,
+    29.0 - 27.5,
+])
+
+assert np.allclose(e_vector, e_manual)
+print(e_vector)  # [ 1.5 -1.   1.5]</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Residuals are observed after fitting. They are not the same as the unobservable population errors in a statistical model, though introductory discussions often use the words loosely.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>4.2 Why OLS squares residuals</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The <strong class="text-white font-semibold">sum of squared residuals</strong> (SSR), also called the residual sum of squares (RSS) or sum of squared errors (SSE), is:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ SSR(\beta)=\sum_{i=1}^{n}e_i^2 =\sum_{i=1}^{n}(y_i-x_i^T\beta)^2. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>In vector notation:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ SSR(\beta)=e^Te=(y-X\beta)^T(y-X\beta). $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Squaring has four important consequences:</p>
+<ol class='list-decimal list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4' style='list-style-type: decimal;'><li class='leading-relaxed'>Positive and negative residuals cannot cancel.</li><li class='leading-relaxed'>Large residuals receive disproportionate weight.</li><li class='leading-relaxed'>The objective is smooth and differentiable everywhere.</li><li class='leading-relaxed'>The objective has a geometric interpretation as squared Euclidean distance.</li></ol>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The second consequence is not automatically desirable. A data-entry error of 390 million instead of 39 million can dominate an OLS fit. High stakes do not, by themselves, prove that squared loss is the right institutional loss function. The analyst must inspect outliers and ask whether the objective reflects the decision.</p>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Code proof: $e^Te$ equals the sum of elementwise squares</h3>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>e = np.array([1.5, -1.0, 1.5])
+
+ssr_loop = 0.0
+for value in e:
+    ssr_loop += value ** 2
+
+ssr_sum = np.sum(e ** 2)
+ssr_dot = e.T @ e
+
+print(ssr_loop, ssr_sum, ssr_dot)
+assert np.isclose(ssr_loop, ssr_sum)
+assert np.isclose(ssr_sum, ssr_dot)</code></pre>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>4.3 SSR, MSE, RMSE, and MAE answer different reporting needs</h2>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ MSE = \frac{1}{n}\sum_{i=1}^{n}e_i^2, $$</div>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ RMSE = \sqrt{MSE}, $$</div>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ MAE = \frac{1}{n}\sum_{i=1}^{n}|e_i|. $$</div>
+<div class='overflow-x-auto my-6 bg-[#151d30] border border-[#223150] rounded-xl p-4'><table class='w-full text-sm text-left text-[#cbd5e1] divide-y divide-[#223150]'><thead><tr class='text-cyan-400 font-semibold'><th class='py-3 px-4'>Metric</th><th class='py-3 px-4'>Units</th><th class='py-3 px-4'>Sensitivity to large residuals</th><th class='py-3 px-4'>Typical use</th></tr></thead><tbody class='divide-y divide-[#223150]/60'><tr><td class='py-3 px-4'>SSR</td><td class='py-3 px-4'>squared target units</td><td class='py-3 px-4'>high</td><td class='py-3 px-4'>Fitting and comparing models on the same observations</td></tr><tr><td class='py-3 px-4'>MSE</td><td class='py-3 px-4'>squared target units</td><td class='py-3 px-4'>high</td><td class='py-3 px-4'>Average squared loss</td></tr><tr><td class='py-3 px-4'>RMSE</td><td class='py-3 px-4'>target units</td><td class='py-3 px-4'>high</td><td class='py-3 px-4'>Error summary interpretable in cost units</td></tr><tr><td class='py-3 px-4'>MAE</td><td class='py-3 px-4'>target units</td><td class='py-3 px-4'>lower</td><td class='py-3 px-4'>Typical absolute miss, more robust than RMSE</td></tr></tbody></table></div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>With targets in million PKR, RMSE and MAE are also in million PKR. MSE is in squared million PKR, which is harder to communicate.</p>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Code proof: compute every metric from definitions</h3>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>def regression_metrics(y, y_hat):
+    y = np.asarray(y, dtype=float)
+    y_hat = np.asarray(y_hat, dtype=float)
+    if y.shape != y_hat.shape:
+        raise ValueError(&quot;y and y_hat must have the same shape&quot;)
+
+    residuals = y - y_hat
+    ssr = np.sum(residuals ** 2)
+    mse = ssr / residuals.size
+    rmse = np.sqrt(mse)
+    mae = np.sum(np.abs(residuals)) / residuals.size
+    return {&quot;ssr&quot;: ssr, &quot;mse&quot;: mse, &quot;rmse&quot;: rmse, &quot;mae&quot;: mae}
+
+
+metrics = regression_metrics(
+    y=np.array([12.0, 19.0, 29.0]),
+    y_hat=np.array([10.5, 20.0, 27.5]),
+)
+print(metrics)</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>For training data, some texts divide SSR by $n-p-1$ to estimate error variance. That is a different quantity from predictive MSE. Always name the denominator.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>4.4 OLS as a constrained search in observation space</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The target vector $y$ contains one coordinate for each project, so it lives in $\mathbb{R}^n$. Every possible $X\beta$ is a weighted combination of the columns of $X$. The set of all such combinations is the <strong class="text-white font-semibold">column space</strong> of $X$.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>OLS cannot choose any point in $\mathbb{R}^n$. It must choose a point inside that column space. It selects the point closest to $y$.</p>
+<pre class='mermaid bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 text-[#cbd5e1] text-xs overflow-x-auto'>flowchart TD
+    Y["Observed vector y"] -->|"perpendicular residual e"| P["Projection ŷ = Xβ̂"]
+    Q["Any other attainable prediction q"] --> P
+    P --> C["Column space of X"]
+    Q --> C</pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Figure 4.1 — Projection view of OLS.</strong> The diagram is conceptual: $\hat{y}$ and $q$ lie in the column space, while the residual from $\hat{y}$ to $y$ is perpendicular to it.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>4.5 The Pythagorean proof of minimum distance</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Let:</p>
+<ul class='list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4'><li class='leading-relaxed'>$\hat{y}$ be the perpendicular projection of $y$ onto the column space of $X$;</li><li class='leading-relaxed'>$q$ be any other prediction in the column space;</li><li class='leading-relaxed'>$e=y-\hat{y}$ be the OLS residual; and</li><li class='leading-relaxed'>$d=\hat{y}-q$ be the displacement within the column space.</li></ul>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Then:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ y-q=(y-\hat{y})+(\hat{y}-q)=e+d. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Because $e$ is perpendicular to the entire column space and $d$ lies inside it:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ e^Td=0. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Now expand the squared distance:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \begin{aligned} \lVert y-q\rVert_2^2 &=(e+d)^T(e+d)\\ &=e^Te+e^Td+d^Te+d^Td\\ &=\lVert e\rVert_2^2+\lVert d\rVert_2^2\\ &\ge \lVert e\rVert_2^2. \end{aligned} $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The last step holds because a squared length cannot be negative. Therefore no other attainable prediction $q$ can be closer to $y$ than $\hat{y}$.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>4.6 Why orthogonality produces the normal equations</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Every column of $X$ lies in the column space. If the residual is perpendicular to the whole column space, it is perpendicular to every column:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ X^Te=0. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Substitute $e=y-X\hat{\beta}$:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ X^T(y-X\hat{\beta})=0. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Distribute $X^T$:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ X^Ty-X^TX\hat{\beta}=0. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Rearrange:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ X^TX\hat{\beta}=X^Ty. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>These are the <strong class="text-white font-semibold">normal equations</strong>. “Normal” refers to perpendicularity, not to the normal probability distribution.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>If an intercept column is present, one of the orthogonality conditions is:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \mathbf{1}^Te=\sum_{i=1}^{n}e_i=0. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Therefore OLS residuals from the training data sum to zero when the model includes an intercept, up to floating-point error.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>4.7 Code proof: orthogonality and Pythagoras</h2>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>import numpy as np
+
+x = np.array([1.0, 2.0, 3.0, 4.0])
+y = np.array([12.0, 19.0, 29.0, 38.0])
+X = np.column_stack([np.ones(x.size), x])
+
+beta_hat = np.linalg.solve(X.T @ X, X.T @ y)
+y_hat = X @ beta_hat
+e = y - y_hat
+
+# Orthogonality: one near-zero dot product per design column
+print(&quot;X.T @ e =&quot;, X.T @ e)
+assert np.allclose(X.T @ e, np.zeros(X.shape[1]), atol=1e-10)
+
+# Intercept implication: residuals sum to zero
+assert np.isclose(e.sum(), 0.0, atol=1e-10)
+
+# Choose another attainable prediction q = X @ beta_other
+beta_other = beta_hat + np.array([2.0, -1.0])
+q = X @ beta_other
+d = y_hat - q
+
+left = np.linalg.norm(y - q) ** 2
+right = np.linalg.norm(e) ** 2 + np.linalg.norm(d) ** 2
+
+print(&quot;Pythagorean sides:&quot;, left, right)
+assert np.isclose(e @ d, 0.0, atol=1e-10)
+assert np.isclose(left, right, atol=1e-10)
+assert left &gt;= np.linalg.norm(e) ** 2</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>This block verifies three equations: the normal-equation orthogonality condition, the zero-sum residual property, and the Pythagorean decomposition.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>4.8 Figure lab: draw the projection in three dimensions</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Three observations allow the target and prediction vectors to be drawn in $\mathbb{R}^3$.</p>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.array([-1.0, 0.0, 1.0])
+X = np.column_stack([np.ones(3), x])
+y = np.array([1.0, 3.0, 2.0])
+
+beta_hat = np.linalg.solve(X.T @ X, X.T @ y)
+y_hat = X @ beta_hat
+e = y - y_hat
+
+fig = plt.figure(figsize=(8, 7))
+ax = fig.add_subplot(111, projection=&quot;3d&quot;)
+origin = np.zeros(3)
+
+ax.quiver(*origin, *y, color=&quot;navy&quot;, label=&quot;Observed y&quot;, arrow_length_ratio=0.08)
+ax.quiver(*origin, *y_hat, color=&quot;darkgreen&quot;, label=&quot;Projection ŷ&quot;, arrow_length_ratio=0.08)
+ax.quiver(*y_hat, *e, color=&quot;firebrick&quot;, label=&quot;Residual e&quot;, arrow_length_ratio=0.15)
+
+# Draw a patch of the column space span{ones, x}
+a = np.linspace(-0.5, 2.5, 10)
+b = np.linspace(-1.0, 1.0, 10)
+A, B = np.meshgrid(a, b)
+plane = A[..., None] * X[:, 0] + B[..., None] * X[:, 1]
+ax.plot_surface(plane[..., 0], plane[..., 1], plane[..., 2], alpha=0.2)
+
+ax.set_xlabel(&quot;Project 1 coordinate&quot;)
+ax.set_ylabel(&quot;Project 2 coordinate&quot;)
+ax.set_zlabel(&quot;Project 3 coordinate&quot;)
+ax.set_title(&quot;OLS projects y onto the column space of X&quot;)
+ax.legend()
+plt.tight_layout()
+plt.show()</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Figure 4.2 — OLS geometry in observation space.</strong> The residual begins at $\hat{y}$ and ends at $y$; it is perpendicular to the surface of attainable predictions.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>4.9 Build: metrics as methods</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Add these methods to <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">MHPCostEstimator</code>:</p>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>    @staticmethod
+    def _metrics_from_predictions(y, y_hat):
+        y = np.asarray(y, dtype=float).reshape(-1)
+        y_hat = np.asarray(y_hat, dtype=float).reshape(-1)
+        if y.shape != y_hat.shape:
+            raise ValueError(&quot;y and y_hat must have identical shapes&quot;)
+
+        residuals = y - y_hat
+        ssr = float(residuals @ residuals)
+        mse = ssr / residuals.size
+        return {
+            &quot;ssr&quot;: ssr,
+            &quot;mse&quot;: mse,
+            &quot;rmse&quot;: float(np.sqrt(mse)),
+            &quot;mae&quot;: float(np.mean(np.abs(residuals))),
+        }
+
+    def evaluate(self, X, y):
+        &quot;&quot;&quot;Evaluate a fitted model on supplied observations.&quot;&quot;&quot;
+        X, y = self._validate_inputs(X, y)
+        y_hat = self.predict(X)
+        return self._metrics_from_predictions(y, y_hat)</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The method does not call these “test metrics” because the caller may supply training, validation, or test data. The application should not pretend to know the provenance of an array.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>4.10 Break it deliberately: one outlier</h2>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>y = np.array([20.0, 22.0, 24.0, 26.0])
+y_hat = np.array([21.0, 21.0, 25.0, 25.0])
+
+ordinary = regression_metrics(y, y_hat)
+
+y_with_error = y.copy()
+y_with_error[-1] = 260.0  # possible extra zero in data entry
+contaminated = regression_metrics(y_with_error, y_hat)
+
+print(&quot;Ordinary:    &quot;, ordinary)
+print(&quot;Contaminated:&quot;, contaminated)</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Compare the change in RMSE and MAE. Do not conclude merely that MAE is “better.” First determine whether 260 is a genuine extreme project, a different type of project, or an error. Robustness cannot replace data investigation.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>4.11 Day 4 practice</h2>
+<ol class='list-decimal list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4' style='list-style-type: decimal;'><li class='leading-relaxed'>Calculate the residuals and SSR for $y=[3,5]$ and $\hat{y}=[4,3]$.</li><li class='leading-relaxed'>Prove in code that RMSE has the same units as the target under a change from million PKR to PKR.</li><li class='leading-relaxed'>Why does including an intercept make training residuals sum to zero?</li><li class='leading-relaxed'>Does a zero sum of residuals imply a good model? Construct a counterexample.</li><li class='leading-relaxed'>Modify Figure 4.2 by choosing a new $y$. Verify that <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">X.T @ e</code> remains near zero.</li></ol>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Day 4 exit check</h3>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>You should be able to explain OLS without calculus:</p>
+<blockquote class='border-l-4 border-cyan-500 bg-cyan-950/20 text-[#94a3b8] italic my-6 p-4 rounded-r-lg text-sm leading-relaxed'>“Among all prediction vectors that can be constructed from the columns of $X$, OLS chooses the one with the shortest squared distance to $y$.”</blockquote>
+<hr class='border-[#223150] my-8'>
+<h1 class='text-3xl font-extrabold tracking-tight text-white mt-12 mb-6 border-b border-[#223150] pb-4'>Day 5 — Deriving, Fitting, and Stress-Testing OLS</h1>
+<blockquote class='border-l-4 border-cyan-500 bg-cyan-950/20 text-[#94a3b8] italic my-6 p-4 rounded-r-lg text-sm leading-relaxed'><strong class="text-white font-semibold">Today’s central idea:</strong> OLS is the parameter value that makes the squared-error surface as small as possible. The normal equation is a consequence, not a formula to memorise.</blockquote>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Day 4 reached the normal equations through geometry:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ X^TX\hat{\beta}=X^Ty. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Today we reach the same point through calculus, first with one feature and then with matrices. The two derivations are complementary:</p>
+<ul class='list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4'><li class='leading-relaxed'>geometry explains <strong class="text-white font-semibold">what</strong> OLS is doing; and</li><li class='leading-relaxed'>calculus explains <strong class="text-white font-semibold">how</strong> the optimum is located.</li></ul>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>5.1 The scalar error bowl</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Begin with a model that has one parameter and no intercept:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \hat{y}_i=\beta x_i. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The squared-error objective is:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ S(\beta)=\sum_{i=1}^{n}(y_i-\beta x_i)^2. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Expand one squared term:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ (y_i-\beta x_i)^2 =y_i^2-2\beta x_iy_i+\beta^2x_i^2. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Therefore:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ S(\beta) =\sum_i y_i^2 -2\beta\sum_i x_iy_i +\beta^2\sum_i x_i^2. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Differentiate with respect to $\beta$:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \frac{dS}{d\beta} =-2\sum_i x_iy_i +2\beta\sum_i x_i^2. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>At a stationary point, the derivative is zero:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ -2\sum_i x_iy_i+2\hat{\beta}\sum_i x_i^2=0. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Rearrange:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \hat{\beta} =\frac{\sum_i x_iy_i}{\sum_i x_i^2}. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The second derivative is:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \frac{d^2S}{d\beta^2}=2\sum_i x_i^2. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>If at least one $x_i$ is nonzero, the second derivative is positive, so the stationary point is the unique minimum.</p>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Code proof: derivative, grid search, and analytic solution</h3>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>import numpy as np
+
+x = np.array([1.0, 2.0, 3.0])
+y = np.array([2.0, 4.0, 7.0])
+
+def ssr_through_origin(beta, x, y):
+    return np.sum((y - beta * x) ** 2)
+
+def derivative_through_origin(beta, x, y):
+    return -2.0 * np.sum(x * y) + 2.0 * beta * np.sum(x ** 2)
+
+beta_hat = np.sum(x * y) / np.sum(x ** 2)
+grid = np.linspace(0.0, 4.0, 4001)
+grid_best = grid[np.argmin([ssr_through_origin(b, x, y) for b in grid])]
+
+print(&quot;Analytic minimum:&quot;, beta_hat)
+print(&quot;Grid minimum:    &quot;, grid_best)
+print(&quot;Derivative there:&quot;, derivative_through_origin(beta_hat, x, y))
+
+assert np.isclose(derivative_through_origin(beta_hat, x, y), 0.0)
+assert np.isclose(beta_hat, grid_best, atol=0.001)
+assert 2.0 * np.sum(x ** 2) &gt; 0.0</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The grid is not how we want to fit the model; it is an independent numerical check that the analytic solution sits at the bottom of the bowl.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>5.2 One feature with an intercept</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Now use:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \hat{y}_i=\beta_0+\beta_1x_i. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The objective is:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ S(\beta_0,\beta_1) =\sum_{i=1}^{n}(y_i-\beta_0-\beta_1x_i)^2. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>There are two unknown parameters, so there are two partial derivatives.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>For the intercept:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \frac{\partial S}{\partial\beta_0} =-2\sum_i(y_i-\beta_0-\beta_1x_i). $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Set it to zero:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \sum_i y_i-n\hat{\beta}_0-\hat{\beta}_1\sum_i x_i=0. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Divide by $n$:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \bar{y}-\hat{\beta}_0-\hat{\beta}_1\bar{x}=0, $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>so:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \hat{\beta}_0=\bar{y}-\hat{\beta}_1\bar{x}. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>This proves that the fitted OLS line with an intercept passes through $(\bar{x},\bar{y})$.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>For the slope:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \frac{\partial S}{\partial\beta_1} =-2\sum_i x_i(y_i-\beta_0-\beta_1x_i). $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Substituting the intercept relationship and simplifying gives:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \hat{\beta}_1= \frac{\sum_i(x_i-\bar{x})(y_i-\bar{y})} {\sum_i(x_i-\bar{x})^2}. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The numerator is the unnormalised co-movement of $x$ and $y$; the denominator is the unnormalised variation in $x$. If every $x_i$ is identical, the denominator is zero and the slope cannot be identified.</p>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Code proof: centred formula, intercept, and mean point</h3>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>x = np.array([1.0, 2.0, 3.0, 4.0])
+y = np.array([12.0, 19.0, 29.0, 38.0])
+
+x_centered = x - x.mean()
+y_centered = y - y.mean()
+
+beta_1 = np.sum(x_centered * y_centered) / np.sum(x_centered ** 2)
+beta_0 = y.mean() - beta_1 * x.mean()
+
+print(&quot;beta_0:&quot;, beta_0)
+print(&quot;beta_1:&quot;, beta_1)
+
+# The fitted line passes through (x̄, ȳ)
+assert np.isclose(beta_0 + beta_1 * x.mean(), y.mean())
+
+# Both partial derivatives are zero
+residuals = y - (beta_0 + beta_1 * x)
+partial_b0 = -2.0 * np.sum(residuals)
+partial_b1 = -2.0 * np.sum(x * residuals)
+assert np.isclose(partial_b0, 0.0, atol=1e-10)
+assert np.isclose(partial_b1, 0.0, atol=1e-10)</code></pre>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>5.3 The matrix objective</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>For multiple features, collect all parameters in $\beta$ and write:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ S(\beta)=(y-X\beta)^T(y-X\beta). $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Expand carefully:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \begin{aligned} S(\beta) &=(y^T-\beta^TX^T)(y-X\beta)\\ &=y^Ty-y^TX\beta-\beta^TX^Ty+\beta^TX^TX\beta. \end{aligned} $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The middle two terms are scalars and transposes of one another, so they are equal:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ y^TX\beta=(y^TX\beta)^T=\beta^TX^Ty. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Therefore:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ S(\beta) =y^Ty-2\beta^TX^Ty+\beta^TX^TX\beta. $$</div>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>5.4 The matrix derivative without hand-waving</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Three derivative facts are needed.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>First, $y^Ty$ contains no $\beta$, so:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \nabla_\beta(y^Ty)=0. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Second, for a constant vector $c$:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \nabla_\beta(\beta^Tc)=c. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Thus:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \nabla_\beta(-2\beta^TX^Ty)=-2X^Ty. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Third, let $A=X^TX$. Expand the quadratic form by coordinates:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \beta^TA\beta=\sum_j\sum_k\beta_jA_{jk}\beta_k. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The derivative with respect to coordinate $\beta_r$ collects terms where $j=r$ and where $k=r$:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \frac{\partial}{\partial\beta_r}(\beta^TA\beta) =\sum_kA_{rk}\beta_k+\sum_j\beta_jA_{jr}. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>In vector form:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \nabla_\beta(\beta^TA\beta)=(A+A^T)\beta. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Because $A=X^TX$ is symmetric, $A=A^T$:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \nabla_\beta(\beta^TX^TX\beta)=2X^TX\beta. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Combine the three derivatives:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \nabla_\beta S(\beta) =-2X^Ty+2X^TX\beta. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>At the minimum:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ -2X^Ty+2X^TX\hat{\beta}=0, $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>which reduces again to:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ X^TX\hat{\beta}=X^Ty. $$</div>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Code proof: compare the analytic gradient with finite differences</h3>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>A finite-difference gradient estimates each partial derivative by nudging one parameter a very small distance:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \frac{\partial S}{\partial\beta_j} \approx \frac{S(\beta+h\,u_j)-S(\beta-h\,u_j)}{2h}, $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>where $u_j$ is a vector with 1 in position $j$ and 0 elsewhere.</p>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>import numpy as np
+
+X = np.array([
+    [1.0, 1.0],
+    [1.0, 2.0],
+    [1.0, 3.0],
+    [1.0, 4.0],
+])
+y = np.array([12.0, 19.0, 29.0, 38.0])
+beta = np.array([4.0, 7.0])
+
+def ssr(beta_vector):
+    residuals = y - X @ beta_vector
+    return residuals @ residuals
+
+analytic_gradient = -2.0 * X.T @ (y - X @ beta)
+
+h = 1e-6
+finite_difference_gradient = np.zeros_like(beta)
+for j in range(beta.size):
+    unit = np.zeros_like(beta)
+    unit[j] = 1.0
+    finite_difference_gradient[j] = (
+        ssr(beta + h * unit) - ssr(beta - h * unit)
+    ) / (2.0 * h)
+
+print(&quot;Analytic:&quot;, analytic_gradient)
+print(&quot;Finite difference:&quot;, finite_difference_gradient)
+assert np.allclose(analytic_gradient, finite_difference_gradient, rtol=1e-6)</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The finite-difference calculation is an independent numerical audit of the matrix derivative. A poor choice of $h$ can introduce approximation or floating-point error; its role is verification, not fitting.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>5.5 Isolating $\hat{\beta}$ and stating the missing condition</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>If $X^TX$ is invertible:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \hat{\beta}=(X^TX)^{-1}X^Ty. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>This famous closed form is valid only when the design matrix has full column rank. In plain language, no design column can be constructed exactly from the others, and there must be enough independent information to estimate every parameter.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The Hessian—the matrix of second derivatives—is:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ \nabla_\beta^2S(\beta)=2X^TX. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>For any vector $z$:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ z^TX^TXz=(Xz)^T(Xz)=\lVert Xz\rVert_2^2\ge0. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Thus $X^TX$ is positive semidefinite and the objective is convex. If $X$ has full column rank, $Xz\ne0$ for every nonzero $z$, so the quantity is strictly positive and the objective is strictly convex. The minimiser is then unique.</p>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Code proof: positive semidefiniteness</h3>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>rng = np.random.default_rng(7)
+X = rng.normal(size=(20, 4))
+z = rng.normal(size=4)
+
+left = z.T @ X.T @ X @ z
+right = np.linalg.norm(X @ z) ** 2
+
+print(left, right)
+assert np.isclose(left, right)
+assert left &gt;= -1e-12  # tolerance for floating-point roundoff</code></pre>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>5.6 Why we do not compute the inverse in application code</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The derivation uses $(X^TX)^{-1}$ to express the mathematical solution. A program should usually solve:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ (X^TX)\hat{\beta}=X^Ty $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>with:</p>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>beta_hat = np.linalg.solve(X.T @ X, X.T @ y)</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Better still for OLS, solve the least-squares problem directly:</p>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>beta_hat, residual_sums, rank, singular_values = np.linalg.lstsq(X, y, rcond=None)</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Why?</p>
+<ul class='list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4'><li class='leading-relaxed'>Forming $X^TX$ squares the condition number and can magnify numerical instability.</li><li class='leading-relaxed'>Explicit inversion performs unnecessary work.</li><li class='leading-relaxed'><code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">lstsq</code> uses a decomposition designed for least-squares problems and also reports rank and singular values.</li></ul>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>This is not a conceptual shortcut. We have already built and derived the objective. It is a numerical implementation choice that respects the same mathematics.</p>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Research note: fitting assumptions are not inference assumptions</h3>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The OLS coefficient calculation does <strong class="text-white font-semibold">not</strong> require the residuals to be normally distributed. To compute a least-squares projection, we need a defined numerical problem; for a unique coefficient vector, we additionally need full column rank.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Stronger claims require stronger assumptions. Unbiased causal or explanatory coefficients require a defensible relationship between included features and the unobserved error. Classical small-sample confidence intervals add assumptions about variance and, in some treatments, normality. Consistency, robust standard errors, clustered data, and sampling design introduce further conditions.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Keep three layers separate:</p>
+<ol class='list-decimal list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4' style='list-style-type: decimal;'><li class='leading-relaxed'><strong class="text-white font-semibold">Algebra:</strong> Did the program minimise SSR correctly?</li><li class='leading-relaxed'><strong class="text-white font-semibold">Statistical generalisation:</strong> Does this sample support claims about new projects or a wider population?</li><li class='leading-relaxed'><strong class="text-white font-semibold">Causal interpretation:</strong> Does the design identify an intervention effect?</li></ol>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>A perfect answer at the first layer does not settle the next two.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>5.7 Rank failure: two columns carrying the same information</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Suppose the design matrix includes both cable length in kilometres and the same cable length in metres:</p>
+<div class='my-6 text-center text-white overflow-x-auto'>$$ x_{\text{metres}}=1000x_{\text{kilometres}}. $$</div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>One column is an exact multiple of another. The model cannot decide how much coefficient to assign to each, because infinitely many pairs produce the same combined prediction.</p>
+<pre class='mermaid bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 text-[#cbd5e1] text-xs overflow-x-auto'>flowchart LR
+    K["Cable length in km"] --> M["Multiply by 1000"]
+    M --> C["Cable length in metres"]
+    K --> R["Redundant design columns"]
+    C --> R</pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Figure 5.1 — Perfect multicollinearity.</strong> More columns do not necessarily provide more information.</p>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Break it deliberately</h3>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>x_km = np.array([1.0, 2.0, 3.0, 4.0])
+x_m = 1000.0 * x_km
+y = np.array([12.0, 19.0, 29.0, 38.0])
+
+X_bad = np.column_stack([np.ones(x_km.size), x_km, x_m])
+
+print(&quot;columns:&quot;, X_bad.shape[1])
+print(&quot;rank:   &quot;, np.linalg.matrix_rank(X_bad))
+
+try:
+    beta_bad = np.linalg.solve(X_bad.T @ X_bad, X_bad.T @ y)
+except np.linalg.LinAlgError as error:
+    print(&quot;Normal-equation solve failed:&quot;, error)
+
+beta_lstsq, _, rank, singular_values = np.linalg.lstsq(X_bad, y, rcond=None)
+print(&quot;One least-squares solution:&quot;, beta_lstsq)
+print(&quot;Reported rank:&quot;, rank)
+print(&quot;Singular values:&quot;, singular_values)</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">lstsq</code> can return a prediction-minimising solution, but the individual coefficients on kilometres and metres are not separately meaningful. A numerical answer does not repair an unidentified interpretation.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The correct response is usually to remove the redundant feature or redesign the representation—not to celebrate that the program returned numbers.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>5.8 Figure lab: see the error valley</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>For a model with an intercept and one slope, SSR is a surface over $(\beta_0,\beta_1)$.</p>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.array([1.0, 2.0, 3.0, 4.0])
+y = np.array([12.0, 19.0, 29.0, 38.0])
+
+b0_grid = np.linspace(-5.0, 20.0, 200)
+b1_grid = np.linspace(2.0, 12.0, 200)
+B0, B1 = np.meshgrid(b0_grid, b1_grid)
+
+SSR = np.zeros_like(B0)
+for i in range(x.size):
+    SSR += (y[i] - (B0 + B1 * x[i])) ** 2
+
+X = np.column_stack([np.ones(x.size), x])
+beta_hat = np.linalg.lstsq(X, y, rcond=None)[0]
+
+plt.figure(figsize=(8, 6))
+contours = plt.contour(B0, B1, SSR, levels=25)
+plt.clabel(contours, inline=True, fontsize=7)
+plt.scatter(beta_hat[0], beta_hat[1], color=&quot;red&quot;, s=80, label=&quot;OLS minimum&quot;)
+plt.xlabel(&quot;Intercept β₀&quot;)
+plt.ylabel(&quot;Slope β₁&quot;)
+plt.title(&quot;Contours of the OLS error surface&quot;)
+plt.legend()
+plt.tight_layout()
+plt.show()</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Figure 5.2 — The OLS error valley.</strong> Each contour joins parameter pairs with equal SSR. The centre is the minimum. With highly correlated features, the contours become long and narrow; with perfect collinearity, the unique centre becomes a flat valley.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>5.9 Build: the complete Week 1 estimator</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The complete application below consolidates the daily increments. Replace the partial <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">mhp_estimator.py</code> with this version.</p>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>from dataclasses import dataclass
+from typing import Literal, Sequence
+
+import numpy as np
+
+
+AnalysisPurpose = Literal[&quot;prediction&quot;, &quot;explanation&quot;, &quot;causation&quot;]
+
+
+@dataclass(frozen=True)
+class AnalysisContract:
+    purpose: AnalysisPurpose
+    target_name: str
+    target_unit: str
+    unit_of_observation: str
+    intended_use: str
+
+    def __post_init__(self):
+        allowed = {&quot;prediction&quot;, &quot;explanation&quot;, &quot;causation&quot;}
+        if self.purpose not in allowed:
+            raise ValueError(f&quot;purpose must be one of {sorted(allowed)}&quot;)
+        for name, value in vars(self).items():
+            if not str(value).strip():
+                raise ValueError(f&quot;{name} cannot be empty&quot;)
+
+
+class MHPCostEstimator:
+    &quot;&quot;&quot;Small OLS estimator for learning, diagnostics, and explicit reasoning.&quot;&quot;&quot;
+
+    def __init__(self, contract: AnalysisContract):
+        self.contract = contract
+        self.parameters_ = None
+        self.feature_names_ = None
+        self.rank_ = None
+        self.singular_values_ = None
+        self.training_metrics_ = None
+        self.is_fitted_ = False
+
+    def __repr__(self):
+        status = &quot;fitted&quot; if self.is_fitted_ else &quot;unfitted&quot;
+        return f&quot;MHPCostEstimator(purpose={self.contract.purpose!r}, {status})&quot;
+
+    @staticmethod
+    def _validate_inputs(X, y=None):
+        X = np.asarray(X, dtype=float)
+        if X.ndim == 1:
+            X = X.reshape(-1, 1)
+        if X.ndim != 2:
+            raise ValueError(f&quot;X must be 2D after conversion; got shape {X.shape}&quot;)
+        if X.shape[0] == 0 or X.shape[1] == 0:
+            raise ValueError(&quot;X must contain at least one row and one feature&quot;)
+        if not np.isfinite(X).all():
+            raise ValueError(&quot;X contains NaN or infinite values&quot;)
+
+        if y is None:
+            return X
+
+        y = np.asarray(y, dtype=float)
+        if y.ndim == 2 and y.shape[1] == 1:
+            y = y.reshape(-1)
+        if y.ndim != 1:
+            raise ValueError(f&quot;y must be 1D; got shape {y.shape}&quot;)
+        if X.shape[0] != y.shape[0]:
+            raise ValueError(
+                f&quot;row mismatch: X has {X.shape[0]} rows but y has {y.shape[0]}&quot;
+            )
+        if not np.isfinite(y).all():
+            raise ValueError(&quot;y contains NaN or infinite values&quot;)
+        return X, y
+
+    @staticmethod
+    def _add_intercept_column(X):
+        return np.column_stack([np.ones(X.shape[0]), X])
+
+    @staticmethod
+    def _metrics_from_predictions(y, y_hat):
+        y = np.asarray(y, dtype=float).reshape(-1)
+        y_hat = np.asarray(y_hat, dtype=float).reshape(-1)
+        if y.shape != y_hat.shape:
+            raise ValueError(&quot;y and y_hat must have identical shapes&quot;)
+
+        residuals = y - y_hat
+        ssr = float(residuals @ residuals)
+        mse = ssr / residuals.size
+        return {
+            &quot;ssr&quot;: ssr,
+            &quot;mse&quot;: mse,
+            &quot;rmse&quot;: float(np.sqrt(mse)),
+            &quot;mae&quot;: float(np.mean(np.abs(residuals))),
+        }
+
+    def fit(self, X, y, feature_names: Sequence[str]):
+        X, y = self._validate_inputs(X, y)
+        feature_names = [str(name).strip() for name in feature_names]
+
+        if len(feature_names) != X.shape[1]:
+            raise ValueError(
+                f&quot;received {len(feature_names)} names for {X.shape[1]} features&quot;
+            )
+        if any(not name for name in feature_names):
+            raise ValueError(&quot;feature names cannot be empty&quot;)
+        if len(set(feature_names)) != len(feature_names):
+            raise ValueError(&quot;feature names must be unique&quot;)
+
+        X_design = self._add_intercept_column(X)
+        parameters, _, rank, singular_values = np.linalg.lstsq(
+            X_design, y, rcond=None
+        )
+
+        required_rank = X_design.shape[1]
+        if rank &lt; required_rank:
+            raise ValueError(
+                &quot;design matrix is rank deficient: &quot;
+                f&quot;rank {rank}, but {required_rank} independent columns are required&quot;
+            )
+
+        self.parameters_ = parameters
+        self.feature_names_ = feature_names
+        self.rank_ = int(rank)
+        self.singular_values_ = singular_values
+        self.is_fitted_ = True
+
+        training_predictions = X_design @ self.parameters_
+        self.training_metrics_ = self._metrics_from_predictions(
+            y, training_predictions
+        )
+        return self
+
+    def predict(self, X):
+        if not self.is_fitted_:
+            raise RuntimeError(&quot;fit the estimator before calling predict&quot;)
+
+        X = np.asarray(X, dtype=float)
+        if X.ndim == 1:
+            X = X.reshape(1, -1)
+        X = self._validate_inputs(X)
+        if X.shape[1] != len(self.feature_names_):
+            raise ValueError(
+                f&quot;expected {len(self.feature_names_)} features, got {X.shape[1]}&quot;
+            )
+
+        return self._add_intercept_column(X) @ self.parameters_
+
+    def evaluate(self, X, y):
+        X, y = self._validate_inputs(X, y)
+        return self._metrics_from_predictions(y, self.predict(X))
+
+    def coefficients(self):
+        if not self.is_fitted_:
+            raise RuntimeError(&quot;fit the estimator before requesting coefficients&quot;)
+        names = [&quot;intercept&quot;, *self.feature_names_]
+        return dict(zip(names, self.parameters_))</code></pre>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>5.10 End-to-end use on synthetic KP projects</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The small dataset below has three pre-construction features. Keeping it small makes the entire calculation inspectable; it is not enough for a real deployment.</p>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>import numpy as np
+
+contract = AnalysisContract(
+    purpose=&quot;prediction&quot;,
+    target_name=&quot;actual_cost_m_pkr&quot;,
+    target_unit=&quot;million PKR&quot;,
+    unit_of_observation=&quot;one completed MHP project&quot;,
+    intended_use=&quot;design-stage budget review for approved projects&quot;,
+)
+
+# Columns: road distance (km), planned capacity (kW), terrain index (1–5)
+X_train = np.array([
+    [5.0,  80.0, 2.0],
+    [8.0, 100.0, 2.0],
+    [12.0, 120.0, 3.0],
+    [15.0, 150.0, 3.0],
+    [18.0, 160.0, 4.0],
+    [22.0, 180.0, 4.0],
+    [25.0, 200.0, 5.0],
+    [30.0, 240.0, 5.0],
+])
+
+y_train = np.array([19.0, 23.0, 30.0, 35.0, 42.0, 47.0, 55.0, 63.0])
+
+model = MHPCostEstimator(contract).fit(
+    X_train,
+    y_train,
+    feature_names=[&quot;road_distance_km&quot;, &quot;planned_capacity_kw&quot;, &quot;terrain_index&quot;],
+)
+
+print(model)
+print(&quot;Coefficients:&quot;, model.coefficients())
+print(&quot;Training metrics:&quot;, model.training_metrics_)
+
+X_new = np.array([
+    [20.0, 170.0, 4.0],
+    [10.0, 110.0, 3.0],
+])
+print(&quot;New predictions:&quot;, model.predict(X_new))</code></pre>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Interpretation discipline</h3>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>If the fitted road-distance coefficient is positive, the prediction reading is:</p>
+<blockquote class='border-l-4 border-cyan-500 bg-cyan-950/20 text-[#94a3b8] italic my-6 p-4 rounded-r-lg text-sm leading-relaxed'>“Holding the other included numerical features fixed, the fitted rule adds this many million PKR for each additional kilometre of recorded road distance.”</blockquote>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>It is <strong class="text-white font-semibold">not</strong> automatically:</p>
+<blockquote class='border-l-4 border-cyan-500 bg-cyan-950/20 text-[#94a3b8] italic my-6 p-4 rounded-r-lg text-sm leading-relaxed'>“Building one kilometre of road will change MHP cost by this amount.”</blockquote>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The second statement is causal and may even reverse the intervention: the feature is distance from a road, while the action is constructing a road.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Also inspect whether “holding capacity and terrain fixed” describes plausible comparisons in the dataset. Regression can calculate contrasts that the observed projects barely support.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>5.11 Verify the class against the equations</h2>
+<pre class='bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto'><code class='language-python'>X_design = np.column_stack([np.ones(X_train.shape[0]), X_train])
+beta_from_normal_equations = np.linalg.solve(
+    X_design.T @ X_design,
+    X_design.T @ y_train,
+)
+
+assert np.allclose(model.parameters_, beta_from_normal_equations)
+
+residuals = y_train - model.predict(X_train)
+assert np.allclose(X_design.T @ residuals, 0.0, atol=1e-9)
+assert np.isclose(residuals.sum(), 0.0, atol=1e-9)
+
+metrics = model.evaluate(X_train, y_train)
+assert np.isclose(metrics[&quot;ssr&quot;], residuals @ residuals)
+assert np.isclose(metrics[&quot;rmse&quot;], np.sqrt(np.mean(residuals ** 2)))</code></pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>These are not decorative tests. Each one ties an application output to a mathematical result developed earlier in the chapter.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>5.12 What the completed application still cannot do</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The Week 1 estimator is a learning instrument, not a deployment-ready public investment system. It does not yet:</p>
+<ul class='list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4'><li class='leading-relaxed'>split data into training, validation, and test sets;</li><li class='leading-relaxed'>handle categorical districts, project types, or contractors;</li><li class='leading-relaxed'>standardise features or examine conditioning;</li><li class='leading-relaxed'>quantify coefficient uncertainty;</li><li class='leading-relaxed'>diagnose heteroskedasticity, nonlinearity, or influential observations;</li><li class='leading-relaxed'>model time trends, inflation, or district-level clustering;</li><li class='leading-relaxed'>protect against data leakage across project phases;</li><li class='leading-relaxed'>establish causal effects;</li><li class='leading-relaxed'>document data lineage, permissions, or revision history; or</li><li class='leading-relaxed'>monitor performance when construction conditions change.</li></ul>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Recognising these limits is part of mastery.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>5.13 Day 5 practice</h2>
+<ol class='list-decimal list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4' style='list-style-type: decimal;'><li class='leading-relaxed'>Derive the through-origin slope without looking at the text.</li><li class='leading-relaxed'>Explain, by coordinates, why the derivative of $\beta^TA\beta$ is $(A+A^T)\beta$.</li><li class='leading-relaxed'>Construct a full-rank matrix with four rows and three columns. Confirm its rank in NumPy.</li><li class='leading-relaxed'>Make one column an exact combination of the other columns. Confirm the rank loss.</li><li class='leading-relaxed'>Change one target in the end-to-end dataset by 20 million PKR. Compare coefficient changes, RMSE, and MAE.</li><li class='leading-relaxed'>Fit the same data after converting road distance from kilometres to metres. Verify that predictions are unchanged and explain the coefficient change.</li><li class='leading-relaxed'>Write a one-paragraph briefing for a senior manager that reports a prediction, its unit, its intended use, and two limitations without using mathematical jargon.</li></ol>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Day 5 exit check</h3>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>You are ready to leave Week 1 when you can move in both directions:</p>
+<pre class='mermaid bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 text-[#cbd5e1] text-xs overflow-x-auto'>flowchart LR
+    W["Words: closest attainable prediction"] --> G["Geometry: orthogonal projection"]
+    G --> E["Equation: XᵀXβ̂ = Xᵀy"]
+    E --> C["Code: lstsq(X, y)"]
+    C --> W</pre>
+<hr class='border-[#223150] my-8'>
+<h1 class='text-3xl font-extrabold tracking-tight text-white mt-12 mb-6 border-b border-[#223150] pb-4'>Week 1 Capstone — Build It, Break It, Rebuild It</h1>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>Capstone brief</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>You are given 40 synthetic completed MHP projects and asked to create an early-stage cost estimator. Complete the work in four passes.</p>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Pass 1: define</h3>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Write the <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">AnalysisContract</code>. State:</p>
+<ul class='list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4'><li class='leading-relaxed'>the unit of observation;</li><li class='leading-relaxed'>the target and price basis;</li><li class='leading-relaxed'>the point in the project cycle when prediction occurs;</li><li class='leading-relaxed'>the decision supported; and</li><li class='leading-relaxed'>whether the work is prediction, explanation, or causation.</li></ul>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Pass 2: build</h3>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Use at least three features known at the stated prediction time. Fit the model, report coefficients with units, and calculate training metrics.</p>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Pass 3: break</h3>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Create and explain each failure:</p>
+<ol class='list-decimal list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4' style='list-style-type: decimal;'><li class='leading-relaxed'>a row-alignment error;</li><li class='leading-relaxed'>a missing or infinite value;</li><li class='leading-relaxed'>a redundant feature;</li><li class='leading-relaxed'>a feature recorded after construction begins; and</li><li class='leading-relaxed'>one extreme target value.</li></ol>
+<h3 class='text-xl font-bold text-white mt-8 mb-3'>Pass 4: rebuild</h3>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Correct the failures. Add a held-out set of projects. Compare training and held-out RMSE and MAE. Write a recommendation that separates what the model can support from what it cannot.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>Assessment rubric</h2>
+<div class='overflow-x-auto my-6 bg-[#151d30] border border-[#223150] rounded-xl p-4'><table class='w-full text-sm text-left text-[#cbd5e1] divide-y divide-[#223150]'><thead><tr class='text-cyan-400 font-semibold'><th class='py-3 px-4'>Dimension</th><th class='py-3 px-4'>Emerging</th><th class='py-3 px-4'>Competent</th><th class='py-3 px-4'>Mastery</th></tr></thead><tbody class='divide-y divide-[#223150]/60'><tr><td class='py-3 px-4'>Question</td><td class='py-3 px-4'>Purpose is vague</td><td class='py-3 px-4'>Purpose and target are stated</td><td class='py-3 px-4'>Estimand, timing, and intended use are precise</td></tr><tr><td class='py-3 px-4'>Mathematics</td><td class='py-3 px-4'>Formula copied</td><td class='py-3 px-4'>Main steps reproduced</td><td class='py-3 px-4'>Derivation explained and verified independently</td></tr><tr><td class='py-3 px-4'>Code</td><td class='py-3 px-4'>Runs once</td><td class='py-3 px-4'>Validates common failures</td><td class='py-3 px-4'>Tests equations, shapes, rank, and interpretation boundaries</td></tr><tr><td class='py-3 px-4'>Geometry</td><td class='py-3 px-4'>Terms repeated</td><td class='py-3 px-4'>Projection described</td><td class='py-3 px-4'>Column space, orthogonality, and minimum distance connected</td></tr><tr><td class='py-3 px-4'>Context</td><td class='py-3 px-4'>Generic example</td><td class='py-3 px-4'>KP units and features used</td><td class='py-3 px-4'>Institutional consequences and data limitations addressed</td></tr><tr><td class='py-3 px-4'>Communication</td><td class='py-3 px-4'>Numbers listed</td><td class='py-3 px-4'>Metrics interpreted</td><td class='py-3 px-4'>Decision, uncertainty, and limits clearly separated</td></tr></tbody></table></div>
+<hr class='border-[#223150] my-8'>
+<h1 class='text-3xl font-extrabold tracking-tight text-white mt-12 mb-6 border-b border-[#223150] pb-4'>Formula Sheet</h1>
+<div class='overflow-x-auto my-6 bg-[#151d30] border border-[#223150] rounded-xl p-4'><table class='w-full text-sm text-left text-[#cbd5e1] divide-y divide-[#223150]'><thead><tr class='text-cyan-400 font-semibold'><th class='py-3 px-4'>Concept</th><th class='py-3 px-4'>Equation</th><th class='py-3 px-4'>Meaning</th></tr></thead><tbody class='divide-y divide-[#223150]/60'><tr><td class='py-3 px-4'>Linear prediction</td><td class='py-3 px-4'>$\hat{y}=X\beta$</td><td class='py-3 px-4'>Weighted combination of design columns</td></tr><tr><td class='py-3 px-4'>Residual</td><td class='py-3 px-4'>$e=y-\hat{y}$</td><td class='py-3 px-4'>Actual minus predicted</td></tr><tr><td class='py-3 px-4'>SSR</td><td class='py-3 px-4'>$e^Te=\sum_i e_i^2$</td><td class='py-3 px-4'>Total squared training error</td></tr><tr><td class='py-3 px-4'>MSE</td><td class='py-3 px-4'>$SSR/n$</td><td class='py-3 px-4'>Mean squared error</td></tr><tr><td class='py-3 px-4'>RMSE</td><td class='py-3 px-4'>$\sqrt{SSR/n}$</td><td class='py-3 px-4'>Squared-error summary in target units</td></tr><tr><td class='py-3 px-4'>MAE</td><td class='py-3 px-4'>$\frac{1}{n}\sum_i</td><td class='py-3 px-4'>e_i</td><td class='py-3 px-4'>$</td><td class='py-3 px-4'>Mean absolute miss</td></tr><tr><td class='py-3 px-4'>Orthogonality</td><td class='py-3 px-4'>$X^Te=0$</td><td class='py-3 px-4'>Residual perpendicular to every design column</td></tr><tr><td class='py-3 px-4'>Normal equations</td><td class='py-3 px-4'>$X^TX\hat{\beta}=X^Ty$</td><td class='py-3 px-4'>First-order condition for OLS</td></tr><tr><td class='py-3 px-4'>Closed form</td><td class='py-3 px-4'>$(X^TX)^{-1}X^Ty$</td><td class='py-3 px-4'>Unique solution when $X$ has full column rank</td></tr><tr><td class='py-3 px-4'>Scalar slope</td><td class='py-3 px-4'>$\frac{\sum_i(x_i-\bar{x})(y_i-\bar{y})}{\sum_i(x_i-\bar{x})^2}$</td><td class='py-3 px-4'>One-feature slope with intercept</td></tr><tr><td class='py-3 px-4'>Scalar intercept</td><td class='py-3 px-4'>$\bar{y}-\hat{\beta}_1\bar{x}$</td><td class='py-3 px-4'>Makes the line pass through the means</td></tr><tr><td class='py-3 px-4'>Hessian</td><td class='py-3 px-4'>$2X^TX$</td><td class='py-3 px-4'>Curvature of the SSR surface</td></tr></tbody></table></div>
+<hr class='border-[#223150] my-8'>
+<h1 class='text-3xl font-extrabold tracking-tight text-white mt-12 mb-6 border-b border-[#223150] pb-4'>Glossary</h1>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Association:</strong> A numerical relationship in observed data; it need not be causal.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Column space:</strong> All vectors that can be formed as weighted combinations of a matrix’s columns.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Confounder:</strong> A common cause that can distort an exposure–outcome association.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Counterfactual:</strong> The outcome that would have occurred under an alternative action or condition.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Design matrix:</strong> The rectangular matrix of features used to construct model predictions.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Estimator:</strong> A rule or algorithm that converts data into parameter estimates.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Feature:</strong> An input variable used by a model.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Full column rank:</strong> A condition in which no design column is an exact linear combination of the others.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Gradient:</strong> A vector of partial derivatives; it points in the direction of steepest local increase.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Hessian:</strong> A matrix of second derivatives describing local curvature.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Hyperparameter:</strong> A modeling setting chosen rather than estimated by the fitting calculation.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Intercept:</strong> The constant term added to every linear prediction.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Loss function:</strong> A numerical rule that penalises prediction error during fitting.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Multicollinearity:</strong> Strong linear dependence among features; perfect multicollinearity causes rank deficiency.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Observation:</strong> One unit represented by one row of the dataset.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">OLS:</strong> Ordinary least squares, the estimator that minimises the sum of squared residuals.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Parameter:</strong> A numerical value learned from data by an estimator.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Projection:</strong> The closest point in a subspace to a given vector under Euclidean distance.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Rank:</strong> The number of linearly independent directions represented by a matrix.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Residual:</strong> The observed target minus its fitted prediction.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Target:</strong> The outcome the model estimates.</p>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'><strong class="text-white font-semibold">Target leakage:</strong> Use of information that would not legitimately be available at prediction time.</p>
+<hr class='border-[#223150] my-8'>
+<h1 class='text-3xl font-extrabold tracking-tight text-white mt-12 mb-6 border-b border-[#223150] pb-4'>Instructor and Self-Study Notes</h1>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>Suggested daily timebox</h2>
+<div class='overflow-x-auto my-6 bg-[#151d30] border border-[#223150] rounded-xl p-4'><table class='w-full text-sm text-left text-[#cbd5e1] divide-y divide-[#223150]'><thead><tr class='text-cyan-400 font-semibold'><th class='py-3 px-4'>Activity</th><th class='py-3 px-4'>Minutes</th></tr></thead><tbody class='divide-y divide-[#223150]/60'><tr><td class='py-3 px-4'>Orient and retrieve prior knowledge</td><td class='py-3 px-4'>15</td></tr><tr><td class='py-3 px-4'>Work through the central derivation</td><td class='py-3 px-4'>35</td></tr><tr><td class='py-3 px-4'>Run and alter the proof code</td><td class='py-3 px-4'>35</td></tr><tr><td class='py-3 px-4'>Create or inspect the figure</td><td class='py-3 px-4'>20</td></tr><tr><td class='py-3 px-4'>Extend the application</td><td class='py-3 px-4'>35</td></tr><tr><td class='py-3 px-4'>Break-and-repair exercise</td><td class='py-3 px-4'>25</td></tr><tr><td class='py-3 px-4'>Exit check and written reflection</td><td class='py-3 px-4'>15</td></tr><tr><td class='py-3 px-4'><strong class="text-white font-semibold">Total</strong></td><td class='py-3 px-4'><strong class="text-white font-semibold">180</strong></td></tr></tbody></table></div>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Three hours is a guide, not a race. If a learner cannot explain yesterday’s exit check, begin there rather than adding more notation.</p>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>Retrieval prompts for the next morning</h2>
+<ul class='list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4'><li class='leading-relaxed'>After Day 1: “Name the three regression jobs and one risk of each.”</li><li class='leading-relaxed'>After Day 2: “Draw the shapes of $X$, $y$, and $\beta$.”</li><li class='leading-relaxed'>After Day 3: “Expand one row of $X\beta$ and explain the ones column.”</li><li class='leading-relaxed'>After Day 4: “Why is the OLS residual perpendicular to $X$?”</li><li class='leading-relaxed'>After Day 5: “State the normal equations and the condition for a unique coefficient vector.”</li></ul>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>Guidance on the KP context</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Context should discipline the mathematics, not decorate it. Ask repeatedly:</p>
+<ul class='list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4'><li class='leading-relaxed'>At what project stage is this field known?</li><li class='leading-relaxed'>Who recorded it and for what administrative purpose?</li><li class='leading-relaxed'>Does one row mean the same thing across districts and implementing partners?</li><li class='leading-relaxed'>Are costs expressed in the same price year?</li><li class='leading-relaxed'>Does a terrain index of 4 mean the same thing to every assessor?</li><li class='leading-relaxed'>Could the model penalise remote projects for structural conditions outside field teams’ control?</li><li class='leading-relaxed'>Would an apparent “efficiency” relationship survive a fair comparison of project types?</li></ul>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>These questions connect modeling capability to institutional responsibility.</p>
+<hr class='border-[#223150] my-8'>
+<h1 class='text-3xl font-extrabold tracking-tight text-white mt-12 mb-6 border-b border-[#223150] pb-4'>Where Week 2 Begins</h1>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>Week 1 ends with a correct small OLS implementation and an honest account of its limits. Week 2 should extend the same application in this order:</p>
+<ol class='list-decimal list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4' style='list-style-type: decimal;'><li class='leading-relaxed'>numerical conditioning and feature scaling;</li><li class='leading-relaxed'>QR and singular-value views of least squares;</li><li class='leading-relaxed'>probability models and maximum likelihood;</li><li class='leading-relaxed'>gradient descent built from the OLS gradient;</li><li class='leading-relaxed'>train/validation/test separation;</li><li class='leading-relaxed'>coefficient and prediction uncertainty; and</li><li class='leading-relaxed'>diagnostic plots and model revision.</li></ol>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The next week should not treat these as disconnected techniques. Each one answers a problem exposed by the model built here.</p>
+<hr class='border-[#223150] my-8'>
+<h2 class='text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2'>Final reflection</h2>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>The intellectual achievement of Week 1 is not the formula $(X^TX)^{-1}X^Ty$. It is the chain of reasoning around it:</p>
+<pre class='mermaid bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 text-[#cbd5e1] text-xs overflow-x-auto'>flowchart TD
+    Q["A precise infrastructure question"] --> D["A defensible data representation"]
+    D --> M["A transparent mathematical model"]
+    M --> V["Independent code and geometric verification"]
+    V --> J["A bounded, responsible judgement"]</pre>
+<p class='my-4 leading-relaxed text-[#cbd5e1] text-sm'>You now know enough to be dangerous if you report coefficients carelessly—and enough to begin becoming useful if you preserve the chain from question to judgement.</p>
+    </div>
+    <!-- Mermaid support -->
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    </script>
+</body>
+</html>

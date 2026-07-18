@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 1.5: Adaptive Optimizers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-[#0b0f19] text-[#cbd5e1] font-sans antialiased">
+    <div id="content" class="max-w-4xl mx-auto px-6 py-12 space-y-12">
+        <!-- Header -->
+        <header class="border-b border-[#223150] pb-8">
+            <span class="inline-block px-3 py-1 text-xs font-semibold tracking-wider text-amber-400 bg-amber-400/10 rounded-full border border-amber-400/20 mb-4">LEVEL 1.5 · OPTIONAL</span>
+            <h1 class="text-4xl font-extrabold tracking-tight text-white mb-2">Chapter 1.5: Adaptive Optimizers — An Optional Deep Dive</h1>
+            <p class="text-lg text-[#94a3b8]">Momentum, AdaGrad, RMSprop, and Adam. Prerequisite: <a href="level_1_data_explorer.html#day-9" class="text-cyan-400 underline">Level 1, Day 9</a>.</p>
+        </header>
+
+        <!-- Intro / Framing -->
+        <section class="bg-amber-500/10 border border-amber-500/20 text-[#f59e0b] rounded-xl p-6 space-y-2 text-sm">
+            <p><strong>This entire chapter is optional.</strong> Lipschitz constants, Robbins-Monro conditions, and Adam's bias-correction terms are genuinely graduate-level optimization theory — this is not beginner material dressed up to look hard, it <em>is</em> hard, and that's fine. It's okay to skim the proofs on a first pass and come back after you've used these optimizers a few times in practice.</p>
+            <p>One honest note on scope: we checked the rest of this book, and Adam does <strong>not</strong> explicitly resurface by name in later chapters — <code>scikit-learn</code>'s built-in regressors handle their own optimization internally. What <em>does</em> resurface constantly is the underlying intuition (badly-scaled features slow down optimization). You can safely jump straight to <a href="level_2_beginner_modeler.html" class="underline font-semibold">Level 2</a> and come back here later.</p>
+        </section>
+
+        <!-- Section 1 -->
+        <section id="convergence-rates" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-4">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">1. Convergence Rates and Learning Rate Dynamics</h2>
+            <p class="text-sm text-[#cbd5e1] leading-relaxed">
+                If $L(\theta)$ is convex and $L$-smooth (its gradient is Lipschitz continuous with constant $L_{\text{Lip}}$):
+                $$\|\nabla L(\theta_1) - \nabla L(\theta_2)\|_2 \le L_{\text{Lip}} \|\theta_1 - \theta_2\|_2$$
+                Then choosing $\eta < \frac{2}{L_{\text{Lip}}}$ guarantees Batch Gradient Descent converges. For OLS, $L_{\text{Lip}} = \lambda_{\max}\left(\frac{1}{n} X^T X\right)$ — the same <a href="level_1_data_explorer.html#day-6" class="text-cyan-400 underline">condition number from Level 1, Day 6</a>. Badly-scaled features stretch this into a narrow valley; scaling compresses it into a symmetric bowl.
+            </p>
+            <img src="../figures/adaptive_optimizers_condition_number.png" alt="Gradient descent path on a narrow valley vs. a symmetric bowl" class="rounded-lg border border-[#223150] w-full mx-auto">
+        </section>
+
+        <!-- Section 2 -->
+        <section id="polyak-ruppert" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-3">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">2. Polyak-Ruppert Averaging</h2>
+            <p class="text-sm text-[#cbd5e1] leading-relaxed">
+                SGD is also a stochastic approximation algorithm. Under Robbins-Monro conditions ($\sum \eta_k = \infty, \sum \eta_k^2 < \infty$), SGD converges to the true parameter $\theta^*$. Averaging the iterates,
+                $$\bar{\theta}^{(k)} = \frac{1}{k} \sum_{j=1}^k \theta^{(j)}$$
+                achieves optimal asymptotic variance, satisfying a Central Limit Theorem: $\sqrt{k}(\bar{\theta}^{(k)} - \theta^*) \xrightarrow{d} \mathcal{N}(0, \Sigma)$. This lets you build confidence intervals directly from online SGD runs — no matrix inversion required.
+            </p>
+        </section>
+
+        <!-- Section 3 -->
+        <section id="adam-optimizer" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-4">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">3. Momentum, AdaGrad, RMSprop, and Adam</h2>
+            <ul class="text-xs text-[#cbd5e1] list-disc list-inside space-y-2">
+                <li><strong>Momentum:</strong> adds a fraction of the past update step: $v^{(k+1)} = \beta v^{(k)} + \eta \nabla L(\theta^{(k)})$, $\theta^{(k+1)} = \theta^{(k)} - v^{(k+1)}$ — accelerates descent, dampens oscillation.</li>
+                <li><strong>AdaGrad:</strong> adapts learning rates per-parameter by dividing by cumulative squared gradients — but stalls as the step size shrinks to zero.</li>
+                <li><strong>RMSprop:</strong> fixes AdaGrad's stall with an exponentially decaying average of squared gradients: $v^{(k+1)} = \beta v^{(k)} + (1-\beta)(\nabla L)^2$.</li>
+                <li><strong>Adam:</strong> combines Momentum (first moment $m_t$) and RMSprop (second moment $v_t$) with bias correction:
+                    $$m_t = \beta_1 m_{t-1} + (1-\beta_1) g_t, \quad v_t = \beta_2 v_{t-1} + (1-\beta_2) g_t^2$$
+                    $$\theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{\hat{v}_t} + \epsilon} \hat{m}_t$$
+                </li>
+            </ul>
+        </section>
+
+        <!-- Recap -->
+        <section class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-2">
+            <h3 class="text-lg font-bold text-white">Recap</h3>
+            <ul class="text-sm text-[#cbd5e1] list-disc list-inside space-y-1">
+                <li>A high condition number turns the loss surface into a narrow valley, forcing plain gradient descent into slow zig-zagging.</li>
+                <li>Polyak-Ruppert averaging turns SGD into a statistical estimator with its own confidence intervals.</li>
+                <li>Momentum, AdaGrad, RMSprop, and Adam each patch a specific weakness of plain gradient descent.</li>
+            </ul>
+        </section>
+
+        <!-- Exercise -->
+        <section class="bg-[#0b0f19] border border-[#223150] rounded-lg p-4 text-sm space-y-1">
+            <p class="font-bold text-amber-400 text-xs">Exercise: Adam From Scratch</p>
+            <p class="text-[#cbd5e1]">Continuing Level 1 Day 9's <code>optimizers_comparison.py</code>, implement <code>AdamRegressorFromScratch</code>, plot its loss trajectory against batch GD and SGD, then re-run all three on <strong>unscaled</strong> features. Which optimizer degrades the most without scaling?</p>
+        </section>
+
+        <!-- Formula Cheat Sheet -->
+        <section id="formula-cheat-sheet" class="space-y-4">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">Formula Cheat Sheet</h2>
+            <div class="overflow-x-auto bg-[#151d30] border border-[#223150] rounded-xl p-4">
+                <table class="w-full text-xs text-left text-[#cbd5e1]">
+                    <thead>
+                        <tr class="text-amber-400 border-b border-[#223150]">
+                            <th class="py-2 pr-4">Concept</th>
+                            <th class="py-2">Formula</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-[#223150]/60 font-mono">
+                        <tr><td class="py-2 pr-4 font-sans">Lipschitz bound</td><td class="py-2">$\|\nabla L(\theta_1) - \nabla L(\theta_2)\|_2 \le L_{\text{Lip}}\|\theta_1-\theta_2\|_2$</td></tr>
+                        <tr><td class="py-2 pr-4 font-sans">Safe learning rate</td><td class="py-2">$\eta < 2/L_{\text{Lip}}$</td></tr>
+                        <tr><td class="py-2 pr-4 font-sans">Polyak-Ruppert average</td><td class="py-2">$\bar\theta^{(k)} = \frac{1}{k}\sum_{j=1}^k \theta^{(j)}$</td></tr>
+                        <tr><td class="py-2 pr-4 font-sans">Momentum update</td><td class="py-2">$v^{(k+1)}=\beta v^{(k)}+\eta\nabla L(\theta^{(k)})$</td></tr>
+                        <tr><td class="py-2 pr-4 font-sans">Adam update</td><td class="py-2">$\theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{\hat v_t}+\epsilon}\hat m_t$</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- References -->
+        <section class="space-y-2">
+            <h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">References</h2>
+            <ol class="text-sm text-[#cbd5e1] list-decimal list-inside space-y-1">
+                <li><strong>Robbins-Monro Asymptotics:</strong> Polyak and Juditsky (1992), "Acceleration of Stochastic Approximation by Averaging".</li>
+                <li><strong>Convex Optimization:</strong> Boyd & Vandenberghe. Cambridge University Press.</li>
+                <li><strong>Adam:</strong> Kingma, D.P. and Ba, J. (2015), "Adam: A Method for Stochastic Optimization," ICLR.</li>
+            </ol>
+        </section>
+    </div>
+</body>
+</html>
