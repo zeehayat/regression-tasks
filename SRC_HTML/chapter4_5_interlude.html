@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interlude — From a Single Moment to a History Through Time</title>
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --panel: #151d30;
+            --border: #223150;
+            --text: #f1f5f9;
+            --text-muted: #cbd5e1;
+            --accent: #22d3ee;
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; overflow-x: hidden; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        code, pre, .mono {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        }
+        #content {
+            width: 100%;
+            max-width: 56rem;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+        nav.chapters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        nav.chapters a {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+        nav.chapters a:hover { border-color: rgba(34, 211, 238, 0.4); }
+        nav.chapters a.active {
+            color: var(--accent);
+            background: rgba(21, 29, 48, 0.8);
+            border-color: rgba(34, 211, 238, 0.4);
+        }
+        .markdown-body h1 { font-size: 2.25rem; font-weight: 800; color: #fff; margin: 0.5rem 0 1.5rem; }
+        .markdown-body h2 { font-size: 1.5rem; font-weight: 700; color: #fff; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin: 2.5rem 0 1rem; }
+        .markdown-body h3 { font-size: 1.25rem; font-weight: 600; color: #fff; margin: 2rem 0 0.75rem; }
+        .markdown-body h4 { font-size: 1.1rem; font-weight: 600; color: #fff; margin: 1.5rem 0 0.5rem; }
+        .markdown-body p { color: var(--text-muted); margin: 0 0 1rem; }
+        .markdown-body ul, .markdown-body ol { color: var(--text-muted); margin: 0 0 1rem; padding-left: 1.5rem; }
+        .markdown-body li { margin-bottom: 0.25rem; }
+        .markdown-body blockquote {
+            border-left: 4px solid var(--accent);
+            padding: 0.5rem 1rem;
+            font-style: italic;
+            background: rgba(34, 211, 238, 0.05);
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 1rem 0;
+        }
+        .markdown-body a { color: var(--accent); text-decoration: underline; }
+        .markdown-body a:hover { color: #67e8f9; }
+        .markdown-body :not(pre) > code {
+            font-size: 0.875rem;
+            color: #67e8f9;
+            background: var(--panel);
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+        }
+        .markdown-body pre {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+        .markdown-body pre code {
+            background: transparent;
+            padding: 0;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+        }
+        .markdown-body table { width: 100%; font-size: 0.875rem; border-collapse: collapse; margin: 1.5rem 0; }
+        .markdown-body th, .markdown-body td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: left; }
+        .markdown-body th { background: var(--panel); color: #fff; font-weight: 600; }
+        .markdown-body td { color: var(--text-muted); }
+        .markdown-body hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+        /* Mermaid diagram panel: readable offline as labeled source; mermaid.js
+           (if vendored) replaces the <pre> contents with a rendered <svg>. */
+        .diagram-panel {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+        .diagram-panel__label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: rgba(34, 211, 238, 0.08);
+            padding: 0.4rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .diagram-panel .mermaid {
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+        }
+        .diagram-panel pre.mermaid-source {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+            padding: 1rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+        }
+
+        .platform-shell {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            width: min(25rem, calc(100vw - 2rem));
+            max-height: calc(100vh - 2rem);
+            display: flex;
+            flex-direction: column;
+            background: rgba(12, 18, 30, 0.96);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            z-index: 50;
+        }
+        .platform-shell.collapsed { width: auto; }
+        .platform-shell.collapsed .platform-body { display: none; }
+        .platform-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.9);
+        }
+        .platform-title { font-size: 0.85rem; font-weight: 700; color: #fff; }
+        .platform-section { font-size: 0.72rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .platform-body { overflow-y: auto; padding: 0.85rem; }
+        .platform-group { border-top: 1px solid var(--border); padding-top: 0.85rem; margin-top: 0.85rem; }
+        .platform-group:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+        .platform-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+        .platform-label { display: block; margin-bottom: 0.35rem; font-size: 0.72rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.04em; }
+        .platform-button {
+            border: 1px solid rgba(34, 211, 238, 0.45);
+            background: rgba(34, 211, 238, 0.08);
+            color: var(--accent);
+            border-radius: 0.35rem;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.78rem;
+            font-weight: 650;
+            cursor: pointer;
+        }
+        .platform-button:hover:not(:disabled) { background: rgba(34, 211, 238, 0.14); }
+        .platform-button:disabled {
+            cursor: not-allowed;
+            color: #94a3b8;
+            border-color: #334155;
+            background: rgba(148, 163, 184, 0.08);
+        }
+        .platform-textarea {
+            width: 100%;
+            min-height: 4.5rem;
+            resize: vertical;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.55rem;
+            font: inherit;
+            font-size: 0.85rem;
+        }
+        .platform-message {
+            margin-top: 0.45rem;
+            color: #fbbf24;
+            font-size: 0.78rem;
+        }
+        .platform-output {
+            margin-top: 0.55rem;
+            white-space: pre-wrap;
+            color: var(--text-muted);
+            font-size: 0.84rem;
+        }
+        .platform-history {
+            max-height: 12rem;
+            overflow: auto;
+            display: grid;
+            gap: 0.45rem;
+            margin: 0.55rem 0;
+        }
+        .platform-turn {
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            padding: 0.45rem 0.55rem;
+            background: rgba(21, 29, 48, 0.55);
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+        .platform-turn strong { color: #fff; }
+        .paper-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 0.8rem;
+            margin: 1rem 0;
+            background: rgba(21, 29, 48, 0.55);
+        }
+        .paper-card h4 { margin: 0 0 0.3rem; font-size: 1rem; }
+        .paper-card p { margin: 0.35rem 0; font-size: 0.9rem; }
+        .paper-card .paper-meta { color: #93c5fd; font-size: 0.82rem; }
+        .paper-card .paper-status { color: #fbbf24; font-size: 0.8rem; }
+        .settings-grid {
+            display: grid;
+            gap: 1rem;
+        }
+        .settings-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: rgba(21, 29, 48, 0.55);
+            padding: 1rem;
+        }
+        .settings-card h2 {
+            margin-top: 0;
+        }
+        .settings-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .settings-field {
+            display: grid;
+            gap: 0.25rem;
+        }
+        .settings-field.full {
+            grid-column: 1 / -1;
+        }
+        .settings-field label,
+        .settings-check {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .settings-field input,
+        .settings-field select {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.5rem;
+            font: inherit;
+        }
+        .settings-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .settings-status {
+            color: #fbbf24;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        .settings-file-viewer {
+            margin-top: 1rem;
+            display: grid;
+            gap: 1rem;
+        }
+        .settings-file-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: rgba(21, 29, 48, 0.55);
+            padding: 1rem;
+        }
+        .settings-file-card h2 {
+            margin: 0 0 0.35rem;
+        }
+        .settings-file-card pre {
+            max-height: 26rem;
+            overflow: auto;
+            margin: 0.75rem 0 0;
+        }
+        .settings-file-meta {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .notes-list {
+            display: grid;
+            gap: 0.35rem;
+            margin-top: 0.55rem;
+        }
+        .note-link {
+            display: block;
+            width: 100%;
+            text-align: left;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: rgba(21, 29, 48, 0.5);
+            color: var(--accent);
+            padding: 0.45rem 0.55rem;
+            cursor: pointer;
+            font: inherit;
+        }
+        .note-link:hover { border-color: rgba(34, 211, 238, 0.5); }
+        .note-link small {
+            display: block;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.68);
+            z-index: 100;
+        }
+        .modal-backdrop.open { display: flex; }
+        .note-modal {
+            width: min(58rem, 100%);
+            max-height: min(46rem, calc(100vh - 2rem));
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: #0b0f19;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
+            overflow: hidden;
+        }
+        .note-modal-header,
+        .note-modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.9);
+        }
+        .note-modal-footer {
+            border-top: 1px solid var(--border);
+            border-bottom: 0;
+        }
+        .note-title-input {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.55rem;
+            font: inherit;
+            font-weight: 700;
+        }
+        .note-toolbar,
+        .note-modal .ql-toolbar.ql-snow {
+            border: 0;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.45);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-picker,
+        .note-modal .ql-toolbar.ql-snow button {
+            color: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-stroke {
+            stroke: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-fill {
+            fill: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-picker-options {
+            background: #0b0f19;
+            border-color: var(--border);
+        }
+        .note-modal .ql-container.ql-snow {
+            border: 0;
+            font: inherit;
+        }
+        .note-editor {
+            min-height: 18rem;
+            flex: 1 1 auto;
+            overflow: auto;
+            color: var(--text);
+            background: #080c14;
+            outline: none;
+        }
+        .note-editor .ql-editor,
+        .note-editor[contenteditable="true"] {
+            min-height: 18rem;
+            color: var(--text);
+            font-size: 1rem;
+            line-height: 1.6;
+            padding: 1rem;
+        }
+        .note-editor .ql-editor.ql-blank::before {
+            color: #64748b;
+            font-style: normal;
+        }
+        .note-editor:empty::before {
+            content: attr(data-placeholder);
+            color: #64748b;
+        }
+        .note-attachments {
+            border-top: 1px solid var(--border);
+            background: rgba(8, 12, 20, 0.95);
+            padding: 0.75rem;
+            max-height: 11rem;
+            overflow: auto;
+        }
+        .attachment-input {
+            max-width: 22rem;
+            color: var(--text-muted);
+            font: inherit;
+        }
+        .attachment-list {
+            display: grid;
+            gap: 0.5rem;
+            margin-top: 0.65rem;
+        }
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: rgba(21, 29, 48, 0.45);
+            padding: 0.5rem;
+        }
+        .attachment-preview {
+            width: 3.5rem;
+            height: 3.5rem;
+            flex: 0 0 3.5rem;
+            display: grid;
+            place-items: center;
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text-muted);
+            overflow: hidden;
+            font-size: 0.78rem;
+        }
+        .attachment-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .attachment-meta {
+            min-width: 0;
+        }
+        .attachment-meta a {
+            display: block;
+            color: var(--accent);
+            overflow-wrap: anywhere;
+        }
+        .attachment-meta small {
+            color: var(--text-muted);
+        }
+        @media (min-width: 72.01rem) {
+            body { padding-right: 27rem; }
+        }
+        @media (max-width: 72rem) {
+            .platform-shell { position: static; width: auto; max-height: none; margin: 0 1rem 1rem; }
+            .platform-shell.collapsed .platform-body { display: none; }
+        }
+
+    </style>
+</head>
+<body>
+    <div id="content">
+        <nav class="chapters">
+            <a href="chapter0.html" class="">Ch. 0</a>
+            <a href="level_0_orientation.html" class="">Level 0 Orientation</a>
+            <a href="chapter1.html" class="">Ch. 1</a>
+            <a href="chapter2.html" class="">Ch. 2</a>
+            <a href="chapter3.html" class="">Ch. 3</a>
+            <a href="chapter4.html" class="">Ch. 4</a>
+            <a href="chapter4_5_interlude.html" class="active">Ch. 4.5 Interlude</a>
+            <a href="chapter5.html" class="">Ch. 5</a>
+            <a href="chapter6.html" class="">Ch. 6</a>
+            <a href="settings.html" class="">Settings</a>
+        </nav>
+        <article class="markdown-body">
+<h1 id="interlude-from-a-single-moment-to-a-history-through-time">Interlude — From a Single Moment to a History Through Time</h1>
+<h2 id="two-short-days-between-chapter-4-and-chapter-5">Two short days between Chapter 4 and Chapter 5</h2>
+<blockquote>
+<p><strong>Central promise.</strong> Chapter 4 asked "did the event happen by month 12?" — a single yes/no, with a single probability attached. Chapter 5 asks "<em>when</em> does the event happen?" — and answering that means working with a probability that's spread out continuously over time, plus two pieces of mathematics this book hasn't used yet: integrals and formal limits. By the end of this interlude, a sentence like "the hazard is the instantaneous event rate among those still event-free" will read as an idea you can compute, not a wall of symbols.</p>
+</blockquote>
+<h2 id="why-this-exists">Why this exists</h2>
+<p>Look at what Chapter 5, Day 31 does in its opening section. In about thirty lines it introduces a cumulative distribution function, a probability density, a hazard defined as a limit of a conditional probability divided by a shrinking interval, an integral linking hazard to cumulative hazard, and the identity $S(t) = \exp[-H(t)]$. Chapter 4 prepared you for the <em>conditional probability</em> and the <em>exp/log</em> parts — logistic regression uses both constantly. It did not prepare you for <strong>continuous</strong> random variables, for <strong>integrals</strong>, or for a <strong>formal limit</strong>. Those three ideas arrive on Day 31 with no runway, and everything from Kaplan–Meier to the Cox model is built on top of them.</p>
+<p>This interlude is short on purpose — you're not starting from zero the way Chapter 0 did. You already know discrete probability, likelihood, and derivatives cold. We're extending three things you know into a fourth thing you don't, not starting over.</p>
+<p>Same rules as always: code proves every claim, you build something small, you break it, you don't move on until the exit check passes.</p>
+<hr />
+<h1 id="interlude-day-a-from-a-single-probability-to-a-curve-over-time">Interlude Day A — From a Single Probability to a Curve Over Time</h1>
+<blockquote>
+<p><strong>Today's central idea:</strong> When an outcome can land anywhere on a continuous scale instead of just "yes" or "no," you can't ask "what's the probability of exactly this value?" — the honest question becomes "what's the probability of landing in this small window?"</p>
+</blockquote>
+<h2 id="a1-what-chapter-4-gave-you-and-where-it-stops">A.1 What Chapter 4 gave you, and where it stops</h2>
+<p>Chapter 4, Day 21 built everything on a Bernoulli outcome: a project either triggers a cost-overrun warning by month 12, or it doesn't. One probability, $p$, describes the whole thing.</p>
+<pre><code class="language-python">import numpy as np
+
+# Chapter 4's world: did it happen by month 12? One number answers everything.
+p_warning_by_12 = 0.30
+</code></pre>
+<p>But a project that triggers a warning at month 3 and one that triggers a warning at month 11 both get coded as <code>1</code> in that world. Chapter 5's whole reason for existing is that this throws away real information — <em>when</em> it happened, and for the ones that haven't happened yet, <em>how long they've already survived without it</em>. To keep that information, the outcome can no longer be a single 0-or-1; it has to be a number that can land anywhere on the timeline: 3.2 months, 11.87 months, 40.001 months. That's a <strong>continuous random variable</strong>, and it needs new machinery.</p>
+<h2 id="a2-why-you-cant-just-ask-whats-the-probability-of-exactly-month-11870000">A.2 Why you can't just ask "what's the probability of exactly month 11.870000...?"</h2>
+<p>Here's the uncomfortable fact first: for a continuous outcome, the probability of hitting any <em>exact</em> value is zero. There are infinitely many possible values between month 11 and month 12 — 11.1, 11.01, 11.001, forever — so no single one of them can carry a positive share of the total probability. This isn't a technicality to wave away; it's the reason the whole toolkit looks different from Chapter 4's.</p>
+<p><strong>Code proof — watch the probability of "close to 11.87" shrink as "close" gets stricter:</strong></p>
+<pre><code class="language-python">rng = np.random.default_rng(0)
+
+# Simulate 200,000 synthetic warning times (months), just to look at the shape.
+# (This is illustrative data, not the real KP mechanism Chapter 5 will use.)
+warning_times = rng.exponential(scale=20.0, size=200_000)
+
+for window in [2.0, 0.5, 0.05, 0.005]:
+    hits = np.sum(np.abs(warning_times - 11.87) &lt; window)
+    prob_estimate = hits / len(warning_times)
+    print(f&quot;window=±{window:&lt;6} estimated P ≈ {prob_estimate:.5f}&quot;)
+</code></pre>
+<p>As the window shrinks, the estimated probability keeps shrinking toward zero — but the probability <em>per unit width</em> of that window settles down to a stable number. That stable number — probability per unit width, not probability itself — is exactly what a <strong>density</strong> is.</p>
+<h2 id="a3-the-density-probability-rescaled-by-width">A.3 The density: probability, rescaled by width</h2>
+<p>If $f(t)$ is the density of event time $T$, then the probability of landing in a small window of width $\Delta t$ around $t$ is approximately $f(t) \cdot \Delta t$ — density times width, the same "rate times interval" idea you'll recognise from Day 0E's slope work, just for probability instead of cost.</p>
+<pre><code class="language-python"># Estimate the density near t=11.87 directly: (probability of a window) / (window width)
+window = 0.5
+hits = np.sum(np.abs(warning_times - 11.87) &lt; window)
+prob_in_window = hits / len(warning_times)
+density_estimate = prob_in_window / (2 * window)   # window extends both directions
+print(f&quot;estimated density near t=11.87: {density_estimate:.5f}&quot;)
+</code></pre>
+<p>A density is <strong>not</strong> a probability — it can be larger than 1, because it's a rate, not a share. Only density multiplied by a width gives you back an actual probability. This is exactly analogous to Chapter 5's warning about hazard later: <em>a rate is not a probability, even though it's built from one.</em></p>
+<h2 id="a4-the-cumulative-distribution-function-and-the-survival-function">A.4 The cumulative distribution function and the survival function</h2>
+<p>You've actually already met the discrete cousin of this in Chapter 4: $P(T \le t)$. For a continuous $T$, this accumulated probability is called the <strong>cumulative distribution function</strong>:</p>
+<p>$$F(t) = P(T \le t)$$</p>
+<p>Chapter 5 will spend far more time on its complement, the <strong>survival function</strong> — directly meaningful in the KP running case as "the probability a project has <em>not yet</em> triggered a warning by month $t$":</p>
+<p>$$S(t) = P(T &gt; t) = 1 - F(t)$$</p>
+<p><strong>Code proof — build both from raw simulated data, no library shortcuts:</strong></p>
+<pre><code class="language-python">sample = np.sort(warning_times)[:1000]   # a manageable sample, sorted
+
+def empirical_cdf(sample, t):
+    return np.mean(sample &lt;= t)
+
+def empirical_survival(sample, t):
+    return np.mean(sample &gt; t)
+
+for t in [5, 10, 20, 40]:
+    print(f&quot;t={t:&gt;3}  F(t)≈{empirical_cdf(sample, t):.3f}  &quot;
+          f&quot;S(t)≈{empirical_survival(sample, t):.3f}  &quot;
+          f&quot;sum={empirical_cdf(sample, t) + empirical_survival(sample, t):.3f}&quot;)
+</code></pre>
+<p>Notice <code>F(t) + S(t)</code> always comes out to (approximately) 1 — they're complements by construction, the same way "probability of rain" and "probability of no rain" always summed to 1 back in Chapter 4. This crude "count how many are past $t$" estimator is exactly the starting intuition for Kaplan–Meier — the only thing Day 31 adds is a correction for the projects whose exact time you never got to see because they were censored.</p>
+<h2 id="a5-build-a-tiny-empirical-survival-curve">A.5 Build: a tiny empirical survival curve</h2>
+<pre><code class="language-python">def survival_curve(sample, time_grid):
+    return np.array([empirical_survival(sample, t) for t in time_grid])
+
+time_grid = np.linspace(0, 60, 13)
+curve = survival_curve(sample, time_grid)
+
+for t, s in zip(time_grid, curve):
+    bar = &quot;#&quot; * int(s * 40)
+    print(f&quot;t={t:5.1f}  S(t)={s:.3f}  {bar}&quot;)
+</code></pre>
+<p>Run this and watch the curve fall from 1.0 toward 0.0 as time passes — every project eventually triggers a warning in this synthetic world, so survival decays to zero. This bar chart <em>is</em> the shape of a Kaplan–Meier curve, minus the censoring correction Day 31 adds.</p>
+<h2 id="a6-break-it-deliberately">A.6 Break it deliberately</h2>
+<pre><code class="language-python"># A tempting but wrong shortcut: treat the density as if it were a probability.
+window = 0.01
+hits = np.sum(np.abs(warning_times - 11.87) &lt; window)
+density_estimate = (hits / len(warning_times)) / (2 * window)
+print(density_estimate)   # this number can easily exceed 1.0
+</code></pre>
+<p>If this prints something bigger than 1, that's not a bug — a density genuinely can exceed 1 (it's a <em>rate per unit time</em>, and if your unit of time is coarse relative to how fast probability accumulates, the rate number can be large). The mistake would be reporting this number as "the probability of triggering a warning around month 11.87." It isn't one. Only density × width is a probability. Keep this straight now, because Day 31 makes the identical distinction for hazard, and conflating the two is the single most common survival-analysis mistake beginners make.</p>
+<h3 id="interlude-day-a-exit-check">Interlude Day A exit check</h3>
+<p>You should be able to:<br />
+- explain, in one sentence, why the probability of a continuous outcome hitting one exact value is zero;<br />
+- explain what a density is, in terms of "probability per unit width," and why it isn't itself a probability;<br />
+- build an empirical CDF and survival function from a raw sample using nothing but comparisons and <code>.mean()</code>;<br />
+- state, without notes, why $F(t) + S(t) = 1$.</p>
+<hr />
+<h1 id="interlude-day-b-rates-limits-and-integrals">Interlude Day B — Rates, Limits, and Integrals</h1>
+<blockquote>
+<p><strong>Today's central idea:</strong> An integral is a sum, the same way $\sum$ is a sum — just added over infinitely many infinitely thin slices instead of a finite list. Once you see it that way, $H(t) = \int_0^t h(u)\,du$ stops being unfamiliar notation and becomes "add up the hazard rate over every instant from 0 to $t$."</p>
+</blockquote>
+<h2 id="b1-youve-already-used-a-limit-now-we-name-it-properly">B.1 You've already used a limit — now we name it properly</h2>
+<p>Back in Day 0E, you approximated a derivative like this:</p>
+<pre><code class="language-python">def numerical_slope(f, x, h):
+    return (f(x + h) - f(x)) / h
+</code></pre>
+<p>and watched the estimate settle down as <code>h</code> shrank toward zero. That <em>is</em> a limit — you were computing $\lim_{h \to 0} \frac{f(x+h)-f(x)}{h}$ without the formal notation. Chapter 5's hazard function is defined the same way, just wrapped around a conditional probability instead of a plain function:</p>
+<p>$$h(t) = \lim_{\Delta t \to 0} \frac{P(t \le T &lt; t + \Delta t \mid T \ge t)}{\Delta t}$$</p>
+<p>Read it exactly the way you read the derivative: "take the probability of the event landing in a shrinking window just after $t$, given that it hasn't happened yet by $t$; divide by the width of that window; watch what happens as the window shrinks to nothing." $\lim_{\Delta t \to 0}$ means precisely what <code>h</code> shrinking toward <code>0</code> meant in your derivative code.</p>
+<p><strong>Code proof — estimate a hazard numerically, the same way you estimated a derivative numerically:</strong></p>
+<pre><code class="language-python">def numerical_hazard(sample, t, window):
+    at_risk = sample[sample &gt;= t]                 # everyone still event-free at t
+    if len(at_risk) == 0:
+        return np.nan
+    events_in_window = np.sum((at_risk &gt;= t) &amp; (at_risk &lt; t + window))
+    conditional_prob = events_in_window / len(at_risk)
+    return conditional_prob / window
+
+for window in [5.0, 1.0, 0.1, 0.01]:
+    print(f&quot;window={window:&lt;6} hazard estimate at t=10: {numerical_hazard(sample, 10, window):.4f}&quot;)
+</code></pre>
+<p>As <code>window</code> shrinks, this settles toward a stable number — the true instantaneous hazard at $t=10$ — exactly the way your derivative estimate settled toward $2x$ back in Day 0E. Same limiting process, applied to a conditional probability instead of a plain function.</p>
+<h2 id="b2-the-integral-summation-notation-for-infinitely-thin-slices">B.2 The integral: summation notation for infinitely thin slices</h2>
+<p>Recall $\sum_{i=1}^{n} x_i$ from Day 0C — add up a formula over a finite list, indexed by whole numbers. An integral does the same <em>adding-up</em>, but over a continuous stretch of a number line instead of a finite list of items, and it's written $\int$.</p>
+<p>The bridge between the two is a <strong>Riemann sum</strong>: chop the interval into many thin rectangles, add up their areas, and watch the total settle down as the rectangles get thinner.</p>
+<pre><code class="language-python">def area_under(func, a, b, n_slices):
+    xs = np.linspace(a, b, n_slices, endpoint=False)
+    width = (b - a) / n_slices
+    return np.sum(func(xs) * width)     # a literal sum of thin rectangle areas
+
+def constant_hazard(t, lam=0.03):
+    return np.full_like(t, lam)
+
+for n in [10, 100, 10_000, 1_000_000]:
+    approx = area_under(constant_hazard, 0, 12, n)
+    print(f&quot;n_slices={n:&lt;10} approx integral = {approx:.6f}&quot;)
+</code></pre>
+<p>For a constant hazard $\lambda = 0.03$, the true value of $\int_0^{12} \lambda\, dt$ is exactly $\lambda \times 12 = 0.36$, and you should see the approximation converge to that as <code>n_slices</code> grows. This is the entire idea behind $\int$: it's <code>np.sum(values * width)</code> in the limit of infinitely many, infinitely thin slices — the continuous sibling of the $\sum$ you already know.</p>
+<h2 id="b3-why-cumulative-hazard-needs-an-integral-and-hazard-alone-doesnt">B.3 Why cumulative hazard needs an integral, and hazard alone doesn't</h2>
+<p>Chapter 5 defines cumulative hazard as</p>
+<p>$$H(t) = \int_0^t h(u)\, du$$</p>
+<p>which is exactly the pattern in §B.2: add up the instantaneous rate $h(u)$ over every instant from 0 to $t$, in infinitely thin slices. This mirrors something you already did in Chapter 4: an overall risk over a <em>fixed</em> window is built by accumulating a rate; here, instead of one fixed window, you're accumulating continuously across the whole timeline up to $t$.</p>
+<h2 id="b4-closing-the-loop-hazard-cumulative-hazard-and-survival">B.4 Closing the loop: hazard, cumulative hazard, and survival</h2>
+<p>Three quantities, one identity, and you now have the pieces for all of it:</p>
+<p>$$H(t) = -\log S(t) \qquad \Longleftrightarrow \qquad S(t) = \exp[-H(t)]$$</p>
+<p>This uses exactly the exp/log machinery Chapter 4's logistic regression already put in your hands — $\log$ turns a product into a sum (useful because survival to time $t$ is a <em>product</em> of surviving each small interval along the way), and $\exp$ undoes it.</p>
+<p><strong>Code proof — build a survival curve two independent ways and check they agree:</strong></p>
+<pre><code class="language-python">lam = 0.03
+time_grid = np.linspace(0, 60, 13)
+
+# Route 1: the closed-form constant-hazard survival function
+survival_direct = np.exp(-lam * time_grid)
+
+# Route 2: integrate the hazard numerically, then apply S(t) = exp(-H(t))
+def cumulative_hazard_numeric(t, lam, n_slices=10_000):
+    return area_under(lambda u: np.full_like(u, lam), 0, t, n_slices)
+
+H_values = np.array([cumulative_hazard_numeric(t, lam) if t &gt; 0 else 0.0 for t in time_grid])
+survival_via_integral = np.exp(-H_values)
+
+for t, s1, s2 in zip(time_grid, survival_direct, survival_via_integral):
+    print(f&quot;t={t:5.1f}  direct S(t)={s1:.4f}  via integral S(t)={s2:.4f}&quot;)
+</code></pre>
+<p>The two routes should agree to several decimal places. This is the single identity that Chapter 5, Day 31 onward leans on constantly: model the <em>rate</em> (hazard), integrate it, and you get back an <em>absolute probability</em> (survival) — the same "rate → total" logic as converting a speed into a distance travelled.</p>
+<h2 id="b5-build-a-hazard-to-survival-mini-pipeline">B.5 Build: a hazard-to-survival mini pipeline</h2>
+<pre><code class="language-python">def hazard_to_survival(hazard_fn, time_grid, n_slices=5_000):
+    H = np.array([
+        area_under(hazard_fn, 0, t, n_slices) if t &gt; 0 else 0.0
+        for t in time_grid
+    ])
+    return np.exp(-H)
+
+def rising_hazard(t):
+    # A hazard that increases over time — riskier the longer a project runs.
+    return 0.01 + 0.002 * t
+
+time_grid = np.linspace(0, 40, 9)
+survival = hazard_to_survival(rising_hazard, time_grid)
+
+for t, s in zip(time_grid, survival):
+    print(f&quot;t={t:5.1f}  S(t)={s:.4f}&quot;)
+</code></pre>
+<p>Unlike the constant-hazard case, this survival curve falls faster as time goes on, because the risk itself is rising — exactly the kind of hazard shape Chapter 5, Day 33 will teach you to detect and model when the constant-risk assumption fails.</p>
+<h2 id="b6-break-it-deliberately">B.6 Break it deliberately</h2>
+<pre><code class="language-python"># A believable but wrong claim: &quot;the hazard at t=10 is 0.4, so there's a 40% chance
+# of the event happening in the next month.&quot;
+window = 12.0   # a whole year, not an instant
+hazard_at_10 = numerical_hazard(sample, 10, window)
+print(hazard_at_10)
+print(&quot;naive probability guess:&quot;, hazard_at_10 * window)   # can exceed 1
+</code></pre>
+<p>If <code>hazard_at_10 * window</code> comes out above 1, you've just produced an impossible "probability." The bug isn't in the arithmetic — it's in forgetting that $h(t)\Delta t$ is only a good <em>approximation</em> to a probability when $\Delta t$ is small. Stretch the window out and the approximation breaks, the same way a straight-line approximation to a curve breaks if you extend it too far past the point you built it at.</p>
+<h3 id="interlude-day-b-exit-check">Interlude Day B exit check</h3>
+<p>You should be able to:<br />
+- explain a hazard as a limit, in the same terms you used to explain a derivative in Day 0E;<br />
+- explain an integral as "a sum over infinitely thin slices," and connect it to $\sum$ from Day 0C;<br />
+- compute a Riemann-sum approximation of an integral in code and watch it converge as slices get finer;<br />
+- derive a survival curve from a hazard function two independent ways ($\exp(-\lambda t)$ directly, and numerically integrating first) and get matching answers;<br />
+- explain why $h(t) \cdot \Delta t$ stops being a good probability approximation once $\Delta t$ is large.</p>
+<hr />
+<h2 id="interlude-capstone">Interlude Capstone</h2>
+<p>Using <code>rising_hazard</code> from §B.5:</p>
+<ol>
+<li>Compute $S(24)$ two ways — direct numeric integration, and by first tabulating $H(t)$ at a fine grid and reading off $\exp(-H(24))$ — and confirm they match.</li>
+<li>Estimate the density $f(t)$ at $t=20$ by using $f(t) = h(t)\cdot S(t)$, then cross-check it against a direct "windowed probability ÷ width" estimate the way you did in §A.3.</li>
+<li>Deliberately pick a <code>window</code> too large in <code>numerical_hazard</code> (say, 20 months) and show the "hazard × window" arithmetic producing a value the size of a real probability shouldn't reach. Write one sentence explaining why.</li>
+<li>In your own words (no formulas), explain to an imaginary colleague the difference between "the probability a project triggers a warning by month 12" (Chapter 4's question) and "the hazard of triggering a warning at month 12" (Chapter 5's question).</li>
+</ol>
+<p>If you can do all four without reopening this interlude, Chapter 5, Day 31 will read as a continuation of something you already understand, not a new subject.</p>
+<hr />
+<h2 id="glossary-new-symbols-for-this-interlude">Glossary (new symbols for this interlude)</h2>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Name</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$f(t)$</td>
+<td>density</td>
+<td>probability per unit time near $t$; not itself a probability</td>
+</tr>
+<tr>
+<td>$F(t)$</td>
+<td>cumulative distribution function</td>
+<td>$P(T \le t)$</td>
+</tr>
+<tr>
+<td>$S(t)$</td>
+<td>survival function</td>
+<td>$P(T &gt; t) = 1 - F(t)$</td>
+</tr>
+<tr>
+<td>$h(t)$</td>
+<td>hazard</td>
+<td>instantaneous event rate among those still event-free at $t$</td>
+</tr>
+<tr>
+<td>$H(t)$</td>
+<td>cumulative hazard</td>
+<td>$\int_0^t h(u)\,du$; accumulated rate from 0 to $t$</td>
+</tr>
+<tr>
+<td>$\lim_{\Delta t \to 0}$</td>
+<td>limit</td>
+<td>what a quantity settles toward as $\Delta t$ shrinks to nothing — same idea as Day 0E's derivative limit</td>
+</tr>
+<tr>
+<td>$\int_a^b \cdots\, du$</td>
+<td>integral</td>
+<td>a sum over infinitely many, infinitely thin slices between $a$ and $b$ — the continuous sibling of $\sum$</td>
+</tr>
+</tbody>
+</table>
+<h2 id="where-chapter-5-continues">Where Chapter 5 continues</h2>
+<p>Day 30 picks up right where Chapter 4 left off — the censoring, risk-set, and truncation content there is already built from scratch and doesn't need a bridge. Day 31 is where this interlude pays off: §31.1's density, survival, and hazard definitions, and §31.2's $H(t) = -\log S(t)$ identity, are now the exact ideas you just built by hand, wearing their formal notation for the first time.</p>
+        </article>
+    </div>
+
+    <aside id="platform-shell" class="platform-shell" aria-label="Learning tools">
+        <div class="platform-header">
+            <div>
+                <div class="platform-title">Learning Tools</div>
+                <div id="platform-section" class="platform-section">Current section</div>
+            </div>
+            <button id="platform-toggle" class="platform-button" type="button" title="Collapse tools">Tools</button>
+        </div>
+        <div class="platform-body">
+            <section class="platform-group">
+                <label class="platform-row"><input id="progress-complete" type="checkbox"> Mark current section complete</label>
+                <div class="platform-row">
+                    <div class="platform-label">Section notes</div>
+                    <button id="note-new" class="platform-button" type="button">New note</button>
+                </div>
+                <div id="notes-list" class="notes-list"></div>
+            </section>
+            <section class="platform-group">
+                <div class="platform-label">AI Tutor</div>
+                <div class="platform-row">
+                    <button id="tutor-explain" class="platform-button" type="button">Explain differently</button>
+                    <button id="tutor-check" class="platform-button" type="button">Check reasoning</button>
+                </div>
+                <div id="tutor-history" class="platform-history"></div>
+                <textarea id="tutor-question" class="platform-textarea" placeholder="Ask about this section or paste your reasoning"></textarea>
+                <button id="tutor-submit" class="platform-button" type="button">Ask tutor</button>
+                <div class="platform-message" data-service-message="tutor"></div>
+                <div id="tutor-output" class="platform-output"></div>
+            </section>
+            <section class="platform-group">
+                <div class="platform-label">Exercise grading</div>
+                <textarea id="grade-submission" class="platform-textarea" placeholder="Paste your answer, code, or derivation"></textarea>
+                <button id="grade-submit" class="platform-button" type="button">Grade my answer</button>
+                <div class="platform-message" data-service-message="grading"></div>
+                <div id="grade-output" class="platform-output"></div>
+            </section>
+            <section class="platform-group">
+                <div class="platform-label">Narration</div>
+                <button id="tts-submit" class="platform-button" type="button">Listen to this section</button>
+                <div class="platform-message" data-service-message="tts"></div>
+                <div id="tts-output" class="platform-output"></div>
+            </section>
+            <section class="platform-group">
+                <div class="platform-label">Cross-device sync</div>
+                <div class="platform-row">
+                    <button id="sync-push" class="platform-button" type="button">Push</button>
+                    <button id="sync-pull" class="platform-button" type="button">Pull</button>
+                    <button id="status-retry" class="platform-button" type="button">Retry services</button>
+                </div>
+                <div class="platform-message" data-service-message="sync"></div>
+                <div id="sync-output" class="platform-output">Opt-in only. Notes, progress, and tutor history stay local unless you push.</div>
+            </section>
+            <section class="platform-group">
+                <div class="platform-label">Spaced repetition</div>
+                <div class="platform-output">Stretch goal: reminder delivery is not built in this pass.</div>
+            </section>
+        </div>
+    </aside>
+    <div id="note-modal-backdrop" class="modal-backdrop">
+        <div id="note-modal" class="note-modal" role="dialog" aria-modal="true" aria-label="Edit note">
+            <div class="note-modal-header">
+                <input id="note-title" class="note-title-input" type="text" value="Untitled note" aria-label="Note title">
+                <button id="note-close" class="platform-button" type="button">Close</button>
+            </div>
+            <div id="note-quill-toolbar" class="note-toolbar">
+                <span class="ql-formats">
+                    <select class="ql-header">
+                        <option value="1"></option>
+                        <option value="2"></option>
+                        <option selected></option>
+                    </select>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-bold" type="button"></button>
+                    <button class="ql-italic" type="button"></button>
+                    <button class="ql-underline" type="button"></button>
+                    <button class="ql-strike" type="button"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-list" value="ordered" type="button"></button>
+                    <button class="ql-list" value="bullet" type="button"></button>
+                    <button class="ql-blockquote" type="button"></button>
+                    <button class="ql-code-block" type="button"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-link" type="button"></button>
+                    <button class="ql-clean" type="button"></button>
+                </span>
+            </div>
+            <div id="note-editor" class="note-editor" data-placeholder="Write a full note for this section"></div>
+            <div class="note-attachments">
+                <div class="platform-row">
+                    <div class="platform-label">Attachments</div>
+                    <input id="note-attachment-input" class="attachment-input" type="file" multiple>
+                </div>
+                <div id="note-attachments-list" class="attachment-list"></div>
+            </div>
+            <div class="note-modal-footer">
+                <div id="note-modal-status" class="settings-status"></div>
+                <button id="note-save" class="platform-button" type="button">Save note</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        window.KP_PLATFORM = {
+            chapterSlug: "chapter4_5_interlude",
+            serviceStatus: {},
+            statusTimer: null,
+            currentSectionId: null,
+            currentHeading: null,
+            noteQuill: null,
+            quillPromise: null
+        };
+
+        (function platform() {
+            var state = window.KP_PLATFORM;
+            var reasonText = {
+                no_connectivity: "no internet connection",
+                no_api_key: "no API key configured",
+                provider_error: "provider error",
+                disabled: "service disabled"
+            };
+            var featureNames = {
+                tutor: "AI Tutor",
+                grading: "Exercise grading",
+                papers: "Research paper lookup",
+                tts: "Read-aloud narration",
+                sync: "Cross-device sync"
+            };
+
+            function qs(sel) { return document.querySelector(sel); }
+            function qsa(sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); }
+            function sectionKey(sectionId) { return state.chapterSlug + "::" + sectionId; }
+            function loadStylesheet(localHref, cdnHref) {
+                if (document.querySelector("link[href='" + localHref + "'], link[href='" + cdnHref + "']")) return;
+                var link = document.createElement("link");
+                link.rel = "stylesheet";
+                link.href = localHref;
+                link.onerror = function () {
+                    var fallback = document.createElement("link");
+                    fallback.rel = "stylesheet";
+                    fallback.href = cdnHref;
+                    document.head.appendChild(fallback);
+                };
+                document.head.appendChild(link);
+            }
+            function loadScript(localSrc, cdnSrc) {
+                return new Promise(function (resolve, reject) {
+                    if (window.Quill) {
+                        resolve(window.Quill);
+                        return;
+                    }
+                    var script = document.createElement("script");
+                    script.src = localSrc;
+                    script.onload = function () { resolve(window.Quill); };
+                    script.onerror = function () {
+                        var fallback = document.createElement("script");
+                        fallback.src = cdnSrc;
+                        fallback.onload = function () { resolve(window.Quill); };
+                        fallback.onerror = reject;
+                        document.head.appendChild(fallback);
+                    };
+                    document.head.appendChild(script);
+                });
+            }
+            function loadQuill() {
+                if (!state.quillPromise) {
+                    loadStylesheet("../vendor/quill/quill.snow.css", "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css");
+                    state.quillPromise = loadScript("../vendor/quill/quill.js", "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js");
+                }
+                return state.quillPromise;
+            }
+            function displayReason(reason) { return reasonText[reason] || "provider error"; }
+            function disabledMessage(service) {
+                return featureNames[service] + " is not available — " + displayReason((state.serviceStatus[service] || {}).reason) + ".";
+            }
+            function setMessage(id, text) {
+                var el = qs(id);
+                if (el) el.textContent = text || "";
+            }
+            function setAvailable(service, selectors) {
+                var status = state.serviceStatus[service] || { available: false, reason: "no_connectivity" };
+                selectors.forEach(function (selector) {
+                    qsa(selector).forEach(function (el) { el.disabled = !status.available; });
+                });
+                var msg = qs("[data-service-message='" + service + "']");
+                if (msg) msg.textContent = status.available ? "" : disabledMessage(service);
+            }
+            function statusFallback() {
+                ["tutor", "grading", "papers", "tts", "sync"].forEach(function (service) {
+                    state.serviceStatus[service] = { available: false, reason: "no_connectivity" };
+                });
+            }
+            async function fetchJson(url, options, timeoutMs) {
+                var controller = new AbortController();
+                var timer = setTimeout(function () { controller.abort(); }, timeoutMs || 3000);
+                try {
+                    var response = await fetch(url, Object.assign({}, options || {}, { signal: controller.signal }));
+                    var text = await response.text();
+                    var data = text ? JSON.parse(text) : {};
+                    if (!response.ok) {
+                        var error = new Error(data.error || response.statusText);
+                        error.status = response.status;
+                        error.data = data;
+                        throw error;
+                    }
+                    return data;
+                } finally {
+                    clearTimeout(timer);
+                }
+            }
+            async function refreshStatus() {
+                try {
+                    state.serviceStatus = await fetchJson("/api/services/status", {}, 6500);
+                } catch (err) {
+                    statusFallback();
+                }
+                applyStatus();
+                loadPaperCards();
+            }
+            function applyStatus() {
+                setAvailable("tutor", ["#tutor-submit", "#tutor-explain", "#tutor-check"]);
+                setAvailable("grading", ["#grade-submit"]);
+                setAvailable("tts", ["#tts-submit"]);
+                setAvailable("sync", ["#sync-push", "#sync-pull"]);
+                qsa(".paper-card[data-live='pending']").forEach(function (card) {
+                    card.querySelector(".paper-status").textContent = disabledMessage("papers");
+                });
+            }
+
+            function headingText(el) { return el ? el.textContent.replace(/\s+/g, " ").trim() : "Current section"; }
+            function chooseInitialSection() {
+                var headings = qsa(".markdown-body h1[id], .markdown-body h2[id], .markdown-body h3[id]");
+                state.currentHeading = headings[0] || null;
+                state.currentSectionId = state.currentHeading ? state.currentHeading.id : "top";
+                updateSectionUi();
+                if ("IntersectionObserver" in window && headings.length) {
+                    var visible = new Map();
+                    var observer = new IntersectionObserver(function (entries) {
+                        entries.forEach(function (entry) { visible.set(entry.target, entry.isIntersecting); });
+                        var active = headings.find(function (h) {
+                            return h.getBoundingClientRect().top >= 0 && h.getBoundingClientRect().top < window.innerHeight * 0.45;
+                        }) || headings.filter(function (h) { return h.getBoundingClientRect().top < window.innerHeight * 0.45; }).pop();
+                        if (active && active.id !== state.currentSectionId) {
+                            state.currentHeading = active;
+                            state.currentSectionId = active.id;
+                            updateSectionUi();
+                        }
+                    }, { rootMargin: "-10% 0px -65% 0px", threshold: [0, 1] });
+                    headings.forEach(function (h) { observer.observe(h); });
+                }
+            }
+            function getSectionText() {
+                var heading = state.currentHeading;
+                if (!heading) return qs(".markdown-body").textContent.slice(0, 5000);
+                var level = Number(heading.tagName.substring(1));
+                var parts = [headingText(heading)];
+                var node = heading.nextElementSibling;
+                while (node) {
+                    if (/^H[1-3]$/.test(node.tagName) && Number(node.tagName.substring(1)) <= level) break;
+                    parts.push(node.innerText || node.textContent || "");
+                    node = node.nextElementSibling;
+                }
+                return parts.join("\n").replace(/\n{3,}/g, "\n\n").slice(0, 9000);
+            }
+            function updateSectionUi() {
+                var id = state.currentSectionId || "top";
+                qs("#platform-section").textContent = headingText(state.currentHeading);
+                loadNote(id);
+                loadProgress(id);
+                loadTutorHistory(id);
+                setMessage("#grade-output", "");
+                setMessage("#tts-output", "");
+            }
+
+            async function loadNote(sectionId) {
+                var list = qs("#notes-list");
+                if (!list) return;
+                list.innerHTML = '<div class="platform-output">Loading notes...</div>';
+                try {
+                    var data = await fetchJson("/api/notes?chapter_slug=" + encodeURIComponent(state.chapterSlug) + "&section_id=" + encodeURIComponent(sectionId), {}, 1200);
+                    renderNotesList(data.notes || []);
+                } catch (err) {
+                    var localNotes = JSON.parse(localStorage.getItem("kp-notes::" + sectionKey(sectionId)) || "[]");
+                    renderNotesList(localNotes);
+                }
+            }
+            function stripHtml(html) {
+                var div = document.createElement("div");
+                div.innerHTML = html || "";
+                return div.textContent || div.innerText || "";
+            }
+            function renderNotesList(notes) {
+                var list = qs("#notes-list");
+                list.innerHTML = "";
+                if (!notes.length) {
+                    list.innerHTML = '<div class="platform-output">No notes for this section yet.</div>';
+                    return;
+                }
+                notes.forEach(function (note) {
+                    var button = document.createElement("button");
+                    button.type = "button";
+                    button.className = "note-link";
+                    button.dataset.noteId = note.id || "";
+                    var preview = stripHtml(note.preview || note.body || "").slice(0, 90);
+                    button.innerHTML = escapeHtml(note.title || "Untitled note") + (preview ? "<small>" + escapeHtml(preview) + "</small>" : "");
+                    button.addEventListener("click", function () { openNote(note.id); });
+                    list.appendChild(button);
+                });
+            }
+            async function ensureNoteEditor() {
+                var editor = qs("#note-editor");
+                if (state.noteQuill) return state.noteQuill;
+                editor.removeAttribute("contenteditable");
+                try {
+                    var QuillLib = await loadQuill();
+                    if (!QuillLib) throw new Error("Quill unavailable");
+                    state.noteQuill = new QuillLib("#note-editor", {
+                        theme: "snow",
+                        placeholder: "Write a full note for this section",
+                        modules: {
+                            toolbar: "#note-quill-toolbar",
+                            history: { delay: 800, maxStack: 150, userOnly: true }
+                        }
+                    });
+                    qs("#note-quill-toolbar").style.display = "";
+                    qs("#note-modal-status").textContent = "";
+                    return state.noteQuill;
+                } catch (err) {
+                    qs("#note-quill-toolbar").style.display = "none";
+                    editor.setAttribute("contenteditable", "true");
+                    qs("#note-modal-status").textContent = "Quill editor is not available; using basic editor.";
+                    return null;
+                }
+            }
+            function setEditorHtml(html) {
+                var editor = qs("#note-editor");
+                if (state.noteQuill) {
+                    state.noteQuill.clipboard.dangerouslyPasteHTML(html || "");
+                } else {
+                    editor.innerHTML = html || "";
+                }
+            }
+            function getEditorHtml() {
+                if (state.noteQuill) return state.noteQuill.root.innerHTML;
+                return qs("#note-editor").innerHTML;
+            }
+            function formatBytes(bytes) {
+                var value = Number(bytes || 0);
+                if (value < 1024) return value + " B";
+                if (value < 1024 * 1024) return (value / 1024).toFixed(1) + " KB";
+                return (value / (1024 * 1024)).toFixed(1) + " MB";
+            }
+            function renderAttachments(attachments) {
+                var list = qs("#note-attachments-list");
+                if (!list) return;
+                list.innerHTML = "";
+                if (!attachments.length) {
+                    list.innerHTML = '<div class="platform-output">No attachments yet.</div>';
+                    return;
+                }
+                attachments.forEach(function (item) {
+                    var row = document.createElement("div");
+                    row.className = "attachment-item";
+                    var preview = item.is_image
+                        ? '<img src="' + encodeURI(item.url) + '" alt="">'
+                        : escapeHtml((item.original_name || "file").split(".").pop().toUpperCase().slice(0, 6) || "FILE");
+                    row.innerHTML =
+                        '<div class="attachment-preview">' + preview + '</div>' +
+                        '<div class="attachment-meta">' +
+                            '<a href="' + encodeURI(item.url) + '" target="_blank" rel="noopener">' + escapeHtml(item.original_name || "Attachment") + '</a>' +
+                            '<small>' + escapeHtml(item.content_type || "file") + " · " + formatBytes(item.size_bytes) + '</small>' +
+                        '</div>';
+                    list.appendChild(row);
+                });
+            }
+            function setAttachmentMessage(message) {
+                var list = qs("#note-attachments-list");
+                if (list) list.innerHTML = '<div class="platform-output">' + escapeHtml(message) + '</div>';
+            }
+            async function loadAttachments(noteId) {
+                if (!noteId || String(noteId).indexOf("local-") === 0) {
+                    setAttachmentMessage("Save this note to the local server before attaching files.");
+                    return;
+                }
+                setAttachmentMessage("Loading attachments...");
+                try {
+                    var data = await fetchJson("/api/notes/" + encodeURIComponent(noteId) + "/attachments", {}, 2500);
+                    renderAttachments(data.attachments || []);
+                } catch (err) {
+                    setAttachmentMessage("Attachments are unavailable because the local server could not be reached.");
+                }
+            }
+            async function uploadAttachments() {
+                var input = qs("#note-attachment-input");
+                var files = Array.prototype.slice.call((input && input.files) || []);
+                if (!files.length) return;
+                var modal = qs("#note-modal");
+                var noteId = modal.dataset.noteId || "";
+                if (!noteId || noteId.indexOf("local-") === 0) {
+                    noteId = await saveNoteModal();
+                }
+                if (!noteId || String(noteId).indexOf("local-") === 0) {
+                    qs("#note-modal-status").textContent = "Attachments require a saved SQLite note. Start the local server and try again.";
+                    input.value = "";
+                    return;
+                }
+                qs("#note-modal-status").textContent = "Uploading attachments...";
+                try {
+                    for (var i = 0; i < files.length; i += 1) {
+                        var form = new FormData();
+                        form.append("file", files[i], files[i].name);
+                        await fetchJson("/api/notes/" + encodeURIComponent(noteId) + "/attachments", {
+                            method: "POST",
+                            body: form
+                        }, 60000);
+                    }
+                    input.value = "";
+                    await loadAttachments(noteId);
+                    loadNote(state.currentSectionId || "top");
+                    qs("#note-modal-status").textContent = "Attachments uploaded.";
+                } catch (err) {
+                    qs("#note-modal-status").textContent = err.status === 413 ? "Attachment is too large. Maximum size is 25 MB per file." : "Could not upload attachment.";
+                }
+            }
+            async function openNote(noteId) {
+                qs("#note-modal-backdrop").classList.add("open");
+                qs("#note-modal-status").textContent = "";
+                await ensureNoteEditor();
+                if (!noteId) {
+                    qs("#note-modal").dataset.noteId = "";
+                    qs("#note-title").value = "Untitled note";
+                    setEditorHtml("");
+                    loadAttachments(null);
+                    if (state.noteQuill) state.noteQuill.focus();
+                    else qs("#note-editor").focus();
+                    return;
+                }
+                try {
+                    var data = await fetchJson("/api/notes/" + encodeURIComponent(noteId), {}, 1500);
+                    var note = data.note;
+                    qs("#note-modal").dataset.noteId = note.id;
+                    qs("#note-title").value = note.title || "Untitled note";
+                    setEditorHtml(note.body || "");
+                    loadAttachments(note.id);
+                    if (state.noteQuill) state.noteQuill.focus();
+                    else qs("#note-editor").focus();
+                } catch (err) {
+                    qs("#note-modal-status").textContent = "Could not load this note.";
+                }
+            }
+            function closeNoteModal() {
+                qs("#note-modal-backdrop").classList.remove("open");
+            }
+            function commandNote(action, value) {
+                document.execCommand(action, false, value || null);
+                qs("#note-editor").focus();
+            }
+            async function saveNoteModal() {
+                var sectionId = state.currentSectionId || "top";
+                var modal = qs("#note-modal");
+                var noteId = modal.dataset.noteId;
+                var title = qs("#note-title").value.trim() || "Untitled note";
+                var body = getEditorHtml();
+                var payload = { chapter_slug: state.chapterSlug, section_id: sectionId, title: title, body: body };
+                qs("#note-modal-status").textContent = "Saving...";
+                try {
+                    var url = noteId ? "/api/notes/" + encodeURIComponent(noteId) : "/api/notes";
+                    var data = await fetchJson(url, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    }, 3000);
+                    if (!noteId && data.id) {
+                        modal.dataset.noteId = data.id;
+                        noteId = data.id;
+                    }
+                    qs("#note-modal-status").textContent = "Saved.";
+                    loadNote(sectionId);
+                    loadAttachments(noteId);
+                    return noteId;
+                } catch (err) {
+                    var key = "kp-notes::" + sectionKey(sectionId);
+                    var notes = JSON.parse(localStorage.getItem(key) || "[]");
+                    var localId = noteId || "local-" + Date.now();
+                    var existing = notes.find(function (n) { return String(n.id) === String(localId); });
+                    if (existing) {
+                        existing.title = title;
+                        existing.body = body;
+                        existing.preview = body;
+                    } else {
+                        notes.unshift({ id: localId, title: title, body: body, preview: body });
+                    }
+                    localStorage.setItem(key, JSON.stringify(notes));
+                    modal.dataset.noteId = localId;
+                    qs("#note-modal-status").textContent = "Saved locally in this browser. Start the server to sync to SQLite.";
+                    renderNotesList(notes);
+                    loadAttachments(localId);
+                    return localId;
+                }
+            }
+            async function loadProgress(sectionId) {
+                var checkbox = qs("#progress-complete");
+                var localKey = "kp-progress::" + sectionKey(sectionId);
+                try {
+                    var data = await fetchJson("/api/progress?chapter_slug=" + encodeURIComponent(state.chapterSlug) + "&section_id=" + encodeURIComponent(sectionId), {}, 1200);
+                    checkbox.checked = Boolean(data.completed);
+                } catch (err) {
+                    checkbox.checked = localStorage.getItem(localKey) === "1";
+                }
+            }
+            function saveProgress() {
+                var sectionId = state.currentSectionId || "top";
+                var completed = qs("#progress-complete").checked;
+                localStorage.setItem("kp-progress::" + sectionKey(sectionId), completed ? "1" : "0");
+                fetchJson("/api/progress", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ chapter_slug: state.chapterSlug, section_id: sectionId, completed: completed })
+                }, 1500).catch(function () {});
+            }
+
+            function renderHistory(messages) {
+                var history = qs("#tutor-history");
+                history.innerHTML = "";
+                messages.forEach(function (msg) {
+                    var div = document.createElement("div");
+                    div.className = "platform-turn";
+                    div.innerHTML = "<strong>" + (msg.role === "assistant" ? "Tutor" : "You") + ":</strong> " + escapeHtml(msg.body);
+                    history.appendChild(div);
+                });
+                history.scrollTop = history.scrollHeight;
+            }
+            async function loadTutorHistory(sectionId) {
+                try {
+                    var data = await fetchJson("/api/tutor/history?chapter_slug=" + encodeURIComponent(state.chapterSlug) + "&section_id=" + encodeURIComponent(sectionId), {}, 1400);
+                    renderHistory(data.messages || []);
+                } catch (err) {
+                    renderHistory([]);
+                }
+            }
+            async function askTutor(mode) {
+                if (!(state.serviceStatus.tutor || {}).available) return;
+                var input = qs("#tutor-question");
+                var question = input.value.trim();
+                if (!question && mode === "explain") question = "Explain this section differently, with a concrete example.";
+                if (!question) return;
+                setMessage("#tutor-output", "Thinking...");
+                var payload = {
+                    chapter_slug: state.chapterSlug,
+                    section_id: state.currentSectionId || "top",
+                    question: question,
+                    mode: mode || "ask",
+                    section_text: getSectionText()
+                };
+                try {
+                    var response = await fetch("/api/tutor/ask", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error("Tutor request failed");
+                    var reader = response.body.getReader();
+                    var decoder = new TextDecoder();
+                    var text = "";
+                    while (true) {
+                        var chunk = await reader.read();
+                        if (chunk.done) break;
+                        text += decoder.decode(chunk.value, { stream: true });
+                        setMessage("#tutor-output", text);
+                    }
+                    input.value = "";
+                    loadTutorHistory(payload.section_id);
+                } catch (err) {
+                    setMessage("#tutor-output", disabledMessage("tutor"));
+                }
+            }
+            async function gradeSubmission() {
+                if (!(state.serviceStatus.grading || {}).available) return;
+                var submission = qs("#grade-submission").value.trim();
+                if (!submission) return;
+                setMessage("#grade-output", "Grading...");
+                try {
+                    var data = await fetchJson("/api/exercises/grade", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            chapter_slug: state.chapterSlug,
+                            section_id: state.currentSectionId || "top",
+                            submission: submission,
+                            exercise_text: getSectionText()
+                        })
+                    }, 30000);
+                    setMessage("#grade-output", data.feedback || "");
+                } catch (err) {
+                    setMessage("#grade-output", disabledMessage("grading"));
+                }
+            }
+            async function playTts() {
+                if (!(state.serviceStatus.tts || {}).available) return;
+                setMessage("#tts-output", "Preparing audio...");
+                try {
+                    var response = await fetch("/api/tts", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            chapter_slug: state.chapterSlug,
+                            section_id: state.currentSectionId || "top",
+                            section_text: getSectionText()
+                        })
+                    });
+                    if (!response.ok) throw new Error("TTS request failed");
+                    var blob = await response.blob();
+                    var audio = new Audio(URL.createObjectURL(blob));
+                    audio.play();
+                    setMessage("#tts-output", "Playing this section.");
+                } catch (err) {
+                    setMessage("#tts-output", disabledMessage("tts"));
+                }
+            }
+            function slugify(text) {
+                return text.toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 90) || "paper";
+            }
+            function createPaperCards() {
+                if (state.chapterSlug === "settings") return;
+                qsa(".markdown-body h2, .markdown-body h3").forEach(function (heading) {
+                    if (!/Research paper/i.test(heading.textContent) || heading.dataset.paperCard) return;
+                    heading.dataset.paperCard = "1";
+                    var card = document.createElement("div");
+                    card.className = "paper-card";
+                    card.dataset.key = slugify(heading.textContent);
+                    card.dataset.query = heading.textContent.replace(/Research papers?:?/i, "").trim() || heading.textContent.trim();
+                    card.dataset.live = "pending";
+                    card.innerHTML = '<div class="paper-status">Research paper lookup is loading.</div>';
+                    heading.insertAdjacentElement("afterend", card);
+                });
+            }
+            async function loadPaperCards() {
+                createPaperCards();
+                qsa(".paper-card").forEach(async function (card) {
+                    var key = card.dataset.key;
+                    var query = card.dataset.query;
+                    try {
+                        var data = await fetchJson("/api/papers/" + encodeURIComponent(key) + "?query=" + encodeURIComponent(query), {}, 4500);
+                        var meta = data.metadata || {};
+                        card.dataset.live = "loaded";
+                        card.innerHTML = '<div class="paper-meta">' + (data.cached ? "cached — available offline" : "live scholarly lookup") + '</div>' +
+                            '<h4>' + escapeHtml(meta.title || query || "Research paper") + '</h4>' +
+                            '<p>' + escapeHtml([meta.authors, meta.year].filter(Boolean).join(" · ")) + '</p>' +
+                            '<p>' + escapeHtml(meta.abstract || "No abstract returned by the provider.") + '</p>' +
+                            (meta.url ? '<p><a href="' + meta.url + '" target="_blank" rel="noopener">Open paper</a></p>' : "");
+                    } catch (err) {
+                        card.dataset.live = "pending";
+                        card.innerHTML = '<div class="paper-status">' + disabledMessage("papers") + '</div><button class="platform-button paper-retry" type="button">Retry</button>';
+                        var retry = card.querySelector(".paper-retry");
+                        retry.addEventListener("click", function () { refreshStatus(); });
+                    }
+                });
+            }
+            async function sync(direction) {
+                var service = state.serviceStatus.sync || {};
+                if (!service.available) return;
+                setMessage("#sync-output", direction === "push" ? "Pushing..." : "Pulling...");
+                try {
+                    var data = await fetchJson("/api/sync/" + direction, { method: "POST" }, 15000);
+                    setMessage("#sync-output", data.message || "Sync complete.");
+                } catch (err) {
+                    setMessage("#sync-output", disabledMessage("sync"));
+                }
+            }
+            function escapeHtml(value) {
+                return String(value || "").replace(/[&<>"']/g, function (ch) {
+                    return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch];
+                });
+            }
+            function bindUi() {
+                qs("#platform-toggle").addEventListener("click", function () {
+                    qs("#platform-shell").classList.toggle("collapsed");
+                });
+                qs("#status-retry").addEventListener("click", refreshStatus);
+                qs("#note-new").addEventListener("click", function () { openNote(null); });
+                qs("#note-close").addEventListener("click", closeNoteModal);
+                qs("#note-save").addEventListener("click", saveNoteModal);
+                qs("#note-attachment-input").addEventListener("change", uploadAttachments);
+                qs("#note-modal-backdrop").addEventListener("click", function (event) {
+                    if (event.target.id === "note-modal-backdrop") closeNoteModal();
+                });
+                qs("#progress-complete").addEventListener("change", saveProgress);
+                qs("#tutor-submit").addEventListener("click", function () { askTutor("ask"); });
+                qs("#tutor-explain").addEventListener("click", function () { askTutor("explain"); });
+                qs("#tutor-check").addEventListener("click", function () { askTutor("check"); });
+                qs("#grade-submit").addEventListener("click", gradeSubmission);
+                qs("#tts-submit").addEventListener("click", playTts);
+                qs("#sync-push").addEventListener("click", function () { sync("push"); });
+                qs("#sync-pull").addEventListener("click", function () { sync("pull"); });
+            }
+            document.addEventListener("DOMContentLoaded", function () {
+                bindUi();
+                chooseInitialSection();
+                createPaperCards();
+                statusFallback();
+                applyStatus();
+                refreshStatus();
+                state.statusTimer = setInterval(refreshStatus, 60000);
+            });
+        })();
+    </script>
+
+
+    <!-- Math: local vendor copy preferred, CDN used only as a fallback when online. -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] }
+        };
+        (function loadMathJax() {
+            var local = document.createElement('script');
+            local.src = '../vendor/mathjax/tex-mml-chtml.js';
+            local.async = true;
+            local.onerror = function () {
+                var cdn = document.createElement('script');
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+                cdn.async = true;
+                document.head.appendChild(cdn);
+            };
+            document.head.appendChild(local);
+        })();
+    </script>
+
+    <!-- Diagrams: local vendor copy preferred, CDN used only as a fallback when online.
+         If neither loads (fully offline, no vendor file), the labeled diagram-source
+         panels above remain readable as plain text. -->
+    <script>
+        (function loadMermaid() {
+            function init(mermaid) {
+                mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+                document.querySelectorAll('.diagram-panel').forEach(function (panel) {
+                    var sourceEl = panel.querySelector('.mermaid-source');
+                    if (!sourceEl) return;
+                    var container = document.createElement('div');
+                    container.className = 'mermaid';
+                    container.textContent = sourceEl.textContent;
+                    panel.replaceChild(container, sourceEl);
+                });
+                mermaid.run();
+            }
+
+            var local = document.createElement('script');
+            local.src = '../vendor/mermaid.min.js';
+            local.onload = function () { init(window.mermaid); };
+            local.onerror = function () {
+                var cdn = document.createElement('script');
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+                cdn.onload = function () { init(window.mermaid); };
+                document.head.appendChild(cdn);
+            };
+            document.head.appendChild(local);
+        })();
+    </script>
+</body>
+</html>

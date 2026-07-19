@@ -1,0 +1,7 @@
+config.yaml
+config.json
+learning_platform.db
+site/static/audio_cache/
+site/static/note_attachments/
+__pycache__/
+*.pyc

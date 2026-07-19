@@ -1,0 +1,1914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 0 — From Nothing to Ready</title>
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --panel: #151d30;
+            --border: #223150;
+            --text: #f1f5f9;
+            --text-muted: #cbd5e1;
+            --accent: #22d3ee;
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; overflow-x: hidden; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        code, pre, .mono {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        }
+        #content {
+            width: 100%;
+            max-width: 56rem;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+        nav.chapters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        nav.chapters a {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+        nav.chapters a:hover { border-color: rgba(34, 211, 238, 0.4); }
+        nav.chapters a.active {
+            color: var(--accent);
+            background: rgba(21, 29, 48, 0.8);
+            border-color: rgba(34, 211, 238, 0.4);
+        }
+        .markdown-body h1 { font-size: 2.25rem; font-weight: 800; color: #fff; margin: 0.5rem 0 1.5rem; }
+        .markdown-body h2 { font-size: 1.5rem; font-weight: 700; color: #fff; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin: 2.5rem 0 1rem; }
+        .markdown-body h3 { font-size: 1.25rem; font-weight: 600; color: #fff; margin: 2rem 0 0.75rem; }
+        .markdown-body h4 { font-size: 1.1rem; font-weight: 600; color: #fff; margin: 1.5rem 0 0.5rem; }
+        .markdown-body p { color: var(--text-muted); margin: 0 0 1rem; }
+        .markdown-body ul, .markdown-body ol { color: var(--text-muted); margin: 0 0 1rem; padding-left: 1.5rem; }
+        .markdown-body li { margin-bottom: 0.25rem; }
+        .markdown-body blockquote {
+            border-left: 4px solid var(--accent);
+            padding: 0.5rem 1rem;
+            font-style: italic;
+            background: rgba(34, 211, 238, 0.05);
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 1rem 0;
+        }
+        .markdown-body a { color: var(--accent); text-decoration: underline; }
+        .markdown-body a:hover { color: #67e8f9; }
+        .markdown-body :not(pre) > code {
+            font-size: 0.875rem;
+            color: #67e8f9;
+            background: var(--panel);
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+        }
+        .markdown-body pre {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+        .markdown-body pre code {
+            background: transparent;
+            padding: 0;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+        }
+        .markdown-body table { width: 100%; font-size: 0.875rem; border-collapse: collapse; margin: 1.5rem 0; }
+        .markdown-body th, .markdown-body td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: left; }
+        .markdown-body th { background: var(--panel); color: #fff; font-weight: 600; }
+        .markdown-body td { color: var(--text-muted); }
+        .markdown-body hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+        /* Mermaid diagram panel: readable offline as labeled source; mermaid.js
+           (if vendored) replaces the <pre> contents with a rendered <svg>. */
+        .diagram-panel {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+        .diagram-panel__label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: rgba(34, 211, 238, 0.08);
+            padding: 0.4rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .diagram-panel .mermaid {
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+        }
+        .diagram-panel pre.mermaid-source {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+            padding: 1rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+        }
+
+        .platform-shell {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            width: min(25rem, calc(100vw - 2rem));
+            max-height: calc(100vh - 2rem);
+            display: flex;
+            flex-direction: column;
+            background: rgba(12, 18, 30, 0.96);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            z-index: 50;
+        }
+        .platform-shell.collapsed { width: auto; }
+        .platform-shell.collapsed .platform-body { display: none; }
+        .platform-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.9);
+        }
+        .platform-title { font-size: 0.85rem; font-weight: 700; color: #fff; }
+        .platform-section { font-size: 0.72rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .platform-body { overflow-y: auto; padding: 0.85rem; }
+        .platform-group { border-top: 1px solid var(--border); padding-top: 0.85rem; margin-top: 0.85rem; }
+        .platform-group:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+        .platform-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+        .platform-label { display: block; margin-bottom: 0.35rem; font-size: 0.72rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.04em; }
+        .platform-button {
+            border: 1px solid rgba(34, 211, 238, 0.45);
+            background: rgba(34, 211, 238, 0.08);
+            color: var(--accent);
+            border-radius: 0.35rem;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.78rem;
+            font-weight: 650;
+            cursor: pointer;
+        }
+        .platform-button:hover:not(:disabled) { background: rgba(34, 211, 238, 0.14); }
+        .platform-button:disabled {
+            cursor: not-allowed;
+            color: #94a3b8;
+            border-color: #334155;
+            background: rgba(148, 163, 184, 0.08);
+        }
+        .platform-textarea {
+            width: 100%;
+            min-height: 4.5rem;
+            resize: vertical;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.55rem;
+            font: inherit;
+            font-size: 0.85rem;
+        }
+        .platform-message {
+            margin-top: 0.45rem;
+            color: #fbbf24;
+            font-size: 0.78rem;
+        }
+        .platform-output {
+            margin-top: 0.55rem;
+            white-space: pre-wrap;
+            color: var(--text-muted);
+            font-size: 0.84rem;
+        }
+        .platform-history {
+            max-height: 12rem;
+            overflow: auto;
+            display: grid;
+            gap: 0.45rem;
+            margin: 0.55rem 0;
+        }
+        .platform-turn {
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            padding: 0.45rem 0.55rem;
+            background: rgba(21, 29, 48, 0.55);
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+        .platform-turn strong { color: #fff; }
+        .paper-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 0.8rem;
+            margin: 1rem 0;
+            background: rgba(21, 29, 48, 0.55);
+        }
+        .paper-card h4 { margin: 0 0 0.3rem; font-size: 1rem; }
+        .paper-card p { margin: 0.35rem 0; font-size: 0.9rem; }
+        .paper-card .paper-meta { color: #93c5fd; font-size: 0.82rem; }
+        .paper-card .paper-status { color: #fbbf24; font-size: 0.8rem; }
+        .settings-grid {
+            display: grid;
+            gap: 1rem;
+        }
+        .settings-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: rgba(21, 29, 48, 0.55);
+            padding: 1rem;
+        }
+        .settings-card h2 {
+            margin-top: 0;
+        }
+        .settings-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .settings-field {
+            display: grid;
+            gap: 0.25rem;
+        }
+        .settings-field.full {
+            grid-column: 1 / -1;
+        }
+        .settings-field label,
+        .settings-check {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .settings-field input,
+        .settings-field select {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.5rem;
+            font: inherit;
+        }
+        .settings-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .settings-status {
+            color: #fbbf24;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        .settings-file-viewer {
+            margin-top: 1rem;
+            display: grid;
+            gap: 1rem;
+        }
+        .settings-file-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: rgba(21, 29, 48, 0.55);
+            padding: 1rem;
+        }
+        .settings-file-card h2 {
+            margin: 0 0 0.35rem;
+        }
+        .settings-file-card pre {
+            max-height: 26rem;
+            overflow: auto;
+            margin: 0.75rem 0 0;
+        }
+        .settings-file-meta {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .notes-list {
+            display: grid;
+            gap: 0.35rem;
+            margin-top: 0.55rem;
+        }
+        .note-link {
+            display: block;
+            width: 100%;
+            text-align: left;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: rgba(21, 29, 48, 0.5);
+            color: var(--accent);
+            padding: 0.45rem 0.55rem;
+            cursor: pointer;
+            font: inherit;
+        }
+        .note-link:hover { border-color: rgba(34, 211, 238, 0.5); }
+        .note-link small {
+            display: block;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.68);
+            z-index: 100;
+        }
+        .modal-backdrop.open { display: flex; }
+        .note-modal {
+            width: min(58rem, 100%);
+            max-height: min(46rem, calc(100vh - 2rem));
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: #0b0f19;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
+            overflow: hidden;
+        }
+        .note-modal-header,
+        .note-modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.9);
+        }
+        .note-modal-footer {
+            border-top: 1px solid var(--border);
+            border-bottom: 0;
+        }
+        .note-title-input {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.55rem;
+            font: inherit;
+            font-weight: 700;
+        }
+        .note-toolbar,
+        .note-modal .ql-toolbar.ql-snow {
+            border: 0;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.45);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-picker,
+        .note-modal .ql-toolbar.ql-snow button {
+            color: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-stroke {
+            stroke: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-fill {
+            fill: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-picker-options {
+            background: #0b0f19;
+            border-color: var(--border);
+        }
+        .note-modal .ql-container.ql-snow {
+            border: 0;
+            font: inherit;
+        }
+        .note-editor {
+            min-height: 18rem;
+            flex: 1 1 auto;
+            overflow: auto;
+            color: var(--text);
+            background: #080c14;
+            outline: none;
+        }
+        .note-editor .ql-editor,
+        .note-editor[contenteditable="true"] {
+            min-height: 18rem;
+            color: var(--text);
+            font-size: 1rem;
+            line-height: 1.6;
+            padding: 1rem;
+        }
+        .note-editor .ql-editor.ql-blank::before {
+            color: #64748b;
+            font-style: normal;
+        }
+        .note-editor:empty::before {
+            content: attr(data-placeholder);
+            color: #64748b;
+        }
+        .note-attachments {
+            border-top: 1px solid var(--border);
+            background: rgba(8, 12, 20, 0.95);
+            padding: 0.75rem;
+            max-height: 11rem;
+            overflow: auto;
+        }
+        .attachment-input {
+            max-width: 22rem;
+            color: var(--text-muted);
+            font: inherit;
+        }
+        .attachment-list {
+            display: grid;
+            gap: 0.5rem;
+            margin-top: 0.65rem;
+        }
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: rgba(21, 29, 48, 0.45);
+            padding: 0.5rem;
+        }
+        .attachment-preview {
+            width: 3.5rem;
+            height: 3.5rem;
+            flex: 0 0 3.5rem;
+            display: grid;
+            place-items: center;
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text-muted);
+            overflow: hidden;
+            font-size: 0.78rem;
+        }
+        .attachment-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .attachment-meta {
+            min-width: 0;
+        }
+        .attachment-meta a {
+            display: block;
+            color: var(--accent);
+            overflow-wrap: anywhere;
+        }
+        .attachment-meta small {
+            color: var(--text-muted);
+        }
+        @media (min-width: 72.01rem) {
+            body { padding-right: 27rem; }
+        }
+        @media (max-width: 72rem) {
+            .platform-shell { position: static; width: auto; max-height: none; margin: 0 1rem 1rem; }
+            .platform-shell.collapsed .platform-body { display: none; }
+        }
+
+    </style>
+</head>
+<body>
+    <div id="content">
+        <nav class="chapters">
+            <a href="chapter0.html" class="active">Ch. 0</a>
+            <a href="level_0_orientation.html" class="">Level 0 Orientation</a>
+            <a href="chapter1.html" class="">Ch. 1</a>
+            <a href="chapter2.html" class="">Ch. 2</a>
+            <a href="chapter3.html" class="">Ch. 3</a>
+            <a href="chapter4.html" class="">Ch. 4</a>
+            <a href="chapter4_5_interlude.html" class="">Ch. 4.5 Interlude</a>
+            <a href="chapter5.html" class="">Ch. 5</a>
+            <a href="chapter6.html" class="">Ch. 6</a>
+            <a href="settings.html" class="">Settings</a>
+        </nav>
+        <article class="markdown-body">
+<h1 id="chapter-0-from-nothing-to-ready">Chapter 0 — From Nothing to Ready</h1>
+<h2 id="level-0-base-camp-five-short-days-before-the-mhp-cost-estimator-begins">Level 0 Base Camp: five short days before the MHP Cost Estimator begins</h2>
+<blockquote>
+<p><strong>Central promise.</strong> By the end of this chapter, a summation sign will not make you flinch, a NumPy shape error will feel like a solvable puzzle instead of a personal insult, and the sentence "take the derivative of the squared error with respect to the slope" will sound like an instruction you could actually follow. You will not yet know any machine learning. You will know enough Python, algebra, statistics, and calculus that Chapter 1 reads like a hard but fair climb, not a cliff.</p>
+</blockquote>
+<p>This chapter exists because Chapter 1 does not slow down for you. By its second day it is talking about vectors, matrices, and tensors. By its fifth day it is deriving a matrix gradient and proving a matrix is positive semidefinite. That is exactly as it should be — this book is aiming you at research-level regression, causal inference, and survival analysis by Chapter 6, and there is no version of that destination that skips the math.</p>
+<p>So we are going to spend five days building the floor you'll stand on. Same rules as every other chapter in this book: no black boxes, code proves every claim, you build something small each day, you break it on purpose, and you don't move on until the exit check passes.</p>
+<p>If you already know some of this — if <code>for</code> loops and <code>numpy</code> arrays are old friends — skim fast, but still run every code block. Muscle memory matters more than novelty here.</p>
+<hr />
+<h2 id="the-pedagogical-contract-same-one-chapter-1-uses">The pedagogical contract (same one Chapter 1 uses)</h2>
+<ol>
+<li><strong>One central concept per day.</strong></li>
+<li><strong>No mathematical hand-waving.</strong> Every symbol gets unpacked and connected to a number you can see.</li>
+<li><strong>Code as proof.</strong> If a rule is true, you will watch Python confirm it.</li>
+<li><strong>Build, break, rebuild.</strong> Each day adds one working piece to a tiny toolkit; each day you also break something on purpose.</li>
+<li><strong>No copy-pasting.</strong> Type it. Your fingers need to learn this as much as your eyes do.</li>
+</ol>
+<h2 id="level-0-learning-outcomes">Level 0 learning outcomes</h2>
+<p>At the end of five days, you should be able to:</p>
+<ul>
+<li>write and reason about Python functions, loops, comprehensions, dictionaries, and a basic class, without looking up syntax for the basics;</li>
+<li>create, index, slice, reshape, and broadcast NumPy arrays, and explain <em>why</em> broadcasting did what it did instead of guessing;</li>
+<li>compute a dot product by hand, by loop, and with <code>@</code>, and know they are the same operation at three levels of abstraction;</li>
+<li>read and write summation notation ($\sum$), and translate between a formula and a line of code in either direction;</li>
+<li>compute a mean, variance, standard deviation, covariance, and correlation coefficient from raw definitions — not from a library you don't understand yet;</li>
+<li>compute a derivative and a partial derivative of a simple function, both by the limit definition and by rule, and explain what "gradient" means in one sentence;</li>
+<li>read a Python traceback methodically instead of panicking at it; and</li>
+<li>set up an isolated Python environment and generate the KP datasets this book runs on.</li>
+</ul>
+<h2 id="the-five-day-route">The five-day route</h2>
+<div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart TD
+    D0["Day 0A: Python you actually need"] --> D0B["Day 0B: NumPy, shapes, and the dot product"]
+    D0B --> D0C["Day 0C: Algebra and summation notation"]
+    D0C --> D0D["Day 0D: Statistics from raw definitions"]
+    D0D --> D0E["Day 0E: Slope, derivatives, and surviving errors"]
+</pre></div>
+
+<h3 id="minimal-software-setup">Minimal software setup</h3>
+<p>Same environment the rest of the book uses. If you already did this while reading the orientation chapter, skip ahead.</p>
+<pre><code class="language-bash">python3 -m venv .venv
+source .venv/bin/activate        # Windows PowerShell: .venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install numpy matplotlib
+</code></pre>
+<p>Keep a scratch file — <code>level0_notes.py</code> or a notebook — and never delete a failed experiment. A wrong answer with a note explaining why it was wrong is worth more than a clean run you don't understand.</p>
+<hr />
+<h1 id="day-0a-python-you-actually-need">Day 0A — Python You Actually Need</h1>
+<blockquote>
+<p><strong>Today's central idea:</strong> You don't need to be a "real programmer." You need six tools — variables, functions, loops, comprehensions, dictionaries, and one small class — used correctly and often.</p>
+</blockquote>
+<h2 id="0a1-variables-and-functions-naming-a-thought">0A.1 Variables and functions: naming a thought</h2>
+<p>Suppose your manager in Peshawar hands you the planned capacity of one microhydro power (MHP) site: 250 kilowatts. You want to convert that to megawatts.</p>
+<pre><code class="language-python">capacity_kw = 250.0
+capacity_mw = capacity_kw / 1000.0
+print(capacity_mw)
+# 0.25
+</code></pre>
+<p>That's a variable: a name you gave to a number so you don't have to keep re-typing <code>250.0</code> and hoping you remembered it correctly. Now suppose you need to do this conversion for every project that lands on your desk, forever. You don't write the same two lines a hundred times. You wrap the <em>behaviour</em> in a function, and give the <em>specific number</em> a name only when you call it.</p>
+<pre><code class="language-python">def kw_to_mw(capacity_kw):
+    &quot;&quot;&quot;Convert kilowatts to megawatts.&quot;&quot;&quot;
+    return capacity_kw / 1000.0
+
+print(kw_to_mw(250.0))   # 0.25
+print(kw_to_mw(1800.0))  # 1.8
+</code></pre>
+<p>A function has a contract: it takes something in, and it promises something specific out. Every regression model you build in this book — starting with <code>MHPCostEstimator</code> in Chapter 1 — is, underneath, a pile of functions with contracts like this one, just with more numbers going in.</p>
+<h2 id="0a2-loops-doing-the-same-thing-many-times-honestly">0A.2 Loops: doing the same thing many times, honestly</h2>
+<p>You have planned capacities for five projects and want each one in megawatts.</p>
+<pre><code class="language-python">capacities_kw = [100.0, 250.0, 500.0, 1800.0, 60.0]
+
+capacities_mw = []
+for c in capacities_kw:
+    capacities_mw.append(kw_to_mw(c))
+
+print(capacities_mw)
+# [0.1, 0.25, 0.5, 1.8, 0.06]
+</code></pre>
+<p>Walk through this out loud (yes, actually say it): "For each value <code>c</code> in the list, convert it, and stick the result onto the end of a new list." That is the entire idea of a <code>for</code> loop. Nothing hides inside it.</p>
+<h2 id="0a3-list-comprehensions-the-same-loop-said-more-tersely">0A.3 List comprehensions: the same loop, said more tersely</h2>
+<p>Python lets you write the loop above in one line. This is not a different idea — it is the <em>identical</em> operation, just written compactly enough that you'll see it constantly in other people's code (and in later chapters of this book).</p>
+<pre><code class="language-python">capacities_mw = [kw_to_mw(c) for c in capacities_kw]
+print(capacities_mw)
+# [0.1, 0.25, 0.5, 1.8, 0.06]
+</code></pre>
+<p>Read it right to left inside the brackets: "for <code>c</code> in <code>capacities_kw</code>, compute <code>kw_to_mw(c)</code>, collect all of those." If a comprehension ever confuses you, the fix is always the same: mentally unroll it back into the <code>for</code> loop from §0A.2. They compute the same thing.</p>
+<h2 id="0a4-dictionaries-a-record-not-just-a-list">0A.4 Dictionaries: a record, not just a list</h2>
+<p>A list of numbers loses the <em>meaning</em> of each number. A single MHP project is not just <code>[15.0, 100.0, 3]</code> — it's cable length, capacity, and terrain difficulty, and you'll forget which number is which within a week. A dictionary keeps the label attached to the value.</p>
+<pre><code class="language-python">project = {
+    &quot;site_id&quot;: &quot;MHP-0042&quot;,
+    &quot;cable_length_km&quot;: 15.0,
+    &quot;planned_capacity_kw&quot;: 100.0,
+    &quot;terrain_index&quot;: 3,
+}
+
+print(project[&quot;planned_capacity_kw&quot;])
+# 100.0
+</code></pre>
+<p>This matters more than it looks like it should. Chapter 1, Day 2 introduces a "data dictionary" as part of the model itself — the discipline of never letting a raw number float around without its meaning attached starts here.</p>
+<h2 id="0a5-a-minimal-class-bundling-data-and-behaviour-together">0A.5 A minimal class: bundling data and behaviour together</h2>
+<p>A function does one thing to whatever you hand it. A class is a way of saying: "here is a <em>thing</em> — it has some data that belongs to it, and some behaviour that belongs to it." You will build classes named <code>MHPCostEstimator</code> and <code>GaussianOLS</code> later in this book. Here is the smallest possible ancestor of those, so the syntax is not a surprise when it matters.</p>
+<pre><code class="language-python">class UnitConverter:
+    def __init__(self, factor):
+        # This runs once, when the object is created.
+        # It stores 'factor' so every method below can use it.
+        self.factor = factor
+
+    def convert(self, value):
+        return value * self.factor
+
+kw_to_mw_converter = UnitConverter(factor=0.001)
+print(kw_to_mw_converter.convert(250.0))
+# 0.25
+</code></pre>
+<p><code>self</code> is just "this specific object." When you call <code>kw_to_mw_converter.convert(250.0)</code>, Python quietly hands the object itself in as <code>self</code>, so <code>self.factor</code> means "<em>this</em> converter's factor," not some factor floating in space. That's the whole trick. Everything else about classes in this book builds on exactly this.</p>
+<h2 id="0a6-build-a-tiny-project-cost-sketch">0A.6 Build: a tiny project-cost sketch</h2>
+<p>Combine everything above into one small tool — not a real model yet, just proof you can chain these pieces together.</p>
+<pre><code class="language-python">projects = [
+    {&quot;site_id&quot;: &quot;MHP-0001&quot;, &quot;cable_length_km&quot;: 12.0, &quot;cost_per_km_million_pkr&quot;: 0.9},
+    {&quot;site_id&quot;: &quot;MHP-0002&quot;, &quot;cable_length_km&quot;: 30.0, &quot;cost_per_km_million_pkr&quot;: 0.9},
+    {&quot;site_id&quot;: &quot;MHP-0003&quot;, &quot;cable_length_km&quot;: 5.0,  &quot;cost_per_km_million_pkr&quot;: 1.4},
+]
+
+def rough_cable_cost(project):
+    return project[&quot;cable_length_km&quot;] * project[&quot;cost_per_km_million_pkr&quot;]
+
+for p in projects:
+    cost = rough_cable_cost(p)
+    print(f&quot;{p['site_id']}: approx {cost:.2f} million PKR of cable cost&quot;)
+</code></pre>
+<p>This is not a regression. It's a fixed formula, not a fitted one — the whole rest of the book is about the difference between "a formula I made up" and "a formula the data told me to use." Keep that distinction in your head; it will matter by Day 5.</p>
+<h2 id="0a7-break-it-deliberately">0A.7 Break it deliberately</h2>
+<p>Run each of these, read the <em>last line</em> of the error only, and write one sentence translating it into English before you fix it.</p>
+<pre><code class="language-python"># Break 1
+def kw_to_mw(capacity_kw)   # missing colon
+    return capacity_kw / 1000.0
+</code></pre>
+<pre><code class="language-python"># Break 2
+project = {&quot;cable_length_km&quot;: 15.0}
+print(project[&quot;cost_per_km_million_pkr&quot;])  # key that doesn't exist
+</code></pre>
+<pre><code class="language-python"># Break 3
+capacities_kw = [100.0, 250.0, 500.0]
+print(capacities_kw * 1000)   # not what you think it does
+</code></pre>
+<p>The third one is the important one. <code>capacities_kw * 1000</code> does not multiply every number by 1000 — it repeats the <em>list</em> a thousand times, because <code>*</code> on a Python list means "repeat," not "scale." This single misunderstanding is the entire reason NumPy exists, and it's where Day 0B starts.</p>
+<h3 id="day-0a-exit-check">Day 0A exit check</h3>
+<p>You should be able to, without looking anything up:<br />
+- write a function with a docstring and a return value;<br />
+- write the same loop two ways (<code>for</code> and a comprehension);<br />
+- explain what <code>self</code> refers to inside a class method;<br />
+- explain, out loud, why <code>[1, 2, 3] * 2</code> is not <code>[2, 4, 6]</code>.</p>
+<hr />
+<h1 id="day-0b-numpy-shapes-and-the-dot-product">Day 0B — NumPy, Shapes, and the Dot Product</h1>
+<blockquote>
+<p><strong>Today's central idea:</strong> A NumPy array is not "a faster list." It's a different kind of object with its own arithmetic rules, and almost every bug you'll hit in this book for the next six chapters is a shape mismatch.</p>
+</blockquote>
+<h2 id="0b1-why-lists-fail-us">0B.1 Why lists fail us</h2>
+<p>You saw it already: <code>capacities_kw * 1000</code> repeats a list instead of scaling it. NumPy arrays fix this by defining <code>*</code>, <code>+</code>, <code>-</code>, <code>/</code> to mean <em>elementwise</em> arithmetic.</p>
+<pre><code class="language-python">import numpy as np
+
+capacities_kw = np.array([100.0, 250.0, 500.0])
+capacities_watts = capacities_kw * 1000.0
+print(capacities_watts)
+# [100000. 250000. 500000.]
+</code></pre>
+<h2 id="0b2-shape-is-the-first-thing-you-check-always">0B.2 Shape is the first thing you check, always</h2>
+<p>Every array has a <code>.shape</code>. Get comfortable reading it before you do anything else with an array.</p>
+<pre><code class="language-python">a = np.array([1.0, 2.0, 3.0])
+print(a.shape)          # (3,)   — a 1-D array of 3 numbers, a &quot;vector&quot;
+
+b = np.array([[1.0, 2.0, 3.0]])
+print(b.shape)          # (1, 3) — a 2-D array: 1 row, 3 columns
+
+c = np.array([[1.0], [2.0], [3.0]])
+print(c.shape)          # (3, 1) — a 2-D array: 3 rows, 1 column
+</code></pre>
+<p><code>(3,)</code>, <code>(1, 3)</code>, and <code>(3, 1)</code> hold the same numbers and are <strong>not interchangeable</strong>. This looks pedantic until it silently ruins a calculation two chapters from now. Chapter 1's design matrices depend on you already having this reflex.</p>
+<h2 id="0b3-indexing-and-slicing">0B.3 Indexing and slicing</h2>
+<pre><code class="language-python">X = np.array([
+    [15.0, 100.0, 3],   # cable_km, capacity_kw, terrain_index
+    [30.0, 250.0, 4],
+    [5.0,  500.0, 1],
+])
+
+print(X.shape)        # (3, 3) — 3 projects, 3 features
+print(X[0])            # first row: array([ 15., 100.,   3.])
+print(X[:, 0])          # first column (all rows): array([15., 30.,  5.])
+print(X[0, 1])          # row 0, column 1: 100.0
+print(X[:2, :2])        # first two rows, first two columns
+</code></pre>
+<p>The comma inside <code>[ ]</code> separates "which rows" from "which columns." <code>:</code> alone means "all of them." This exact slicing vocabulary is what Chapter 1 uses to pull a single feature column out of a design matrix — get it into your hands now, not while also learning what a design matrix is.</p>
+<h2 id="0b4-broadcasting-numpys-rule-for-mismatched-shapes">0B.4 Broadcasting: NumPy's rule for mismatched shapes</h2>
+<p>Broadcasting is <em>not</em> magic. It's one precise rule: NumPy compares shapes from the right, and a dimension of size 1 (or a missing dimension) is allowed to stretch to match. Watch it work, then watch it correctly refuse.</p>
+<pre><code class="language-python">X = np.array([
+    [15.0, 100.0],
+    [30.0, 250.0],
+    [5.0,  500.0],
+])   # shape (3, 2): cable_km, capacity_kw
+
+means = np.array([16.7, 283.3])   # shape (2,) — one mean per column
+
+centred = X - means
+print(centred)
+# Each row of X has 'means' subtracted from it, column by column.
+</code></pre>
+<p><code>(3, 2)</code> and <code>(2,)</code> are compatible because the trailing dimension <code>2</code> matches <code>2</code>. Now break it on purpose:</p>
+<pre><code class="language-python">weights = np.array([1.5, 0.8, 2.1])   # shape (3,) — wrong length on purpose
+
+result = X @ weights
+</code></pre>
+<pre><code class="language-text">ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0,
+with gufunc signature (n?,k),(k?,m?)-&gt;(n?,m?) (size 3 is different from 2)
+</code></pre>
+<p>Translate the last line, not the jargon: <em>X has 2 columns; <code>weights</code> has 3 entries; matrix multiplication needs those to match.</em> Fix it by giving <code>weights</code> exactly 2 entries, one per column of <code>X</code>. This is the single most common error you will produce for the next six chapters, so get used to reading it calmly.</p>
+<h2 id="0b5-the-dot-product-at-three-levels-of-honesty">0B.5 The dot product, at three levels of honesty</h2>
+<p>A "weighted sum" is the single most important operation in this entire book — every regression coefficient you will ever fit multiplies a feature by a weight and adds the results up. Here it is proven three ways, so you know they're the same thing.</p>
+<pre><code class="language-python">features = np.array([15.0, 100.0])       # cable_km, capacity_kw
+weights  = np.array([0.05, 0.002])       # million PKR per unit
+
+# Level 1: by hand, term by term
+manual = features[0] * weights[0] + features[1] * weights[1]
+
+# Level 2: by an explicit loop (works for any length)
+loop_total = 0.0
+for f, w in zip(features, weights):
+    loop_total += f * w
+
+# Level 3: NumPy's dot product
+dot_total = features @ weights   # equivalently: np.dot(features, weights)
+
+print(manual, loop_total, dot_total)
+# 0.95 0.95 0.95
+</code></pre>
+<p>All three give <code>0.95</code> — 0.75 (cable contribution) + 0.2 (capacity contribution) million PKR. When Chapter 1 writes <code>X @ beta</code>, this is exactly what it means: do this weighted sum, once per row of <code>X</code>, all at once.</p>
+<h2 id="0b6-build-a-manual-prediction-matrix-style">0B.6 Build: a manual prediction, matrix style</h2>
+<pre><code class="language-python">X = np.array([
+    [15.0, 100.0],
+    [30.0, 250.0],
+    [5.0,  500.0],
+])   # 3 projects, 2 features each
+
+beta = np.array([0.05, 0.002])   # made-up weights, not fitted — just practising the mechanics
+
+predictions = X @ beta
+print(predictions)
+# one predicted cost per project, in the same units as beta implies
+</code></pre>
+<h2 id="0b7-break-it-deliberately">0B.7 Break it deliberately</h2>
+<pre><code class="language-python">row_vector = np.array([[1.0, 2.0, 3.0]])   # shape (1, 3)
+col_vector = np.array([[1.0], [2.0], [3.0]])  # shape (3, 1)
+
+print(row_vector + col_vector)
+</code></pre>
+<p>This does <strong>not</strong> error — it broadcasts to a <code>(3, 3)</code> result, which surprises almost everyone the first time. Before running it, predict the shape of the output. Then run it and see if you were right. If you were wrong, walk through §0B.4's rule again until the result stops being a surprise.</p>
+<h3 id="day-0b-exit-check">Day 0B exit check</h3>
+<p>You should be able to, without looking anything up:<br />
+- state the shape of any array you just created, without running <code>.shape</code>, and then confirm it;<br />
+- explain broadcasting as one sentence about matching dimensions from the right;<br />
+- compute a dot product three ways and get the same number each time;<br />
+- read a <code>matmul</code> shape-mismatch error and say, in plain English, which two numbers disagree.</p>
+<hr />
+<h1 id="day-0c-algebra-and-summation-notation">Day 0C — Algebra and Summation Notation</h1>
+<blockquote>
+<p><strong>Today's central idea:</strong> $\sum$ is not a foreign symbol. It's a <code>for</code> loop that adds things up, written in a more compressed alphabet.</p>
+</blockquote>
+<h2 id="0c1-a-function-is-a-recipe-with-a-name">0C.1 A function is a recipe with a name</h2>
+<p>You already know this from Python — <code>def kw_to_mw(capacity_kw): return capacity_kw / 1000.0</code> is a recipe. Algebra just writes recipes with single letters instead of English words:</p>
+<p>$$f(x) = \frac{x}{1000}$$</p>
+<p>says exactly what the Python function said: give me a number $x$, I'll divide it by 1000 and call the result $f(x)$. Every formula in this book is a recipe like this one — the discipline is learning to read the recipe before panicking about the symbols.</p>
+<h2 id="0c2-the-equation-of-a-line-and-why-it-matters-here">0C.2 The equation of a line, and why it matters here</h2>
+<p>$$y = mx + c$$</p>
+<p>$m$ is the slope: how much $y$ changes when $x$ increases by exactly 1. $c$ is the intercept: the value of $y$ when $x$ is 0. This is the entire idea behind linear regression with one feature — Chapter 1 spends its first three days building up to exactly this equation, generalised to many features. If you can already sketch $y = 2x + 5$ on paper and say what happens as $x$ grows, you have the geometric intuition; the rest is notation.</p>
+<h2 id="0c3-summation-notation-built-from-a-loop-you-already-wrote">0C.3 Summation notation, built from a loop you already wrote</h2>
+<p>Recall Day 0A's loop:</p>
+<pre><code class="language-python">loop_total = 0.0
+for f, w in zip(features, weights):
+    loop_total += f * w
+</code></pre>
+<p>In algebra, if there are $p$ features indexed $i = 1, 2, \dots, p$, this exact loop is written:</p>
+<p>$$\sum_{i=1}^{p} f_i w_i$$</p>
+<p>Read it left to right, the same way you'd read the <code>for</code> loop: "start a running total at 0; for each $i$ from 1 to $p$, add $f_i$ times $w_i$; stop." The little number under $\sum$ is where the loop starts, the number on top is where it ends, and everything to the right of $\sum$ is what gets added at each step.</p>
+<p><strong>Code proof — the formula and the loop must agree:</strong></p>
+<pre><code class="language-python">import numpy as np
+
+f = np.array([15.0, 100.0, 3.0])
+w = np.array([0.05, 0.002, -1.5])
+
+# The formula, as a loop
+total_loop = 0.0
+for i in range(len(f)):
+    total_loop += f[i] * w[i]
+
+# The formula, as NumPy
+total_numpy = f @ w
+
+print(total_loop, total_numpy)
+# 0.55 0.55
+</code></pre>
+<p>$\sum_{i=1}^{p} f_i w_i$, the <code>for</code> loop, and <code>f @ w</code> are three spellings of one idea. When Chapter 1, Day 4 writes the sum of squared residuals as</p>
+<p>$$\text{SSR} = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$</p>
+<p>you should now be able to read it as: "loop over every project $i$; take the actual cost minus the predicted cost; square it; add it to a running total." Try writing that as Python <em>before</em> Chapter 1 does it for you.</p>
+<h2 id="0c4-exponents-and-why-we-square-errors-a-preview">0C.4 Exponents and why we square errors (a preview)</h2>
+<p>$x^2$ means $x$ multiplied by itself. Two properties matter for everything downstream:</p>
+<ul>
+<li>squaring always produces a non-negative number, so a positive error and an equally-sized negative error contribute the same amount once squared;</li>
+<li>squaring punishes large errors much more than small ones — an error of 10 contributes 100, an error of 2 contributes only 4.</li>
+</ul>
+<p>Chapter 1, Day 4 spends real time justifying <em>why</em> regression squares errors instead of just adding them up. You don't need the full argument yet — just the two facts above, so the argument doesn't start from zero.</p>
+<h2 id="0c5-build-ssr-from-the-formula-three-ways">0C.5 Build: SSR from the formula, three ways</h2>
+<pre><code class="language-python">y_actual    = np.array([12.0, 30.0, 8.0])
+y_predicted = np.array([11.2, 31.5, 9.0])
+
+# Level 1: by hand
+errors = y_actual - y_predicted
+squared_errors = errors ** 2
+ssr_manual = squared_errors.sum()
+
+# Level 2: as a literal loop mirroring the sigma
+ssr_loop = 0.0
+for a, p in zip(y_actual, y_predicted):
+    ssr_loop += (a - p) ** 2
+
+# Level 3: one line
+ssr_oneline = np.sum((y_actual - y_predicted) ** 2)
+
+print(ssr_manual, ssr_loop, ssr_oneline)
+</code></pre>
+<p>All three must match. If they don't, you have a bug — and finding it is exactly the kind of debugging Chapter 1 will ask of you constantly.</p>
+<h2 id="0c6-break-it-deliberately">0C.6 Break it deliberately</h2>
+<p>Predict the output on paper before running:</p>
+<pre><code class="language-python">values = np.array([2.0, -3.0, 5.0])
+print(np.sum(values ** 2))     # sum of squares
+print(np.sum(values) ** 2)     # square of the sum
+</code></pre>
+<p>These are <strong>not equal</strong>, and the difference between "sum of squares" and "square of a sum" is a mistake that will cost you real debugging time in later chapters (variance, in particular, depends on getting this order right). Say out loud why they differ before moving on.</p>
+<h3 id="day-0c-exit-check">Day 0C exit check</h3>
+<p>You should be able to:<br />
+- translate a $\sum$ formula into a <code>for</code> loop and into one line of NumPy, and get matching numbers all three ways;<br />
+- explain why $y = mx + c$ is the same shape of idea as Chapter 1's regression equation;<br />
+- explain the difference between $\sum x_i^2$ and $(\sum x_i)^2$ using a concrete 3-number example.</p>
+<hr />
+<h1 id="day-0d-statistics-from-raw-definitions">Day 0D — Statistics From Raw Definitions</h1>
+<blockquote>
+<p><strong>Today's central idea:</strong> Mean, variance, and correlation are not library functions you call. They are formulas you can build from Day 0C's summation notation in about four lines each — and Chapter 2's probability content assumes you already know what they mean.</p>
+</blockquote>
+<h2 id="0d1-the-mean-the-balancing-point">0D.1 The mean: the balancing point</h2>
+<p>Suppose five MHP projects had these actual costs, in million PKR: <code>[12.0, 30.0, 8.0, 45.0, 15.0]</code>.</p>
+<p>$$\bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i$$</p>
+<p>"Add everything up, divide by how many there are."</p>
+<pre><code class="language-python">costs = np.array([12.0, 30.0, 8.0, 45.0, 15.0])
+
+n = len(costs)
+mean_manual = np.sum(costs) / n
+mean_numpy = costs.mean()
+
+print(mean_manual, mean_numpy)
+# 22.0 22.0
+</code></pre>
+<h2 id="0d2-variance-how-far-on-average-things-sit-from-the-mean">0D.2 Variance: how far, on average, things sit from the mean</h2>
+<p>You can't just average the raw deviations from the mean — they always sum to zero (that's <em>what</em> "mean" means). So we square them first, borrowing exactly the trick from Day 0C.</p>
+<p>$$\sigma^2 = \frac{1}{n}\sum_{i=1}^{n} (x_i - \bar{x})^2$$</p>
+<pre><code class="language-python">deviations = costs - costs.mean()
+print(deviations)               # [-10. 8. -14. 23. -7.]
+print(deviations.sum())          # 0.0 — always, by construction
+
+variance_manual = np.sum(deviations ** 2) / n
+variance_numpy = costs.var()     # NumPy's default matches this population formula
+
+print(variance_manual, variance_numpy)
+</code></pre>
+<blockquote>
+<p><strong>A warning that will save you real confusion later:</strong> you'll sometimes see variance computed by dividing by $n - 1$ instead of $n$ (the "sample" variance, <code>ddof=1</code> in NumPy). Chapter 2, Day 6 explains exactly why that correction exists. For now, just notice that <code>costs.var()</code> and <code>costs.var(ddof=1)</code> disagree, and don't assume it's a bug when you see it — it's a deliberate choice depending on what you're trying to estimate.</p>
+</blockquote>
+<h2 id="0d3-standard-deviation-getting-the-units-back">0D.3 Standard deviation: getting the units back</h2>
+<p>Variance is in squared units (million PKR², which means nothing to anyone). Standard deviation undoes the squaring:</p>
+<p>$$\sigma = \sqrt{\sigma^2}$$</p>
+<pre><code class="language-python">std_manual = np.sqrt(variance_manual)
+std_numpy = costs.std()
+print(std_manual, std_numpy)
+</code></pre>
+<h2 id="0d4-covariance-do-two-things-move-together">0D.4 Covariance: do two things move together?</h2>
+<p>Now bring in a second variable — cable length per project, in km: <code>[12.0, 30.0, 5.0, 40.0, 15.0]</code>. Covariance asks: when one variable is above its mean, is the other one usually above its mean too?</p>
+<p>$$\text{cov}(x, y) = \frac{1}{n}\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})$$</p>
+<pre><code class="language-python">cable_km = np.array([12.0, 30.0, 5.0, 40.0, 15.0])
+
+x_dev = costs - costs.mean()
+y_dev = cable_km - cable_km.mean()
+
+cov_manual = np.sum(x_dev * y_dev) / n
+cov_numpy = np.cov(costs, cable_km, ddof=0)[0, 1]
+
+print(cov_manual, cov_numpy)
+</code></pre>
+<p>If both deviations tend to have the same sign (both above their means, or both below), each product is positive and covariance comes out positive: as cable length rises, cost tends to rise too. That's not a coincidence for this dataset — it's the whole reason regression will later find cable length a useful feature.</p>
+<h2 id="0d5-correlation-covariance-with-the-units-washed-out">0D.5 Correlation: covariance with the units washed out</h2>
+<p>Covariance's <em>size</em> depends on the units you happened to measure in, which makes two covariances hard to compare. Correlation fixes that by dividing out each variable's own spread:</p>
+<p>$$r = \frac{\text{cov}(x, y)}{\sigma_x \sigma_y}$$</p>
+<pre><code class="language-python">r_manual = cov_manual / (costs.std() * cable_km.std())
+r_numpy = np.corrcoef(costs, cable_km)[0, 1]
+
+print(r_manual, r_numpy)
+</code></pre>
+<p>$r$ always sits between $-1$ and $1$. Close to $1$: strong positive relationship. Close to $-1$: strong negative. Close to $0$: little linear relationship. This single number is going to matter enormously in Chapter 1, Day 2, where you'll learn that two <em>nearly identical</em> correlated features (like literacy rate and school enrollment in the orientation chapter's development dataset) can quietly break a regression — that's called multicollinearity, and it's just "correlation close to 1" between features, wearing a bigger hat.</p>
+<h2 id="0d6-build-a-tiny-stats-report">0D.6 Build: a tiny stats report</h2>
+<pre><code class="language-python">def describe(values, label):
+    print(f&quot;{label}: mean={values.mean():.2f}, std={values.std():.2f}, &quot;
+          f&quot;min={values.min():.2f}, max={values.max():.2f}&quot;)
+
+describe(costs, &quot;cost (million PKR)&quot;)
+describe(cable_km, &quot;cable length (km)&quot;)
+print(f&quot;correlation(cost, cable_km) = {np.corrcoef(costs, cable_km)[0,1]:.3f}&quot;)
+</code></pre>
+<p>This four-line report is, in essence, what Exercise 0.1 in the orientation chapter asked you to build for the full KP datasets. Now you know what every number in it actually means, instead of trusting <code>.describe()</code> blindly.</p>
+<h2 id="0d7-break-it-deliberately">0D.7 Break it deliberately</h2>
+<pre><code class="language-python">constant = np.array([5.0, 5.0, 5.0, 5.0, 5.0])
+print(np.corrcoef(constant, costs))
+</code></pre>
+<p>This produces <code>nan</code>, not an error — correlation divides by <code>constant.std()</code>, which is <code>0.0</code>, and dividing by zero silently poisons the whole calculation with <code>nan</code> instead of crashing loudly. This is a real trap: a feature with zero variance (every project has the same terrain grade, say) will not throw an exception, it will quietly corrupt anything downstream that touches it. Get used to checking <code>.std()</code> for zero <em>before</em> you trust a correlation number.</p>
+<h3 id="day-0d-exit-check">Day 0D exit check</h3>
+<p>You should be able to:<br />
+- compute mean, variance, standard deviation, covariance, and correlation from the raw summation formulas, and match NumPy's built-ins;<br />
+- explain in one sentence why variance squares the deviations instead of just averaging them;<br />
+- explain what a correlation near $1$ between two features will eventually mean for a regression model;<br />
+- explain why a zero-variance feature produces <code>nan</code> instead of an error, and why that's more dangerous.</p>
+<hr />
+<h1 id="day-0e-slope-derivatives-and-surviving-errors">Day 0E — Slope, Derivatives, and Surviving Errors</h1>
+<blockquote>
+<p><strong>Today's central idea:</strong> A derivative is just the slope of a curve at one exact point, and every model you train in this book is, underneath, a search for the point where that slope hits zero.</p>
+</blockquote>
+<h2 id="0e1-from-a-straight-slope-to-a-curved-one">0E.1 From a straight slope to a curved one</h2>
+<p>You already know $y = mx + c$ has one constant slope, $m$, everywhere. Now consider a curve: $y = x^2$. Its steepness is different at every point — flat near $x=0$, steep far from it. The <strong>derivative</strong> is a formula that tells you the exact slope at any single point you pick.</p>
+<p>For $y = x^2$, the derivative is:</p>
+<p>$$\frac{dy}{dx} = 2x$$</p>
+<ul>
+<li>At $x = 0$: slope is $2(0) = 0$ — flat, the bottom of the bowl.</li>
+<li>At $x = 3$: slope is $2(3) = 6$ — climbing steeply.</li>
+<li>At $x = -3$: slope is $2(-3) = -6$ — descending steeply, mirror image.</li>
+</ul>
+<h2 id="0e2-where-that-formula-actually-comes-from-the-limit-definition">0E.2 Where that formula actually comes from (the limit definition)</h2>
+<p>You don't have to memorise derivative rules as magic — they fall out of one idea: <em>look at the average slope between two points that are getting closer and closer together.</em></p>
+<p>$$\frac{dy}{dx} = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}$$</p>
+<p><strong>Code proof — approximate this numerically and watch it converge to $2x$:</strong></p>
+<pre><code class="language-python">def f(x):
+    return x ** 2
+
+def numerical_slope(f, x, h):
+    return (f(x + h) - f(x)) / h
+
+x = 3.0
+for h in [1.0, 0.1, 0.01, 0.0001, 0.000001]:
+    print(f&quot;h={h:&lt;10} slope estimate={numerical_slope(f, x, h):.6f}&quot;)
+# As h shrinks, the estimate creeps toward exactly 6.0 = 2 * 3
+</code></pre>
+<p>This is not a party trick. Chapter 1, Day 5 checks its hand-derived matrix gradient against exactly this kind of numerical approximation ("finite differences"), and Chapter 2, Day 9 builds gradient descent directly on top of it. You just ran a miniature version of both.</p>
+<h2 id="0e3-two-derivative-rules-youll-actually-use">0E.3 Two derivative rules you'll actually use</h2>
+<p>You don't need a full calculus course — this book only leans on a handful of rules, repeatedly:</p>
+<ul>
+<li><strong>Power rule:</strong> the derivative of $x^n$ is $n x^{n-1}$. (This is where $x^2 \to 2x$ came from.)</li>
+<li><strong>Constant multiple:</strong> the derivative of $a \cdot f(x)$ is $a$ times the derivative of $f(x)$.</li>
+<li><strong>Sum rule:</strong> the derivative of $f(x) + g(x)$ is just the derivative of $f(x)$ plus the derivative of $g(x)$ — you can differentiate term by term.</li>
+</ul>
+<pre><code class="language-python"># Example: derivative of  y = 3x^2 + 5x
+# Power rule on 3x^2  -&gt; 6x
+# Power rule on 5x    -&gt; 5   (since x^1's derivative is 1*x^0 = 1)
+# Sum rule combines them -&gt; 6x + 5
+
+def y(x):
+    return 3 * x**2 + 5 * x
+
+def dy_dx_by_rule(x):
+    return 6 * x + 5
+
+x = 2.0
+print(dy_dx_by_rule(x))                                  # 17.0
+print(numerical_slope(y, x, h=0.000001))                  # ~17.0, confirms the rule
+</code></pre>
+<h2 id="0e4-partial-derivatives-slope-when-theres-more-than-one-dial-to-turn">0E.4 Partial derivatives: slope when there's more than one dial to turn</h2>
+<p>Regression rarely has one adjustable number — it has one per feature. A <strong>partial derivative</strong> asks: "if I nudge <em>just this one</em> number and freeze everything else, how does the output change?" Notation-wise, $\partial$ replaces $d$ to signal "there are other variables here, and I'm holding them still."</p>
+<p>Take a toy error surface: $E(m, c) = (10 - (m \cdot 2 + c))^2$ — the squared error of predicting $y=10$ at $x=2$ using slope $m$ and intercept $c$.</p>
+<pre><code class="language-python">def error(m, c):
+    prediction = m * 2 + c
+    return (10 - prediction) ** 2
+
+def partial_wrt_m(error_fn, m, c, h=1e-6):
+    return (error_fn(m + h, c) - error_fn(m, c)) / h
+
+def partial_wrt_c(error_fn, m, c, h=1e-6):
+    return (error_fn(m, c + h) - error_fn(m, c)) / h
+
+m, c = 1.0, 1.0
+print(&quot;slope if we nudge m:&quot;, partial_wrt_m(error, m, c))
+print(&quot;slope if we nudge c:&quot;, partial_wrt_c(error, m, c))
+</code></pre>
+<p>Both numbers together form the <strong>gradient</strong> — a small arrow made of "how much does the error change per dial, holding the others still." Chapter 1, Day 5 derives this gradient by hand for the full OLS objective, with one partial derivative per feature instead of two. You just did the two-dial version.</p>
+<h2 id="0e5-why-any-of-this-matters-descending-toward-zero-error">0E.5 Why any of this matters: descending toward zero error</h2>
+<p>The core trick behind fitting almost every model in this book: start somewhere, compute the gradient, take a small step in the direction that <em>decreases</em> error, and repeat until the gradient is (close to) zero.</p>
+<pre><code class="language-python">m, c = 0.0, 0.0        # start with a bad guess
+learning_rate = 0.01
+
+for step in range(50):
+    grad_m = partial_wrt_m(error, m, c)
+    grad_c = partial_wrt_c(error, m, c)
+    m -= learning_rate * grad_m
+    c -= learning_rate * grad_c
+
+print(f&quot;m={m:.3f}, c={c:.3f}, error={error(m, c):.6f}&quot;)
+</code></pre>
+<p>Run it and watch the error shrink toward zero as <code>m</code> and <code>c</code> settle into values that make <code>m * 2 + c</code> land near <code>10</code>. This is a hand-built, miniature version of gradient descent — the real one arrives in Chapter 2, Day 9, with real data instead of one toy point.</p>
+<h2 id="0e6-surviving-the-traceback">0E.6 Surviving the traceback</h2>
+<p>You will see red error text constantly for the rest of this book. A practitioner reads an error the way an investigator reads a scene: bottom line first, ignore the jargon, translate to English.</p>
+<p><strong>Shape mismatch (you already met this on Day 0B):</strong></p>
+<pre><code class="language-text">ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0...
+(size 4 is different from 2)
+</code></pre>
+<p>→ "Two things that need matching lengths don't have matching lengths."</p>
+<p><strong>Missing key:</strong></p>
+<pre><code class="language-python">project = {&quot;cable_length_km&quot;: 15.0}
+project[&quot;terrain_index&quot;]
+</code></pre>
+<pre><code class="language-text">KeyError: 'terrain_index'
+</code></pre>
+<p>→ "You asked the dictionary for a label it doesn't have. Check spelling, check whether the data actually contains that field."</p>
+<p><strong>Wrong type:</strong></p>
+<pre><code class="language-python">&quot;cost: &quot; + 15.0
+</code></pre>
+<pre><code class="language-text">TypeError: can only concatenate str (not &quot;float&quot;) to str
+</code></pre>
+<p>→ "Python won't silently guess how to combine a string and a number. Convert one of them explicitly: <code>"cost: " + str(15.0)</code>."</p>
+<p>The instinct to panic and immediately paste the whole traceback into a search bar is understandable but skips the useful step: read the last line first, translate it into a plain sentence, <em>then</em> decide if you need help.</p>
+<h2 id="0e7-the-rule-of-the-rubber-duck">0E.7 The rule of the rubber duck</h2>
+<p>Put a mug, a duck, or an unimpressed cat on your desk. When something breaks, explain your code to it out loud, line by line, as if it has never seen Python. "Okay, here I create an array with three rows. Then I multiply it by a vector with... wait, how many entries does that vector have?" In a large fraction of cases you will catch the bug mid-sentence, before the duck says a word.</p>
+<h2 id="0e8-break-it-deliberately">0E.8 Break it deliberately</h2>
+<pre><code class="language-python">def error(m, c):
+    prediction = m * 2 + c
+    return (10 - prediction) ** 2
+
+# Break: learning rate far too large
+m, c = 0.0, 0.0
+learning_rate = 5.0   # was 0.01
+
+for step in range(10):
+    grad_m = partial_wrt_m(error, m, c)
+    grad_c = partial_wrt_c(error, m, c)
+    m -= learning_rate * grad_m
+    c -= learning_rate * grad_c
+    print(step, m, c, error(m, c))
+</code></pre>
+<p>Watch the error <em>grow</em> instead of shrink, possibly exploding toward infinity. You just reproduced, in miniature, the single most common failure in Chapter 2, Day 9 — a learning rate that's too large overshoots the bottom of the valley on every step instead of settling into it. File that feeling away; you'll need to recognise it fast later.</p>
+<h3 id="day-0e-exit-check">Day 0E exit check</h3>
+<p>You should be able to:<br />
+- compute a derivative numerically (finite differences) and confirm it against a rule-based derivative;<br />
+- explain a partial derivative in one sentence to someone who's never seen the word;<br />
+- explain, without notes, what gradient descent is doing and why a too-large learning rate breaks it;<br />
+- read a <code>KeyError</code>, <code>TypeError</code>, and shape-mismatch <code>ValueError</code> and translate each into plain English before trying to fix it.</p>
+<hr />
+<h1 id="level-0-capstone-prove-youre-ready">Level 0 Capstone — Prove You're Ready</h1>
+<p>Do this without peeking at earlier sections. This mirrors the format every later chapter uses for its own capstone, so it's worth taking seriously now.</p>
+<p><strong>Given:</strong></p>
+<pre><code class="language-python">projects = np.array([
+    [12.0, 15.0],   # cable_km, terrain_index
+    [30.0, 25.0],
+    [5.0,  8.0],
+    [40.0, 45.0],
+    [15.0, 12.0],
+])
+costs = np.array([12.0, 30.0, 8.0, 45.0, 15.0])   # million PKR
+</code></pre>
+<ol>
+<li>Report the shape of <code>projects</code> and explain what each dimension means, in a sentence.</li>
+<li>Compute the mean and standard deviation of each column of <code>projects</code>, without using <code>.mean(axis=...)</code> — write the loop or comprehension yourself first, then confirm with NumPy.</li>
+<li>Compute the correlation between <code>costs</code> and column 0 of <code>projects</code> from the raw covariance/std formulas, then check it with <code>np.corrcoef</code>.</li>
+<li>Pick any made-up weight vector <code>beta</code> of length 2 and compute <code>predictions = projects @ beta</code> by hand-loop and with <code>@</code>, and confirm they match.</li>
+<li>Write a function <code>sse(y_actual, y_predicted)</code> that returns $\sum (y_i - \hat{y}_i)^2$, and test it against your <code>predictions</code> from step 4.</li>
+<li>Using finite differences, numerically estimate how <code>sse</code> changes if you nudge just the first entry of <code>beta</code> by a small amount. (You now have one entry of the gradient Chapter 1, Day 5 will derive properly.)</li>
+<li>Deliberately break something — pass <code>beta</code> with the wrong length into step 4 — and write, in one sentence, what the resulting error is telling you.</li>
+</ol>
+<p>If you can do all seven without reopening this chapter, you are ready for Chapter 1.</p>
+<hr />
+<h2 id="glossary-symbols-youll-now-recognise-on-sight">Glossary (symbols you'll now recognise on sight)</h2>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Name</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$x_i$</td>
+<td>indexed variable</td>
+<td>the $i$-th value in a collection</td>
+</tr>
+<tr>
+<td>$\sum_{i=1}^{n}$</td>
+<td>summation</td>
+<td>add up a formula for every $i$ from 1 to $n$</td>
+</tr>
+<tr>
+<td>$\bar{x}$</td>
+<td>mean</td>
+<td>average value</td>
+</tr>
+<tr>
+<td>$\sigma^2$</td>
+<td>variance</td>
+<td>average squared distance from the mean</td>
+</tr>
+<tr>
+<td>$\sigma$</td>
+<td>standard deviation</td>
+<td>square root of variance; same units as the data</td>
+</tr>
+<tr>
+<td>$r$</td>
+<td>correlation</td>
+<td>covariance rescaled to sit between $-1$ and $1$</td>
+</tr>
+<tr>
+<td>$\frac{dy}{dx}$, $f'(x)$</td>
+<td>derivative</td>
+<td>exact slope of $y=f(x)$ at a point</td>
+</tr>
+<tr>
+<td>$\frac{\partial E}{\partial m}$</td>
+<td>partial derivative</td>
+<td>slope of $E$ with respect to $m$ alone, holding other variables fixed</td>
+</tr>
+<tr>
+<td>gradient</td>
+<td>—</td>
+<td>the collection of all partial derivatives, one per adjustable number</td>
+</tr>
+</tbody>
+</table>
+<h2 id="instructor-and-self-study-notes">Instructor and self-study notes</h2>
+<ul>
+<li><strong>Suggested timebox:</strong> one focused day per section (0A–0E), or two half-days if math is genuinely new to you. Do not compress this into a single afternoon — the exit checks exist because rushing here is exactly what makes Chapter 1 feel impossible later.</li>
+<li><strong>Most common failure point:</strong> learners skim Day 0B's broadcasting section because arrays "look like lists." Don't. Every day from Chapter 1 onward assumes shape-checking is reflexive, not effortful.</li>
+<li><strong>If the capstone is a struggle:</strong> repeat Day 0C and 0D before moving on. Chapter 1 will not re-teach summation notation or variance; it will simply use them.</li>
+</ul>
+<h2 id="where-chapter-1-begins">Where Chapter 1 begins</h2>
+<p>Chapter 1 opens with a question you're now equipped to actually think about: <em>what is a regression for — prediction, explanation, or causation?</em> Everything you built this week — functions, shapes, sums, means, slopes — is about to get one name each: features, design matrix, objective function, gradient. Turn the page.</p>
+        </article>
+    </div>
+
+    <aside id="platform-shell" class="platform-shell" aria-label="Learning tools">
+        <div class="platform-header">
+            <div>
+                <div class="platform-title">Learning Tools</div>
+                <div id="platform-section" class="platform-section">Current section</div>
+            </div>
+            <button id="platform-toggle" class="platform-button" type="button" title="Collapse tools">Tools</button>
+        </div>
+        <div class="platform-body">
+            <section class="platform-group">
+                <label class="platform-row"><input id="progress-complete" type="checkbox"> Mark current section complete</label>
+                <div class="platform-row">
+                    <div class="platform-label">Section notes</div>
+                    <button id="note-new" class="platform-button" type="button">New note</button>
+                </div>
+                <div id="notes-list" class="notes-list"></div>
+            </section>
+            <section class="platform-group">
+                <div class="platform-label">AI Tutor</div>
+                <div class="platform-row">
+                    <button id="tutor-explain" class="platform-button" type="button">Explain differently</button>
+                    <button id="tutor-check" class="platform-button" type="button">Check reasoning</button>
+                </div>
+                <div id="tutor-history" class="platform-history"></div>
+                <textarea id="tutor-question" class="platform-textarea" placeholder="Ask about this section or paste your reasoning"></textarea>
+                <button id="tutor-submit" class="platform-button" type="button">Ask tutor</button>
+                <div class="platform-message" data-service-message="tutor"></div>
+                <div id="tutor-output" class="platform-output"></div>
+            </section>
+            <section class="platform-group">
+                <div class="platform-label">Exercise grading</div>
+                <textarea id="grade-submission" class="platform-textarea" placeholder="Paste your answer, code, or derivation"></textarea>
+                <button id="grade-submit" class="platform-button" type="button">Grade my answer</button>
+                <div class="platform-message" data-service-message="grading"></div>
+                <div id="grade-output" class="platform-output"></div>
+            </section>
+            <section class="platform-group">
+                <div class="platform-label">Narration</div>
+                <button id="tts-submit" class="platform-button" type="button">Listen to this section</button>
+                <div class="platform-message" data-service-message="tts"></div>
+                <div id="tts-output" class="platform-output"></div>
+            </section>
+            <section class="platform-group">
+                <div class="platform-label">Cross-device sync</div>
+                <div class="platform-row">
+                    <button id="sync-push" class="platform-button" type="button">Push</button>
+                    <button id="sync-pull" class="platform-button" type="button">Pull</button>
+                    <button id="status-retry" class="platform-button" type="button">Retry services</button>
+                </div>
+                <div class="platform-message" data-service-message="sync"></div>
+                <div id="sync-output" class="platform-output">Opt-in only. Notes, progress, and tutor history stay local unless you push.</div>
+            </section>
+            <section class="platform-group">
+                <div class="platform-label">Spaced repetition</div>
+                <div class="platform-output">Stretch goal: reminder delivery is not built in this pass.</div>
+            </section>
+        </div>
+    </aside>
+    <div id="note-modal-backdrop" class="modal-backdrop">
+        <div id="note-modal" class="note-modal" role="dialog" aria-modal="true" aria-label="Edit note">
+            <div class="note-modal-header">
+                <input id="note-title" class="note-title-input" type="text" value="Untitled note" aria-label="Note title">
+                <button id="note-close" class="platform-button" type="button">Close</button>
+            </div>
+            <div id="note-quill-toolbar" class="note-toolbar">
+                <span class="ql-formats">
+                    <select class="ql-header">
+                        <option value="1"></option>
+                        <option value="2"></option>
+                        <option selected></option>
+                    </select>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-bold" type="button"></button>
+                    <button class="ql-italic" type="button"></button>
+                    <button class="ql-underline" type="button"></button>
+                    <button class="ql-strike" type="button"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-list" value="ordered" type="button"></button>
+                    <button class="ql-list" value="bullet" type="button"></button>
+                    <button class="ql-blockquote" type="button"></button>
+                    <button class="ql-code-block" type="button"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-link" type="button"></button>
+                    <button class="ql-clean" type="button"></button>
+                </span>
+            </div>
+            <div id="note-editor" class="note-editor" data-placeholder="Write a full note for this section"></div>
+            <div class="note-attachments">
+                <div class="platform-row">
+                    <div class="platform-label">Attachments</div>
+                    <input id="note-attachment-input" class="attachment-input" type="file" multiple>
+                </div>
+                <div id="note-attachments-list" class="attachment-list"></div>
+            </div>
+            <div class="note-modal-footer">
+                <div id="note-modal-status" class="settings-status"></div>
+                <button id="note-save" class="platform-button" type="button">Save note</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        window.KP_PLATFORM = {
+            chapterSlug: "chapter0",
+            serviceStatus: {},
+            statusTimer: null,
+            currentSectionId: null,
+            currentHeading: null,
+            noteQuill: null,
+            quillPromise: null
+        };
+
+        (function platform() {
+            var state = window.KP_PLATFORM;
+            var reasonText = {
+                no_connectivity: "no internet connection",
+                no_api_key: "no API key configured",
+                provider_error: "provider error",
+                disabled: "service disabled"
+            };
+            var featureNames = {
+                tutor: "AI Tutor",
+                grading: "Exercise grading",
+                papers: "Research paper lookup",
+                tts: "Read-aloud narration",
+                sync: "Cross-device sync"
+            };
+
+            function qs(sel) { return document.querySelector(sel); }
+            function qsa(sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); }
+            function sectionKey(sectionId) { return state.chapterSlug + "::" + sectionId; }
+            function loadStylesheet(localHref, cdnHref) {
+                if (document.querySelector("link[href='" + localHref + "'], link[href='" + cdnHref + "']")) return;
+                var link = document.createElement("link");
+                link.rel = "stylesheet";
+                link.href = localHref;
+                link.onerror = function () {
+                    var fallback = document.createElement("link");
+                    fallback.rel = "stylesheet";
+                    fallback.href = cdnHref;
+                    document.head.appendChild(fallback);
+                };
+                document.head.appendChild(link);
+            }
+            function loadScript(localSrc, cdnSrc) {
+                return new Promise(function (resolve, reject) {
+                    if (window.Quill) {
+                        resolve(window.Quill);
+                        return;
+                    }
+                    var script = document.createElement("script");
+                    script.src = localSrc;
+                    script.onload = function () { resolve(window.Quill); };
+                    script.onerror = function () {
+                        var fallback = document.createElement("script");
+                        fallback.src = cdnSrc;
+                        fallback.onload = function () { resolve(window.Quill); };
+                        fallback.onerror = reject;
+                        document.head.appendChild(fallback);
+                    };
+                    document.head.appendChild(script);
+                });
+            }
+            function loadQuill() {
+                if (!state.quillPromise) {
+                    loadStylesheet("../vendor/quill/quill.snow.css", "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css");
+                    state.quillPromise = loadScript("../vendor/quill/quill.js", "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js");
+                }
+                return state.quillPromise;
+            }
+            function displayReason(reason) { return reasonText[reason] || "provider error"; }
+            function disabledMessage(service) {
+                return featureNames[service] + " is not available — " + displayReason((state.serviceStatus[service] || {}).reason) + ".";
+            }
+            function setMessage(id, text) {
+                var el = qs(id);
+                if (el) el.textContent = text || "";
+            }
+            function setAvailable(service, selectors) {
+                var status = state.serviceStatus[service] || { available: false, reason: "no_connectivity" };
+                selectors.forEach(function (selector) {
+                    qsa(selector).forEach(function (el) { el.disabled = !status.available; });
+                });
+                var msg = qs("[data-service-message='" + service + "']");
+                if (msg) msg.textContent = status.available ? "" : disabledMessage(service);
+            }
+            function statusFallback() {
+                ["tutor", "grading", "papers", "tts", "sync"].forEach(function (service) {
+                    state.serviceStatus[service] = { available: false, reason: "no_connectivity" };
+                });
+            }
+            async function fetchJson(url, options, timeoutMs) {
+                var controller = new AbortController();
+                var timer = setTimeout(function () { controller.abort(); }, timeoutMs || 3000);
+                try {
+                    var response = await fetch(url, Object.assign({}, options || {}, { signal: controller.signal }));
+                    var text = await response.text();
+                    var data = text ? JSON.parse(text) : {};
+                    if (!response.ok) {
+                        var error = new Error(data.error || response.statusText);
+                        error.status = response.status;
+                        error.data = data;
+                        throw error;
+                    }
+                    return data;
+                } finally {
+                    clearTimeout(timer);
+                }
+            }
+            async function refreshStatus() {
+                try {
+                    state.serviceStatus = await fetchJson("/api/services/status", {}, 6500);
+                } catch (err) {
+                    statusFallback();
+                }
+                applyStatus();
+                loadPaperCards();
+            }
+            function applyStatus() {
+                setAvailable("tutor", ["#tutor-submit", "#tutor-explain", "#tutor-check"]);
+                setAvailable("grading", ["#grade-submit"]);
+                setAvailable("tts", ["#tts-submit"]);
+                setAvailable("sync", ["#sync-push", "#sync-pull"]);
+                qsa(".paper-card[data-live='pending']").forEach(function (card) {
+                    card.querySelector(".paper-status").textContent = disabledMessage("papers");
+                });
+            }
+
+            function headingText(el) { return el ? el.textContent.replace(/\s+/g, " ").trim() : "Current section"; }
+            function chooseInitialSection() {
+                var headings = qsa(".markdown-body h1[id], .markdown-body h2[id], .markdown-body h3[id]");
+                state.currentHeading = headings[0] || null;
+                state.currentSectionId = state.currentHeading ? state.currentHeading.id : "top";
+                updateSectionUi();
+                if ("IntersectionObserver" in window && headings.length) {
+                    var visible = new Map();
+                    var observer = new IntersectionObserver(function (entries) {
+                        entries.forEach(function (entry) { visible.set(entry.target, entry.isIntersecting); });
+                        var active = headings.find(function (h) {
+                            return h.getBoundingClientRect().top >= 0 && h.getBoundingClientRect().top < window.innerHeight * 0.45;
+                        }) || headings.filter(function (h) { return h.getBoundingClientRect().top < window.innerHeight * 0.45; }).pop();
+                        if (active && active.id !== state.currentSectionId) {
+                            state.currentHeading = active;
+                            state.currentSectionId = active.id;
+                            updateSectionUi();
+                        }
+                    }, { rootMargin: "-10% 0px -65% 0px", threshold: [0, 1] });
+                    headings.forEach(function (h) { observer.observe(h); });
+                }
+            }
+            function getSectionText() {
+                var heading = state.currentHeading;
+                if (!heading) return qs(".markdown-body").textContent.slice(0, 5000);
+                var level = Number(heading.tagName.substring(1));
+                var parts = [headingText(heading)];
+                var node = heading.nextElementSibling;
+                while (node) {
+                    if (/^H[1-3]$/.test(node.tagName) && Number(node.tagName.substring(1)) <= level) break;
+                    parts.push(node.innerText || node.textContent || "");
+                    node = node.nextElementSibling;
+                }
+                return parts.join("\n").replace(/\n{3,}/g, "\n\n").slice(0, 9000);
+            }
+            function updateSectionUi() {
+                var id = state.currentSectionId || "top";
+                qs("#platform-section").textContent = headingText(state.currentHeading);
+                loadNote(id);
+                loadProgress(id);
+                loadTutorHistory(id);
+                setMessage("#grade-output", "");
+                setMessage("#tts-output", "");
+            }
+
+            async function loadNote(sectionId) {
+                var list = qs("#notes-list");
+                if (!list) return;
+                list.innerHTML = '<div class="platform-output">Loading notes...</div>';
+                try {
+                    var data = await fetchJson("/api/notes?chapter_slug=" + encodeURIComponent(state.chapterSlug) + "&section_id=" + encodeURIComponent(sectionId), {}, 1200);
+                    renderNotesList(data.notes || []);
+                } catch (err) {
+                    var localNotes = JSON.parse(localStorage.getItem("kp-notes::" + sectionKey(sectionId)) || "[]");
+                    renderNotesList(localNotes);
+                }
+            }
+            function stripHtml(html) {
+                var div = document.createElement("div");
+                div.innerHTML = html || "";
+                return div.textContent || div.innerText || "";
+            }
+            function renderNotesList(notes) {
+                var list = qs("#notes-list");
+                list.innerHTML = "";
+                if (!notes.length) {
+                    list.innerHTML = '<div class="platform-output">No notes for this section yet.</div>';
+                    return;
+                }
+                notes.forEach(function (note) {
+                    var button = document.createElement("button");
+                    button.type = "button";
+                    button.className = "note-link";
+                    button.dataset.noteId = note.id || "";
+                    var preview = stripHtml(note.preview || note.body || "").slice(0, 90);
+                    button.innerHTML = escapeHtml(note.title || "Untitled note") + (preview ? "<small>" + escapeHtml(preview) + "</small>" : "");
+                    button.addEventListener("click", function () { openNote(note.id); });
+                    list.appendChild(button);
+                });
+            }
+            async function ensureNoteEditor() {
+                var editor = qs("#note-editor");
+                if (state.noteQuill) return state.noteQuill;
+                editor.removeAttribute("contenteditable");
+                try {
+                    var QuillLib = await loadQuill();
+                    if (!QuillLib) throw new Error("Quill unavailable");
+                    state.noteQuill = new QuillLib("#note-editor", {
+                        theme: "snow",
+                        placeholder: "Write a full note for this section",
+                        modules: {
+                            toolbar: "#note-quill-toolbar",
+                            history: { delay: 800, maxStack: 150, userOnly: true }
+                        }
+                    });
+                    qs("#note-quill-toolbar").style.display = "";
+                    qs("#note-modal-status").textContent = "";
+                    return state.noteQuill;
+                } catch (err) {
+                    qs("#note-quill-toolbar").style.display = "none";
+                    editor.setAttribute("contenteditable", "true");
+                    qs("#note-modal-status").textContent = "Quill editor is not available; using basic editor.";
+                    return null;
+                }
+            }
+            function setEditorHtml(html) {
+                var editor = qs("#note-editor");
+                if (state.noteQuill) {
+                    state.noteQuill.clipboard.dangerouslyPasteHTML(html || "");
+                } else {
+                    editor.innerHTML = html || "";
+                }
+            }
+            function getEditorHtml() {
+                if (state.noteQuill) return state.noteQuill.root.innerHTML;
+                return qs("#note-editor").innerHTML;
+            }
+            function formatBytes(bytes) {
+                var value = Number(bytes || 0);
+                if (value < 1024) return value + " B";
+                if (value < 1024 * 1024) return (value / 1024).toFixed(1) + " KB";
+                return (value / (1024 * 1024)).toFixed(1) + " MB";
+            }
+            function renderAttachments(attachments) {
+                var list = qs("#note-attachments-list");
+                if (!list) return;
+                list.innerHTML = "";
+                if (!attachments.length) {
+                    list.innerHTML = '<div class="platform-output">No attachments yet.</div>';
+                    return;
+                }
+                attachments.forEach(function (item) {
+                    var row = document.createElement("div");
+                    row.className = "attachment-item";
+                    var preview = item.is_image
+                        ? '<img src="' + encodeURI(item.url) + '" alt="">'
+                        : escapeHtml((item.original_name || "file").split(".").pop().toUpperCase().slice(0, 6) || "FILE");
+                    row.innerHTML =
+                        '<div class="attachment-preview">' + preview + '</div>' +
+                        '<div class="attachment-meta">' +
+                            '<a href="' + encodeURI(item.url) + '" target="_blank" rel="noopener">' + escapeHtml(item.original_name || "Attachment") + '</a>' +
+                            '<small>' + escapeHtml(item.content_type || "file") + " · " + formatBytes(item.size_bytes) + '</small>' +
+                        '</div>';
+                    list.appendChild(row);
+                });
+            }
+            function setAttachmentMessage(message) {
+                var list = qs("#note-attachments-list");
+                if (list) list.innerHTML = '<div class="platform-output">' + escapeHtml(message) + '</div>';
+            }
+            async function loadAttachments(noteId) {
+                if (!noteId || String(noteId).indexOf("local-") === 0) {
+                    setAttachmentMessage("Save this note to the local server before attaching files.");
+                    return;
+                }
+                setAttachmentMessage("Loading attachments...");
+                try {
+                    var data = await fetchJson("/api/notes/" + encodeURIComponent(noteId) + "/attachments", {}, 2500);
+                    renderAttachments(data.attachments || []);
+                } catch (err) {
+                    setAttachmentMessage("Attachments are unavailable because the local server could not be reached.");
+                }
+            }
+            async function uploadAttachments() {
+                var input = qs("#note-attachment-input");
+                var files = Array.prototype.slice.call((input && input.files) || []);
+                if (!files.length) return;
+                var modal = qs("#note-modal");
+                var noteId = modal.dataset.noteId || "";
+                if (!noteId || noteId.indexOf("local-") === 0) {
+                    noteId = await saveNoteModal();
+                }
+                if (!noteId || String(noteId).indexOf("local-") === 0) {
+                    qs("#note-modal-status").textContent = "Attachments require a saved SQLite note. Start the local server and try again.";
+                    input.value = "";
+                    return;
+                }
+                qs("#note-modal-status").textContent = "Uploading attachments...";
+                try {
+                    for (var i = 0; i < files.length; i += 1) {
+                        var form = new FormData();
+                        form.append("file", files[i], files[i].name);
+                        await fetchJson("/api/notes/" + encodeURIComponent(noteId) + "/attachments", {
+                            method: "POST",
+                            body: form
+                        }, 60000);
+                    }
+                    input.value = "";
+                    await loadAttachments(noteId);
+                    loadNote(state.currentSectionId || "top");
+                    qs("#note-modal-status").textContent = "Attachments uploaded.";
+                } catch (err) {
+                    qs("#note-modal-status").textContent = err.status === 413 ? "Attachment is too large. Maximum size is 25 MB per file." : "Could not upload attachment.";
+                }
+            }
+            async function openNote(noteId) {
+                qs("#note-modal-backdrop").classList.add("open");
+                qs("#note-modal-status").textContent = "";
+                await ensureNoteEditor();
+                if (!noteId) {
+                    qs("#note-modal").dataset.noteId = "";
+                    qs("#note-title").value = "Untitled note";
+                    setEditorHtml("");
+                    loadAttachments(null);
+                    if (state.noteQuill) state.noteQuill.focus();
+                    else qs("#note-editor").focus();
+                    return;
+                }
+                try {
+                    var data = await fetchJson("/api/notes/" + encodeURIComponent(noteId), {}, 1500);
+                    var note = data.note;
+                    qs("#note-modal").dataset.noteId = note.id;
+                    qs("#note-title").value = note.title || "Untitled note";
+                    setEditorHtml(note.body || "");
+                    loadAttachments(note.id);
+                    if (state.noteQuill) state.noteQuill.focus();
+                    else qs("#note-editor").focus();
+                } catch (err) {
+                    qs("#note-modal-status").textContent = "Could not load this note.";
+                }
+            }
+            function closeNoteModal() {
+                qs("#note-modal-backdrop").classList.remove("open");
+            }
+            function commandNote(action, value) {
+                document.execCommand(action, false, value || null);
+                qs("#note-editor").focus();
+            }
+            async function saveNoteModal() {
+                var sectionId = state.currentSectionId || "top";
+                var modal = qs("#note-modal");
+                var noteId = modal.dataset.noteId;
+                var title = qs("#note-title").value.trim() || "Untitled note";
+                var body = getEditorHtml();
+                var payload = { chapter_slug: state.chapterSlug, section_id: sectionId, title: title, body: body };
+                qs("#note-modal-status").textContent = "Saving...";
+                try {
+                    var url = noteId ? "/api/notes/" + encodeURIComponent(noteId) : "/api/notes";
+                    var data = await fetchJson(url, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    }, 3000);
+                    if (!noteId && data.id) {
+                        modal.dataset.noteId = data.id;
+                        noteId = data.id;
+                    }
+                    qs("#note-modal-status").textContent = "Saved.";
+                    loadNote(sectionId);
+                    loadAttachments(noteId);
+                    return noteId;
+                } catch (err) {
+                    var key = "kp-notes::" + sectionKey(sectionId);
+                    var notes = JSON.parse(localStorage.getItem(key) || "[]");
+                    var localId = noteId || "local-" + Date.now();
+                    var existing = notes.find(function (n) { return String(n.id) === String(localId); });
+                    if (existing) {
+                        existing.title = title;
+                        existing.body = body;
+                        existing.preview = body;
+                    } else {
+                        notes.unshift({ id: localId, title: title, body: body, preview: body });
+                    }
+                    localStorage.setItem(key, JSON.stringify(notes));
+                    modal.dataset.noteId = localId;
+                    qs("#note-modal-status").textContent = "Saved locally in this browser. Start the server to sync to SQLite.";
+                    renderNotesList(notes);
+                    loadAttachments(localId);
+                    return localId;
+                }
+            }
+            async function loadProgress(sectionId) {
+                var checkbox = qs("#progress-complete");
+                var localKey = "kp-progress::" + sectionKey(sectionId);
+                try {
+                    var data = await fetchJson("/api/progress?chapter_slug=" + encodeURIComponent(state.chapterSlug) + "&section_id=" + encodeURIComponent(sectionId), {}, 1200);
+                    checkbox.checked = Boolean(data.completed);
+                } catch (err) {
+                    checkbox.checked = localStorage.getItem(localKey) === "1";
+                }
+            }
+            function saveProgress() {
+                var sectionId = state.currentSectionId || "top";
+                var completed = qs("#progress-complete").checked;
+                localStorage.setItem("kp-progress::" + sectionKey(sectionId), completed ? "1" : "0");
+                fetchJson("/api/progress", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ chapter_slug: state.chapterSlug, section_id: sectionId, completed: completed })
+                }, 1500).catch(function () {});
+            }
+
+            function renderHistory(messages) {
+                var history = qs("#tutor-history");
+                history.innerHTML = "";
+                messages.forEach(function (msg) {
+                    var div = document.createElement("div");
+                    div.className = "platform-turn";
+                    div.innerHTML = "<strong>" + (msg.role === "assistant" ? "Tutor" : "You") + ":</strong> " + escapeHtml(msg.body);
+                    history.appendChild(div);
+                });
+                history.scrollTop = history.scrollHeight;
+            }
+            async function loadTutorHistory(sectionId) {
+                try {
+                    var data = await fetchJson("/api/tutor/history?chapter_slug=" + encodeURIComponent(state.chapterSlug) + "&section_id=" + encodeURIComponent(sectionId), {}, 1400);
+                    renderHistory(data.messages || []);
+                } catch (err) {
+                    renderHistory([]);
+                }
+            }
+            async function askTutor(mode) {
+                if (!(state.serviceStatus.tutor || {}).available) return;
+                var input = qs("#tutor-question");
+                var question = input.value.trim();
+                if (!question && mode === "explain") question = "Explain this section differently, with a concrete example.";
+                if (!question) return;
+                setMessage("#tutor-output", "Thinking...");
+                var payload = {
+                    chapter_slug: state.chapterSlug,
+                    section_id: state.currentSectionId || "top",
+                    question: question,
+                    mode: mode || "ask",
+                    section_text: getSectionText()
+                };
+                try {
+                    var response = await fetch("/api/tutor/ask", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error("Tutor request failed");
+                    var reader = response.body.getReader();
+                    var decoder = new TextDecoder();
+                    var text = "";
+                    while (true) {
+                        var chunk = await reader.read();
+                        if (chunk.done) break;
+                        text += decoder.decode(chunk.value, { stream: true });
+                        setMessage("#tutor-output", text);
+                    }
+                    input.value = "";
+                    loadTutorHistory(payload.section_id);
+                } catch (err) {
+                    setMessage("#tutor-output", disabledMessage("tutor"));
+                }
+            }
+            async function gradeSubmission() {
+                if (!(state.serviceStatus.grading || {}).available) return;
+                var submission = qs("#grade-submission").value.trim();
+                if (!submission) return;
+                setMessage("#grade-output", "Grading...");
+                try {
+                    var data = await fetchJson("/api/exercises/grade", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            chapter_slug: state.chapterSlug,
+                            section_id: state.currentSectionId || "top",
+                            submission: submission,
+                            exercise_text: getSectionText()
+                        })
+                    }, 30000);
+                    setMessage("#grade-output", data.feedback || "");
+                } catch (err) {
+                    setMessage("#grade-output", disabledMessage("grading"));
+                }
+            }
+            async function playTts() {
+                if (!(state.serviceStatus.tts || {}).available) return;
+                setMessage("#tts-output", "Preparing audio...");
+                try {
+                    var response = await fetch("/api/tts", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            chapter_slug: state.chapterSlug,
+                            section_id: state.currentSectionId || "top",
+                            section_text: getSectionText()
+                        })
+                    });
+                    if (!response.ok) throw new Error("TTS request failed");
+                    var blob = await response.blob();
+                    var audio = new Audio(URL.createObjectURL(blob));
+                    audio.play();
+                    setMessage("#tts-output", "Playing this section.");
+                } catch (err) {
+                    setMessage("#tts-output", disabledMessage("tts"));
+                }
+            }
+            function slugify(text) {
+                return text.toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 90) || "paper";
+            }
+            function createPaperCards() {
+                if (state.chapterSlug === "settings") return;
+                qsa(".markdown-body h2, .markdown-body h3").forEach(function (heading) {
+                    if (!/Research paper/i.test(heading.textContent) || heading.dataset.paperCard) return;
+                    heading.dataset.paperCard = "1";
+                    var card = document.createElement("div");
+                    card.className = "paper-card";
+                    card.dataset.key = slugify(heading.textContent);
+                    card.dataset.query = heading.textContent.replace(/Research papers?:?/i, "").trim() || heading.textContent.trim();
+                    card.dataset.live = "pending";
+                    card.innerHTML = '<div class="paper-status">Research paper lookup is loading.</div>';
+                    heading.insertAdjacentElement("afterend", card);
+                });
+            }
+            async function loadPaperCards() {
+                createPaperCards();
+                qsa(".paper-card").forEach(async function (card) {
+                    var key = card.dataset.key;
+                    var query = card.dataset.query;
+                    try {
+                        var data = await fetchJson("/api/papers/" + encodeURIComponent(key) + "?query=" + encodeURIComponent(query), {}, 4500);
+                        var meta = data.metadata || {};
+                        card.dataset.live = "loaded";
+                        card.innerHTML = '<div class="paper-meta">' + (data.cached ? "cached — available offline" : "live scholarly lookup") + '</div>' +
+                            '<h4>' + escapeHtml(meta.title || query || "Research paper") + '</h4>' +
+                            '<p>' + escapeHtml([meta.authors, meta.year].filter(Boolean).join(" · ")) + '</p>' +
+                            '<p>' + escapeHtml(meta.abstract || "No abstract returned by the provider.") + '</p>' +
+                            (meta.url ? '<p><a href="' + meta.url + '" target="_blank" rel="noopener">Open paper</a></p>' : "");
+                    } catch (err) {
+                        card.dataset.live = "pending";
+                        card.innerHTML = '<div class="paper-status">' + disabledMessage("papers") + '</div><button class="platform-button paper-retry" type="button">Retry</button>';
+                        var retry = card.querySelector(".paper-retry");
+                        retry.addEventListener("click", function () { refreshStatus(); });
+                    }
+                });
+            }
+            async function sync(direction) {
+                var service = state.serviceStatus.sync || {};
+                if (!service.available) return;
+                setMessage("#sync-output", direction === "push" ? "Pushing..." : "Pulling...");
+                try {
+                    var data = await fetchJson("/api/sync/" + direction, { method: "POST" }, 15000);
+                    setMessage("#sync-output", data.message || "Sync complete.");
+                } catch (err) {
+                    setMessage("#sync-output", disabledMessage("sync"));
+                }
+            }
+            function escapeHtml(value) {
+                return String(value || "").replace(/[&<>"']/g, function (ch) {
+                    return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch];
+                });
+            }
+            function bindUi() {
+                qs("#platform-toggle").addEventListener("click", function () {
+                    qs("#platform-shell").classList.toggle("collapsed");
+                });
+                qs("#status-retry").addEventListener("click", refreshStatus);
+                qs("#note-new").addEventListener("click", function () { openNote(null); });
+                qs("#note-close").addEventListener("click", closeNoteModal);
+                qs("#note-save").addEventListener("click", saveNoteModal);
+                qs("#note-attachment-input").addEventListener("change", uploadAttachments);
+                qs("#note-modal-backdrop").addEventListener("click", function (event) {
+                    if (event.target.id === "note-modal-backdrop") closeNoteModal();
+                });
+                qs("#progress-complete").addEventListener("change", saveProgress);
+                qs("#tutor-submit").addEventListener("click", function () { askTutor("ask"); });
+                qs("#tutor-explain").addEventListener("click", function () { askTutor("explain"); });
+                qs("#tutor-check").addEventListener("click", function () { askTutor("check"); });
+                qs("#grade-submit").addEventListener("click", gradeSubmission);
+                qs("#tts-submit").addEventListener("click", playTts);
+                qs("#sync-push").addEventListener("click", function () { sync("push"); });
+                qs("#sync-pull").addEventListener("click", function () { sync("pull"); });
+            }
+            document.addEventListener("DOMContentLoaded", function () {
+                bindUi();
+                chooseInitialSection();
+                createPaperCards();
+                statusFallback();
+                applyStatus();
+                refreshStatus();
+                state.statusTimer = setInterval(refreshStatus, 60000);
+            });
+        })();
+    </script>
+
+
+    <!-- Math: local vendor copy preferred, CDN used only as a fallback when online. -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] }
+        };
+        (function loadMathJax() {
+            var local = document.createElement('script');
+            local.src = '../vendor/mathjax/tex-mml-chtml.js';
+            local.async = true;
+            local.onerror = function () {
+                var cdn = document.createElement('script');
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+                cdn.async = true;
+                document.head.appendChild(cdn);
+            };
+            document.head.appendChild(local);
+        })();
+    </script>
+
+    <!-- Diagrams: local vendor copy preferred, CDN used only as a fallback when online.
+         If neither loads (fully offline, no vendor file), the labeled diagram-source
+         panels above remain readable as plain text. -->
+    <script>
+        (function loadMermaid() {
+            function init(mermaid) {
+                mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+                document.querySelectorAll('.diagram-panel').forEach(function (panel) {
+                    var sourceEl = panel.querySelector('.mermaid-source');
+                    if (!sourceEl) return;
+                    var container = document.createElement('div');
+                    container.className = 'mermaid';
+                    container.textContent = sourceEl.textContent;
+                    panel.replaceChild(container, sourceEl);
+                });
+                mermaid.run();
+            }
+
+            var local = document.createElement('script');
+            local.src = '../vendor/mermaid.min.js';
+            local.onload = function () { init(window.mermaid); };
+            local.onerror = function () {
+                var cdn = document.createElement('script');
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+                cdn.onload = function () { init(window.mermaid); };
+                document.head.appendChild(cdn);
+            };
+            document.head.appendChild(local);
+        })();
+    </script>
+</body>
+</html>

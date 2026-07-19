@@ -94,6 +94,42 @@
 <div class="text-sm font-semibold">Ch 7: Reference Vault</div>
 </a>
 </nav>
+<!-- SRC Markdown Chapters (compiled from SRC/*.md via compile_src.py) -->
+<nav aria-label="SRC source chapters" class="space-y-1.5 pt-2">
+<span class="block text-xs font-semibold tracking-wider text-[#475569] uppercase mb-3">SRC CHAPTERS (DRAFT)</span>
+<a class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-[#cbd5e1] hover:text-emerald-400 hover:bg-[#151d30]/50 transition-all border border-transparent" href="SRC_HTML/chapter0.html" rel="noopener" target="_blank">
+<span class="text-lg">📄</span>
+<div class="text-sm font-semibold">Ch 0: From Nothing to Ready</div>
+</a>
+<a class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-[#cbd5e1] hover:text-emerald-400 hover:bg-[#151d30]/50 transition-all border border-transparent" href="SRC_HTML/chapter1.html" rel="noopener" target="_blank">
+<span class="text-lg">📄</span>
+<div class="text-sm font-semibold">Ch 1: Question to OLS</div>
+</a>
+<a class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-[#cbd5e1] hover:text-emerald-400 hover:bg-[#151d30]/50 transition-all border border-transparent" href="SRC_HTML/chapter2.html" rel="noopener" target="_blank">
+<span class="text-lg">📄</span>
+<div class="text-sm font-semibold">Ch 2: Fitted Line to Trustworthy Model</div>
+</a>
+<a class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-[#cbd5e1] hover:text-emerald-400 hover:bg-[#151d30]/50 transition-all border border-transparent" href="SRC_HTML/chapter3.html" rel="noopener" target="_blank">
+<span class="text-lg">📄</span>
+<div class="text-sm font-semibold">Ch 3: Research-Grade Study</div>
+</a>
+<a class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-[#cbd5e1] hover:text-emerald-400 hover:bg-[#151d30]/50 transition-all border border-transparent" href="SRC_HTML/chapter4.html" rel="noopener" target="_blank">
+<span class="text-lg">📄</span>
+<div class="text-sm font-semibold">Ch 4: Probabilities to Decisions</div>
+</a>
+<a class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-[#cbd5e1] hover:text-emerald-400 hover:bg-[#151d30]/50 transition-all border border-transparent" href="SRC_HTML/chapter4_5_interlude.html" rel="noopener" target="_blank">
+<span class="text-lg">📄</span>
+<div class="text-sm font-semibold">Ch 4.5: Interlude</div>
+</a>
+<a class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-[#cbd5e1] hover:text-emerald-400 hover:bg-[#151d30]/50 transition-all border border-transparent" href="SRC_HTML/chapter5.html" rel="noopener" target="_blank">
+<span class="text-lg">📄</span>
+<div class="text-sm font-semibold">Ch 5: Event Labels to Histories</div>
+</a>
+<a class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-[#cbd5e1] hover:text-emerald-400 hover:bg-[#151d30]/50 transition-all border border-transparent" href="SRC_HTML/chapter6.html" rel="noopener" target="_blank">
+<span class="text-lg">📄</span>
+<div class="text-sm font-semibold">Ch 6: Prediction to Intervention</div>
+</a>
+</nav>
 </div>
 <!-- Progress Widget -->
 <div class="bg-[#151d30] border border-[#223150] rounded-2xl p-4 mt-6 space-y-3">
@@ -115,148 +151,759 @@
 </div>
 <!-- Main Dynamic content injection zone -->
 <div class="flex-1 opacity-100 transition-opacity duration-300" id="main-content"><div class="chapter-content-section hidden" id="section-level_0_orientation">
-<!-- Header -->
-<header class="border-b border-[#223150] pb-8">
+<header class="border-b border-[#223150] pb-8 mb-8">
 <span class="inline-block px-3 py-1 text-xs font-semibold tracking-wider text-cyan-400 bg-cyan-400/10 rounded-full border border-cyan-400/20 mb-4">LEVEL 0</span>
-<h1 class="text-4xl font-extrabold tracking-tight text-white mb-2">Chapter 0: Level 0 Orientation — Landing on Planet Regression</h1>
-<p class="text-lg text-[#cbd5e1]">Get your environment running and meet the datasets.</p>
+<h1 class="text-4xl font-extrabold tracking-tight text-white mb-2">Chapter 0 — From Nothing to Ready</h1>
+<p class="text-lg text-[#94a3b8]">Level 0 Base Camp: five short days before the MHP Cost Estimator begins</p>
 </header>
-<!-- Intro -->
-<section class="prose prose-invert max-w-none text-[#cbd5e1] leading-relaxed space-y-4">
-<p>
-                Hey there! Welcome. If you've ever looked at a messy spreadsheet and thought, <em>"I wonder if we can predict one column using the others without losing my mind,"</em> you're in the right place.
-            </p>
-<p>
-                This guide is designed to take you from a complete beginner—someone who doesn't know their features from their targets—to someone who can confidently sit down with PhD researchers, discuss causal estimation, and not break a sweat. All in about a week of focused work.
-            </p>
-<p class="border-l-4 border-cyan-400 pl-4 italic bg-cyan-400/5 py-2 rounded-r-lg">
-<strong>No passive reading rule:</strong> You don't learn swimming by reading a manual on hydrodynamics; you learn it by jumping into the pool and swallowing a bit of water. In our case, the pool is full of data, and the water is Python code.
-            </p>
-</section>
-<!-- Section 1 -->
-<section class="space-y-4" id="how-to-use">
-<h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">1. How to Use This Guide</h2>
-<p class="text-[#cbd5e1] leading-relaxed">
-                This is a self-paced, project-based curriculum. Instead of using toy datasets like Boston Housing or Iris flowers, we are going to work with three custom-built datasets based on Khyber Pakhtunkhwa (KP), Pakistan.
-            </p>
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-<div class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2 hover:border-cyan-400/50 transition-colors">
-<span class="text-2xl">🧪</span>
-<h3 class="text-lg font-semibold text-white">1. Read &amp; Try</h3>
-<p class="text-base text-[#cbd5e1]">Study the theory, then write and execute code yourself. No blind copying allowed.</p>
-</div>
-<div class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2 hover:border-cyan-400/50 transition-colors">
-<span class="text-2xl">💥</span>
-<h3 class="text-lg font-semibold text-white">2. Break &amp; Learn</h3>
-<p class="text-base text-[#cbd5e1]">Alter parameters, introduce data leaks, or feed ID columns on purpose to observe how models fail.</p>
-</div>
-<div class="bg-[#151d30] border border-[#223150] rounded-xl p-5 space-y-2 hover:border-cyan-400/50 transition-colors">
-<span class="text-2xl">🎓</span>
-<h3 class="text-lg font-semibold text-white">3. Master Labs</h3>
-<p class="text-base text-[#cbd5e1]">Resolve non-trivial exercises designed to check conceptual limits and technical fluency.</p>
-</div>
-</div>
-</section>
-<!-- Section 2 -->
-<section class="space-y-4" id="setup-venv">
-<h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">2. Setup and Data Generation</h2>
-<p class="text-[#cbd5e1] leading-relaxed">
-                Suppose someone collected data across the valleys and plains of KP. Before we can do any math, we must prepare the Python environment and run the data generator.
-            </p>
-<div class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-4">
-<h3 class="text-lg font-semibold text-white">Terminal Activation Commands</h3>
-<pre class="bg-[#0b0f19] border border-[#223150] rounded-lg p-4 font-mono text-sm text-cyan-400 overflow-x-auto"><code># Create and activate environment
+<h1 class="text-3xl font-extrabold tracking-tight text-white mt-12 mb-6 border-b border-[#223150] pb-4">Chapter 0: Level 0 Orientation — Landing on Planet Regression</h1>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Hey there! Welcome. If you've ever looked at a messy spreadsheet and thought, <em>"I wonder if we can predict one column using the others without losing my mind,"</em> you're in the right place. </p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">This guide is designed to take you from a complete beginner—someone who doesn't know their features from their targets—to someone who can confidently sit down with PhD researchers, discuss causal estimation, and not break a sweat. All in about a week of focused work.</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">But we have a strict rule here: <strong class="text-white font-semibold">no passive reading</strong>. You don't learn swimming by reading a manual on hydrodynamics; you learn it by jumping into the pool and swallowing a bit of water. In our case, the pool is full of data, and the water is Python code. </p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Let's get oriented.</p>
+<hr class="border-[#223150] my-8"/>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">1. How to Use This Guide</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">This is a self-paced, project-based curriculum. Instead of using toy datasets like Boston Housing (which has been beaten to death and has some pretty sketchy history anyway) or Iris flowers, we are going to work with three custom-built datasets based on Khyber Pakhtunkhwa (KP), Pakistan. </p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">For every single chapter, you should follow this rhythm:
+1. <strong class="text-white font-semibold">Read the theory</strong> (informal, conceptual, but mathematically honest).
+2. <strong class="text-white font-semibold">Explain it back</strong> (tell a rubber duck or your cat what the concept means).
+3. <strong class="text-white font-semibold">Run the experiments</strong> (write the code yourself—no copy-pasting allowed).
+4. <strong class="text-white font-semibold">Break it on purpose</strong> (what happens if you scale the target? what if you pass ID columns? find out!).
+5. <strong class="text-white font-semibold">Solve the exercises</strong> (thoughtful, structured problems designed to build muscle memory).</p>
+<h3 class="text-xl font-bold text-white mt-8 mb-3">Your Toolkit</h3>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Make sure you have a working Python installation. We'll be using:
+- <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">pandas</code> &amp; <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">numpy</code> (the bread and butter of data manipulation)
+- <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">matplotlib</code> &amp; <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">seaborn</code> (for making plots that actually look good)
+- <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">scikit-learn</code> (for machine learning)
+- <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">statsmodels</code> (for statistical tests and classical econometrics)
+- Advanced tools (which we will introduce as we go: <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">XGBoost</code>, <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">Optuna</code>, <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">SHAP</code>, <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">MAPIE</code>, etc.)</p>
+<hr class="border-[#223150] my-8"/>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">2. Setup and Data Generation</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Suppose someone collected data across the beautiful valleys and plains of KP. Before we can do any math or fit any lines, we need to generate this data. </p>
+<h3 class="text-xl font-bold text-white mt-8 mb-3">Step 2.1: The Command Line Ritual</h3>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Open your terminal and run the following commands to set up a clean, isolated environment. Don't install packages globally; that's how you break other projects and end up crying over dependency conflicts at 2 AM.</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-bash"># Clone or navigate to your workspace
+cd /var/www/documentation/regression-tasks
+
+# Create a virtual environment
 python3 -m venv .venv
+
+# Activate the virtual environment
 source .venv/bin/activate
 
-# Install core packages
+# Install the essentials
 pip install --upgrade pip
-pip install pandas numpy matplotlib seaborn scikit-learn statsmodels</code></pre>
-<h3 class="text-lg font-semibold text-white mt-4">Generating Data</h3>
-<pre class="bg-[#0b0f19] border border-[#223150] rounded-lg p-4 font-mono text-sm text-cyan-400 overflow-x-auto"><code># Run the dataset generator
-python generate_data.py</code></pre>
-<div class="bg-amber-500/10 border border-amber-500/20 text-[#f59e0b] rounded-lg p-4 text-sm">
-<strong>⚠️ Caution:</strong> These datasets are synthetic. They model realistic dynamics, but they do not represent real survey outputs. Avoid using them to make real government policies.
-                </div>
-</div>
-</section>
-<!-- Section 3 -->
-<section class="space-y-6" id="kp-datasets">
-<h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">3. The Three KP Regression Datasets</h2>
-<!-- Dataset 1 -->
-<div class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-3" id="dataset-development">
-<div class="flex items-center justify-between">
-<h3 class="text-xl font-bold text-white">3.1 The Development Index Dataset</h3>
-<span class="text-xs bg-cyan-400/15 text-cyan-400 px-2.5 py-1 rounded-md font-mono border border-cyan-400/20">kp_subdistrict_development_index.csv</span>
-</div>
-<p class="text-base text-[#cbd5e1]">
-<strong>Concept:</strong> Suppose someone collected survey data from 100,000 communities in KP (terrain type, literacy rate, school enrollment, income, access to electricity). Now he wants to find the <code>development_score</code> (0 to 100). What do we do? We fit linear regressions, checking for high multicollinearity.
-                </p>
-<ul class="text-sm text-[#cbd5e1] list-disc list-inside space-y-1">
-<li><strong>Target:</strong> <code>development_score</code></li>
-<li><strong>Identifiers:</strong> <code>community_id</code> (Should be dropped!)</li>
-<li><strong>Key Challenge:</strong> Severe collinearity between literacy and school enrollment.</li>
+pip install pandas numpy matplotlib seaborn scikit-learn statsmodels
+</code></pre>
+<h3 class="text-xl font-bold text-white mt-8 mb-3">Step 2.2: Generate the Synthetic KP Datasets</h3>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">The project directory contains a script called <a class="text-cyan-400 underline hover:text-cyan-300" href="../generate_data.py">generate_data.py</a>. This script simulates a mini-world with realistic statistical dependencies. Let's run it:</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-bash">python generate_data.py
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">If successful, you will see output like this:</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-text">Generating development dataset: data/kp_subdistrict_development_index.csv with 100000 records...
+Finished generating data/kp_subdistrict_development_index.csv.
+Generating agricultural dataset: data/kp_agricultural_yields.csv with 100000 records...
+Finished generating data/kp_agricultural_yields.csv.
+Generating infrastructure dataset: data/kp_infrastructure_projects.csv with 100000 records...
+Finished generating data/kp_infrastructure_projects.csv.
+All datasets generated successfully in the 'data' directory!
+</code></pre>
+<blockquote class="border-l-4 border-cyan-500 bg-cyan-950/20 text-[#94a3b8] italic my-6 p-4 rounded-r-lg text-sm leading-relaxed">
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm"><strong class="text-white font-semibold">Warning:</strong> These datasets are <strong class="text-white font-semibold">synthetic</strong>. They are mathematically designed to teach you regression. They reflect realistic terrain constraints, crop scales, and budget overruns of Pakistan, but they are <strong class="text-white font-semibold">not</strong> real survey data. Do not present these as actual policy evidence to the KP Planning and Development Department unless you want to get laughed out of the room.</p>
+</blockquote>
+<hr class="border-[#223150] my-8"/>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">3. The Three KP Regression Datasets</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Let's meet our three main characters. Each represents a distinct style of regression problem.</p>
+<h3 class="text-xl font-bold text-white mt-8 mb-3">3.1 The Development Index Dataset</h3>
+<ul class="list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4">
+<li class="leading-relaxed"><strong class="text-white font-semibold">File:</strong> <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">data/kp_subdistrict_development_index.csv</code></li>
+<li class="leading-relaxed"><strong class="text-white font-semibold">Target (What we want to find):</strong> <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">development_score</code> (a bounded index from 0 to 100).</li>
+<li class="leading-relaxed"><strong class="text-white font-semibold">Concept:</strong> <em>Suppose someone collected survey data from 100,000 communities in KP. They have indicators like literacy rate, school enrollment, average household income, distance to health facilities, and public funding. Now, they want to predict the overall community development score. What do we do?</em></li>
+<li class="leading-relaxed"><strong class="text-white font-semibold">The Reality Inside:</strong> This dataset is highly linear with some terrain-based penalties (e.g., mountainous regions face structural challenges). However, it contains severe <strong class="text-white font-semibold">multicollinearity</strong> (literacy rate and school enrollment are almost copies of each other).</li>
 </ul>
-</div>
-<!-- Dataset 2 -->
-<div class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-3" id="dataset-agriculture">
-<div class="flex items-center justify-between">
-<h3 class="text-xl font-bold text-white">3.2 The Agricultural Yields Dataset</h3>
-<span class="text-xs bg-cyan-400/15 text-cyan-400 px-2.5 py-1 rounded-md font-mono border border-cyan-400/20">kp_agricultural_yields.csv</span>
-</div>
-<p class="text-base text-[#cbd5e1]">
-<strong>Concept:</strong> Suppose a researcher collected farm-level metrics (pH, fertilizer use, organic flags, rainfall, temperature, crop types). Now he wants to find <code>crop_yield_tons_per_acre</code>. What do we do? We engineer non-linear curves because soil pH has an optimal range and temperature effects depend on the crop type.
-                </p>
-<ul class="text-sm text-[#cbd5e1] list-disc list-inside space-y-1">
-<li><strong>Target:</strong> <code>crop_yield_tons_per_acre</code></li>
-<li><strong>Identifiers:</strong> <code>farm_id</code></li>
-<li><strong>Key Challenge:</strong> Complex interactions and non-linear response profiles.</li>
+<h3 class="text-xl font-bold text-white mt-8 mb-3">3.2 The Agricultural Yields Dataset</h3>
+<ul class="list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4">
+<li class="leading-relaxed"><strong class="text-white font-semibold">File:</strong> <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">data/kp_agricultural_yields.csv</code></li>
+<li class="leading-relaxed"><strong class="text-white font-semibold">Target:</strong> <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">crop_yield_tons_per_acre</code> (a positive continuous value).</li>
+<li class="leading-relaxed"><strong class="text-white font-semibold">Concept:</strong> <em>Suppose a researcher collected farm-level data including crop types (wheat, maize, sugarcane, apples, peaches), soil pH, rainfall, elevation, fertilizer application, and whether the farm is organic. They want to predict the yield per acre to advise farmers. What do we do?</em></li>
+<li class="leading-relaxed"><strong class="text-white font-semibold">The Reality Inside:</strong> This dataset is highly <strong class="text-white font-semibold">nonlinear</strong> and filled with <strong class="text-white font-semibold">interactions</strong>. Soil pH has an optimal point (curves downwards if pH is too acidic or basic). Apples and peaches die in high temperatures, while sugarcane thrives. Organic farms have strictly zero fertilizer and pesticides. A simple straight line will fail miserably here.</li>
 </ul>
-</div>
-<!-- Dataset 3 -->
-<div class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-3" id="dataset-infrastructure">
-<div class="flex items-center justify-between">
-<h3 class="text-xl font-bold text-white">3.3 The Infrastructure Projects Dataset</h3>
-<span class="text-xs bg-cyan-400/15 text-cyan-400 px-2.5 py-1 rounded-md font-mono border border-cyan-400/20">kp_infrastructure_projects.csv</span>
-</div>
-<p class="text-base text-[#cbd5e1]">
-<strong>Concept:</strong> Suppose the KP government logged 100,000 historical public works. Now they want to find final <code>actual_cost_million_pkr</code> and <code>actual_duration_months</code>. What do we do? We build multi-output models and apply log-transforms to counter severe right-skew.
-                </p>
-<ul class="text-sm text-[#cbd5e1] list-disc list-inside space-y-1">
-<li><strong>Targets:</strong> <code>actual_cost_million_pkr</code>, <code>actual_duration_months</code></li>
-<li><strong>Identifiers:</strong> <code>project_id</code></li>
-<li><strong>Key Challenge:</strong> Multi-output targets with highly skewed cost distributions.</li>
+<h3 class="text-xl font-bold text-white mt-8 mb-3">3.3 The Infrastructure Projects Dataset</h3>
+<ul class="list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4">
+<li class="leading-relaxed"><strong class="text-white font-semibold">File:</strong> <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">data/kp_infrastructure_projects.csv</code></li>
+<li class="leading-relaxed"><strong class="text-white font-semibold">Targets:</strong> <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">actual_cost_million_pkr</code> and <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">actual_duration_months</code> (two continuous values!).</li>
+<li class="leading-relaxed"><strong class="text-white font-semibold">Concept:</strong> <em>Suppose the government of KP tracked 100,000 public works projects (roads, schools, water supply). They have the approved budget, estimated duration, contractor experience, and year of initiation. They want to predict the actual final cost and duration before building starts to prevent budget overruns. What do we do?</em></li>
+<li class="leading-relaxed"><strong class="text-white font-semibold">The Reality Inside:</strong> The targets are heavily <strong class="text-white font-semibold">right-skewed</strong> (most projects are small, but a few mega-projects cost billions). It is a <strong class="text-white font-semibold">multi-output</strong> problem where cost and duration are intimately related, but actual duration is unknown when planning.</li>
 </ul>
-</div>
-</section>
-<!-- Exercises -->
-<section class="space-y-6" id="exercises">
-<h2 class="text-2xl font-bold text-white border-b border-[#223150] pb-2">Chapter 0 Exercises</h2>
-<div class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-4">
-<h3 class="text-lg font-semibold text-white">Exercise 0.1: The Data Handshake</h3>
-<p class="text-base text-[#cbd5e1]">Write a Python script <code>verify_setup.py</code> to load all three datasets and print their shapes, columns, and target variable ranges (minimum and maximum values).</p>
-<p class="text-sm text-[#cbd5e1] italic"><strong>Helpful Comment:</strong> Use <code>pd.read_csv()</code> and <code>df.describe()</code>. If it fails with FileNotFoundError, make sure you ran the generation script. Data does not create itself out of magic!</p>
-</div>
-<div class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-4">
-<h3 class="text-lg font-semibold text-white">Exercise 0.2: Spotting the Imposters (Identifiers)</h3>
-<p class="text-base text-[#cbd5e1]">Review all columns in the three datasets. Why must we drop ID columns like <code>community_id</code> before feeding data to a linear model? What happens if the model memorizes these IDs?</p>
-<p class="text-sm text-[#cbd5e1] italic"><strong>Helpful Comment:</strong> Memorizing unique row IDs results in perfect training scores but absolute failure on test splits. Drop them immediately!</p>
-</div>
-<div class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-4">
-<h3 class="text-lg font-semibold text-white">Exercise 0.3: Tracing the Data-Generating Code</h3>
-<p class="text-base text-[#cbd5e1]">Open <code>generate_data.py</code> and inspect the <code>generate_development_dataset</code> function. Write down the exact weights assigned to <code>literacy_rate</code> and <code>public_funding_allocated_million_pkr</code> when computing <code>raw_score</code>.</p>
-</div>
-</section>
-<!-- YouTube Video Links -->
-<section class="bg-red-500/5 border border-red-500/10 rounded-xl p-6 space-y-4">
-<h3 class="text-lg font-semibold text-white flex items-center gap-2">
-<span class="text-red-500">▶</span> Quick Video Reference
-            </h3>
-<p class="text-base text-[#cbd5e1]">Watch a quick overview of virtual environments and regression data structures.</p>
-<a class="yt-link inline-flex items-center gap-2 text-xs font-semibold text-red-400 hover:text-red-300 transition-colors" href="https://www.youtube.com/embed/dQw4w9WgXcQ">
-<span>🎥</span> Watch: Setting up Python Environments for ML
-            </a>
-</section>
+<hr class="border-[#223150] my-8"/>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">Chapter 0 Exercises</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Here are your first hands-on challenges. Write python scripts (save them under <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">scratch/</code> or run them in an interactive environment) to solve them.</p>
+<h3 class="text-xl font-bold text-white mt-8 mb-3">Exercise 0.1: The Data Handshake</h3>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Write a Python script <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">verify_setup.py</code> to load all three datasets and print their shapes, columns, and target variable ranges (minimum and maximum values).</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm"><strong class="text-white font-semibold">Helpful Comments:</strong>
+* Use <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">pd.read_csv()</code> to load.
+* Use <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">.shape</code>, <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">.columns</code>, and <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">.describe()</code> to extract statistics.
+* <em>Comic Relief:</em> If your script throws a <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">FileNotFoundError</code>, verify you ran <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">generate_data.py</code> first. Data does not materialize out of thin air, no matter how hard you stare at the screen.</p>
+<h3 class="text-xl font-bold text-white mt-8 mb-3">Exercise 0.2: Spotting the Imposters (Identifiers)</h3>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Look closely at the columns of all three datasets. Identify the columns that represent unique IDs (identifiers). 
+1. Why must we drop these columns before feeding them to a regression model?
+2. What happens if a model "memorizes" <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">community_id</code> to predict <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">development_score</code>?</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm"><strong class="text-white font-semibold">Helpful Comments:</strong>
+* Unique identifiers have high cardinality (almost every row has a unique value).
+* If you train a model with ID columns, it might find a spurious pattern (e.g., ID <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">COM-00042</code> has a high score just by luck) and fail when predicting on a new community <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">COM-99999</code>. This is the ultimate form of cheating and overfitting.</p>
+<h3 class="text-xl font-bold text-white mt-8 mb-3">Exercise 0.3: Tracing the Data-Generating Code</h3>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Open <a class="text-cyan-400 underline hover:text-cyan-300" href="../generate_data.py">generate_data.py</a> and search for the function <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">generate_development_dataset</code>. Look at how <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">raw_score</code> is calculated.
+Write down the exact formula used to build <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">raw_score</code>.
+What weights are given to <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">literacy_rate</code> vs <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">public_funding_allocated_million_pkr</code>?</p>
+<hr class="border-[#223150] my-8"/>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">References</h2>
+<ol class="list-decimal list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4" style="list-style-type: decimal;">
+<li class="leading-relaxed"><strong class="text-white font-semibold">Python Virtual Environments:</strong> <a class="text-cyan-400 underline hover:text-cyan-300" href="https://docs.python.org/3/library/venv.html">Python venv Docs</a> - Read this if you still don't know why we use virtual environments.</li>
+<li class="leading-relaxed"><strong class="text-white font-semibold">pandas Basics:</strong> <a class="text-cyan-400 underline hover:text-cyan-300" href="https://pandas.pydata.org/docs/getting_started/index.html">pandas Getting Started Guide</a> - Essential reading for data loading.</li>
+<li class="leading-relaxed"><strong class="text-white font-semibold">Pakistan Development Context:</strong> Planning &amp; Development Department, Khyber Pakhtunkhwa <a class="text-cyan-400 underline hover:text-cyan-300" href="https://pndkp.gov.pk/">KP P&amp;D Website</a> - For background on how development funding and infrastructure projects are managed in KP.</li>
+</ol>
+<hr class="border-[#223150] my-8"/>
+<blockquote class="border-l-4 border-cyan-500 bg-cyan-950/20 text-[#94a3b8] italic my-6 p-4 rounded-r-lg text-sm leading-relaxed">
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm"><strong class="text-white font-semibold">Central promise.</strong> By the end of this chapter, a summation sign will not make you flinch, a NumPy shape error will feel like a solvable puzzle instead of a personal insult, and the sentence "take the derivative of the squared error with respect to the slope" will sound like an instruction you could actually follow. You will not yet know any machine learning. You will know enough Python, algebra, statistics, and calculus that Chapter 1 reads like a hard but fair climb, not a cliff.</p>
+</blockquote>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">This chapter exists because Chapter 1 does not slow down for you. By its second day it is talking about vectors, matrices, and tensors. By its fifth day it is deriving a matrix gradient and proving a matrix is positive semidefinite. That is exactly as it should be — this book is aiming you at research-level regression, causal inference, and survival analysis by Chapter 6, and there is no version of that destination that skips the math.</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">So we are going to spend five days building the floor you'll stand on. Same rules as every other chapter in this book: no black boxes, code proves every claim, you build something small each day, you break it on purpose, and you don't move on until the exit check passes.</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">If you already know some of this — if <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">for</code> loops and <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">numpy</code> arrays are old friends — skim fast, but still run every code block. Muscle memory matters more than novelty here.</p>
+<hr class="border-[#223150] my-8"/>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">The pedagogical contract (same one Chapter 1 uses)</h2>
+<ol class="list-decimal list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4" style="list-style-type: decimal;">
+<li class="leading-relaxed"><strong class="text-white font-semibold">One central concept per day.</strong></li>
+<li class="leading-relaxed"><strong class="text-white font-semibold">No mathematical hand-waving.</strong> Every symbol gets unpacked and connected to a number you can see.</li>
+<li class="leading-relaxed"><strong class="text-white font-semibold">Code as proof.</strong> If a rule is true, you will watch Python confirm it.</li>
+<li class="leading-relaxed"><strong class="text-white font-semibold">Build, break, rebuild.</strong> Each day adds one working piece to a tiny toolkit; each day you also break something on purpose.</li>
+<li class="leading-relaxed"><strong class="text-white font-semibold">No copy-pasting.</strong> Type it. Your fingers need to learn this as much as your eyes do.</li>
+</ol>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">Level 0 learning outcomes</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">At the end of five days, you should be able to:</p>
+<ul class="list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4">
+<li class="leading-relaxed">write and reason about Python functions, loops, comprehensions, dictionaries, and a basic class, without looking up syntax for the basics;</li>
+<li class="leading-relaxed">create, index, slice, reshape, and broadcast NumPy arrays, and explain <em>why</em> broadcasting did what it did instead of guessing;</li>
+<li class="leading-relaxed">compute a dot product by hand, by loop, and with <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">@</code>, and know they are the same operation at three levels of abstraction;</li>
+<li class="leading-relaxed">read and write summation notation ($\sum$), and translate between a formula and a line of code in either direction;</li>
+<li class="leading-relaxed">compute a mean, variance, standard deviation, covariance, and correlation coefficient from raw definitions — not from a library you don't understand yet;</li>
+<li class="leading-relaxed">compute a derivative and a partial derivative of a simple function, both by the limit definition and by rule, and explain what "gradient" means in one sentence;</li>
+<li class="leading-relaxed">read a Python traceback methodically instead of panicking at it; and</li>
+<li class="leading-relaxed">set up an isolated Python environment and generate the KP datasets this book runs on.</li>
+</ul>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">The five-day route</h2>
+<pre class="mermaid bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 text-[#cbd5e1] text-xs overflow-x-auto">flowchart TD
+    D0["Day 0A: Python you actually need"] --&gt; D0B["Day 0B: NumPy, shapes, and the dot product"]
+    D0B --&gt; D0C["Day 0C: Algebra and summation notation"]
+    D0C --&gt; D0D["Day 0D: Statistics from raw definitions"]
+    D0D --&gt; D0E["Day 0E: Slope, derivatives, and surviving errors"]
+</pre>
+<h3 class="text-xl font-bold text-white mt-8 mb-3">Minimal software setup</h3>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Same environment the rest of the book uses. If you already did this while reading the orientation chapter, skip ahead.</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-bash">python3 -m venv .venv
+source .venv/bin/activate        # Windows PowerShell: .venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install numpy matplotlib
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Keep a scratch file — <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">level0_notes.py</code> or a notebook — and never delete a failed experiment. A wrong answer with a note explaining why it was wrong is worth more than a clean run you don't understand.</p>
+<hr class="border-[#223150] my-8">
+<h1 class="text-3xl font-extrabold tracking-tight text-white mt-12 mb-6 border-b border-[#223150] pb-4">Day 0A — Python You Actually Need</h1>
+<blockquote class="border-l-4 border-cyan-500 bg-cyan-950/20 text-[#94a3b8] italic my-6 p-4 rounded-r-lg text-sm leading-relaxed">
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm"><strong class="text-white font-semibold">Today's central idea:</strong> You don't need to be a "real programmer." You need six tools — variables, functions, loops, comprehensions, dictionaries, and one small class — used correctly and often.</p>
+</blockquote>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0A.1 Variables and functions: naming a thought</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Suppose your manager in Peshawar hands you the planned capacity of one microhydro power (MHP) site: 250 kilowatts. You want to convert that to megawatts.</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">capacity_kw = 250.0
+capacity_mw = capacity_kw / 1000.0
+print(capacity_mw)
+# 0.25
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">That's a variable: a name you gave to a number so you don't have to keep re-typing <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">250.0</code> and hoping you remembered it correctly. Now suppose you need to do this conversion for every project that lands on your desk, forever. You don't write the same two lines a hundred times. You wrap the <em>behaviour</em> in a function, and give the <em>specific number</em> a name only when you call it.</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">def kw_to_mw(capacity_kw):
+    """Convert kilowatts to megawatts."""
+    return capacity_kw / 1000.0
+
+print(kw_to_mw(250.0))   # 0.25
+print(kw_to_mw(1800.0))  # 1.8
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">A function has a contract: it takes something in, and it promises something specific out. Every regression model you build in this book — starting with <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">MHPCostEstimator</code> in Chapter 1 — is, underneath, a pile of functions with contracts like this one, just with more numbers going in.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0A.2 Loops: doing the same thing many times, honestly</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">You have planned capacities for five projects and want each one in megawatts.</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">capacities_kw = [100.0, 250.0, 500.0, 1800.0, 60.0]
+
+capacities_mw = []
+for c in capacities_kw:
+    capacities_mw.append(kw_to_mw(c))
+
+print(capacities_mw)
+# [0.1, 0.25, 0.5, 1.8, 0.06]
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Walk through this out loud (yes, actually say it): "For each value <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">c</code> in the list, convert it, and stick the result onto the end of a new list." That is the entire idea of a <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">for</code> loop. Nothing hides inside it.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0A.3 List comprehensions: the same loop, said more tersely</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Python lets you write the loop above in one line. This is not a different idea — it is the <em>identical</em> operation, just written compactly enough that you'll see it constantly in other people's code (and in later chapters of this book).</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">capacities_mw = [kw_to_mw(c) for c in capacities_kw]
+print(capacities_mw)
+# [0.1, 0.25, 0.5, 1.8, 0.06]
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Read it right to left inside the brackets: "for <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">c</code> in <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">capacities_kw</code>, compute <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">kw_to_mw(c)</code>, collect all of those." If a comprehension ever confuses you, the fix is always the same: mentally unroll it back into the <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">for</code> loop from §0A.2. They compute the same thing.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0A.4 Dictionaries: a record, not just a list</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">A list of numbers loses the <em>meaning</em> of each number. A single MHP project is not just <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">[15.0, 100.0, 3]</code> — it's cable length, capacity, and terrain difficulty, and you'll forget which number is which within a week. A dictionary keeps the label attached to the value.</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">project = {
+    "site_id": "MHP-0042",
+    "cable_length_km": 15.0,
+    "planned_capacity_kw": 100.0,
+    "terrain_index": 3,
+}
+
+print(project["planned_capacity_kw"])
+# 100.0
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">This matters more than it looks like it should. Chapter 1, Day 2 introduces a "data dictionary" as part of the model itself — the discipline of never letting a raw number float around without its meaning attached starts here.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0A.5 A minimal class: bundling data and behaviour together</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">A function does one thing to whatever you hand it. A class is a way of saying: "here is a <em>thing</em> — it has some data that belongs to it, and some behaviour that belongs to it." You will build classes named <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">MHPCostEstimator</code> and <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">GaussianOLS</code> later in this book. Here is the smallest possible ancestor of those, so the syntax is not a surprise when it matters.</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">class UnitConverter:
+    def __init__(self, factor):
+        # This runs once, when the object is created.
+        # It stores 'factor' so every method below can use it.
+        self.factor = factor
+
+    def convert(self, value):
+        return value * self.factor
+
+kw_to_mw_converter = UnitConverter(factor=0.001)
+print(kw_to_mw_converter.convert(250.0))
+# 0.25
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm"><code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">self</code> is just "this specific object." When you call <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">kw_to_mw_converter.convert(250.0)</code>, Python quietly hands the object itself in as <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">self</code>, so <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">self.factor</code> means "<em>this</em> converter's factor," not some factor floating in space. That's the whole trick. Everything else about classes in this book builds on exactly this.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0A.6 Build: a tiny project-cost sketch</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Combine everything above into one small tool — not a real model yet, just proof you can chain these pieces together.</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">projects = [
+    {"site_id": "MHP-0001", "cable_length_km": 12.0, "cost_per_km_million_pkr": 0.9},
+    {"site_id": "MHP-0002", "cable_length_km": 30.0, "cost_per_km_million_pkr": 0.9},
+    {"site_id": "MHP-0003", "cable_length_km": 5.0,  "cost_per_km_million_pkr": 1.4},
+]
+
+def rough_cable_cost(project):
+    return project["cable_length_km"] * project["cost_per_km_million_pkr"]
+
+for p in projects:
+    cost = rough_cable_cost(p)
+    print(f"{p['site_id']}: approx {cost:.2f} million PKR of cable cost")
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">This is not a regression. It's a fixed formula, not a fitted one — the whole rest of the book is about the difference between "a formula I made up" and "a formula the data told me to use." Keep that distinction in your head; it will matter by Day 5.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0A.7 Break it deliberately</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Run each of these, read the <em>last line</em> of the error only, and write one sentence translating it into English before you fix it.</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python"># Break 1
+def kw_to_mw(capacity_kw)   # missing colon
+    return capacity_kw / 1000.0
+</code></pre>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python"># Break 2
+project = {"cable_length_km": 15.0}
+print(project["cost_per_km_million_pkr"])  # key that doesn't exist
+</code></pre>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python"># Break 3
+capacities_kw = [100.0, 250.0, 500.0]
+print(capacities_kw * 1000)   # not what you think it does
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">The third one is the important one. <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">capacities_kw * 1000</code> does not multiply every number by 1000 — it repeats the <em>list</em> a thousand times, because <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">*</code> on a Python list means "repeat," not "scale." This single misunderstanding is the entire reason NumPy exists, and it's where Day 0B starts.</p>
+<h3 class="text-xl font-bold text-white mt-8 mb-3">Day 0A exit check</h3>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">You should be able to, without looking anything up:
+- write a function with a docstring and a return value;
+- write the same loop two ways (<code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">for</code> and a comprehension);
+- explain what <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">self</code> refers to inside a class method;
+- explain, out loud, why <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">[1, 2, 3] * 2</code> is not <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">[2, 4, 6]</code>.</p>
+<hr class="border-[#223150] my-8"/>
+<h1 class="text-3xl font-extrabold tracking-tight text-white mt-12 mb-6 border-b border-[#223150] pb-4">Day 0B — NumPy, Shapes, and the Dot Product</h1>
+<blockquote class="border-l-4 border-cyan-500 bg-cyan-950/20 text-[#94a3b8] italic my-6 p-4 rounded-r-lg text-sm leading-relaxed">
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm"><strong class="text-white font-semibold">Today's central idea:</strong> A NumPy array is not "a faster list." It's a different kind of object with its own arithmetic rules, and almost every bug you'll hit in this book for the next six chapters is a shape mismatch.</p>
+</blockquote>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0B.1 Why lists fail us</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">You saw it already: <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">capacities_kw * 1000</code> repeats a list instead of scaling it. NumPy arrays fix this by defining <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">*</code>, <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">+</code>, <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">-</code>, <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">/</code> to mean <em>elementwise</em> arithmetic.</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">import numpy as np
+
+capacities_kw = np.array([100.0, 250.0, 500.0])
+capacities_watts = capacities_kw * 1000.0
+print(capacities_watts)
+# [100000. 250000. 500000.]
+</code></pre>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0B.2 Shape is the first thing you check, always</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Every array has a <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">.shape</code>. Get comfortable reading it before you do anything else with an array.</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">a = np.array([1.0, 2.0, 3.0])
+print(a.shape)          # (3,)   — a 1-D array of 3 numbers, a "vector"
+
+b = np.array([[1.0, 2.0, 3.0]])
+print(b.shape)          # (1, 3) — a 2-D array: 1 row, 3 columns
+
+c = np.array([[1.0], [2.0], [3.0]])
+print(c.shape)          # (3, 1) — a 2-D array: 3 rows, 1 column
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm"><code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">(3,)</code>, <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">(1, 3)</code>, and <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">(3, 1)</code> hold the same numbers and are <strong class="text-white font-semibold">not interchangeable</strong>. This looks pedantic until it silently ruins a calculation two chapters from now. Chapter 1's design matrices depend on you already having this reflex.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0B.3 Indexing and slicing</h2>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">X = np.array([
+    [15.0, 100.0, 3],   # cable_km, capacity_kw, terrain_index
+    [30.0, 250.0, 4],
+    [5.0,  500.0, 1],
+])
+
+print(X.shape)        # (3, 3) — 3 projects, 3 features
+print(X[0])            # first row: array([ 15., 100.,   3.])
+print(X[:, 0])          # first column (all rows): array([15., 30.,  5.])
+print(X[0, 1])          # row 0, column 1: 100.0
+print(X[:2, :2])        # first two rows, first two columns
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">The comma inside <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">[ ]</code> separates "which rows" from "which columns." <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">:</code> alone means "all of them." This exact slicing vocabulary is what Chapter 1 uses to pull a single feature column out of a design matrix — get it into your hands now, not while also learning what a design matrix is.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0B.4 Broadcasting: NumPy's rule for mismatched shapes</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Broadcasting is <em>not</em> magic. It's one precise rule: NumPy compares shapes from the right, and a dimension of size 1 (or a missing dimension) is allowed to stretch to match. Watch it work, then watch it correctly refuse.</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">X = np.array([
+    [15.0, 100.0],
+    [30.0, 250.0],
+    [5.0,  500.0],
+])   # shape (3, 2): cable_km, capacity_kw
+
+means = np.array([16.7, 283.3])   # shape (2,) — one mean per column
+
+centred = X - means
+print(centred)
+# Each row of X has 'means' subtracted from it, column by column.
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm"><code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">(3, 2)</code> and <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">(2,)</code> are compatible because the trailing dimension <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">2</code> matches <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">2</code>. Now break it on purpose:</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">weights = np.array([1.5, 0.8, 2.1])   # shape (3,) — wrong length on purpose
+
+result = X @ weights
+</code></pre>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-text">ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0,
+with gufunc signature (n?,k),(k?,m?)-&gt;(n?,m?) (size 3 is different from 2)
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Translate the last line, not the jargon: <em>X has 2 columns; <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">weights</code> has 3 entries; matrix multiplication needs those to match.</em> Fix it by giving <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">weights</code> exactly 2 entries, one per column of <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">X</code>. This is the single most common error you will produce for the next six chapters, so get used to reading it calmly.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0B.5 The dot product, at three levels of honesty</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">A "weighted sum" is the single most important operation in this entire book — every regression coefficient you will ever fit multiplies a feature by a weight and adds the results up. Here it is proven three ways, so you know they're the same thing.</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">features = np.array([15.0, 100.0])       # cable_km, capacity_kw
+weights  = np.array([0.05, 0.002])       # million PKR per unit
+
+# Level 1: by hand, term by term
+manual = features[0] * weights[0] + features[1] * weights[1]
+
+# Level 2: by an explicit loop (works for any length)
+loop_total = 0.0
+for f, w in zip(features, weights):
+    loop_total += f * w
+
+# Level 3: NumPy's dot product
+dot_total = features @ weights   # equivalently: np.dot(features, weights)
+
+print(manual, loop_total, dot_total)
+# 0.95 0.95 0.95
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">All three give <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">0.95</code> — 0.75 (cable contribution) + 0.2 (capacity contribution) million PKR. When Chapter 1 writes <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">X @ beta</code>, this is exactly what it means: do this weighted sum, once per row of <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">X</code>, all at once.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0B.6 Build: a manual prediction, matrix style</h2>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">X = np.array([
+    [15.0, 100.0],
+    [30.0, 250.0],
+    [5.0,  500.0],
+])   # 3 projects, 2 features each
+
+beta = np.array([0.05, 0.002])   # made-up weights, not fitted — just practising the mechanics
+
+predictions = X @ beta
+print(predictions)
+# one predicted cost per project, in the same units as beta implies
+</code></pre>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0B.7 Break it deliberately</h2>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">row_vector = np.array([[1.0, 2.0, 3.0]])   # shape (1, 3)
+col_vector = np.array([[1.0], [2.0], [3.0]])  # shape (3, 1)
+
+print(row_vector + col_vector)
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">This does <strong class="text-white font-semibold">not</strong> error — it broadcasts to a <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">(3, 3)</code> result, which surprises almost everyone the first time. Before running it, predict the shape of the output. Then run it and see if you were right. If you were wrong, walk through §0B.4's rule again until the result stops being a surprise.</p>
+<h3 class="text-xl font-bold text-white mt-8 mb-3">Day 0B exit check</h3>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">You should be able to, without looking anything up:
+- state the shape of any array you just created, without running <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">.shape</code>, and then confirm it;
+- explain broadcasting as one sentence about matching dimensions from the right;
+- compute a dot product three ways and get the same number each time;
+- read a <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">matmul</code> shape-mismatch error and say, in plain English, which two numbers disagree.</p>
+<hr class="border-[#223150] my-8"/>
+<h1 class="text-3xl font-extrabold tracking-tight text-white mt-12 mb-6 border-b border-[#223150] pb-4">Day 0C — Algebra and Summation Notation</h1>
+<blockquote class="border-l-4 border-cyan-500 bg-cyan-950/20 text-[#94a3b8] italic my-6 p-4 rounded-r-lg text-sm leading-relaxed">
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm"><strong class="text-white font-semibold">Today's central idea:</strong> $\sum$ is not a foreign symbol. It's a <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">for</code> loop that adds things up, written in a more compressed alphabet.</p>
+</blockquote>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0C.1 A function is a recipe with a name</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">You already know this from Python — <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">def kw_to_mw(capacity_kw): return capacity_kw / 1000.0</code> is a recipe. Algebra just writes recipes with single letters instead of English words:</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">$$f(x) = \frac{x}{1000}$$</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">says exactly what the Python function said: give me a number $x$, I'll divide it by 1000 and call the result $f(x)$. Every formula in this book is a recipe like this one — the discipline is learning to read the recipe before panicking about the symbols.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0C.2 The equation of a line, and why it matters here</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">$$y = mx + c$$</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">$m$ is the slope: how much $y$ changes when $x$ increases by exactly 1. $c$ is the intercept: the value of $y$ when $x$ is 0. This is the entire idea behind linear regression with one feature — Chapter 1 spends its first three days building up to exactly this equation, generalised to many features. If you can already sketch $y = 2x + 5$ on paper and say what happens as $x$ grows, you have the geometric intuition; the rest is notation.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0C.3 Summation notation, built from a loop you already wrote</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Recall Day 0A's loop:</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">loop_total = 0.0
+for f, w in zip(features, weights):
+    loop_total += f * w
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">In algebra, if there are $p$ features indexed $i = 1, 2, \dots, p$, this exact loop is written:</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">$$\sum_{i=1}^{p} f_i w_i$$</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Read it left to right, the same way you'd read the <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">for</code> loop: "start a running total at 0; for each $i$ from 1 to $p$, add $f_i$ times $w_i$; stop." The little number under $\sum$ is where the loop starts, the number on top is where it ends, and everything to the right of $\sum$ is what gets added at each step.</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm"><strong class="text-white font-semibold">Code proof — the formula and the loop must agree:</strong></p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">import numpy as np
+
+f = np.array([15.0, 100.0, 3.0])
+w = np.array([0.05, 0.002, -1.5])
+
+# The formula, as a loop
+total_loop = 0.0
+for i in range(len(f)):
+    total_loop += f[i] * w[i]
+
+# The formula, as NumPy
+total_numpy = f @ w
+
+print(total_loop, total_numpy)
+# 0.55 0.55
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">$\sum_{i=1}^{p} f_i w_i$, the <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">for</code> loop, and <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">f @ w</code> are three spellings of one idea. When Chapter 1, Day 4 writes the sum of squared residuals as</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">$$\text{SSR} = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">you should now be able to read it as: "loop over every project $i$; take the actual cost minus the predicted cost; square it; add it to a running total." Try writing that as Python <em>before</em> Chapter 1 does it for you.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0C.4 Exponents and why we square errors (a preview)</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">$x^2$ means $x$ multiplied by itself. Two properties matter for everything downstream:</p>
+<ul class="list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4">
+<li class="leading-relaxed">squaring always produces a non-negative number, so a positive error and an equally-sized negative error contribute the same amount once squared;</li>
+<li class="leading-relaxed">squaring punishes large errors much more than small ones — an error of 10 contributes 100, an error of 2 contributes only 4.</li>
+</ul>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Chapter 1, Day 4 spends real time justifying <em>why</em> regression squares errors instead of just adding them up. You don't need the full argument yet — just the two facts above, so the argument doesn't start from zero.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0C.5 Build: SSR from the formula, three ways</h2>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">y_actual    = np.array([12.0, 30.0, 8.0])
+y_predicted = np.array([11.2, 31.5, 9.0])
+
+# Level 1: by hand
+errors = y_actual - y_predicted
+squared_errors = errors ** 2
+ssr_manual = squared_errors.sum()
+
+# Level 2: as a literal loop mirroring the sigma
+ssr_loop = 0.0
+for a, p in zip(y_actual, y_predicted):
+    ssr_loop += (a - p) ** 2
+
+# Level 3: one line
+ssr_oneline = np.sum((y_actual - y_predicted) ** 2)
+
+print(ssr_manual, ssr_loop, ssr_oneline)
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">All three must match. If they don't, you have a bug — and finding it is exactly the kind of debugging Chapter 1 will ask of you constantly.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0C.6 Break it deliberately</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Predict the output on paper before running:</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">values = np.array([2.0, -3.0, 5.0])
+print(np.sum(values ** 2))     # sum of squares
+print(np.sum(values) ** 2)     # square of the sum
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">These are <strong class="text-white font-semibold">not equal</strong>, and the difference between "sum of squares" and "square of a sum" is a mistake that will cost you real debugging time in later chapters (variance, in particular, depends on getting this order right). Say out loud why they differ before moving on.</p>
+<h3 class="text-xl font-bold text-white mt-8 mb-3">Day 0C exit check</h3>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">You should be able to:
+- translate a $\sum$ formula into a <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">for</code> loop and into one line of NumPy, and get matching numbers all three ways;
+- explain why $y = mx + c$ is the same shape of idea as Chapter 1's regression equation;
+- explain the difference between $\sum x_i^2$ and $(\sum x_i)^2$ using a concrete 3-number example.</p>
+<hr class="border-[#223150] my-8"/>
+<h1 class="text-3xl font-extrabold tracking-tight text-white mt-12 mb-6 border-b border-[#223150] pb-4">Day 0D — Statistics From Raw Definitions</h1>
+<blockquote class="border-l-4 border-cyan-500 bg-cyan-950/20 text-[#94a3b8] italic my-6 p-4 rounded-r-lg text-sm leading-relaxed">
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm"><strong class="text-white font-semibold">Today's central idea:</strong> Mean, variance, and correlation are not library functions you call. They are formulas you can build from Day 0C's summation notation in about four lines each — and Chapter 2's probability content assumes you already know what they mean.</p>
+</blockquote>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0D.1 The mean: the balancing point</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Suppose five MHP projects had these actual costs, in million PKR: <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">[12.0, 30.0, 8.0, 45.0, 15.0]</code>.</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">$$\bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i$$</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">"Add everything up, divide by how many there are."</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">costs = np.array([12.0, 30.0, 8.0, 45.0, 15.0])
+
+n = len(costs)
+mean_manual = np.sum(costs) / n
+mean_numpy = costs.mean()
+
+print(mean_manual, mean_numpy)
+# 22.0 22.0
+</code></pre>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0D.2 Variance: how far, on average, things sit from the mean</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">You can't just average the raw deviations from the mean — they always sum to zero (that's <em>what</em> "mean" means). So we square them first, borrowing exactly the trick from Day 0C.</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">$$\sigma^2 = \frac{1}{n}\sum_{i=1}^{n} (x_i - \bar{x})^2$$</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">deviations = costs - costs.mean()
+print(deviations)               # [-10. 8. -14. 23. -7.]
+print(deviations.sum())          # 0.0 — always, by construction
+
+variance_manual = np.sum(deviations ** 2) / n
+variance_numpy = costs.var()     # NumPy's default matches this population formula
+
+print(variance_manual, variance_numpy)
+</code></pre>
+<blockquote class="border-l-4 border-cyan-500 bg-cyan-950/20 text-[#94a3b8] italic my-6 p-4 rounded-r-lg text-sm leading-relaxed">
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm"><strong class="text-white font-semibold">A warning that will save you real confusion later:</strong> you'll sometimes see variance computed by dividing by $n - 1$ instead of $n$ (the "sample" variance, <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">ddof=1</code> in NumPy). Chapter 2, Day 6 explains exactly why that correction exists. For now, just notice that <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">costs.var()</code> and <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">costs.var(ddof=1)</code> disagree, and don't assume it's a bug when you see it — it's a deliberate choice depending on what you're trying to estimate.</p>
+</blockquote>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0D.3 Standard deviation: getting the units back</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Variance is in squared units (million PKR², which means nothing to anyone). Standard deviation undoes the squaring:</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">$$\sigma = \sqrt{\sigma^2}$$</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">std_manual = np.sqrt(variance_manual)
+std_numpy = costs.std()
+print(std_manual, std_numpy)
+</code></pre>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0D.4 Covariance: do two things move together?</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Now bring in a second variable — cable length per project, in km: <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">[12.0, 30.0, 5.0, 40.0, 15.0]</code>. Covariance asks: when one variable is above its mean, is the other one usually above its mean too?</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">$$\text{cov}(x, y) = \frac{1}{n}\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})$$</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">cable_km = np.array([12.0, 30.0, 5.0, 40.0, 15.0])
+
+x_dev = costs - costs.mean()
+y_dev = cable_km - cable_km.mean()
+
+cov_manual = np.sum(x_dev * y_dev) / n
+cov_numpy = np.cov(costs, cable_km, ddof=0)[0, 1]
+
+print(cov_manual, cov_numpy)
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">If both deviations tend to have the same sign (both above their means, or both below), each product is positive and covariance comes out positive: as cable length rises, cost tends to rise too. That's not a coincidence for this dataset — it's the whole reason regression will later find cable length a useful feature.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0D.5 Correlation: covariance with the units washed out</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Covariance's <em>size</em> depends on the units you happened to measure in, which makes two covariances hard to compare. Correlation fixes that by dividing out each variable's own spread:</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">$$r = \frac{\text{cov}(x, y)}{\sigma_x \sigma_y}$$</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">r_manual = cov_manual / (costs.std() * cable_km.std())
+r_numpy = np.corrcoef(costs, cable_km)[0, 1]
+
+print(r_manual, r_numpy)
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">$r$ always sits between $-1$ and $1$. Close to $1$: strong positive relationship. Close to $-1$: strong negative. Close to $0$: little linear relationship. This single number is going to matter enormously in Chapter 1, Day 2, where you'll learn that two <em>nearly identical</em> correlated features (like literacy rate and school enrollment in the orientation chapter's development dataset) can quietly break a regression — that's called multicollinearity, and it's just "correlation close to 1" between features, wearing a bigger hat.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0D.6 Build: a tiny stats report</h2>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">def describe(values, label):
+    print(f"{label}: mean={values.mean():.2f}, std={values.std():.2f}, "
+          f"min={values.min():.2f}, max={values.max():.2f}")
+
+describe(costs, "cost (million PKR)")
+describe(cable_km, "cable length (km)")
+print(f"correlation(cost, cable_km) = {np.corrcoef(costs, cable_km)[0,1]:.3f}")
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">This four-line report is, in essence, what Exercise 0.1 in the orientation chapter asked you to build for the full KP datasets. Now you know what every number in it actually means, instead of trusting <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">.describe()</code> blindly.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0D.7 Break it deliberately</h2>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">constant = np.array([5.0, 5.0, 5.0, 5.0, 5.0])
+print(np.corrcoef(constant, costs))
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">This produces <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">nan</code>, not an error — correlation divides by <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">constant.std()</code>, which is <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">0.0</code>, and dividing by zero silently poisons the whole calculation with <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">nan</code> instead of crashing loudly. This is a real trap: a feature with zero variance (every project has the same terrain grade, say) will not throw an exception, it will quietly corrupt anything downstream that touches it. Get used to checking <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">.std()</code> for zero <em>before</em> you trust a correlation number.</p>
+<h3 class="text-xl font-bold text-white mt-8 mb-3">Day 0D exit check</h3>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">You should be able to:
+- compute mean, variance, standard deviation, covariance, and correlation from the raw summation formulas, and match NumPy's built-ins;
+- explain in one sentence why variance squares the deviations instead of just averaging them;
+- explain what a correlation near $1$ between two features will eventually mean for a regression model;
+- explain why a zero-variance feature produces <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">nan</code> instead of an error, and why that's more dangerous.</p>
+<hr class="border-[#223150] my-8"/>
+<h1 class="text-3xl font-extrabold tracking-tight text-white mt-12 mb-6 border-b border-[#223150] pb-4">Day 0E — Slope, Derivatives, and Surviving Errors</h1>
+<blockquote class="border-l-4 border-cyan-500 bg-cyan-950/20 text-[#94a3b8] italic my-6 p-4 rounded-r-lg text-sm leading-relaxed">
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm"><strong class="text-white font-semibold">Today's central idea:</strong> A derivative is just the slope of a curve at one exact point, and every model you train in this book is, underneath, a search for the point where that slope hits zero.</p>
+</blockquote>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0E.1 From a straight slope to a curved one</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">You already know $y = mx + c$ has one constant slope, $m$, everywhere. Now consider a curve: $y = x^2$. Its steepness is different at every point — flat near $x=0$, steep far from it. The <strong class="text-white font-semibold">derivative</strong> is a formula that tells you the exact slope at any single point you pick.</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">For $y = x^2$, the derivative is:</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">$$\frac{dy}{dx} = 2x$$</p>
+<ul class="list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4">
+<li class="leading-relaxed">At $x = 0$: slope is $2(0) = 0$ — flat, the bottom of the bowl.</li>
+<li class="leading-relaxed">At $x = 3$: slope is $2(3) = 6$ — climbing steeply.</li>
+<li class="leading-relaxed">At $x = -3$: slope is $2(-3) = -6$ — descending steeply, mirror image.</li>
+</ul>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0E.2 Where that formula actually comes from (the limit definition)</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">You don't have to memorise derivative rules as magic — they fall out of one idea: <em>look at the average slope between two points that are getting closer and closer together.</em></p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">$$\frac{dy}{dx} = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}$$</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm"><strong class="text-white font-semibold">Code proof — approximate this numerically and watch it converge to $2x$:</strong></p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">def f(x):
+    return x ** 2
+
+def numerical_slope(f, x, h):
+    return (f(x + h) - f(x)) / h
+
+x = 3.0
+for h in [1.0, 0.1, 0.01, 0.0001, 0.000001]:
+    print(f"h={h:&lt;10} slope estimate={numerical_slope(f, x, h):.6f}")
+# As h shrinks, the estimate creeps toward exactly 6.0 = 2 * 3
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">This is not a party trick. Chapter 1, Day 5 checks its hand-derived matrix gradient against exactly this kind of numerical approximation ("finite differences"), and Chapter 2, Day 9 builds gradient descent directly on top of it. You just ran a miniature version of both.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0E.3 Two derivative rules you'll actually use</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">You don't need a full calculus course — this book only leans on a handful of rules, repeatedly:</p>
+<ul class="list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4">
+<li class="leading-relaxed"><strong class="text-white font-semibold">Power rule:</strong> the derivative of $x^n$ is $n x^{n-1}$. (This is where $x^2 \to 2x$ came from.)</li>
+<li class="leading-relaxed"><strong class="text-white font-semibold">Constant multiple:</strong> the derivative of $a \cdot f(x)$ is $a$ times the derivative of $f(x)$.</li>
+<li class="leading-relaxed"><strong class="text-white font-semibold">Sum rule:</strong> the derivative of $f(x) + g(x)$ is just the derivative of $f(x)$ plus the derivative of $g(x)$ — you can differentiate term by term.</li>
+</ul>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python"># Example: derivative of  y = 3x^2 + 5x
+# Power rule on 3x^2  -&gt; 6x
+# Power rule on 5x    -&gt; 5   (since x^1's derivative is 1*x^0 = 1)
+# Sum rule combines them -&gt; 6x + 5
+
+def y(x):
+    return 3 * x**2 + 5 * x
+
+def dy_dx_by_rule(x):
+    return 6 * x + 5
+
+x = 2.0
+print(dy_dx_by_rule(x))                                  # 17.0
+print(numerical_slope(y, x, h=0.000001))                  # ~17.0, confirms the rule
+</code></pre>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0E.4 Partial derivatives: slope when there's more than one dial to turn</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Regression rarely has one adjustable number — it has one per feature. A <strong class="text-white font-semibold">partial derivative</strong> asks: "if I nudge <em>just this one</em> number and freeze everything else, how does the output change?" Notation-wise, $\partial$ replaces $d$ to signal "there are other variables here, and I'm holding them still."</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Take a toy error surface: $E(m, c) = (10 - (m \cdot 2 + c))^2$ — the squared error of predicting $y=10$ at $x=2$ using slope $m$ and intercept $c$.</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">def error(m, c):
+    prediction = m * 2 + c
+    return (10 - prediction) ** 2
+
+def partial_wrt_m(error_fn, m, c, h=1e-6):
+    return (error_fn(m + h, c) - error_fn(m, c)) / h
+
+def partial_wrt_c(error_fn, m, c, h=1e-6):
+    return (error_fn(m, c + h) - error_fn(m, c)) / h
+
+m, c = 1.0, 1.0
+print("slope if we nudge m:", partial_wrt_m(error, m, c))
+print("slope if we nudge c:", partial_wrt_c(error, m, c))
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Both numbers together form the <strong class="text-white font-semibold">gradient</strong> — a small arrow made of "how much does the error change per dial, holding the others still." Chapter 1, Day 5 derives this gradient by hand for the full OLS objective, with one partial derivative per feature instead of two. You just did the two-dial version.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0E.5 Why any of this matters: descending toward zero error</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">The core trick behind fitting almost every model in this book: start somewhere, compute the gradient, take a small step in the direction that <em>decreases</em> error, and repeat until the gradient is (close to) zero.</p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">m, c = 0.0, 0.0        # start with a bad guess
+learning_rate = 0.01
+
+for step in range(50):
+    grad_m = partial_wrt_m(error, m, c)
+    grad_c = partial_wrt_c(error, m, c)
+    m -= learning_rate * grad_m
+    c -= learning_rate * grad_c
+
+print(f"m={m:.3f}, c={c:.3f}, error={error(m, c):.6f}")
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Run it and watch the error shrink toward zero as <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">m</code> and <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">c</code> settle into values that make <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">m * 2 + c</code> land near <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">10</code>. This is a hand-built, miniature version of gradient descent — the real one arrives in Chapter 2, Day 9, with real data instead of one toy point.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0E.6 Surviving the traceback</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">You will see red error text constantly for the rest of this book. A practitioner reads an error the way an investigator reads a scene: bottom line first, ignore the jargon, translate to English.</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm"><strong class="text-white font-semibold">Shape mismatch (you already met this on Day 0B):</strong></p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-text">ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0...
+(size 4 is different from 2)
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">→ "Two things that need matching lengths don't have matching lengths."</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm"><strong class="text-white font-semibold">Missing key:</strong></p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">project = {"cable_length_km": 15.0}
+project["terrain_index"]
+</code></pre>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-text">KeyError: 'terrain_index'
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">→ "You asked the dictionary for a label it doesn't have. Check spelling, check whether the data actually contains that field."</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm"><strong class="text-white font-semibold">Wrong type:</strong></p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">"cost: " + 15.0
+</code></pre>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-text">TypeError: can only concatenate str (not "float") to str
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">→ "Python won't silently guess how to combine a string and a number. Convert one of them explicitly: <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">"cost: " + str(15.0)</code>."</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">The instinct to panic and immediately paste the whole traceback into a search bar is understandable but skips the useful step: read the last line first, translate it into a plain sentence, <em>then</em> decide if you need help.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0E.7 The rule of the rubber duck</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Put a mug, a duck, or an unimpressed cat on your desk. When something breaks, explain your code to it out loud, line by line, as if it has never seen Python. "Okay, here I create an array with three rows. Then I multiply it by a vector with... wait, how many entries does that vector have?" In a large fraction of cases you will catch the bug mid-sentence, before the duck says a word.</p>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">0E.8 Break it deliberately</h2>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">def error(m, c):
+    prediction = m * 2 + c
+    return (10 - prediction) ** 2
+
+# Break: learning rate far too large
+m, c = 0.0, 0.0
+learning_rate = 5.0   # was 0.01
+
+for step in range(10):
+    grad_m = partial_wrt_m(error, m, c)
+    grad_c = partial_wrt_c(error, m, c)
+    m -= learning_rate * grad_m
+    c -= learning_rate * grad_c
+    print(step, m, c, error(m, c))
+</code></pre>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Watch the error <em>grow</em> instead of shrink, possibly exploding toward infinity. You just reproduced, in miniature, the single most common failure in Chapter 2, Day 9 — a learning rate that's too large overshoots the bottom of the valley on every step instead of settling into it. File that feeling away; you'll need to recognise it fast later.</p>
+<h3 class="text-xl font-bold text-white mt-8 mb-3">Day 0E exit check</h3>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">You should be able to:
+- compute a derivative numerically (finite differences) and confirm it against a rule-based derivative;
+- explain a partial derivative in one sentence to someone who's never seen the word;
+- explain, without notes, what gradient descent is doing and why a too-large learning rate breaks it;
+- read a <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">KeyError</code>, <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">TypeError</code>, and shape-mismatch <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">ValueError</code> and translate each into plain English before trying to fix it.</p>
+<hr class="border-[#223150] my-8"/>
+<h1 class="text-3xl font-extrabold tracking-tight text-white mt-12 mb-6 border-b border-[#223150] pb-4">Level 0 Capstone — Prove You're Ready</h1>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Do this without peeking at earlier sections. This mirrors the format every later chapter uses for its own capstone, so it's worth taking seriously now.</p>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm"><strong class="text-white font-semibold">Given:</strong></p>
+<pre class="bg-[#151d30] border border-[#223150] rounded-xl p-4 my-6 font-mono text-xs text-cyan-400 overflow-x-auto"><code class="language-python">projects = np.array([
+    [12.0, 15.0],   # cable_km, terrain_index
+    [30.0, 25.0],
+    [5.0,  8.0],
+    [40.0, 45.0],
+    [15.0, 12.0],
+])
+costs = np.array([12.0, 30.0, 8.0, 45.0, 15.0])   # million PKR
+</code></pre>
+<ol class="list-decimal list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4" style="list-style-type: decimal;">
+<li class="leading-relaxed">Report the shape of <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">projects</code> and explain what each dimension means, in a sentence.</li>
+<li class="leading-relaxed">Compute the mean and standard deviation of each column of <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">projects</code>, without using <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">.mean(axis=...)</code> — write the loop or comprehension yourself first, then confirm with NumPy.</li>
+<li class="leading-relaxed">Compute the correlation between <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">costs</code> and column 0 of <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">projects</code> from the raw covariance/std formulas, then check it with <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">np.corrcoef</code>.</li>
+<li class="leading-relaxed">Pick any made-up weight vector <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">beta</code> of length 2 and compute <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">predictions = projects @ beta</code> by hand-loop and with <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">@</code>, and confirm they match.</li>
+<li class="leading-relaxed">Write a function <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">sse(y_actual, y_predicted)</code> that returns $\sum (y_i - \hat{y}_i)^2$, and test it against your <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">predictions</code> from step 4.</li>
+<li class="leading-relaxed">Using finite differences, numerically estimate how <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">sse</code> changes if you nudge just the first entry of <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">beta</code> by a small amount. (You now have one entry of the gradient Chapter 1, Day 5 will derive properly.)</li>
+<li class="leading-relaxed">Deliberately break something — pass <code class="font-mono text-cyan-400 bg-cyan-400/10 px-1 py-0.5 rounded text-xs">beta</code> with the wrong length into step 4 — and write, in one sentence, what the resulting error is telling you.</li>
+</ol>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">If you can do all seven without reopening this chapter, you are ready for Chapter 1.</p>
+<hr class="border-[#223150] my-8"/>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">Glossary (symbols you'll now recognise on sight)</h2>
+<div class="overflow-x-auto my-6 bg-[#151d30] border border-[#223150] rounded-xl p-4"><table class="w-full text-sm text-left text-[#cbd5e1] divide-y divide-[#223150]">
+<thead>
+<tr class="text-cyan-400 font-semibold">
+<th class="py-3 px-4">Symbol</th>
+<th class="py-3 px-4">Name</th>
+<th class="py-3 px-4">Meaning</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#223150]/60">
+<tr>
+<td class="py-3 px-4">$x_i$</td>
+<td class="py-3 px-4">indexed variable</td>
+<td class="py-3 px-4">the $i$-th value in a collection</td>
+</tr>
+<tr>
+<td class="py-3 px-4">$\sum_{i=1}^{n}$</td>
+<td class="py-3 px-4">summation</td>
+<td class="py-3 px-4">add up a formula for every $i$ from 1 to $n$</td>
+</tr>
+<tr>
+<td class="py-3 px-4">$\bar{x}$</td>
+<td class="py-3 px-4">mean</td>
+<td class="py-3 px-4">average value</td>
+</tr>
+<tr>
+<td class="py-3 px-4">$\sigma^2$</td>
+<td class="py-3 px-4">variance</td>
+<td class="py-3 px-4">average squared distance from the mean</td>
+</tr>
+<tr>
+<td class="py-3 px-4">$\sigma$</td>
+<td class="py-3 px-4">standard deviation</td>
+<td class="py-3 px-4">square root of variance; same units as the data</td>
+</tr>
+<tr>
+<td class="py-3 px-4">$r$</td>
+<td class="py-3 px-4">correlation</td>
+<td class="py-3 px-4">covariance rescaled to sit between $-1$ and $1$</td>
+</tr>
+<tr>
+<td class="py-3 px-4">$\frac{dy}{dx}$, $f'(x)$</td>
+<td class="py-3 px-4">derivative</td>
+<td class="py-3 px-4">exact slope of $y=f(x)$ at a point</td>
+</tr>
+<tr>
+<td class="py-3 px-4">$\frac{\partial E}{\partial m}$</td>
+<td class="py-3 px-4">partial derivative</td>
+<td class="py-3 px-4">slope of $E$ with respect to $m$ alone, holding other variables fixed</td>
+</tr>
+<tr>
+<td class="py-3 px-4">gradient</td>
+<td class="py-3 px-4">—</td>
+<td class="py-3 px-4">the collection of all partial derivatives, one per adjustable number</td>
+</tr>
+</tbody>
+</table></div>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">Instructor and self-study notes</h2>
+<ul class="list-disc list-inside space-y-2 my-4 text-[#cbd5e1] text-sm pl-4">
+<li class="leading-relaxed"><strong class="text-white font-semibold">Suggested timebox:</strong> one focused day per section (0A–0E), or two half-days if math is genuinely new to you. Do not compress this into a single afternoon — the exit checks exist because rushing here is exactly what makes Chapter 1 feel impossible later.</li>
+<li class="leading-relaxed"><strong class="text-white font-semibold">Most common failure point:</strong> learners skim Day 0B's broadcasting section because arrays "look like lists." Don't. Every day from Chapter 1 onward assumes shape-checking is reflexive, not effortful.</li>
+<li class="leading-relaxed"><strong class="text-white font-semibold">If the capstone is a struggle:</strong> repeat Day 0C and 0D before moving on. Chapter 1 will not re-teach summation notation or variance; it will simply use them.</li>
+</ul>
+<h2 class="text-2xl font-bold tracking-tight text-white mt-10 mb-4 border-b border-[#223150] pb-2">Where Chapter 1 begins</h2>
+<p class="my-4 leading-relaxed text-[#cbd5e1] text-sm">Chapter 1 opens with a question you're now equipped to actually think about: <em>what is a regression for — prediction, explanation, or causation?</em> Everything you built this week — functions, shapes, sums, means, slopes — is about to get one name each: features, design matrix, objective function, gradient. Turn the page.</p>
+</hr>
 </div>
 <div class="chapter-content-section hidden" id="section-level_1_data_explorer">
 <header class="border-b border-[#223150] pb-8 mb-8">

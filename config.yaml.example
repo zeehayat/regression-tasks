@@ -1,0 +1,72 @@
+server:
+  host: 127.0.0.1
+  port: 9001
+
+# You can also create a local config.json next to server.py. When present,
+# config.json is loaded after config.yaml and becomes the settings page's save
+# target. Keep both real config files local; .gitignore excludes them.
+
+services:
+  tutor:
+    enabled: true
+    provider: anthropic
+    endpoint: https://api.anthropic.com/v1/messages
+    api_key: ${ANTHROPIC_API_KEY}
+    model: ${ANTHROPIC_MODEL}
+    timeout_seconds: 3
+
+    # Free-tier alternative:
+    # provider: gemini
+    # endpoint: https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent
+    # api_key: ${GEMINI_API_KEY}
+    # model: gemini-flash-latest
+    #
+    # Local/no-cloud alternative:
+    # provider: lmstudio
+    # endpoint: http://127.0.0.1:1234/v1/chat/completions
+    # model: local-model
+
+  grading:
+    enabled: true
+    provider: anthropic
+    endpoint: https://api.anthropic.com/v1/messages
+    api_key: ${ANTHROPIC_API_KEY}
+    model: ${ANTHROPIC_MODEL}
+    timeout_seconds: 3
+
+  papers:
+    enabled: true
+    provider: semantic_scholar
+    endpoint: https://api.semanticscholar.org/graph/v1/paper/search
+    mailto:
+    timeout_seconds: 3
+
+    # No-key alternative:
+    # provider: crossref
+    # endpoint: https://api.crossref.org/works
+    # mailto: you@example.com
+
+  tts:
+    enabled: true
+    provider: openai
+    endpoint: https://api.openai.com/v1/audio/speech
+    api_key: ${OPENAI_API_KEY}
+    model: ${OPENAI_TTS_MODEL}
+    voice: ${OPENAI_TTS_VOICE}
+    timeout_seconds: 3
+
+    # Free monthly quota alternative, billing account still required:
+    # provider: google_tts
+    # endpoint: https://texttospeech.googleapis.com/v1/text:synthesize
+    # api_key: ${GOOGLE_TTS_API_KEY}
+    # model:
+    # voice: en-US
+
+  sync:
+    enabled: true
+    endpoint: ${KP_SYNC_ENDPOINT}
+    api_key: ${KP_SYNC_API_KEY}
+    timeout_seconds: 3
+
+    # Free hosted options for the endpoint behind this REST contract include
+    # Supabase Edge Functions or Firebase/Cloud Functions free-tier projects.

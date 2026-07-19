@@ -4,6 +4,10 @@
 echo "=== Recompiling study guide chapters ==="
 python3 compile_book.py
 
+# 1b. Compile the SRC/ markdown chapters into standalone HTML pages
+echo "=== Compiling SRC markdown chapters ==="
+python3 compile_src.py
+
 # 2. Find an available port starting from 8000
 PORT=8000
 while ss -tln | grep -q ":$PORT " &>/dev/null; do

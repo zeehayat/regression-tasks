@@ -297,8 +297,6 @@ This demands a well-defined treatment. “Senior review” cannot silently range
 
 After conditioning on adequate pre-treatment covariates $X$,
 
-> **Notation:** The symbol ⊥ means "is statistically independent of." You already used the underlying idea in Chapter 2, Day 8, when the Gaussian linear model assumed errors were independent of one another — this is the same concept, just written with its own symbol instead of a sentence. `U ⊥ V | X` reads as "`U` and `V` are independent of each other, once you already know `X`": knowing `V` (in addition to `X`) would tell you nothing more about `U` than `X` alone already does.
-
 $$
 \{Y(1),Y(0)\}\perp A\mid X.
 $$

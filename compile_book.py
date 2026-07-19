@@ -277,6 +277,12 @@ new_concept_modal = """        async function openConceptModal(file, id) {
 compiled_html = compiled_html.replace(old_navigate, new_navigate)
 compiled_html = compiled_html.replace(old_concept_modal, new_concept_modal)
 
+# 4b. Fix SRC chapter links: the template (HTML BOOK/index.html) is one
+# directory below the repo root, so its SRC links are "../SRC_HTML/...".
+# The monolithic file lives at the repo root itself, so those links need to
+# drop the leading "../" to keep resolving to the real SRC_HTML/ directory.
+compiled_html = compiled_html.replace('href="../SRC_HTML/', 'href="SRC_HTML/')
+
 # 5. Write the compiled content to regression_study_guide.html in the root
 with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
     f.write(compiled_html)

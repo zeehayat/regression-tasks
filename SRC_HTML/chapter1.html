@@ -1,0 +1,3532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 1 — From a Question to Ordinary Least Squares</title>
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --panel: #151d30;
+            --border: #223150;
+            --text: #f1f5f9;
+            --text-muted: #cbd5e1;
+            --accent: #22d3ee;
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; overflow-x: hidden; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        code, pre, .mono {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        }
+        #content {
+            width: 100%;
+            max-width: 56rem;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+        nav.chapters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        nav.chapters a {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+        nav.chapters a:hover { border-color: rgba(34, 211, 238, 0.4); }
+        nav.chapters a.active {
+            color: var(--accent);
+            background: rgba(21, 29, 48, 0.8);
+            border-color: rgba(34, 211, 238, 0.4);
+        }
+        .markdown-body h1 { font-size: 2.25rem; font-weight: 800; color: #fff; margin: 0.5rem 0 1.5rem; }
+        .markdown-body h2 { font-size: 1.5rem; font-weight: 700; color: #fff; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin: 2.5rem 0 1rem; }
+        .markdown-body h3 { font-size: 1.25rem; font-weight: 600; color: #fff; margin: 2rem 0 0.75rem; }
+        .markdown-body h4 { font-size: 1.1rem; font-weight: 600; color: #fff; margin: 1.5rem 0 0.5rem; }
+        .markdown-body p { color: var(--text-muted); margin: 0 0 1rem; }
+        .markdown-body ul, .markdown-body ol { color: var(--text-muted); margin: 0 0 1rem; padding-left: 1.5rem; }
+        .markdown-body li { margin-bottom: 0.25rem; }
+        .markdown-body blockquote {
+            border-left: 4px solid var(--accent);
+            padding: 0.5rem 1rem;
+            font-style: italic;
+            background: rgba(34, 211, 238, 0.05);
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 1rem 0;
+        }
+        .markdown-body a { color: var(--accent); text-decoration: underline; }
+        .markdown-body a:hover { color: #67e8f9; }
+        .markdown-body :not(pre) > code {
+            font-size: 0.875rem;
+            color: #67e8f9;
+            background: var(--panel);
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+        }
+        .markdown-body pre {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+        .markdown-body pre code {
+            background: transparent;
+            padding: 0;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+        }
+        .markdown-body table { width: 100%; font-size: 0.875rem; border-collapse: collapse; margin: 1.5rem 0; }
+        .markdown-body th, .markdown-body td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: left; }
+        .markdown-body th { background: var(--panel); color: #fff; font-weight: 600; }
+        .markdown-body td { color: var(--text-muted); }
+        .markdown-body hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+        /* Mermaid diagram panel: readable offline as labeled source; mermaid.js
+           (if vendored) replaces the <pre> contents with a rendered <svg>. */
+        .diagram-panel {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+        .diagram-panel__label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: rgba(34, 211, 238, 0.08);
+            padding: 0.4rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .diagram-panel .mermaid {
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+        }
+        .diagram-panel pre.mermaid-source {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+            padding: 1rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+        }
+
+        .platform-shell {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            width: min(25rem, calc(100vw - 2rem));
+            max-height: calc(100vh - 2rem);
+            display: flex;
+            flex-direction: column;
+            background: rgba(12, 18, 30, 0.96);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            z-index: 50;
+        }
+        .platform-shell.collapsed { width: auto; }
+        .platform-shell.collapsed .platform-body { display: none; }
+        .platform-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.9);
+        }
+        .platform-title { font-size: 0.85rem; font-weight: 700; color: #fff; }
+        .platform-section { font-size: 0.72rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .platform-body { overflow-y: auto; padding: 0.85rem; }
+        .platform-group { border-top: 1px solid var(--border); padding-top: 0.85rem; margin-top: 0.85rem; }
+        .platform-group:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+        .platform-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+        .platform-label { display: block; margin-bottom: 0.35rem; font-size: 0.72rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.04em; }
+        .platform-button {
+            border: 1px solid rgba(34, 211, 238, 0.45);
+            background: rgba(34, 211, 238, 0.08);
+            color: var(--accent);
+            border-radius: 0.35rem;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.78rem;
+            font-weight: 650;
+            cursor: pointer;
+        }
+        .platform-button:hover:not(:disabled) { background: rgba(34, 211, 238, 0.14); }
+        .platform-button:disabled {
+            cursor: not-allowed;
+            color: #94a3b8;
+            border-color: #334155;
+            background: rgba(148, 163, 184, 0.08);
+        }
+        .platform-textarea {
+            width: 100%;
+            min-height: 4.5rem;
+            resize: vertical;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.55rem;
+            font: inherit;
+            font-size: 0.85rem;
+        }
+        .platform-message {
+            margin-top: 0.45rem;
+            color: #fbbf24;
+            font-size: 0.78rem;
+        }
+        .platform-output {
+            margin-top: 0.55rem;
+            white-space: pre-wrap;
+            color: var(--text-muted);
+            font-size: 0.84rem;
+        }
+        .platform-history {
+            max-height: 12rem;
+            overflow: auto;
+            display: grid;
+            gap: 0.45rem;
+            margin: 0.55rem 0;
+        }
+        .platform-turn {
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            padding: 0.45rem 0.55rem;
+            background: rgba(21, 29, 48, 0.55);
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+        .platform-turn strong { color: #fff; }
+        .paper-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 0.8rem;
+            margin: 1rem 0;
+            background: rgba(21, 29, 48, 0.55);
+        }
+        .paper-card h4 { margin: 0 0 0.3rem; font-size: 1rem; }
+        .paper-card p { margin: 0.35rem 0; font-size: 0.9rem; }
+        .paper-card .paper-meta { color: #93c5fd; font-size: 0.82rem; }
+        .paper-card .paper-status { color: #fbbf24; font-size: 0.8rem; }
+        .settings-grid {
+            display: grid;
+            gap: 1rem;
+        }
+        .settings-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: rgba(21, 29, 48, 0.55);
+            padding: 1rem;
+        }
+        .settings-card h2 {
+            margin-top: 0;
+        }
+        .settings-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .settings-field {
+            display: grid;
+            gap: 0.25rem;
+        }
+        .settings-field.full {
+            grid-column: 1 / -1;
+        }
+        .settings-field label,
+        .settings-check {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .settings-field input,
+        .settings-field select {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.5rem;
+            font: inherit;
+        }
+        .settings-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .settings-status {
+            color: #fbbf24;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        .settings-file-viewer {
+            margin-top: 1rem;
+            display: grid;
+            gap: 1rem;
+        }
+        .settings-file-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: rgba(21, 29, 48, 0.55);
+            padding: 1rem;
+        }
+        .settings-file-card h2 {
+            margin: 0 0 0.35rem;
+        }
+        .settings-file-card pre {
+            max-height: 26rem;
+            overflow: auto;
+            margin: 0.75rem 0 0;
+        }
+        .settings-file-meta {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .notes-list {
+            display: grid;
+            gap: 0.35rem;
+            margin-top: 0.55rem;
+        }
+        .note-link {
+            display: block;
+            width: 100%;
+            text-align: left;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: rgba(21, 29, 48, 0.5);
+            color: var(--accent);
+            padding: 0.45rem 0.55rem;
+            cursor: pointer;
+            font: inherit;
+        }
+        .note-link:hover { border-color: rgba(34, 211, 238, 0.5); }
+        .note-link small {
+            display: block;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.68);
+            z-index: 100;
+        }
+        .modal-backdrop.open { display: flex; }
+        .note-modal {
+            width: min(58rem, 100%);
+            max-height: min(46rem, calc(100vh - 2rem));
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: #0b0f19;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
+            overflow: hidden;
+        }
+        .note-modal-header,
+        .note-modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.9);
+        }
+        .note-modal-footer {
+            border-top: 1px solid var(--border);
+            border-bottom: 0;
+        }
+        .note-title-input {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.55rem;
+            font: inherit;
+            font-weight: 700;
+        }
+        .note-toolbar,
+        .note-modal .ql-toolbar.ql-snow {
+            border: 0;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.45);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-picker,
+        .note-modal .ql-toolbar.ql-snow button {
+            color: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-stroke {
+            stroke: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-fill {
+            fill: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-picker-options {
+            background: #0b0f19;
+            border-color: var(--border);
+        }
+        .note-modal .ql-container.ql-snow {
+            border: 0;
+            font: inherit;
+        }
+        .note-editor {
+            min-height: 18rem;
+            flex: 1 1 auto;
+            overflow: auto;
+            color: var(--text);
+            background: #080c14;
+            outline: none;
+        }
+        .note-editor .ql-editor,
+        .note-editor[contenteditable="true"] {
+            min-height: 18rem;
+            color: var(--text);
+            font-size: 1rem;
+            line-height: 1.6;
+            padding: 1rem;
+        }
+        .note-editor .ql-editor.ql-blank::before {
+            color: #64748b;
+            font-style: normal;
+        }
+        .note-editor:empty::before {
+            content: attr(data-placeholder);
+            color: #64748b;
+        }
+        .note-attachments {
+            border-top: 1px solid var(--border);
+            background: rgba(8, 12, 20, 0.95);
+            padding: 0.75rem;
+            max-height: 11rem;
+            overflow: auto;
+        }
+        .attachment-input {
+            max-width: 22rem;
+            color: var(--text-muted);
+            font: inherit;
+        }
+        .attachment-list {
+            display: grid;
+            gap: 0.5rem;
+            margin-top: 0.65rem;
+        }
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: rgba(21, 29, 48, 0.45);
+            padding: 0.5rem;
+        }
+        .attachment-preview {
+            width: 3.5rem;
+            height: 3.5rem;
+            flex: 0 0 3.5rem;
+            display: grid;
+            place-items: center;
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text-muted);
+            overflow: hidden;
+            font-size: 0.78rem;
+        }
+        .attachment-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .attachment-meta {
+            min-width: 0;
+        }
+        .attachment-meta a {
+            display: block;
+            color: var(--accent);
+            overflow-wrap: anywhere;
+        }
+        .attachment-meta small {
+            color: var(--text-muted);
+        }
+        @media (min-width: 72.01rem) {
+            body { padding-right: 27rem; }
+        }
+        @media (max-width: 72rem) {
+            .platform-shell { position: static; width: auto; max-height: none; margin: 0 1rem 1rem; }
+            .platform-shell.collapsed .platform-body { display: none; }
+        }
+
+    </style>
+</head>
+<body>
+    <div id="content">
+        <nav class="chapters">
+            <a href="chapter0.html" class="">Ch. 0</a>
+            <a href="level_0_orientation.html" class="">Level 0 Orientation</a>
+            <a href="chapter1.html" class="active">Ch. 1</a>
+            <a href="chapter2.html" class="">Ch. 2</a>
+            <a href="chapter3.html" class="">Ch. 3</a>
+            <a href="chapter4.html" class="">Ch. 4</a>
+            <a href="chapter4_5_interlude.html" class="">Ch. 4.5 Interlude</a>
+            <a href="chapter5.html" class="">Ch. 5</a>
+            <a href="chapter6.html" class="">Ch. 6</a>
+            <a href="settings.html" class="">Settings</a>
+        </nav>
+        <article class="markdown-body">
+<h1 id="chapter-1-from-a-question-to-ordinary-least-squares">Chapter 1 — From a Question to Ordinary Least Squares</h1>
+<h2 id="level-1-data-explorer-week-1-of-the-mhp-cost-estimator">Level 1 Data Explorer: Week 1 of the MHP Cost Estimator</h2>
+<blockquote>
+<p><strong>Central promise.</strong> By the end of this chapter, you will not merely be able to call a regression function. You will be able to state the question a regression can answer, represent the data correctly, derive ordinary least squares (OLS) in scalar and matrix form, implement it without a machine-learning library, diagnose when it fails, and explain the result to a decision-maker responsible for public infrastructure.</p>
+</blockquote>
+<p>This chapter uses a running case: estimating the cost of microhydro power (MHP) projects in Khyber Pakhtunkhwa (KP). The projects are fictional but realistic. Their geography, procurement problems, transport constraints, and management decisions are grounded in the kinds of conditions infrastructure teams encounter in Chitral, Dir, Swat, and other mountainous districts.</p>
+<blockquote>
+<p><strong>A note if you just finished Chapter 0.</strong> This is a new dataset, not a continuation of the development, agricultural, or infrastructure CSVs you generated there. Those built the reflex; this is where it gets used. The MHP case starts small — eight projects below — and grows with each chapter.</p>
+</blockquote>
+<p>The case is deliberately high-stakes. A regression coefficient is not just a number on a screen. If misunderstood, it can lead to an unrealistic budget, an unfair judgement about a field team, or a decision to withdraw a service from a remote community.</p>
+<hr />
+<h2 id="the-pedagogical-contract">The pedagogical contract</h2>
+<p>This book asks the learner and the author to keep the same contract.</p>
+<ol>
+<li><strong>One central concept per day.</strong> Each lesson has a single intellectual centre. Supporting ideas are introduced only when that centre requires them.</li>
+<li><strong>No mathematical hand-waving.</strong> A displayed equation is unpacked symbol by symbol and connected to numbers.</li>
+<li><strong>Code as proof.</strong> Important equations are verified with NumPy and, where useful, with plain loops. We do not use <code>scikit-learn</code> in Week 1.</li>
+<li><strong>Geometry before memorisation.</strong> Vectors, projections, residuals, and error surfaces are drawn or plotted.</li>
+<li><strong>Build, break, rebuild.</strong> Every day adds to the <code>MHPCostEstimator</code>, then deliberately creates a failure that the learner must diagnose.</li>
+<li><strong>Interpretation in context.</strong> Every mathematical result is translated back into a budget, engineering, or management statement.</li>
+<li><strong>Cognitive load is managed, not intelligence underestimated.</strong> New notation is introduced gradually, but no essential reasoning is hidden.</li>
+</ol>
+<h3 id="what-from-scratch-means-here">What “from scratch” means here</h3>
+<p>We will use Python, NumPy, and Matplotlib as basic tools. We will not ask a library to fit a regression model for us. NumPy stores arrays and performs arithmetic; the learner still constructs the design matrix, objective function, normal equations, parameter estimates, predictions, residuals, and diagnostics.</p>
+<p>Later chapters can remove even more scaffolding—for example, by implementing matrix decomposition manually—but doing that now would bury the statistical idea under numerical bookkeeping.</p>
+<hr />
+<h2 id="week-1-learning-outcomes">Week 1 learning outcomes</h2>
+<p>At the end of five days, you should be able to:</p>
+<ul>
+<li>distinguish prediction, explanation, and causal inference;</li>
+<li>identify a target, features, observations, parameters, and hyperparameters;</li>
+<li>read and verify the shapes of vectors and matrices;</li>
+<li>explain why a column of ones creates an intercept;</li>
+<li>calculate residuals, SSR, MSE, RMSE, and MAE by hand and in code;</li>
+<li>describe OLS as both error minimisation and orthogonal projection;</li>
+<li>derive the scalar and matrix OLS solutions;</li>
+<li>explain when the OLS solution is unique;</li>
+<li>detect perfect multicollinearity and other common failures;</li>
+<li>fit and evaluate a small regression model without a machine-learning library; and</li>
+<li>separate a mathematically correct calculation from a defensible policy conclusion.</li>
+</ul>
+<h2 id="the-five-day-route">The five-day route</h2>
+<div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart TD
+    D1["Day 1: Define the question"] --> D2["Day 2: Represent the data"]
+    D2 --> D3["Day 3: Build linear predictions"]
+    D3 --> D4["Day 4: Measure and project error"]
+    D4 --> D5["Day 5: Derive and fit OLS"]
+</pre></div>
+
+<p>Each day follows the same rhythm:</p>
+<ol>
+<li><strong>Orient:</strong> connect the concept to a decision;</li>
+<li><strong>Construct:</strong> develop the mathematics carefully;</li>
+<li><strong>Prove:</strong> test the mathematics with raw code;</li>
+<li><strong>See:</strong> create a diagram or figure;</li>
+<li><strong>Build:</strong> add one working part to the application;</li>
+<li><strong>Break:</strong> produce a predictable failure;</li>
+<li><strong>Reflect:</strong> decide what the result does and does not justify.</li>
+</ol>
+<hr />
+<h2 id="running-case-and-units">Running case and units</h2>
+<p>The MHP Cost Estimator will eventually use multiple project features. During the first four days, we also use very small datasets so that every number can be inspected.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th style="text-align: right;">Symbol</th>
+<th style="text-align: right;">Unit</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Project count</td>
+<td style="text-align: right;">$n$</td>
+<td style="text-align: right;">projects</td>
+<td>Number of observations</td>
+</tr>
+<tr>
+<td>Feature count</td>
+<td style="text-align: right;">$p$</td>
+<td style="text-align: right;">features</td>
+<td>Number of explanatory columns before the intercept</td>
+</tr>
+<tr>
+<td>Cable length</td>
+<td style="text-align: right;">$x_1$</td>
+<td style="text-align: right;">km</td>
+<td>Length of distribution cable</td>
+</tr>
+<tr>
+<td>Hydraulic head</td>
+<td style="text-align: right;">$x_2$</td>
+<td style="text-align: right;">m</td>
+<td>Vertical fall available to drive the turbine</td>
+</tr>
+<tr>
+<td>Road distance</td>
+<td style="text-align: right;">$x_3$</td>
+<td style="text-align: right;">km</td>
+<td>Distance from an all-weather road to the site</td>
+</tr>
+<tr>
+<td>Terrain difficulty</td>
+<td style="text-align: right;">$x_4$</td>
+<td style="text-align: right;">index 1–5</td>
+<td>Ordered field assessment of access difficulty</td>
+</tr>
+<tr>
+<td>Planned capacity</td>
+<td style="text-align: right;">$x_5$</td>
+<td style="text-align: right;">kW</td>
+<td>Intended generating capacity</td>
+</tr>
+<tr>
+<td>Actual project cost</td>
+<td style="text-align: right;">$y$</td>
+<td style="text-align: right;">million PKR</td>
+<td>Target to be estimated</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Unit discipline:</strong> A coefficient is meaningless without its units. If cost is recorded in million PKR and cable length in kilometres, the cable coefficient has units of “million PKR per kilometre,” holding the other included features constant.</p>
+</blockquote>
+<p>The data in this chapter are <strong>synthetic</strong>. They are for learning, not for judging a real district, contractor, community, or organisation.</p>
+<h3 id="minimal-software-setup">Minimal software setup</h3>
+<p>The code assumes Python 3.11 or later. In a terminal, create an isolated environment and install the two numerical packages used in this chapter:</p>
+<pre><code class="language-bash">python -m venv .venv
+source .venv/bin/activate        # Windows PowerShell: .venv\Scripts\Activate.ps1
+python -m pip install numpy matplotlib
+</code></pre>
+<p>Use a plain <code>.py</code> file, a Jupyter notebook, or an editor with an interactive Python terminal. Keep every day’s experiments. A failed calculation with a short note about why it failed is part of the learning record, not clutter to erase.</p>
+<hr />
+<h1 id="day-1-what-question-are-we-asking">Day 1 — What Question Are We Asking?</h1>
+<blockquote>
+<p><strong>Today’s central idea:</strong> Prediction, explanation, and causation are different jobs. A regression calculation does not decide which job you meant.</p>
+</blockquote>
+<h2 id="11-regression-in-one-sentence">1.1 Regression in one sentence</h2>
+<p>Regression constructs a numerical relationship between a target variable $y$ and one or more observed features $X$.</p>
+<p>That sentence describes the mechanism but not the purpose. The same regression equation can be used for three very different purposes.</p>
+<table>
+<thead>
+<tr>
+<th>Job</th>
+<th>Question</th>
+<th>What success looks like</th>
+<th>Main danger</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Prediction</td>
+<td>“How accurately can we estimate the cost of a new project?”</td>
+<td>Low error on genuinely new projects</td>
+<td>A model may fail when conditions change</td>
+</tr>
+<tr>
+<td>Explanation</td>
+<td>“How is road distance associated with cost after accounting for included features?”</td>
+<td>Stable, interpretable coefficients with uncertainty</td>
+<td>Omitted variables and correlated features distort interpretation</td>
+</tr>
+<tr>
+<td>Causal inference</td>
+<td>“How much would cost change if we improved road access?”</td>
+<td>Credible estimate of an intervention</td>
+<td>Association is mistaken for the effect of an action</td>
+</tr>
+</tbody>
+</table>
+<p>The distinction is not philosophical decoration. It changes the data you need, the assumptions you must defend, and the way the result may be used.</p>
+<h2 id="12-prediction-estimating-an-unknown-outcome">1.2 Prediction: estimating an unknown outcome</h2>
+<p>For prediction, we want a function $f$ that converts the observed features of project $i$ into an estimate:</p>
+<p>$$<br />
+\hat{y}<em i1="i1">i = f(x</em>).},x_{i2},\ldots,x_{ip<br />
+$$</p>
+<p>Read the symbols slowly:</p>
+<ul>
+<li>$i$ identifies one project;</li>
+<li>$x_{ij}$ is feature $j$ for project $i$;</li>
+<li>$f$ is the fitted prediction rule;</li>
+<li>$y_i$ is the actual cost; and</li>
+<li>$\hat{y}_i$, pronounced “y-hat,” is the estimated cost.</li>
+</ul>
+<p>A predictor may be useful even when a feature is not causal. For instance, the number of difficult river crossings may predict transport cost because it summarises remoteness. A planning unit can use that signal to improve a contingency estimate without claiming that a river crossing, by itself, causes every extra rupee.</p>
+<p>Prediction must be evaluated on data not used to fit the model. A rule that memorises completed projects can appear perfect and still fail on the next valley.</p>
+<h2 id="13-explanation-describing-conditional-association">1.3 Explanation: describing conditional association</h2>
+<p>For explanation, attention shifts from the prediction alone to the model’s parameters. Consider:</p>
+<p>$$<br />
+\hat{y}_i = \beta_0 + \beta_1\,\text{road_distance}_i + \beta_2\,\text{capacity}_i.<br />
+$$</p>
+<p>Here $\beta_1$ describes the estimated difference in cost associated with one additional kilometre of road distance <strong>among projects with the same included capacity</strong>.</p>
+<p>The phrase in bold is essential. In multiple regression, a coefficient is conditional on the other included features. It does not automatically control for variables that are absent, poorly measured, or structurally different across districts.</p>
+<p>An explanatory analysis also needs uncertainty. A coefficient of 0.8 million PKR per kilometre is not equally persuasive if it comes from 6 projects or 600 projects. Standard errors and confidence intervals arrive later; Week 1 first establishes what is being estimated.</p>
+<h2 id="14-causation-estimating-an-intervention">1.4 Causation: estimating an intervention</h2>
+<p>A causal question asks about a change we could make:</p>
+<blockquote>
+<p>If an all-weather access road were constructed before the MHP works began, how would the final project cost differ from what it would otherwise have been?</p>
+</blockquote>
+<p>This question compares two potential outcomes for the same project:</p>
+<p>$$<br />
+\text{causal effect}_i = Y_i(\text{road improved}) - Y_i(\text{road not improved}).<br />
+$$</p>
+<p>We can observe only one of those outcomes for a given project. The unobserved alternative is the <strong>counterfactual</strong>. Causal inference is therefore a problem of constructing a credible comparison, not merely fitting a line.</p>
+<p>Ordinary regression can be part of a causal design, but the regression output is causal only when the research design and assumptions make it so. Random assignment, natural experiments, careful matching, panel designs, and defensible causal graphs can help. A high $R^2$ cannot turn an associational design into a causal one.</p>
+<h2 id="15-confounding-the-hidden-common-cause">1.5 Confounding: the hidden common cause</h2>
+<p>Suppose projects in rugged terrain are more likely to require helicopter transport, and rugged terrain independently increases excavation delays and labour costs.</p>
+<div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart TD
+    T["Rugged terrain"] --> H["Helicopter transport"]
+    T --> C["Cost overrun"]
+    H -. "association may not equal effect" .-> C
+</pre></div>
+
+<p><strong>Figure 1.1 — A confounding structure.</strong> Terrain is a common cause of the selected transport method and the cost overrun. The dotted arrow is the relationship we might estimate naively.</p>
+<p>If terrain is ignored, projects using helicopters will look more expensive even if helicopter transport reduced cost relative to the feasible alternative—weeks of manual carriage or an unfinished project.</p>
+<p>A variable is a confounder when it is causally related to both the exposure or decision and the outcome, and is not itself a consequence of that exposure. The precise definition depends on the full causal structure; “control for everything available” is not a safe rule because controlling for mediators or colliders can introduce new bias.</p>
+<h2 id="16-simpsons-paradox-when-aggregation-reverses-a-pattern">1.6 Simpson’s paradox: when aggregation reverses a pattern</h2>
+<p>Imagine eight projects, four in relatively accessible terrain and four in remote mountain terrain. Within each terrain group, longer cable raises cost. Yet remote projects happen to use shorter cable and start from a much higher cost base.</p>
+<table>
+<thead>
+<tr>
+<th>Terrain group</th>
+<th style="text-align: right;">Cable length (km)</th>
+<th style="text-align: right;">Cost (million PKR)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Accessible</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">18</td>
+</tr>
+<tr>
+<td>Accessible</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">20</td>
+</tr>
+<tr>
+<td>Accessible</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">22</td>
+</tr>
+<tr>
+<td>Accessible</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">24</td>
+</tr>
+<tr>
+<td>Remote</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">30</td>
+</tr>
+<tr>
+<td>Remote</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">33</td>
+</tr>
+<tr>
+<td>Remote</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">36</td>
+</tr>
+<tr>
+<td>Remote</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">39</td>
+</tr>
+</tbody>
+</table>
+<p>Within accessible projects, one more kilometre is associated with about 2 million PKR more cost. Within remote projects, it is associated with about 3 million PKR more cost. But in the combined data, low cable lengths are concentrated among costly remote projects, so the overall line slopes downward.</p>
+<p>For one feature, the OLS slope can be written as:</p>
+<p>$$<br />
+\hat{\beta}<em i="1">1 =<br />
+\frac{\sum</em>}^{n}(x_i-\bar{x})(y_i-\bar{y})<br />
+{\sum_{i=1}^{n}(x_i-\bar{x})^2}.<br />
+$$</p>
+<p>The numerator measures how $x$ and $y$ move together. The denominator measures how much $x$ varies. Day 5 derives this formula; today we use it as a diagnostic.</p>
+<h3 id="code-proof-calculate-all-three-slopes">Code proof: calculate all three slopes</h3>
+<pre><code class="language-python">import numpy as np
+
+def slope_from_sums(x, y):
+    &quot;&quot;&quot;One-feature OLS slope, written directly from the equation.&quot;&quot;&quot;
+    x = np.asarray(x, dtype=float)
+    y = np.asarray(y, dtype=float)
+    x_centered = x - x.mean()
+    y_centered = y - y.mean()
+    numerator = np.sum(x_centered * y_centered)
+    denominator = np.sum(x_centered ** 2)
+    return numerator / denominator
+
+x_accessible = np.array([4, 5, 6, 7], dtype=float)
+y_accessible = np.array([18, 20, 22, 24], dtype=float)
+
+x_remote = np.array([1, 2, 3, 4], dtype=float)
+y_remote = np.array([30, 33, 36, 39], dtype=float)
+
+x_all = np.concatenate([x_accessible, x_remote])
+y_all = np.concatenate([y_accessible, y_remote])
+
+print(&quot;Accessible slope:&quot;, slope_from_sums(x_accessible, y_accessible))
+print(&quot;Remote slope:    &quot;, slope_from_sums(x_remote, y_remote))
+print(&quot;Combined slope:  &quot;, slope_from_sums(x_all, y_all))
+
+# Expected, approximately:
+# Accessible slope:  2.0
+# Remote slope:      3.0
+# Combined slope:   -2.0
+</code></pre>
+<p>The code does not “prove” which relationship is causal. It proves the numerical reversal and forces us to explain it using geography and the data-generating process.</p>
+<h3 id="figure-lab-make-the-reversal-visible">Figure lab: make the reversal visible</h3>
+<pre><code class="language-python">import matplotlib.pyplot as plt
+
+def line_for(x, y, grid):
+    b1 = slope_from_sums(x, y)
+    b0 = y.mean() - b1 * x.mean()
+    return b0 + b1 * grid
+
+grid = np.linspace(0.5, 7.5, 100)
+
+plt.figure(figsize=(8, 5))
+plt.scatter(x_accessible, y_accessible, label=&quot;Accessible terrain&quot;, s=70)
+plt.scatter(x_remote, y_remote, label=&quot;Remote terrain&quot;, s=70)
+plt.plot(grid, line_for(x_accessible, y_accessible, grid), linewidth=2)
+plt.plot(grid, line_for(x_remote, y_remote, grid), linewidth=2)
+plt.plot(
+    grid,
+    line_for(x_all, y_all, grid),
+    color=&quot;black&quot;,
+    linestyle=&quot;--&quot;,
+    label=&quot;Misleading combined line&quot;,
+)
+plt.xlabel(&quot;Cable length (km)&quot;)
+plt.ylabel(&quot;Actual cost (million PKR)&quot;)
+plt.title(&quot;Simpson's paradox in synthetic MHP projects&quot;)
+plt.legend()
+plt.tight_layout()
+plt.show()
+</code></pre>
+<p><strong>Figure 1.2 — Group-specific and aggregated regression lines.</strong> The dashed combined line answers a different—and substantively misleading—question.</p>
+<h2 id="17-a-decision-protocol-before-touching-code">1.7 A decision protocol before touching code</h2>
+<p>Use this sequence whenever someone asks for “a regression.”</p>
+<div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart TD
+    Q["What decision or claim is required?"] --> P{"Prediction, explanation, or causation?"}
+    P -->|Prediction| V["Define future cases and validation data"]
+    P -->|Explanation| A["Define coefficient and conditioning set"]
+    P -->|Causation| G["Define intervention, counterfactual, and design"]
+</pre></div>
+
+<p>Before analysis, write a one-sentence <strong>estimand</strong>—the exact quantity to be estimated. Examples:</p>
+<ul>
+<li>Prediction: “The expected final cost, in million PKR, of an approved project at the design stage.”</li>
+<li>Explanation: “The adjusted difference in final cost associated with one additional kilometre from an all-weather road, conditional on planned capacity and measured terrain difficulty.”</li>
+<li>Causation: “The average change in final MHP cost caused by completing an access road before civil works, among currently approved remote projects.”</li>
+</ul>
+<p>If the sentence is vague, the model will not rescue it.</p>
+<h2 id="18-build-start-the-application-with-a-question-contract">1.8 Build: start the application with a question contract</h2>
+<p>Create <code>mhp_estimator.py</code>:</p>
+<pre><code class="language-python">from dataclasses import dataclass
+from typing import Literal
+
+import numpy as np
+
+
+AnalysisPurpose = Literal[&quot;prediction&quot;, &quot;explanation&quot;, &quot;causation&quot;]
+
+
+@dataclass(frozen=True)
+class AnalysisContract:
+    purpose: AnalysisPurpose
+    target_name: str
+    target_unit: str
+    unit_of_observation: str
+    intended_use: str
+
+    def __post_init__(self):
+        if self.purpose not in {&quot;prediction&quot;, &quot;explanation&quot;, &quot;causation&quot;}:
+            raise ValueError(&quot;purpose must be prediction, explanation, or causation&quot;)
+        for name, value in vars(self).items():
+            if not str(value).strip():
+                raise ValueError(f&quot;{name} cannot be empty&quot;)
+
+
+class MHPCostEstimator:
+    &quot;&quot;&quot;OLS estimator built progressively during Week 1.&quot;&quot;&quot;
+
+    def __init__(self, contract: AnalysisContract):
+        self.contract = contract
+        self.parameters_ = None
+        self.feature_names_ = None
+        self.rank_ = None
+        self.is_fitted_ = False
+
+    def __repr__(self):
+        status = &quot;fitted&quot; if self.is_fitted_ else &quot;unfitted&quot;
+        return f&quot;MHPCostEstimator(purpose={self.contract.purpose!r}, {status})&quot;
+
+
+if __name__ == &quot;__main__&quot;:
+    contract = AnalysisContract(
+        purpose=&quot;prediction&quot;,
+        target_name=&quot;actual_project_cost&quot;,
+        target_unit=&quot;million PKR&quot;,
+        unit_of_observation=&quot;one completed MHP project&quot;,
+        intended_use=&quot;early budget review for approved projects&quot;,
+    )
+    print(MHPCostEstimator(contract))
+</code></pre>
+<p>The class begins with a contract because a technically correct model can still be unfit for its intended use.</p>
+<h2 id="19-break-it-deliberately">1.9 Break it deliberately</h2>
+<p>Change <code>purpose="prediction"</code> to <code>purpose="forecasting"</code>. The program should reject the unrecognised purpose. Then leave the purpose valid but make <code>intended_use=""</code>. It should reject the empty field.</p>
+<p>The lesson is small but important: silent ambiguity is a data-quality problem.</p>
+<h2 id="110-day-1-practice">1.10 Day 1 practice</h2>
+<ol>
+<li>A finance unit wants next year’s total contingency allocation. Is its first task prediction, explanation, or causation?</li>
+<li>A director asks whether contractor type “causes” delay because its regression coefficient is positive. What additional question must you ask?</li>
+<li>Draw a DAG in which flood damage affects both the decision to redesign a headrace channel and final cost.</li>
+<li>In the Simpson dataset, add 10 million PKR to every accessible project. Recalculate the three slopes. Which slopes change, and why?</li>
+<li>Write an estimand for a real infrastructure decision you know.</li>
+</ol>
+<h3 id="day-1-exit-check">Day 1 exit check</h3>
+<p>You are ready to continue if you can complete this sentence without hesitation:</p>
+<blockquote>
+<p>“A regression coefficient is a causal effect only when <strong><em>_</em></strong>___.”</p>
+</blockquote>
+<p>A defensible completion is: “the design and assumptions make the comparison equivalent to the relevant intervention and counterfactual.”</p>
+<hr />
+<h1 id="day-2-regression-vocabulary-and-the-shape-of-data">Day 2 — Regression Vocabulary and the Shape of Data</h1>
+<blockquote>
+<p><strong>Today’s central idea:</strong> Data have roles, shapes, units, and provenance. Most early modeling errors are representation errors before they are statistical errors.</p>
+</blockquote>
+<h2 id="21-the-vocabulary-of-one-project-table">2.1 The vocabulary of one project table</h2>
+<p>Suppose the rows of a table are completed MHP projects.</p>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+<th>MHP example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Observation</td>
+<td>One unit represented by one row</td>
+<td>One completed MHP project</td>
+</tr>
+<tr>
+<td>Feature</td>
+<td>An input measured before the target is known</td>
+<td>Planned capacity in kW</td>
+</tr>
+<tr>
+<td>Target</td>
+<td>The outcome to estimate</td>
+<td>Actual project cost</td>
+</tr>
+<tr>
+<td>Parameter</td>
+<td>A value learned from data</td>
+<td>Cost coefficient for road distance</td>
+</tr>
+<tr>
+<td>Hyperparameter</td>
+<td>A setting chosen outside the fitting calculation</td>
+<td>Whether to include an intercept</td>
+</tr>
+<tr>
+<td>Prediction</td>
+<td>Model output for an observation</td>
+<td>Estimated cost of 42 million PKR</td>
+</tr>
+<tr>
+<td>Residual</td>
+<td>Actual minus predicted target</td>
+<td>$45-42=3$ million PKR</td>
+</tr>
+<tr>
+<td>Loss</td>
+<td>A rule for penalising errors during fitting</td>
+<td>Squared residual</td>
+</tr>
+<tr>
+<td>Metric</td>
+<td>A summary used to evaluate performance</td>
+<td>RMSE in million PKR</td>
+</tr>
+<tr>
+<td>Estimator</td>
+<td>The procedure that learns parameters</td>
+<td>OLS</td>
+</tr>
+<tr>
+<td>Fitted model</td>
+<td>Estimator plus learned parameter values</td>
+<td>Intercept and slopes after fitting</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Parameter</strong> and <strong>hyperparameter</strong> should not be explained through a loose physical analogy. The reliable distinction is procedural: the fitting algorithm learns parameters from the training data; the analyst sets hyperparameters or design choices.</p>
+<h2 id="22-scalars-vectors-matrices-and-tensors">2.2 Scalars, vectors, matrices, and tensors</h2>
+<p>A <strong>scalar</strong> is one number. A <strong>vector</strong> is an ordered one-dimensional array. A <strong>matrix</strong> is a two-dimensional rectangular array. A <strong>tensor</strong> is the general term for an array with any number of axes.</p>
+<p>The number of tensor axes is sometimes called its order or tensor rank. Do not confuse that usage with <strong>matrix rank</strong>, introduced on Day 5, which counts independent directions in a matrix.</p>
+<div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart LR
+    S["Scalar: one cost"] --> V["Vector: costs for n projects"]
+    V --> M["Matrix: n projects × p features"]
+    M --> T["Tensor: projects × months × sensors"]
+</pre></div>
+
+<p><strong>Figure 2.1 — The dimensional ladder.</strong> Regression in this chapter mainly uses vectors and matrices; “tensor” is useful as the general family name.</p>
+<p>The mathematical objects are:</p>
+<p>$$<br />
+X \in \mathbb{R}^{n\times p},<br />
+\qquad<br />
+y \in \mathbb{R}^{n},<br />
+\qquad<br />
+\beta \in \mathbb{R}^{p}.<br />
+$$</p>
+<p>Read them as:</p>
+<ul>
+<li>$X$ is a real-valued matrix with $n$ rows and $p$ feature columns;</li>
+<li>$y$ is a real-valued target vector with $n$ entries; and</li>
+<li>$\beta$ is a parameter vector with one entry per feature.</li>
+</ul>
+<p>Once an intercept column is added, $X$ has $p+1$ columns and $\beta$ has $p+1$ entries.</p>
+<h3 id="a-concrete-shape-example">A concrete shape example</h3>
+<p>Three projects with two features—road distance and capacity—can be represented as:</p>
+<p>$$<br />
+X =<br />
+\begin{bmatrix}<br />
+12 &amp; 100\<br />
+25 &amp; 150\<br />
+8 &amp; 80<br />
+\end{bmatrix},<br />
+\qquad<br />
+y =<br />
+\begin{bmatrix}<br />
+28\<br />
+44\<br />
+22<br />
+\end{bmatrix}.<br />
+$$</p>
+<p>Then $X$ has shape $3\times2$ and $y$ has length 3. Row 2 means that the second project is 25 km from an all-weather road, has planned capacity 150 kW, and actually cost 44 million PKR.</p>
+<h2 id="23-shape-is-part-of-meaning">2.3 Shape is part of meaning</h2>
+<p>These arrays contain the same three numbers but do not have the same shape:</p>
+<pre><code class="language-python">import numpy as np
+
+a = np.array([28.0, 44.0, 22.0])          # shape (3,)
+b = np.array([[28.0], [44.0], [22.0]])    # shape (3, 1)
+c = np.array([[28.0, 44.0, 22.0]])        # shape (1, 3)
+
+print(a.shape, b.shape, c.shape)
+# (3,) (3, 1) (1, 3)
+</code></pre>
+<p>In NumPy, <code>(3,)</code> is a one-dimensional vector. <code>(3, 1)</code> is a two-dimensional column matrix. <code>(1, 3)</code> is a two-dimensional row matrix. They can behave differently under multiplication and broadcasting.</p>
+<p>Our application will accept a one-dimensional target vector <code>y.shape == (n,)</code>. It will convert a single feature from <code>(n,)</code> to a two-dimensional matrix <code>(n, 1)</code>.</p>
+<h2 id="24-the-design-matrix-and-row-alignment">2.4 The design matrix and row alignment</h2>
+<p>The feature matrix used in a regression is called the <strong>design matrix</strong>. “Design” here refers to the arrangement of predictor columns; it does not mean the projects were experimentally assigned.</p>
+<p>The $i$th row of $X$ and the $i$th entry of $y$ must refer to the same project.</p>
+<div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart LR
+    R["Raw project records"] --> C["Clean and order fields"]
+    C --> X["Feature matrix X"]
+    C --> Y["Target vector y"]
+    X --> V["Validate row identity and shape"]
+    Y --> V
+</pre></div>
+
+<p><strong>Figure 2.2 — Data assembly.</strong> Matching row counts are necessary but not sufficient: row identities must also match.</p>
+<p>If <code>X</code> is accidentally sorted by district while <code>y</code> remains sorted by project ID, the shapes still match. The code may run and the model may be nonsense. Preserve a project identifier during preparation, even if it is not used as a numerical feature.</p>
+<h2 id="25-a-data-dictionary-is-part-of-the-model">2.5 A data dictionary is part of the model</h2>
+<p>A usable dataset needs more than column names.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Data type</th>
+<th>Unit / categories</th>
+<th>Timing</th>
+<th>Missing-value rule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>project_id</code></td>
+<td>string</td>
+<td>unique ID</td>
+<td>approval</td>
+<td>never missing</td>
+</tr>
+<tr>
+<td><code>road_distance_km</code></td>
+<td>float</td>
+<td>km</td>
+<td>design survey</td>
+<td>verify from GIS if missing</td>
+</tr>
+<tr>
+<td><code>planned_capacity_kw</code></td>
+<td>float</td>
+<td>kW</td>
+<td>approved design</td>
+<td>never impute casually</td>
+</tr>
+<tr>
+<td><code>terrain_index</code></td>
+<td>integer</td>
+<td>1, 2, 3, 4, 5</td>
+<td>pre-construction</td>
+<td>document assessor</td>
+</tr>
+<tr>
+<td><code>actual_cost_m_pkr</code></td>
+<td>float</td>
+<td>million PKR, stated price basis</td>
+<td>completion</td>
+<td>target; exclude incomplete projects</td>
+</tr>
+</tbody>
+</table>
+<p>Timing prevents <strong>target leakage</strong>. A feature recorded after cost escalation—for example, “number of contract amendments”—might predict final cost extremely well. It is unavailable when the original budget is prepared and may partly be a consequence of the overrun. It should not be used in an early-stage prediction model without redefining the intended use.</p>
+<h2 id="26-parsing-one-nested-project-record">2.6 Parsing one nested project record</h2>
+<pre><code class="language-python">import json
+import numpy as np
+
+raw_json = &quot;&quot;&quot;
+{
+  &quot;project_id&quot;: &quot;MHP-CH-003&quot;,
+  &quot;design&quot;: {
+    &quot;road_distance_km&quot;: 18.5,
+    &quot;planned_capacity_kw&quot;: 120.0,
+    &quot;terrain_index&quot;: 4
+  },
+  &quot;completion&quot;: {
+    &quot;actual_cost_m_pkr&quot;: 39.2
+  }
+}
+&quot;&quot;&quot;
+
+record = json.loads(raw_json)
+
+X_one = np.array([[  # two brackets: one row, three columns
+    record[&quot;design&quot;][&quot;road_distance_km&quot;],
+    record[&quot;design&quot;][&quot;planned_capacity_kw&quot;],
+    record[&quot;design&quot;][&quot;terrain_index&quot;],
+]], dtype=float)
+
+y_one = np.array([
+    record[&quot;completion&quot;][&quot;actual_cost_m_pkr&quot;]
+], dtype=float)
+
+print(&quot;X:&quot;, X_one, &quot;shape:&quot;, X_one.shape)
+print(&quot;y:&quot;, y_one, &quot;shape:&quot;, y_one.shape)
+
+assert X_one.shape == (1, 3)
+assert y_one.shape == (1,)
+</code></pre>
+<p>The <code>assert</code> statements are executable claims. If the parser stops satisfying the intended mathematical shape, the program fails at the boundary instead of producing a later mystery.</p>
+<h2 id="27-code-proof-matrixvector-multiplication-by-loops">2.7 Code proof: matrix–vector multiplication by loops</h2>
+<p>The linear prediction without an intercept is:</p>
+<p>$$<br />
+\hat{y}<em j="1">i = \sum</em>\beta_j.}^{p}x_{ij<br />
+$$</p>
+<p>For every project $i$, multiply each feature $x_{ij}$ by its corresponding parameter $\beta_j$, then add the products.</p>
+<pre><code class="language-python">X = np.array([
+    [12.0, 100.0],
+    [25.0, 150.0],
+    [8.0, 80.0],
+])
+beta = np.array([0.6, 0.20])
+
+# Proof using explicit loops
+y_hat_loop = np.zeros(X.shape[0])
+for i in range(X.shape[0]):
+    total = 0.0
+    for j in range(X.shape[1]):
+        total += X[i, j] * beta[j]
+    y_hat_loop[i] = total
+
+# The same operation in matrix notation
+y_hat_matrix = X @ beta
+
+print(y_hat_loop)
+print(y_hat_matrix)
+assert np.allclose(y_hat_loop, y_hat_matrix)
+</code></pre>
+<p>The <code>@</code> operator is compact, but it is not magic. The loops show exactly what it does.</p>
+<h2 id="28-build-robust-input-validation">2.8 Build: robust input validation</h2>
+<p>Add these methods inside <code>MHPCostEstimator</code>:</p>
+<pre><code class="language-python">    @staticmethod
+    def _validate_inputs(X, y=None):
+        &quot;&quot;&quot;Return finite float arrays with predictable regression shapes.&quot;&quot;&quot;
+        X = np.asarray(X, dtype=float)
+
+        if X.ndim == 1:
+            X = X.reshape(-1, 1)
+        if X.ndim != 2:
+            raise ValueError(f&quot;X must be 2D after conversion; got shape {X.shape}&quot;)
+        if X.shape[0] == 0 or X.shape[1] == 0:
+            raise ValueError(&quot;X must contain at least one row and one feature&quot;)
+        if not np.isfinite(X).all():
+            raise ValueError(&quot;X contains NaN or infinite values&quot;)
+
+        if y is None:
+            return X
+
+        y = np.asarray(y, dtype=float)
+        if y.ndim == 2 and y.shape[1] == 1:
+            y = y.reshape(-1)
+        if y.ndim != 1:
+            raise ValueError(f&quot;y must be 1D; got shape {y.shape}&quot;)
+        if X.shape[0] != y.shape[0]:
+            raise ValueError(
+                f&quot;row mismatch: X has {X.shape[0]} rows but y has {y.shape[0]}&quot;
+            )
+        if not np.isfinite(y).all():
+            raise ValueError(&quot;y contains NaN or infinite values&quot;)
+
+        return X, y
+</code></pre>
+<h3 id="why-each-check-exists">Why each check exists</h3>
+<ul>
+<li><code>dtype=float</code> prevents accidental string arithmetic.</li>
+<li>A 1D <code>X</code> is interpreted as one feature observed for many projects.</li>
+<li>Regression requires a 2D design matrix even when $p=1$.</li>
+<li>Empty arrays have mathematically valid-looking shapes but no estimable relationship.</li>
+<li><code>NaN</code> and infinity propagate through calculations and can silently destroy results.</li>
+<li>A one-column target matrix is flattened to the application’s chosen convention.</li>
+<li>Matching row counts are enforced, though project-ID alignment must be checked earlier.</li>
+</ul>
+<h2 id="29-break-it-deliberately">2.9 Break it deliberately</h2>
+<p>Run each case and predict the error message before reading it.</p>
+<pre><code class="language-python">contract = AnalysisContract(
+    purpose=&quot;prediction&quot;,
+    target_name=&quot;actual_cost_m_pkr&quot;,
+    target_unit=&quot;million PKR&quot;,
+    unit_of_observation=&quot;completed MHP project&quot;,
+    intended_use=&quot;design-stage budget review&quot;,
+)
+model = MHPCostEstimator(contract)
+
+bad_cases = [
+    (np.ones((10, 3)), np.ones(8)),       # row mismatch
+    (np.array([[1.0, np.nan]]), [2.0]),   # missing feature
+    (np.empty((0, 2)), np.empty(0)),      # no observations
+    (np.ones((2, 2, 2)), np.ones(2)),     # three-dimensional X
+]
+
+for X_bad, y_bad in bad_cases:
+    try:
+        model._validate_inputs(X_bad, y_bad)
+    except ValueError as error:
+        print(type(error).__name__, &quot;-&gt;&quot;, error)
+</code></pre>
+<p>Then construct the more dangerous failure: create <code>X</code> and <code>y</code> with the same number of rows but place <code>y</code> in reverse project order. Validation cannot detect the mistake unless project identifiers are checked during data assembly.</p>
+<h2 id="210-day-2-practice">2.10 Day 2 practice</h2>
+<ol>
+<li>State the shape of a dataset containing 70 projects and 5 features.</li>
+<li>After adding an intercept, what are the shapes of $X$ and $\beta$?</li>
+<li>Why is <code>project_id</code> important even when it is not a numerical feature?</li>
+<li>Give one example of target leakage in an MHP cost model.</li>
+<li>Extend <code>_validate_inputs</code> to reject a constant target vector, but explain why a constant target is not mathematically invalid in every context.</li>
+</ol>
+<h3 id="day-2-exit-check">Day 2 exit check</h3>
+<p>Given <code>X.shape == (40, 6)</code> and <code>beta.shape == (5,)</code>, you should immediately say: “Multiplication is impossible because the inner dimensions, 6 and 5, do not match.”</p>
+<hr />
+<h1 id="day-3-linear-algebra-as-a-system-of-predictions">Day 3 — Linear Algebra as a System of Predictions</h1>
+<blockquote>
+<p><strong>Today’s central idea:</strong> A linear model forms each prediction by adding weighted features. Matrix notation performs that same operation for every project at once.</p>
+</blockquote>
+<h2 id="31-from-a-verbal-rule-to-a-linear-equation">3.1 From a verbal rule to a linear equation</h2>
+<p>Suppose a deliberately simple budget rule uses only cable length:</p>
+<blockquote>
+<p>Begin with a fixed base cost of 8 million PKR, then add 4 million PKR for each kilometre of cable.</p>
+</blockquote>
+<p>For project $i$:</p>
+<p>$$<br />
+\hat{y}_i = 8 + 4x_i.<br />
+$$</p>
+<p>The general one-feature linear model is:</p>
+<p>$$<br />
+\hat{y}_i = \beta_0 + \beta_1x_i.<br />
+$$</p>
+<ul>
+<li>$\beta_0$ is the <strong>intercept</strong>: the model’s predicted target when $x_i=0$.</li>
+<li>$\beta_1$ is the <strong>slope</strong>: the predicted change in $y$ associated with a one-unit increase in $x$.</li>
+</ul>
+<p>If $y$ is million PKR and $x$ is km, the slope’s units are million PKR per km.</p>
+<p>The intercept may be necessary for good predictions without having a useful physical interpretation. “A project with zero cable” may lie outside the scope of the data. An intercept is an algebraic baseline, not automatically the price of a literal zero-feature project.</p>
+<h2 id="32-multiple-features-are-still-a-weighted-sum">3.2 Multiple features are still a weighted sum</h2>
+<p>With road distance, capacity, and terrain difficulty:</p>
+<p>$$<br />
+\hat{y}_i<br />
+= \beta_0<br />
++ \beta_1\,\text{road_distance}_i<br />
++ \beta_2\,\text{capacity}_i<br />
++ \beta_3\,\text{terrain}_i.<br />
+$$</p>
+<p>For one project, this is a dot product between a row of feature values and a vector of parameters. For every project, it becomes matrix–vector multiplication:</p>
+<p>$$<br />
+\hat{y} = X\beta.<br />
+$$</p>
+<p>The apparent simplicity of the matrix equation is earned by carefully constructing $X$.</p>
+<h2 id="33-why-a-column-of-ones-creates-an-intercept">3.3 Why a column of ones creates an intercept</h2>
+<p>For three projects and one measured feature, start with:</p>
+<p>$$<br />
+X_{\text{raw}} =<br />
+\begin{bmatrix}<br />
+x_1\x_2\x_3<br />
+\end{bmatrix}.<br />
+$$</p>
+<p>Prepend a column of ones:</p>
+<p>$$<br />
+X =<br />
+\begin{bmatrix}<br />
+1 &amp; x_1\<br />
+1 &amp; x_2\<br />
+1 &amp; x_3<br />
+\end{bmatrix},<br />
+\qquad<br />
+\beta =<br />
+\begin{bmatrix}<br />
+\beta_0\<br />
+\beta_1<br />
+\end{bmatrix}.<br />
+$$</p>
+<p>Now multiply row by column:</p>
+<p>$$<br />
+X\beta =<br />
+\begin{bmatrix}<br />
+1\beta_0+x_1\beta_1\<br />
+1\beta_0+x_2\beta_1\<br />
+1\beta_0+x_3\beta_1<br />
+\end{bmatrix}.<br />
+$$</p>
+<p>The same $\beta_0$ is added to every project because every first-column entry is 1.</p>
+<p>Without the column of ones, the one-feature model is $\hat{y}=\beta_1x$. At $x=0$, it must pass through the origin. With the ones column, the model is <strong>affine</strong>: a linear transformation plus a translation. In everyday statistics it is still called a linear regression because it is linear in the parameters.</p>
+<h2 id="34-code-proof-expand-x-beta-by-hand">3.4 Code proof: expand <code>X @ beta</code> by hand</h2>
+<pre><code class="language-python">import numpy as np
+
+x = np.array([1.0, 2.0, 3.0])
+X = np.column_stack([np.ones(x.size), x])
+beta = np.array([8.0, 4.0])
+
+y_hat_matrix = X @ beta
+y_hat_manual = np.array([
+    1.0 * 8.0 + 1.0 * 4.0,
+    1.0 * 8.0 + 2.0 * 4.0,
+    1.0 * 8.0 + 3.0 * 4.0,
+])
+
+print(X)
+print(y_hat_matrix)
+assert np.array_equal(y_hat_matrix, y_hat_manual)
+assert np.array_equal(y_hat_matrix, np.array([12.0, 16.0, 20.0]))
+</code></pre>
+<p>Every multiplication in the displayed equation appears explicitly in the code.</p>
+<h2 id="35-shape-algebra-before-numerical-algebra">3.5 Shape algebra before numerical algebra</h2>
+<p>If:</p>
+<p>$$<br />
+X \in \mathbb{R}^{n\times(p+1)}<br />
+\quad\text{and}\quad<br />
+\beta \in \mathbb{R}^{p+1},<br />
+$$</p>
+<p>then:</p>
+<p>$$<br />
+X\beta \in \mathbb{R}^{n}.<br />
+$$</p>
+<p>The inner dimensions must agree:</p>
+<p>$$<br />
+(n\times(p+1))\,(p+1\times1) = n\times1.<br />
+$$</p>
+<p>This is not a software convention. It follows from the dot product: each row of $X$ needs exactly one parameter for each column.</p>
+<h3 id="symbol-to-python-map">Symbol-to-Python map</h3>
+<table>
+<thead>
+<tr>
+<th>Mathematics</th>
+<th>Meaning</th>
+<th>NumPy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$X\beta$</td>
+<td>Matrix–vector product</td>
+<td><code>X @ beta</code></td>
+</tr>
+<tr>
+<td>$X^T$</td>
+<td>Transpose</td>
+<td><code>X.T</code></td>
+</tr>
+<tr>
+<td>$x^Ty$</td>
+<td>Dot product</td>
+<td><code>x @ y</code> or <code>np.dot(x, y)</code></td>
+</tr>
+<tr>
+<td>$I$</td>
+<td>Identity matrix</td>
+<td><code>np.eye(p)</code></td>
+</tr>
+<tr>
+<td>$\mathbf{1}$</td>
+<td>Vector of ones</td>
+<td><code>np.ones(n)</code></td>
+</tr>
+<tr>
+<td>$\lVert v\rVert_2$</td>
+<td>Euclidean length</td>
+<td><code>np.linalg.norm(v)</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="36-matrices-as-transformationsand-the-limit-of-the-analogy">3.6 Matrices as transformations—and the limit of the analogy</h2>
+<p>A matrix can transform geometric coordinates by stretching, shrinking, rotating, reflecting, or shearing vectors. That view is useful for understanding linear algebra. In regression, however, the most immediate interpretation of $X\beta$ is slightly different: the columns of $X$ are building blocks, and $\beta$ chooses how much of each column to combine.</p>
+<p>If $X$ has columns $x_0,x_1,\ldots,x_p$, then:</p>
+<p>$$<br />
+X\beta = \beta_0x_0+\beta_1x_1+\cdots+\beta_px_p.<br />
+$$</p>
+<p>Because $x_0$ is the column of ones, $\beta_0x_0$ adds the same amount to every prediction.</p>
+<div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart TD
+    B["Parameter vector β"] --> W["Weight each column of X"]
+    X["Design-matrix columns"] --> W
+    W --> S["Add weighted columns"]
+    S --> Y["Prediction vector ŷ in the column space of X"]
+</pre></div>
+
+<p><strong>Figure 3.1 — Column-combination view of regression.</strong> The prediction vector is not an arbitrary vector; it must be built from the columns available in $X$.</p>
+<h2 id="37-figure-lab-with-and-without-an-intercept">3.7 Figure lab: with and without an intercept</h2>
+<p>Use four synthetic projects:</p>
+<pre><code class="language-python">import matplotlib.pyplot as plt
+import numpy as np
+
+x_cable_km = np.array([1.0, 2.0, 3.0, 4.0])
+y_cost_m_pkr = np.array([12.0, 19.0, 29.0, 38.0])
+
+# OLS through the origin: minimise ||y - xb||²
+b_origin = (x_cable_km @ y_cost_m_pkr) / (x_cable_km @ x_cable_km)
+
+# OLS with an intercept: solve the normal equations
+X = np.column_stack([np.ones(x_cable_km.size), x_cable_km])
+beta = np.linalg.solve(X.T @ X, X.T @ y_cost_m_pkr)
+
+grid = np.linspace(0, 5, 100)
+
+plt.figure(figsize=(8, 5))
+plt.scatter(x_cable_km, y_cost_m_pkr, color=&quot;navy&quot;, s=70, label=&quot;Projects&quot;)
+plt.plot(grid, b_origin * grid, &quot;--&quot;, color=&quot;firebrick&quot;, label=&quot;Forced through origin&quot;)
+plt.plot(grid, beta[0] + beta[1] * grid, color=&quot;darkgreen&quot;, label=&quot;With intercept&quot;)
+plt.axhline(0, color=&quot;grey&quot;, linewidth=0.6)
+plt.axvline(0, color=&quot;grey&quot;, linewidth=0.6)
+plt.xlabel(&quot;Cable length (km)&quot;)
+plt.ylabel(&quot;Actual cost (million PKR)&quot;)
+plt.title(&quot;The intercept translates the fitted line&quot;)
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+print(&quot;Through-origin slope:&quot;, b_origin)
+print(&quot;Intercept and slope:&quot;, beta)
+</code></pre>
+<p><strong>Figure 3.2 — The effect of the intercept.</strong> The through-origin model is required to predict zero cost at zero cable length. The intercept model is allowed to fit the observed baseline.</p>
+<p>Notice that the code uses <code>np.linalg.solve(A, b)</code> for $A\beta=b$, not <code>np.linalg.inv(A) @ b</code>. The inverse formula is useful for derivation, but directly solving the linear system is clearer and usually more numerically stable.</p>
+<h2 id="38-scaling-and-units">3.8 Scaling and units</h2>
+<p>Suppose cable is changed from kilometres to metres:</p>
+<p>$$<br />
+x_{\text{metres}}=1000x_{\text{km}}.<br />
+$$</p>
+<p>To preserve the same prediction:</p>
+<p>$$<br />
+\beta_{\text{metres}}=\frac{\beta_{\text{km}}}{1000}.<br />
+$$</p>
+<p>Then:</p>
+<p>$$<br />
+\beta_{\text{metres}}x_{\text{metres}}<br />
+=\frac{\beta_{\text{km}}}{1000}(1000x_{\text{km}})<br />
+=\beta_{\text{km}}x_{\text{km}}.<br />
+$$</p>
+<h3 id="code-proof-changing-units-changes-the-coefficient-not-the-prediction">Code proof: changing units changes the coefficient, not the prediction</h3>
+<pre><code class="language-python">x_km = np.array([1.0, 2.0, 3.0])
+x_m = 1000.0 * x_km
+
+beta_km = 4.0       # million PKR per km
+beta_m = beta_km / 1000.0
+
+assert np.allclose(beta_km * x_km, beta_m * x_m)
+</code></pre>
+<p>This is why comparing coefficient magnitudes across differently scaled features is misleading. A smaller numerical coefficient need not represent a less important variable.</p>
+<h2 id="39-build-intercept-construction-and-prediction">3.9 Build: intercept construction and prediction</h2>
+<p>Add these methods inside <code>MHPCostEstimator</code>:</p>
+<pre><code class="language-python">    @staticmethod
+    def _add_intercept_column(X):
+        &quot;&quot;&quot;Prepend one constant column; X must already be validated and 2D.&quot;&quot;&quot;
+        ones = np.ones((X.shape[0], 1), dtype=float)
+        return np.hstack([ones, X])
+
+    def predict(self, X):
+        &quot;&quot;&quot;Return predictions for new feature rows.&quot;&quot;&quot;
+        if not self.is_fitted_:
+            raise RuntimeError(&quot;fit the estimator before calling predict&quot;)
+
+        X = np.asarray(X, dtype=float)
+        if X.ndim == 1:
+            X = X.reshape(1, -1)  # one new project with p features
+        X = self._validate_inputs(X)
+        if X.shape[1] != len(self.feature_names_):
+            raise ValueError(
+                f&quot;expected {len(self.feature_names_)} features, got {X.shape[1]}&quot;
+            )
+
+        X_design = self._add_intercept_column(X)
+        return X_design @ self.parameters_
+</code></pre>
+<p><code>predict</code> cannot yet succeed because <code>fit</code> has not been built. This is intentional. We have defined the behaviour of a fitted application before learning how to estimate the parameters.</p>
+<p>The context resolves a genuine shape ambiguity: during fitting, a one-dimensional <code>X</code> means one feature observed across many projects; during prediction, a one-dimensional <code>X</code> means one new project containing several features. Passing an explicit two-dimensional array remains safest.</p>
+<h2 id="310-break-it-deliberately-broadcasting-is-not-matrix-multiplication">3.10 Break it deliberately: broadcasting is not matrix multiplication</h2>
+<pre><code class="language-python">X = np.array([
+    [1.0, 12.0, 100.0],
+    [1.0, 25.0, 150.0],
+])
+beta = np.array([5.0, 0.6, 0.2])
+
+correct = X @ beta
+print(&quot;correct shape:&quot;, correct.shape, &quot;values:&quot;, correct)
+
+elementwise = X * beta
+print(&quot;elementwise shape:&quot;, elementwise.shape)
+print(elementwise)
+</code></pre>
+<p><code>X * beta</code> broadcasts the parameter vector across rows and multiplies element by element. It returns a matrix of products, not a prediction vector. The expression runs without an error, which makes it more dangerous than a crash.</p>
+<p>Also try multiplying the same <code>X</code> by <code>np.array([5.0, 0.6])</code>. Matrix multiplication should fail because the number of parameters does not equal the number of columns.</p>
+<h2 id="311-day-3-practice">3.11 Day 3 practice</h2>
+<ol>
+<li>Expand one row of $X\beta$ for an intercept plus three features.</li>
+<li>Explain why a column of twos would not estimate the conventional intercept. What would its coefficient represent?</li>
+<li>If cost changes from million PKR to PKR, how do the coefficients change?</li>
+<li>Write a <code>matvec_with_loops(X, beta)</code> function that rejects incompatible dimensions.</li>
+<li>Plot a dataset for which the intercept has a strong effect on fit and another for which it has little effect.</li>
+</ol>
+<h3 id="day-3-exit-check">Day 3 exit check</h3>
+<p>You should be able to explain both statements:</p>
+<ul>
+<li>“$X\beta$ is one dot product per project.”</li>
+<li>“$X\beta$ is a weighted combination of the columns of $X$.”</li>
+</ul>
+<p>They are two views of the same operation.</p>
+<hr />
+<h1 id="day-4-residuals-loss-and-the-geometry-of-ols">Day 4 — Residuals, Loss, and the Geometry of OLS</h1>
+<blockquote>
+<p><strong>Today’s central idea:</strong> OLS chooses the attainable prediction vector closest to the observed target vector in squared Euclidean distance.</p>
+</blockquote>
+<h2 id="41-a-prediction-becomes-testable-through-its-residual">4.1 A prediction becomes testable through its residual</h2>
+<p>For project $i$:</p>
+<p>$$<br />
+e_i = y_i-\hat{y}_i.<br />
+$$</p>
+<ul>
+<li>$e_i&gt;0$: actual cost exceeded predicted cost; the model underpredicted.</li>
+<li>$e_i&lt;0$: actual cost was below predicted cost; the model overpredicted.</li>
+<li>$e_i=0$: prediction matched the observed target.</li>
+</ul>
+<p>The sign convention matters. This chapter uses <strong>actual minus predicted</strong>.</p>
+<p>For all projects:</p>
+<p>$$<br />
+e = y-\hat{y}=y-X\beta.<br />
+$$</p>
+<h3 id="code-proof-the-vector-equation-and-the-elementwise-equation-agree">Code proof: the vector equation and the elementwise equation agree</h3>
+<pre><code class="language-python">import numpy as np
+
+y = np.array([12.0, 19.0, 29.0])
+y_hat = np.array([10.5, 20.0, 27.5])
+
+e_vector = y - y_hat
+e_manual = np.array([
+    12.0 - 10.5,
+    19.0 - 20.0,
+    29.0 - 27.5,
+])
+
+assert np.allclose(e_vector, e_manual)
+print(e_vector)  # [ 1.5 -1.   1.5]
+</code></pre>
+<p>Residuals are observed after fitting. They are not the same as the unobservable population errors in a statistical model, though introductory discussions often use the words loosely.</p>
+<h2 id="42-why-ols-squares-residuals">4.2 Why OLS squares residuals</h2>
+<p>The <strong>sum of squared residuals</strong> (SSR), also called the residual sum of squares (RSS) or sum of squared errors (SSE), is:</p>
+<p>$$<br />
+SSR(\beta)=\sum_{i=1}^{n}e_i^2<br />
+=\sum_{i=1}^{n}(y_i-x_i^T\beta)^2.<br />
+$$</p>
+<p>In vector notation:</p>
+<p>$$<br />
+SSR(\beta)=e^Te=(y-X\beta)^T(y-X\beta).<br />
+$$</p>
+<p>Squaring has four important consequences:</p>
+<ol>
+<li>Positive and negative residuals cannot cancel.</li>
+<li>Large residuals receive disproportionate weight.</li>
+<li>The objective is smooth and differentiable everywhere.</li>
+<li>The objective has a geometric interpretation as squared Euclidean distance.</li>
+</ol>
+<p>The second consequence is not automatically desirable. A data-entry error of 390 million instead of 39 million can dominate an OLS fit. High stakes do not, by themselves, prove that squared loss is the right institutional loss function. The analyst must inspect outliers and ask whether the objective reflects the decision.</p>
+<h3 id="code-proof-ete-equals-the-sum-of-elementwise-squares">Code proof: $e^Te$ equals the sum of elementwise squares</h3>
+<pre><code class="language-python">e = np.array([1.5, -1.0, 1.5])
+
+ssr_loop = 0.0
+for value in e:
+    ssr_loop += value ** 2
+
+ssr_sum = np.sum(e ** 2)
+ssr_dot = e.T @ e
+
+print(ssr_loop, ssr_sum, ssr_dot)
+assert np.isclose(ssr_loop, ssr_sum)
+assert np.isclose(ssr_sum, ssr_dot)
+</code></pre>
+<h2 id="43-ssr-mse-rmse-and-mae-answer-different-reporting-needs">4.3 SSR, MSE, RMSE, and MAE answer different reporting needs</h2>
+<p>$$<br />
+MSE = \frac{1}{n}\sum_{i=1}^{n}e_i^2,<br />
+$$</p>
+<p>$$<br />
+RMSE = \sqrt{MSE},<br />
+$$</p>
+<p>$$<br />
+MAE = \frac{1}{n}\sum_{i=1}^{n}|e_i|.<br />
+$$</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Units</th>
+<th>Sensitivity to large residuals</th>
+<th>Typical use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SSR</td>
+<td>squared target units</td>
+<td>high</td>
+<td>Fitting and comparing models on the same observations</td>
+</tr>
+<tr>
+<td>MSE</td>
+<td>squared target units</td>
+<td>high</td>
+<td>Average squared loss</td>
+</tr>
+<tr>
+<td>RMSE</td>
+<td>target units</td>
+<td>high</td>
+<td>Error summary interpretable in cost units</td>
+</tr>
+<tr>
+<td>MAE</td>
+<td>target units</td>
+<td>lower</td>
+<td>Typical absolute miss, more robust than RMSE</td>
+</tr>
+</tbody>
+</table>
+<p>With targets in million PKR, RMSE and MAE are also in million PKR. MSE is in squared million PKR, which is harder to communicate.</p>
+<h3 id="code-proof-compute-every-metric-from-definitions">Code proof: compute every metric from definitions</h3>
+<pre><code class="language-python">def regression_metrics(y, y_hat):
+    y = np.asarray(y, dtype=float)
+    y_hat = np.asarray(y_hat, dtype=float)
+    if y.shape != y_hat.shape:
+        raise ValueError(&quot;y and y_hat must have the same shape&quot;)
+
+    residuals = y - y_hat
+    ssr = np.sum(residuals ** 2)
+    mse = ssr / residuals.size
+    rmse = np.sqrt(mse)
+    mae = np.sum(np.abs(residuals)) / residuals.size
+    return {&quot;ssr&quot;: ssr, &quot;mse&quot;: mse, &quot;rmse&quot;: rmse, &quot;mae&quot;: mae}
+
+
+metrics = regression_metrics(
+    y=np.array([12.0, 19.0, 29.0]),
+    y_hat=np.array([10.5, 20.0, 27.5]),
+)
+print(metrics)
+</code></pre>
+<p>For training data, some texts divide SSR by $n-p-1$ to estimate error variance. That is a different quantity from predictive MSE. Always name the denominator.</p>
+<h2 id="44-ols-as-a-constrained-search-in-observation-space">4.4 OLS as a constrained search in observation space</h2>
+<p>The target vector $y$ contains one coordinate for each project, so it lives in $\mathbb{R}^n$. Every possible $X\beta$ is a weighted combination of the columns of $X$. The set of all such combinations is the <strong>column space</strong> of $X$.</p>
+<p>OLS cannot choose any point in $\mathbb{R}^n$. It must choose a point inside that column space. It selects the point closest to $y$.</p>
+<div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart TD
+    Y["Observed vector y"] -->|"perpendicular residual e"| P["Projection ŷ = Xβ̂"]
+    Q["Any other attainable prediction q"] --> P
+    P --> C["Column space of X"]
+    Q --> C
+</pre></div>
+
+<p><strong>Figure 4.1 — Projection view of OLS.</strong> The diagram is conceptual: $\hat{y}$ and $q$ lie in the column space, while the residual from $\hat{y}$ to $y$ is perpendicular to it.</p>
+<h2 id="45-the-pythagorean-proof-of-minimum-distance">4.5 The Pythagorean proof of minimum distance</h2>
+<p>Let:</p>
+<ul>
+<li>$\hat{y}$ be the perpendicular projection of $y$ onto the column space of $X$;</li>
+<li>$q$ be any other prediction in the column space;</li>
+<li>$e=y-\hat{y}$ be the OLS residual; and</li>
+<li>$d=\hat{y}-q$ be the displacement within the column space.</li>
+</ul>
+<p>Then:</p>
+<p>$$<br />
+y-q=(y-\hat{y})+(\hat{y}-q)=e+d.<br />
+$$</p>
+<p>Because $e$ is perpendicular to the entire column space and $d$ lies inside it:</p>
+<p>$$<br />
+e^Td=0.<br />
+$$</p>
+<p>Now expand the squared distance:</p>
+<p>$$<br />
+\begin{aligned}<br />
+\lVert y-q\rVert_2^2<br />
+&amp;=(e+d)^T(e+d)\<br />
+&amp;=e^Te+e^Td+d^Te+d^Td\<br />
+&amp;=\lVert e\rVert_2^2+\lVert d\rVert_2^2\<br />
+&amp;\ge \lVert e\rVert_2^2.<br />
+\end{aligned}<br />
+$$</p>
+<p>The last step holds because a squared length cannot be negative. Therefore no other attainable prediction $q$ can be closer to $y$ than $\hat{y}$.</p>
+<h2 id="46-why-orthogonality-produces-the-normal-equations">4.6 Why orthogonality produces the normal equations</h2>
+<p>Every column of $X$ lies in the column space. If the residual is perpendicular to the whole column space, it is perpendicular to every column:</p>
+<p>$$<br />
+X^Te=0.<br />
+$$</p>
+<p>Substitute $e=y-X\hat{\beta}$:</p>
+<p>$$<br />
+X^T(y-X\hat{\beta})=0.<br />
+$$</p>
+<p>Distribute $X^T$:</p>
+<p>$$<br />
+X^Ty-X^TX\hat{\beta}=0.<br />
+$$</p>
+<p>Rearrange:</p>
+<p>$$<br />
+X^TX\hat{\beta}=X^Ty.<br />
+$$</p>
+<p>These are the <strong>normal equations</strong>. “Normal” refers to perpendicularity, not to the normal probability distribution.</p>
+<p>If an intercept column is present, one of the orthogonality conditions is:</p>
+<p>$$<br />
+\mathbf{1}^Te=\sum_{i=1}^{n}e_i=0.<br />
+$$</p>
+<p>Therefore OLS residuals from the training data sum to zero when the model includes an intercept, up to floating-point error.</p>
+<h2 id="47-code-proof-orthogonality-and-pythagoras">4.7 Code proof: orthogonality and Pythagoras</h2>
+<pre><code class="language-python">import numpy as np
+
+x = np.array([1.0, 2.0, 3.0, 4.0])
+y = np.array([12.0, 19.0, 29.0, 38.0])
+X = np.column_stack([np.ones(x.size), x])
+
+beta_hat = np.linalg.solve(X.T @ X, X.T @ y)
+y_hat = X @ beta_hat
+e = y - y_hat
+
+# Orthogonality: one near-zero dot product per design column
+print(&quot;X.T @ e =&quot;, X.T @ e)
+assert np.allclose(X.T @ e, np.zeros(X.shape[1]), atol=1e-10)
+
+# Intercept implication: residuals sum to zero
+assert np.isclose(e.sum(), 0.0, atol=1e-10)
+
+# Choose another attainable prediction q = X @ beta_other
+beta_other = beta_hat + np.array([2.0, -1.0])
+q = X @ beta_other
+d = y_hat - q
+
+left = np.linalg.norm(y - q) ** 2
+right = np.linalg.norm(e) ** 2 + np.linalg.norm(d) ** 2
+
+print(&quot;Pythagorean sides:&quot;, left, right)
+assert np.isclose(e @ d, 0.0, atol=1e-10)
+assert np.isclose(left, right, atol=1e-10)
+assert left &gt;= np.linalg.norm(e) ** 2
+</code></pre>
+<p>This block verifies three equations: the normal-equation orthogonality condition, the zero-sum residual property, and the Pythagorean decomposition.</p>
+<h2 id="48-figure-lab-draw-the-projection-in-three-dimensions">4.8 Figure lab: draw the projection in three dimensions</h2>
+<p>Three observations allow the target and prediction vectors to be drawn in $\mathbb{R}^3$.</p>
+<pre><code class="language-python">import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.array([-1.0, 0.0, 1.0])
+X = np.column_stack([np.ones(3), x])
+y = np.array([1.0, 3.0, 2.0])
+
+beta_hat = np.linalg.solve(X.T @ X, X.T @ y)
+y_hat = X @ beta_hat
+e = y - y_hat
+
+fig = plt.figure(figsize=(8, 7))
+ax = fig.add_subplot(111, projection=&quot;3d&quot;)
+origin = np.zeros(3)
+
+ax.quiver(*origin, *y, color=&quot;navy&quot;, label=&quot;Observed y&quot;, arrow_length_ratio=0.08)
+ax.quiver(*origin, *y_hat, color=&quot;darkgreen&quot;, label=&quot;Projection ŷ&quot;, arrow_length_ratio=0.08)
+ax.quiver(*y_hat, *e, color=&quot;firebrick&quot;, label=&quot;Residual e&quot;, arrow_length_ratio=0.15)
+
+# Draw a patch of the column space span{ones, x}
+a = np.linspace(-0.5, 2.5, 10)
+b = np.linspace(-1.0, 1.0, 10)
+A, B = np.meshgrid(a, b)
+plane = A[..., None] * X[:, 0] + B[..., None] * X[:, 1]
+ax.plot_surface(plane[..., 0], plane[..., 1], plane[..., 2], alpha=0.2)
+
+ax.set_xlabel(&quot;Project 1 coordinate&quot;)
+ax.set_ylabel(&quot;Project 2 coordinate&quot;)
+ax.set_zlabel(&quot;Project 3 coordinate&quot;)
+ax.set_title(&quot;OLS projects y onto the column space of X&quot;)
+ax.legend()
+plt.tight_layout()
+plt.show()
+</code></pre>
+<p><strong>Figure 4.2 — OLS geometry in observation space.</strong> The residual begins at $\hat{y}$ and ends at $y$; it is perpendicular to the surface of attainable predictions.</p>
+<h2 id="49-build-metrics-as-methods">4.9 Build: metrics as methods</h2>
+<p>Add these methods to <code>MHPCostEstimator</code>:</p>
+<pre><code class="language-python">    @staticmethod
+    def _metrics_from_predictions(y, y_hat):
+        y = np.asarray(y, dtype=float).reshape(-1)
+        y_hat = np.asarray(y_hat, dtype=float).reshape(-1)
+        if y.shape != y_hat.shape:
+            raise ValueError(&quot;y and y_hat must have identical shapes&quot;)
+
+        residuals = y - y_hat
+        ssr = float(residuals @ residuals)
+        mse = ssr / residuals.size
+        return {
+            &quot;ssr&quot;: ssr,
+            &quot;mse&quot;: mse,
+            &quot;rmse&quot;: float(np.sqrt(mse)),
+            &quot;mae&quot;: float(np.mean(np.abs(residuals))),
+        }
+
+    def evaluate(self, X, y):
+        &quot;&quot;&quot;Evaluate a fitted model on supplied observations.&quot;&quot;&quot;
+        X, y = self._validate_inputs(X, y)
+        y_hat = self.predict(X)
+        return self._metrics_from_predictions(y, y_hat)
+</code></pre>
+<p>The method does not call these “test metrics” because the caller may supply training, validation, or test data. The application should not pretend to know the provenance of an array.</p>
+<h2 id="410-break-it-deliberately-one-outlier">4.10 Break it deliberately: one outlier</h2>
+<pre><code class="language-python">y = np.array([20.0, 22.0, 24.0, 26.0])
+y_hat = np.array([21.0, 21.0, 25.0, 25.0])
+
+ordinary = regression_metrics(y, y_hat)
+
+y_with_error = y.copy()
+y_with_error[-1] = 260.0  # possible extra zero in data entry
+contaminated = regression_metrics(y_with_error, y_hat)
+
+print(&quot;Ordinary:    &quot;, ordinary)
+print(&quot;Contaminated:&quot;, contaminated)
+</code></pre>
+<p>Compare the change in RMSE and MAE. Do not conclude merely that MAE is “better.” First determine whether 260 is a genuine extreme project, a different type of project, or an error. Robustness cannot replace data investigation.</p>
+<h2 id="411-day-4-practice">4.11 Day 4 practice</h2>
+<ol>
+<li>Calculate the residuals and SSR for $y=[3,5]$ and $\hat{y}=[4,3]$.</li>
+<li>Prove in code that RMSE has the same units as the target under a change from million PKR to PKR.</li>
+<li>Why does including an intercept make training residuals sum to zero?</li>
+<li>Does a zero sum of residuals imply a good model? Construct a counterexample.</li>
+<li>Modify Figure 4.2 by choosing a new $y$. Verify that <code>X.T @ e</code> remains near zero.</li>
+</ol>
+<h3 id="day-4-exit-check">Day 4 exit check</h3>
+<p>You should be able to explain OLS without calculus:</p>
+<blockquote>
+<p>“Among all prediction vectors that can be constructed from the columns of $X$, OLS chooses the one with the shortest squared distance to $y$.”</p>
+</blockquote>
+<hr />
+<h1 id="day-5-deriving-fitting-and-stress-testing-ols">Day 5 — Deriving, Fitting, and Stress-Testing OLS</h1>
+<blockquote>
+<p><strong>Today’s central idea:</strong> OLS is the parameter value that makes the squared-error surface as small as possible. The normal equation is a consequence, not a formula to memorise.</p>
+</blockquote>
+<p>Day 4 reached the normal equations through geometry:</p>
+<p>$$<br />
+X^TX\hat{\beta}=X^Ty.<br />
+$$</p>
+<p>Today we reach the same point through calculus, first with one feature and then with matrices. The two derivations are complementary:</p>
+<ul>
+<li>geometry explains <strong>what</strong> OLS is doing; and</li>
+<li>calculus explains <strong>how</strong> the optimum is located.</li>
+</ul>
+<h2 id="51-the-scalar-error-bowl">5.1 The scalar error bowl</h2>
+<p>Begin with a model that has one parameter and no intercept:</p>
+<p>$$<br />
+\hat{y}_i=\beta x_i.<br />
+$$</p>
+<p>The squared-error objective is:</p>
+<p>$$<br />
+S(\beta)=\sum_{i=1}^{n}(y_i-\beta x_i)^2.<br />
+$$</p>
+<p>Expand one squared term:</p>
+<p>$$<br />
+(y_i-\beta x_i)^2<br />
+=y_i^2-2\beta x_iy_i+\beta^2x_i^2.<br />
+$$</p>
+<p>Therefore:</p>
+<p>$$<br />
+S(\beta)<br />
+=\sum_i y_i^2<br />
+-2\beta\sum_i x_iy_i<br />
++\beta^2\sum_i x_i^2.<br />
+$$</p>
+<p>Differentiate with respect to $\beta$:</p>
+<p>$$<br />
+\frac{dS}{d\beta}<br />
+=-2\sum_i x_iy_i<br />
++2\beta\sum_i x_i^2.<br />
+$$</p>
+<p>At a stationary point, the derivative is zero:</p>
+<p>$$<br />
+-2\sum_i x_iy_i+2\hat{\beta}\sum_i x_i^2=0.<br />
+$$</p>
+<p>Rearrange:</p>
+<p>$$<br />
+\hat{\beta}<br />
+=\frac{\sum_i x_iy_i}{\sum_i x_i^2}.<br />
+$$</p>
+<p>The second derivative is:</p>
+<p>$$<br />
+\frac{d^2S}{d\beta^2}=2\sum_i x_i^2.<br />
+$$</p>
+<p>If at least one $x_i$ is nonzero, the second derivative is positive, so the stationary point is the unique minimum.</p>
+<h3 id="code-proof-derivative-grid-search-and-analytic-solution">Code proof: derivative, grid search, and analytic solution</h3>
+<pre><code class="language-python">import numpy as np
+
+x = np.array([1.0, 2.0, 3.0])
+y = np.array([2.0, 4.0, 7.0])
+
+def ssr_through_origin(beta, x, y):
+    return np.sum((y - beta * x) ** 2)
+
+def derivative_through_origin(beta, x, y):
+    return -2.0 * np.sum(x * y) + 2.0 * beta * np.sum(x ** 2)
+
+beta_hat = np.sum(x * y) / np.sum(x ** 2)
+grid = np.linspace(0.0, 4.0, 4001)
+grid_best = grid[np.argmin([ssr_through_origin(b, x, y) for b in grid])]
+
+print(&quot;Analytic minimum:&quot;, beta_hat)
+print(&quot;Grid minimum:    &quot;, grid_best)
+print(&quot;Derivative there:&quot;, derivative_through_origin(beta_hat, x, y))
+
+assert np.isclose(derivative_through_origin(beta_hat, x, y), 0.0)
+assert np.isclose(beta_hat, grid_best, atol=0.001)
+assert 2.0 * np.sum(x ** 2) &gt; 0.0
+</code></pre>
+<p>The grid is not how we want to fit the model; it is an independent numerical check that the analytic solution sits at the bottom of the bowl.</p>
+<h2 id="52-one-feature-with-an-intercept">5.2 One feature with an intercept</h2>
+<p>Now use:</p>
+<p>$$<br />
+\hat{y}_i=\beta_0+\beta_1x_i.<br />
+$$</p>
+<p>The objective is:</p>
+<p>$$<br />
+S(\beta_0,\beta_1)<br />
+=\sum_{i=1}^{n}(y_i-\beta_0-\beta_1x_i)^2.<br />
+$$</p>
+<p>There are two unknown parameters, so there are two partial derivatives.</p>
+<p>For the intercept:</p>
+<p>$$<br />
+\frac{\partial S}{\partial\beta_0}<br />
+=-2\sum_i(y_i-\beta_0-\beta_1x_i).<br />
+$$</p>
+<p>Set it to zero:</p>
+<p>$$<br />
+\sum_i y_i-n\hat{\beta}_0-\hat{\beta}_1\sum_i x_i=0.<br />
+$$</p>
+<p>Divide by $n$:</p>
+<p>$$<br />
+\bar{y}-\hat{\beta}_0-\hat{\beta}_1\bar{x}=0,<br />
+$$</p>
+<p>so:</p>
+<p>$$<br />
+\hat{\beta}_0=\bar{y}-\hat{\beta}_1\bar{x}.<br />
+$$</p>
+<p>This proves that the fitted OLS line with an intercept passes through $(\bar{x},\bar{y})$.</p>
+<p>For the slope:</p>
+<p>$$<br />
+\frac{\partial S}{\partial\beta_1}<br />
+=-2\sum_i x_i(y_i-\beta_0-\beta_1x_i).<br />
+$$</p>
+<p>Substituting the intercept relationship and simplifying gives:</p>
+<p>$$<br />
+\hat{\beta}_1=<br />
+\frac{\sum_i(x_i-\bar{x})(y_i-\bar{y})}<br />
+{\sum_i(x_i-\bar{x})^2}.<br />
+$$</p>
+<p>The numerator is the unnormalised co-movement of $x$ and $y$; the denominator is the unnormalised variation in $x$. If every $x_i$ is identical, the denominator is zero and the slope cannot be identified.</p>
+<h3 id="code-proof-centred-formula-intercept-and-mean-point">Code proof: centred formula, intercept, and mean point</h3>
+<pre><code class="language-python">x = np.array([1.0, 2.0, 3.0, 4.0])
+y = np.array([12.0, 19.0, 29.0, 38.0])
+
+x_centered = x - x.mean()
+y_centered = y - y.mean()
+
+beta_1 = np.sum(x_centered * y_centered) / np.sum(x_centered ** 2)
+beta_0 = y.mean() - beta_1 * x.mean()
+
+print(&quot;beta_0:&quot;, beta_0)
+print(&quot;beta_1:&quot;, beta_1)
+
+# The fitted line passes through (x̄, ȳ)
+assert np.isclose(beta_0 + beta_1 * x.mean(), y.mean())
+
+# Both partial derivatives are zero
+residuals = y - (beta_0 + beta_1 * x)
+partial_b0 = -2.0 * np.sum(residuals)
+partial_b1 = -2.0 * np.sum(x * residuals)
+assert np.isclose(partial_b0, 0.0, atol=1e-10)
+assert np.isclose(partial_b1, 0.0, atol=1e-10)
+</code></pre>
+<h2 id="53-the-matrix-objective">5.3 The matrix objective</h2>
+<p>For multiple features, collect all parameters in $\beta$ and write:</p>
+<p>$$<br />
+S(\beta)=(y-X\beta)^T(y-X\beta).<br />
+$$</p>
+<p>Expand carefully:</p>
+<p>$$<br />
+\begin{aligned}<br />
+S(\beta)<br />
+&amp;=(y^T-\beta^TX^T)(y-X\beta)\<br />
+&amp;=y^Ty-y^TX\beta-\beta^TX^Ty+\beta^TX^TX\beta.<br />
+\end{aligned}<br />
+$$</p>
+<p>The middle two terms are scalars and transposes of one another, so they are equal:</p>
+<p>$$<br />
+y^TX\beta=(y^TX\beta)^T=\beta^TX^Ty.<br />
+$$</p>
+<p>Therefore:</p>
+<p>$$<br />
+S(\beta)<br />
+=y^Ty-2\beta^TX^Ty+\beta^TX^TX\beta.<br />
+$$</p>
+<h2 id="54-the-matrix-derivative-without-hand-waving">5.4 The matrix derivative without hand-waving</h2>
+<p>Three derivative facts are needed.</p>
+<p>First, $y^Ty$ contains no $\beta$, so:</p>
+<p>$$<br />
+\nabla_\beta(y^Ty)=0.<br />
+$$</p>
+<p>Second, for a constant vector $c$:</p>
+<p>$$<br />
+\nabla_\beta(\beta^Tc)=c.<br />
+$$</p>
+<p>Thus:</p>
+<p>$$<br />
+\nabla_\beta(-2\beta^TX^Ty)=-2X^Ty.<br />
+$$</p>
+<p>Third, let $A=X^TX$. Expand the quadratic form by coordinates:</p>
+<p>$$<br />
+\beta^TA\beta=\sum_j\sum_k\beta_jA_{jk}\beta_k.<br />
+$$</p>
+<p>The derivative with respect to coordinate $\beta_r$ collects terms where $j=r$ and where $k=r$:</p>
+<p>$$<br />
+\frac{\partial}{\partial\beta_r}(\beta^TA\beta)<br />
+=\sum_kA_{rk}\beta_k+\sum_j\beta_jA_{jr}.<br />
+$$</p>
+<p>In vector form:</p>
+<p>$$<br />
+\nabla_\beta(\beta^TA\beta)=(A+A^T)\beta.<br />
+$$</p>
+<p>Because $A=X^TX$ is symmetric, $A=A^T$:</p>
+<p>$$<br />
+\nabla_\beta(\beta^TX^TX\beta)=2X^TX\beta.<br />
+$$</p>
+<p>Combine the three derivatives:</p>
+<p>$$<br />
+\nabla_\beta S(\beta)<br />
+=-2X^Ty+2X^TX\beta.<br />
+$$</p>
+<p>At the minimum:</p>
+<p>$$<br />
+-2X^Ty+2X^TX\hat{\beta}=0,<br />
+$$</p>
+<p>which reduces again to:</p>
+<p>$$<br />
+X^TX\hat{\beta}=X^Ty.<br />
+$$</p>
+<h3 id="code-proof-compare-the-analytic-gradient-with-finite-differences">Code proof: compare the analytic gradient with finite differences</h3>
+<p>A finite-difference gradient estimates each partial derivative by nudging one parameter a very small distance:</p>
+<p>$$<br />
+\frac{\partial S}{\partial\beta_j}<br />
+\approx<br />
+\frac{S(\beta+h\,u_j)-S(\beta-h\,u_j)}{2h},<br />
+$$</p>
+<p>where $u_j$ is a vector with 1 in position $j$ and 0 elsewhere.</p>
+<pre><code class="language-python">import numpy as np
+
+X = np.array([
+    [1.0, 1.0],
+    [1.0, 2.0],
+    [1.0, 3.0],
+    [1.0, 4.0],
+])
+y = np.array([12.0, 19.0, 29.0, 38.0])
+beta = np.array([4.0, 7.0])
+
+def ssr(beta_vector):
+    residuals = y - X @ beta_vector
+    return residuals @ residuals
+
+analytic_gradient = -2.0 * X.T @ (y - X @ beta)
+
+h = 1e-6
+finite_difference_gradient = np.zeros_like(beta)
+for j in range(beta.size):
+    unit = np.zeros_like(beta)
+    unit[j] = 1.0
+    finite_difference_gradient[j] = (
+        ssr(beta + h * unit) - ssr(beta - h * unit)
+    ) / (2.0 * h)
+
+print(&quot;Analytic:&quot;, analytic_gradient)
+print(&quot;Finite difference:&quot;, finite_difference_gradient)
+assert np.allclose(analytic_gradient, finite_difference_gradient, rtol=1e-6)
+</code></pre>
+<p>The finite-difference calculation is an independent numerical audit of the matrix derivative. A poor choice of $h$ can introduce approximation or floating-point error; its role is verification, not fitting.</p>
+<h2 id="55-isolating-hatbeta-and-stating-the-missing-condition">5.5 Isolating $\hat{\beta}$ and stating the missing condition</h2>
+<p>If $X^TX$ is invertible:</p>
+<p>$$<br />
+\hat{\beta}=(X^TX)^{-1}X^Ty.<br />
+$$</p>
+<p>This famous closed form is valid only when the design matrix has full column rank. In plain language, no design column can be constructed exactly from the others, and there must be enough independent information to estimate every parameter.</p>
+<p>The Hessian—the matrix of second derivatives—is:</p>
+<p>$$<br />
+\nabla_\beta^2S(\beta)=2X^TX.<br />
+$$</p>
+<p>For any vector $z$:</p>
+<p>$$<br />
+z^TX^TXz=(Xz)^T(Xz)=\lVert Xz\rVert_2^2\ge0.<br />
+$$</p>
+<p>Thus $X^TX$ is positive semidefinite and the objective is convex. If $X$ has full column rank, $Xz\ne0$ for every nonzero $z$, so the quantity is strictly positive and the objective is strictly convex. The minimiser is then unique.</p>
+<h3 id="code-proof-positive-semidefiniteness">Code proof: positive semidefiniteness</h3>
+<pre><code class="language-python">rng = np.random.default_rng(7)
+X = rng.normal(size=(20, 4))
+z = rng.normal(size=4)
+
+left = z.T @ X.T @ X @ z
+right = np.linalg.norm(X @ z) ** 2
+
+print(left, right)
+assert np.isclose(left, right)
+assert left &gt;= -1e-12  # tolerance for floating-point roundoff
+</code></pre>
+<h2 id="56-why-we-do-not-compute-the-inverse-in-application-code">5.6 Why we do not compute the inverse in application code</h2>
+<p>The derivation uses $(X^TX)^{-1}$ to express the mathematical solution. A program should usually solve:</p>
+<p>$$<br />
+(X^TX)\hat{\beta}=X^Ty<br />
+$$</p>
+<p>with:</p>
+<pre><code class="language-python">beta_hat = np.linalg.solve(X.T @ X, X.T @ y)
+</code></pre>
+<p>Better still for OLS, solve the least-squares problem directly:</p>
+<pre><code class="language-python">beta_hat, residual_sums, rank, singular_values = np.linalg.lstsq(X, y, rcond=None)
+</code></pre>
+<p>Why?</p>
+<ul>
+<li>Forming $X^TX$ squares the condition number and can magnify numerical instability.</li>
+<li>Explicit inversion performs unnecessary work.</li>
+<li><code>lstsq</code> uses a decomposition designed for least-squares problems and also reports rank and singular values.</li>
+</ul>
+<p>This is not a conceptual shortcut. We have already built and derived the objective. It is a numerical implementation choice that respects the same mathematics.</p>
+<h3 id="research-note-fitting-assumptions-are-not-inference-assumptions">Research note: fitting assumptions are not inference assumptions</h3>
+<p>The OLS coefficient calculation does <strong>not</strong> require the residuals to be normally distributed. To compute a least-squares projection, we need a defined numerical problem; for a unique coefficient vector, we additionally need full column rank.</p>
+<p>Stronger claims require stronger assumptions. Unbiased causal or explanatory coefficients require a defensible relationship between included features and the unobserved error. Classical small-sample confidence intervals add assumptions about variance and, in some treatments, normality. Consistency, robust standard errors, clustered data, and sampling design introduce further conditions.</p>
+<p>Keep three layers separate:</p>
+<ol>
+<li><strong>Algebra:</strong> Did the program minimise SSR correctly?</li>
+<li><strong>Statistical generalisation:</strong> Does this sample support claims about new projects or a wider population?</li>
+<li><strong>Causal interpretation:</strong> Does the design identify an intervention effect?</li>
+</ol>
+<p>A perfect answer at the first layer does not settle the next two.</p>
+<h2 id="57-rank-failure-two-columns-carrying-the-same-information">5.7 Rank failure: two columns carrying the same information</h2>
+<p>Suppose the design matrix includes both cable length in kilometres and the same cable length in metres:</p>
+<p>$$<br />
+x_{\text{metres}}=1000x_{\text{kilometres}}.<br />
+$$</p>
+<p>One column is an exact multiple of another. The model cannot decide how much coefficient to assign to each, because infinitely many pairs produce the same combined prediction.</p>
+<div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart LR
+    K["Cable length in km"] --> M["Multiply by 1000"]
+    M --> C["Cable length in metres"]
+    K --> R["Redundant design columns"]
+    C --> R
+</pre></div>
+
+<p><strong>Figure 5.1 — Perfect multicollinearity.</strong> More columns do not necessarily provide more information.</p>
+<h3 id="break-it-deliberately">Break it deliberately</h3>
+<pre><code class="language-python">x_km = np.array([1.0, 2.0, 3.0, 4.0])
+x_m = 1000.0 * x_km
+y = np.array([12.0, 19.0, 29.0, 38.0])
+
+X_bad = np.column_stack([np.ones(x_km.size), x_km, x_m])
+
+print(&quot;columns:&quot;, X_bad.shape[1])
+print(&quot;rank:   &quot;, np.linalg.matrix_rank(X_bad))
+
+try:
+    beta_bad = np.linalg.solve(X_bad.T @ X_bad, X_bad.T @ y)
+except np.linalg.LinAlgError as error:
+    print(&quot;Normal-equation solve failed:&quot;, error)
+
+beta_lstsq, _, rank, singular_values = np.linalg.lstsq(X_bad, y, rcond=None)
+print(&quot;One least-squares solution:&quot;, beta_lstsq)
+print(&quot;Reported rank:&quot;, rank)
+print(&quot;Singular values:&quot;, singular_values)
+</code></pre>
+<p><code>lstsq</code> can return a prediction-minimising solution, but the individual coefficients on kilometres and metres are not separately meaningful. A numerical answer does not repair an unidentified interpretation.</p>
+<p>The correct response is usually to remove the redundant feature or redesign the representation—not to celebrate that the program returned numbers.</p>
+<h2 id="58-figure-lab-see-the-error-valley">5.8 Figure lab: see the error valley</h2>
+<p>For a model with an intercept and one slope, SSR is a surface over $(\beta_0,\beta_1)$.</p>
+<pre><code class="language-python">import matplotlib.pyplot as plt
+import numpy as np
+
+x = np.array([1.0, 2.0, 3.0, 4.0])
+y = np.array([12.0, 19.0, 29.0, 38.0])
+
+b0_grid = np.linspace(-5.0, 20.0, 200)
+b1_grid = np.linspace(2.0, 12.0, 200)
+B0, B1 = np.meshgrid(b0_grid, b1_grid)
+
+SSR = np.zeros_like(B0)
+for i in range(x.size):
+    SSR += (y[i] - (B0 + B1 * x[i])) ** 2
+
+X = np.column_stack([np.ones(x.size), x])
+beta_hat = np.linalg.lstsq(X, y, rcond=None)[0]
+
+plt.figure(figsize=(8, 6))
+contours = plt.contour(B0, B1, SSR, levels=25)
+plt.clabel(contours, inline=True, fontsize=7)
+plt.scatter(beta_hat[0], beta_hat[1], color=&quot;red&quot;, s=80, label=&quot;OLS minimum&quot;)
+plt.xlabel(&quot;Intercept β₀&quot;)
+plt.ylabel(&quot;Slope β₁&quot;)
+plt.title(&quot;Contours of the OLS error surface&quot;)
+plt.legend()
+plt.tight_layout()
+plt.show()
+</code></pre>
+<p><strong>Figure 5.2 — The OLS error valley.</strong> Each contour joins parameter pairs with equal SSR. The centre is the minimum. With highly correlated features, the contours become long and narrow; with perfect collinearity, the unique centre becomes a flat valley.</p>
+<h2 id="59-build-the-complete-week-1-estimator">5.9 Build: the complete Week 1 estimator</h2>
+<p>The complete application below consolidates the daily increments. Replace the partial <code>mhp_estimator.py</code> with this version.</p>
+<pre><code class="language-python">from dataclasses import dataclass
+from typing import Literal, Sequence
+
+import numpy as np
+
+
+AnalysisPurpose = Literal[&quot;prediction&quot;, &quot;explanation&quot;, &quot;causation&quot;]
+
+
+@dataclass(frozen=True)
+class AnalysisContract:
+    purpose: AnalysisPurpose
+    target_name: str
+    target_unit: str
+    unit_of_observation: str
+    intended_use: str
+
+    def __post_init__(self):
+        allowed = {&quot;prediction&quot;, &quot;explanation&quot;, &quot;causation&quot;}
+        if self.purpose not in allowed:
+            raise ValueError(f&quot;purpose must be one of {sorted(allowed)}&quot;)
+        for name, value in vars(self).items():
+            if not str(value).strip():
+                raise ValueError(f&quot;{name} cannot be empty&quot;)
+
+
+class MHPCostEstimator:
+    &quot;&quot;&quot;Small OLS estimator for learning, diagnostics, and explicit reasoning.&quot;&quot;&quot;
+
+    def __init__(self, contract: AnalysisContract):
+        self.contract = contract
+        self.parameters_ = None
+        self.feature_names_ = None
+        self.rank_ = None
+        self.singular_values_ = None
+        self.training_metrics_ = None
+        self.is_fitted_ = False
+
+    def __repr__(self):
+        status = &quot;fitted&quot; if self.is_fitted_ else &quot;unfitted&quot;
+        return f&quot;MHPCostEstimator(purpose={self.contract.purpose!r}, {status})&quot;
+
+    @staticmethod
+    def _validate_inputs(X, y=None):
+        X = np.asarray(X, dtype=float)
+        if X.ndim == 1:
+            X = X.reshape(-1, 1)
+        if X.ndim != 2:
+            raise ValueError(f&quot;X must be 2D after conversion; got shape {X.shape}&quot;)
+        if X.shape[0] == 0 or X.shape[1] == 0:
+            raise ValueError(&quot;X must contain at least one row and one feature&quot;)
+        if not np.isfinite(X).all():
+            raise ValueError(&quot;X contains NaN or infinite values&quot;)
+
+        if y is None:
+            return X
+
+        y = np.asarray(y, dtype=float)
+        if y.ndim == 2 and y.shape[1] == 1:
+            y = y.reshape(-1)
+        if y.ndim != 1:
+            raise ValueError(f&quot;y must be 1D; got shape {y.shape}&quot;)
+        if X.shape[0] != y.shape[0]:
+            raise ValueError(
+                f&quot;row mismatch: X has {X.shape[0]} rows but y has {y.shape[0]}&quot;
+            )
+        if not np.isfinite(y).all():
+            raise ValueError(&quot;y contains NaN or infinite values&quot;)
+        return X, y
+
+    @staticmethod
+    def _add_intercept_column(X):
+        return np.column_stack([np.ones(X.shape[0]), X])
+
+    @staticmethod
+    def _metrics_from_predictions(y, y_hat):
+        y = np.asarray(y, dtype=float).reshape(-1)
+        y_hat = np.asarray(y_hat, dtype=float).reshape(-1)
+        if y.shape != y_hat.shape:
+            raise ValueError(&quot;y and y_hat must have identical shapes&quot;)
+
+        residuals = y - y_hat
+        ssr = float(residuals @ residuals)
+        mse = ssr / residuals.size
+        return {
+            &quot;ssr&quot;: ssr,
+            &quot;mse&quot;: mse,
+            &quot;rmse&quot;: float(np.sqrt(mse)),
+            &quot;mae&quot;: float(np.mean(np.abs(residuals))),
+        }
+
+    def fit(self, X, y, feature_names: Sequence[str]):
+        X, y = self._validate_inputs(X, y)
+        feature_names = [str(name).strip() for name in feature_names]
+
+        if len(feature_names) != X.shape[1]:
+            raise ValueError(
+                f&quot;received {len(feature_names)} names for {X.shape[1]} features&quot;
+            )
+        if any(not name for name in feature_names):
+            raise ValueError(&quot;feature names cannot be empty&quot;)
+        if len(set(feature_names)) != len(feature_names):
+            raise ValueError(&quot;feature names must be unique&quot;)
+
+        X_design = self._add_intercept_column(X)
+        parameters, _, rank, singular_values = np.linalg.lstsq(
+            X_design, y, rcond=None
+        )
+
+        required_rank = X_design.shape[1]
+        if rank &lt; required_rank:
+            raise ValueError(
+                &quot;design matrix is rank deficient: &quot;
+                f&quot;rank {rank}, but {required_rank} independent columns are required&quot;
+            )
+
+        self.parameters_ = parameters
+        self.feature_names_ = feature_names
+        self.rank_ = int(rank)
+        self.singular_values_ = singular_values
+        self.is_fitted_ = True
+
+        training_predictions = X_design @ self.parameters_
+        self.training_metrics_ = self._metrics_from_predictions(
+            y, training_predictions
+        )
+        return self
+
+    def predict(self, X):
+        if not self.is_fitted_:
+            raise RuntimeError(&quot;fit the estimator before calling predict&quot;)
+
+        X = np.asarray(X, dtype=float)
+        if X.ndim == 1:
+            X = X.reshape(1, -1)
+        X = self._validate_inputs(X)
+        if X.shape[1] != len(self.feature_names_):
+            raise ValueError(
+                f&quot;expected {len(self.feature_names_)} features, got {X.shape[1]}&quot;
+            )
+
+        return self._add_intercept_column(X) @ self.parameters_
+
+    def evaluate(self, X, y):
+        X, y = self._validate_inputs(X, y)
+        return self._metrics_from_predictions(y, self.predict(X))
+
+    def coefficients(self):
+        if not self.is_fitted_:
+            raise RuntimeError(&quot;fit the estimator before requesting coefficients&quot;)
+        names = [&quot;intercept&quot;, *self.feature_names_]
+        return dict(zip(names, self.parameters_))
+</code></pre>
+<h2 id="510-end-to-end-use-on-synthetic-kp-projects">5.10 End-to-end use on synthetic KP projects</h2>
+<p>The small dataset below has three pre-construction features. Keeping it small makes the entire calculation inspectable; it is not enough for a real deployment.</p>
+<pre><code class="language-python">import numpy as np
+
+contract = AnalysisContract(
+    purpose=&quot;prediction&quot;,
+    target_name=&quot;actual_cost_m_pkr&quot;,
+    target_unit=&quot;million PKR&quot;,
+    unit_of_observation=&quot;one completed MHP project&quot;,
+    intended_use=&quot;design-stage budget review for approved projects&quot;,
+)
+
+# Columns: road distance (km), planned capacity (kW), terrain index (1–5)
+X_train = np.array([
+    [5.0,  80.0, 2.0],
+    [8.0, 100.0, 2.0],
+    [12.0, 120.0, 3.0],
+    [15.0, 150.0, 3.0],
+    [18.0, 160.0, 4.0],
+    [22.0, 180.0, 4.0],
+    [25.0, 200.0, 5.0],
+    [30.0, 240.0, 5.0],
+])
+
+y_train = np.array([19.0, 23.0, 30.0, 35.0, 42.0, 47.0, 55.0, 63.0])
+
+model = MHPCostEstimator(contract).fit(
+    X_train,
+    y_train,
+    feature_names=[&quot;road_distance_km&quot;, &quot;planned_capacity_kw&quot;, &quot;terrain_index&quot;],
+)
+
+print(model)
+print(&quot;Coefficients:&quot;, model.coefficients())
+print(&quot;Training metrics:&quot;, model.training_metrics_)
+
+X_new = np.array([
+    [20.0, 170.0, 4.0],
+    [10.0, 110.0, 3.0],
+])
+print(&quot;New predictions:&quot;, model.predict(X_new))
+</code></pre>
+<h3 id="interpretation-discipline">Interpretation discipline</h3>
+<p>If the fitted road-distance coefficient is positive, the prediction reading is:</p>
+<blockquote>
+<p>“Holding the other included numerical features fixed, the fitted rule adds this many million PKR for each additional kilometre of recorded road distance.”</p>
+</blockquote>
+<p>It is <strong>not</strong> automatically:</p>
+<blockquote>
+<p>“Building one kilometre of road will change MHP cost by this amount.”</p>
+</blockquote>
+<p>The second statement is causal and may even reverse the intervention: the feature is distance from a road, while the action is constructing a road.</p>
+<p>Also inspect whether “holding capacity and terrain fixed” describes plausible comparisons in the dataset. Regression can calculate contrasts that the observed projects barely support.</p>
+<h2 id="511-verify-the-class-against-the-equations">5.11 Verify the class against the equations</h2>
+<pre><code class="language-python">X_design = np.column_stack([np.ones(X_train.shape[0]), X_train])
+beta_from_normal_equations = np.linalg.solve(
+    X_design.T @ X_design,
+    X_design.T @ y_train,
+)
+
+assert np.allclose(model.parameters_, beta_from_normal_equations)
+
+residuals = y_train - model.predict(X_train)
+assert np.allclose(X_design.T @ residuals, 0.0, atol=1e-9)
+assert np.isclose(residuals.sum(), 0.0, atol=1e-9)
+
+metrics = model.evaluate(X_train, y_train)
+assert np.isclose(metrics[&quot;ssr&quot;], residuals @ residuals)
+assert np.isclose(metrics[&quot;rmse&quot;], np.sqrt(np.mean(residuals ** 2)))
+</code></pre>
+<p>These are not decorative tests. Each one ties an application output to a mathematical result developed earlier in the chapter.</p>
+<h2 id="512-what-the-completed-application-still-cannot-do">5.12 What the completed application still cannot do</h2>
+<p>The Week 1 estimator is a learning instrument, not a deployment-ready public investment system. It does not yet:</p>
+<ul>
+<li>split data into training, validation, and test sets;</li>
+<li>handle categorical districts, project types, or contractors;</li>
+<li>standardise features or examine conditioning;</li>
+<li>quantify coefficient uncertainty;</li>
+<li>diagnose heteroskedasticity, nonlinearity, or influential observations;</li>
+<li>model time trends, inflation, or district-level clustering;</li>
+<li>protect against data leakage across project phases;</li>
+<li>establish causal effects;</li>
+<li>document data lineage, permissions, or revision history; or</li>
+<li>monitor performance when construction conditions change.</li>
+</ul>
+<p>Recognising these limits is part of mastery.</p>
+<h2 id="513-day-5-practice">5.13 Day 5 practice</h2>
+<ol>
+<li>Derive the through-origin slope without looking at the text.</li>
+<li>Explain, by coordinates, why the derivative of $\beta^TA\beta$ is $(A+A^T)\beta$.</li>
+<li>Construct a full-rank matrix with four rows and three columns. Confirm its rank in NumPy.</li>
+<li>Make one column an exact combination of the other columns. Confirm the rank loss.</li>
+<li>Change one target in the end-to-end dataset by 20 million PKR. Compare coefficient changes, RMSE, and MAE.</li>
+<li>Fit the same data after converting road distance from kilometres to metres. Verify that predictions are unchanged and explain the coefficient change.</li>
+<li>Write a one-paragraph briefing for a senior manager that reports a prediction, its unit, its intended use, and two limitations without using mathematical jargon.</li>
+</ol>
+<h3 id="day-5-exit-check">Day 5 exit check</h3>
+<p>You are ready to leave Week 1 when you can move in both directions:</p>
+<div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart LR
+    W["Words: closest attainable prediction"] --> G["Geometry: orthogonal projection"]
+    G --> E["Equation: XᵀXβ̂ = Xᵀy"]
+    E --> C["Code: lstsq(X, y)"]
+    C --> W
+</pre></div>
+
+<hr />
+<h1 id="week-1-capstone-build-it-break-it-rebuild-it">Week 1 Capstone — Build It, Break It, Rebuild It</h1>
+<h2 id="capstone-brief">Capstone brief</h2>
+<p>You are given 40 synthetic completed MHP projects and asked to create an early-stage cost estimator. Complete the work in four passes.</p>
+<h3 id="pass-1-define">Pass 1: define</h3>
+<p>Write the <code>AnalysisContract</code>. State:</p>
+<ul>
+<li>the unit of observation;</li>
+<li>the target and price basis;</li>
+<li>the point in the project cycle when prediction occurs;</li>
+<li>the decision supported; and</li>
+<li>whether the work is prediction, explanation, or causation.</li>
+</ul>
+<h3 id="pass-2-build">Pass 2: build</h3>
+<p>Use at least three features known at the stated prediction time. Fit the model, report coefficients with units, and calculate training metrics.</p>
+<h3 id="pass-3-break">Pass 3: break</h3>
+<p>Create and explain each failure:</p>
+<ol>
+<li>a row-alignment error;</li>
+<li>a missing or infinite value;</li>
+<li>a redundant feature;</li>
+<li>a feature recorded after construction begins; and</li>
+<li>one extreme target value.</li>
+</ol>
+<h3 id="pass-4-rebuild">Pass 4: rebuild</h3>
+<p>Correct the failures. Add a held-out set of projects. Compare training and held-out RMSE and MAE. Write a recommendation that separates what the model can support from what it cannot.</p>
+<h2 id="assessment-rubric">Assessment rubric</h2>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Emerging</th>
+<th>Competent</th>
+<th>Mastery</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Question</td>
+<td>Purpose is vague</td>
+<td>Purpose and target are stated</td>
+<td>Estimand, timing, and intended use are precise</td>
+</tr>
+<tr>
+<td>Mathematics</td>
+<td>Formula copied</td>
+<td>Main steps reproduced</td>
+<td>Derivation explained and verified independently</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>Runs once</td>
+<td>Validates common failures</td>
+<td>Tests equations, shapes, rank, and interpretation boundaries</td>
+</tr>
+<tr>
+<td>Geometry</td>
+<td>Terms repeated</td>
+<td>Projection described</td>
+<td>Column space, orthogonality, and minimum distance connected</td>
+</tr>
+<tr>
+<td>Context</td>
+<td>Generic example</td>
+<td>KP units and features used</td>
+<td>Institutional consequences and data limitations addressed</td>
+</tr>
+<tr>
+<td>Communication</td>
+<td>Numbers listed</td>
+<td>Metrics interpreted</td>
+<td>Decision, uncertainty, and limits clearly separated</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="formula-sheet">Formula Sheet</h1>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Equation</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linear prediction</td>
+<td>$\hat{y}=X\beta$</td>
+<td>Weighted combination of design columns</td>
+</tr>
+<tr>
+<td>Residual</td>
+<td>$e=y-\hat{y}$</td>
+<td>Actual minus predicted</td>
+</tr>
+<tr>
+<td>SSR</td>
+<td>$e^Te=\sum_i e_i^2$</td>
+<td>Total squared training error</td>
+</tr>
+<tr>
+<td>MSE</td>
+<td>$SSR/n$</td>
+<td>Mean squared error</td>
+</tr>
+<tr>
+<td>RMSE</td>
+<td>$\sqrt{SSR/n}$</td>
+<td>Squared-error summary in target units</td>
+</tr>
+<tr>
+<td>MAE</td>
+<td>$\frac{1}{n}\sum_i</td>
+<td>e_i</td>
+</tr>
+<tr>
+<td>Orthogonality</td>
+<td>$X^Te=0$</td>
+<td>Residual perpendicular to every design column</td>
+</tr>
+<tr>
+<td>Normal equations</td>
+<td>$X^TX\hat{\beta}=X^Ty$</td>
+<td>First-order condition for OLS</td>
+</tr>
+<tr>
+<td>Closed form</td>
+<td>$(X^TX)^{-1}X^Ty$</td>
+<td>Unique solution when $X$ has full column rank</td>
+</tr>
+<tr>
+<td>Scalar slope</td>
+<td>$\frac{\sum_i(x_i-\bar{x})(y_i-\bar{y})}{\sum_i(x_i-\bar{x})^2}$</td>
+<td>One-feature slope with intercept</td>
+</tr>
+<tr>
+<td>Scalar intercept</td>
+<td>$\bar{y}-\hat{\beta}_1\bar{x}$</td>
+<td>Makes the line pass through the means</td>
+</tr>
+<tr>
+<td>Hessian</td>
+<td>$2X^TX$</td>
+<td>Curvature of the SSR surface</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="glossary">Glossary</h1>
+<p><strong>Association:</strong> A numerical relationship in observed data; it need not be causal.</p>
+<p><strong>Column space:</strong> All vectors that can be formed as weighted combinations of a matrix’s columns.</p>
+<p><strong>Confounder:</strong> A common cause that can distort an exposure–outcome association.</p>
+<p><strong>Counterfactual:</strong> The outcome that would have occurred under an alternative action or condition.</p>
+<p><strong>Design matrix:</strong> The rectangular matrix of features used to construct model predictions.</p>
+<p><strong>Estimator:</strong> A rule or algorithm that converts data into parameter estimates.</p>
+<p><strong>Feature:</strong> An input variable used by a model.</p>
+<p><strong>Full column rank:</strong> A condition in which no design column is an exact linear combination of the others.</p>
+<p><strong>Gradient:</strong> A vector of partial derivatives; it points in the direction of steepest local increase.</p>
+<p><strong>Hessian:</strong> A matrix of second derivatives describing local curvature.</p>
+<p><strong>Hyperparameter:</strong> A modeling setting chosen rather than estimated by the fitting calculation.</p>
+<p><strong>Intercept:</strong> The constant term added to every linear prediction.</p>
+<p><strong>Loss function:</strong> A numerical rule that penalises prediction error during fitting.</p>
+<p><strong>Multicollinearity:</strong> Strong linear dependence among features; perfect multicollinearity causes rank deficiency.</p>
+<p><strong>Observation:</strong> One unit represented by one row of the dataset.</p>
+<p><strong>OLS:</strong> Ordinary least squares, the estimator that minimises the sum of squared residuals.</p>
+<p><strong>Parameter:</strong> A numerical value learned from data by an estimator.</p>
+<p><strong>Projection:</strong> The closest point in a subspace to a given vector under Euclidean distance.</p>
+<p><strong>Rank:</strong> The number of linearly independent directions represented by a matrix.</p>
+<p><strong>Residual:</strong> The observed target minus its fitted prediction.</p>
+<p><strong>Target:</strong> The outcome the model estimates.</p>
+<p><strong>Target leakage:</strong> Use of information that would not legitimately be available at prediction time.</p>
+<hr />
+<h1 id="instructor-and-self-study-notes">Instructor and Self-Study Notes</h1>
+<h2 id="suggested-daily-timebox">Suggested daily timebox</h2>
+<table>
+<thead>
+<tr>
+<th>Activity</th>
+<th style="text-align: right;">Minutes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Orient and retrieve prior knowledge</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr>
+<td>Work through the central derivation</td>
+<td style="text-align: right;">35</td>
+</tr>
+<tr>
+<td>Run and alter the proof code</td>
+<td style="text-align: right;">35</td>
+</tr>
+<tr>
+<td>Create or inspect the figure</td>
+<td style="text-align: right;">20</td>
+</tr>
+<tr>
+<td>Extend the application</td>
+<td style="text-align: right;">35</td>
+</tr>
+<tr>
+<td>Break-and-repair exercise</td>
+<td style="text-align: right;">25</td>
+</tr>
+<tr>
+<td>Exit check and written reflection</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td style="text-align: right;"><strong>180</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Three hours is a guide, not a race. If a learner cannot explain yesterday’s exit check, begin there rather than adding more notation.</p>
+<h2 id="retrieval-prompts-for-the-next-morning">Retrieval prompts for the next morning</h2>
+<ul>
+<li>After Day 1: “Name the three regression jobs and one risk of each.”</li>
+<li>After Day 2: “Draw the shapes of $X$, $y$, and $\beta$.”</li>
+<li>After Day 3: “Expand one row of $X\beta$ and explain the ones column.”</li>
+<li>After Day 4: “Why is the OLS residual perpendicular to $X$?”</li>
+<li>After Day 5: “State the normal equations and the condition for a unique coefficient vector.”</li>
+</ul>
+<h2 id="guidance-on-the-kp-context">Guidance on the KP context</h2>
+<p>Context should discipline the mathematics, not decorate it. Ask repeatedly:</p>
+<ul>
+<li>At what project stage is this field known?</li>
+<li>Who recorded it and for what administrative purpose?</li>
+<li>Does one row mean the same thing across districts and implementing partners?</li>
+<li>Are costs expressed in the same price year?</li>
+<li>Does a terrain index of 4 mean the same thing to every assessor?</li>
+<li>Could the model penalise remote projects for structural conditions outside field teams’ control?</li>
+<li>Would an apparent “efficiency” relationship survive a fair comparison of project types?</li>
+</ul>
+<p>These questions connect modeling capability to institutional responsibility.</p>
+<hr />
+<h1 id="where-week-2-begins">Where Week 2 Begins</h1>
+<p>Week 1 ends with a correct small OLS implementation and an honest account of its limits. Week 2 should extend the same application in this order:</p>
+<ol>
+<li>numerical conditioning and feature scaling;</li>
+<li>QR and singular-value views of least squares;</li>
+<li>probability models and maximum likelihood;</li>
+<li>gradient descent built from the OLS gradient;</li>
+<li>train/validation/test separation;</li>
+<li>coefficient and prediction uncertainty; and</li>
+<li>diagnostic plots and model revision.</li>
+</ol>
+<p>The next week should not treat these as disconnected techniques. Each one answers a problem exposed by the model built here.</p>
+<hr />
+<h2 id="final-reflection">Final reflection</h2>
+<p>The intellectual achievement of Week 1 is not the formula $(X^TX)^{-1}X^Ty$. It is the chain of reasoning around it:</p>
+<div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart TD
+    Q["A precise infrastructure question"] --> D["A defensible data representation"]
+    D --> M["A transparent mathematical model"]
+    M --> V["Independent code and geometric verification"]
+    V --> J["A bounded, responsible judgement"]
+</pre></div>
+
+<p>You now know enough to be dangerous if you report coefficients carelessly—and enough to begin becoming useful if you preserve the chain from question to judgement.</p>
+        </article>
+    </div>
+
+    <aside id="platform-shell" class="platform-shell" aria-label="Learning tools">
+        <div class="platform-header">
+            <div>
+                <div class="platform-title">Learning Tools</div>
+                <div id="platform-section" class="platform-section">Current section</div>
+            </div>
+            <button id="platform-toggle" class="platform-button" type="button" title="Collapse tools">Tools</button>
+        </div>
+        <div class="platform-body">
+            <section class="platform-group">
+                <label class="platform-row"><input id="progress-complete" type="checkbox"> Mark current section complete</label>
+                <div class="platform-row">
+                    <div class="platform-label">Section notes</div>
+                    <button id="note-new" class="platform-button" type="button">New note</button>
+                </div>
+                <div id="notes-list" class="notes-list"></div>
+            </section>
+            <section class="platform-group">
+                <div class="platform-label">AI Tutor</div>
+                <div class="platform-row">
+                    <button id="tutor-explain" class="platform-button" type="button">Explain differently</button>
+                    <button id="tutor-check" class="platform-button" type="button">Check reasoning</button>
+                </div>
+                <div id="tutor-history" class="platform-history"></div>
+                <textarea id="tutor-question" class="platform-textarea" placeholder="Ask about this section or paste your reasoning"></textarea>
+                <button id="tutor-submit" class="platform-button" type="button">Ask tutor</button>
+                <div class="platform-message" data-service-message="tutor"></div>
+                <div id="tutor-output" class="platform-output"></div>
+            </section>
+            <section class="platform-group">
+                <div class="platform-label">Exercise grading</div>
+                <textarea id="grade-submission" class="platform-textarea" placeholder="Paste your answer, code, or derivation"></textarea>
+                <button id="grade-submit" class="platform-button" type="button">Grade my answer</button>
+                <div class="platform-message" data-service-message="grading"></div>
+                <div id="grade-output" class="platform-output"></div>
+            </section>
+            <section class="platform-group">
+                <div class="platform-label">Narration</div>
+                <button id="tts-submit" class="platform-button" type="button">Listen to this section</button>
+                <div class="platform-message" data-service-message="tts"></div>
+                <div id="tts-output" class="platform-output"></div>
+            </section>
+            <section class="platform-group">
+                <div class="platform-label">Cross-device sync</div>
+                <div class="platform-row">
+                    <button id="sync-push" class="platform-button" type="button">Push</button>
+                    <button id="sync-pull" class="platform-button" type="button">Pull</button>
+                    <button id="status-retry" class="platform-button" type="button">Retry services</button>
+                </div>
+                <div class="platform-message" data-service-message="sync"></div>
+                <div id="sync-output" class="platform-output">Opt-in only. Notes, progress, and tutor history stay local unless you push.</div>
+            </section>
+            <section class="platform-group">
+                <div class="platform-label">Spaced repetition</div>
+                <div class="platform-output">Stretch goal: reminder delivery is not built in this pass.</div>
+            </section>
+        </div>
+    </aside>
+    <div id="note-modal-backdrop" class="modal-backdrop">
+        <div id="note-modal" class="note-modal" role="dialog" aria-modal="true" aria-label="Edit note">
+            <div class="note-modal-header">
+                <input id="note-title" class="note-title-input" type="text" value="Untitled note" aria-label="Note title">
+                <button id="note-close" class="platform-button" type="button">Close</button>
+            </div>
+            <div id="note-quill-toolbar" class="note-toolbar">
+                <span class="ql-formats">
+                    <select class="ql-header">
+                        <option value="1"></option>
+                        <option value="2"></option>
+                        <option selected></option>
+                    </select>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-bold" type="button"></button>
+                    <button class="ql-italic" type="button"></button>
+                    <button class="ql-underline" type="button"></button>
+                    <button class="ql-strike" type="button"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-list" value="ordered" type="button"></button>
+                    <button class="ql-list" value="bullet" type="button"></button>
+                    <button class="ql-blockquote" type="button"></button>
+                    <button class="ql-code-block" type="button"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-link" type="button"></button>
+                    <button class="ql-clean" type="button"></button>
+                </span>
+            </div>
+            <div id="note-editor" class="note-editor" data-placeholder="Write a full note for this section"></div>
+            <div class="note-attachments">
+                <div class="platform-row">
+                    <div class="platform-label">Attachments</div>
+                    <input id="note-attachment-input" class="attachment-input" type="file" multiple>
+                </div>
+                <div id="note-attachments-list" class="attachment-list"></div>
+            </div>
+            <div class="note-modal-footer">
+                <div id="note-modal-status" class="settings-status"></div>
+                <button id="note-save" class="platform-button" type="button">Save note</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        window.KP_PLATFORM = {
+            chapterSlug: "chapter1",
+            serviceStatus: {},
+            statusTimer: null,
+            currentSectionId: null,
+            currentHeading: null,
+            noteQuill: null,
+            quillPromise: null
+        };
+
+        (function platform() {
+            var state = window.KP_PLATFORM;
+            var reasonText = {
+                no_connectivity: "no internet connection",
+                no_api_key: "no API key configured",
+                provider_error: "provider error",
+                disabled: "service disabled"
+            };
+            var featureNames = {
+                tutor: "AI Tutor",
+                grading: "Exercise grading",
+                papers: "Research paper lookup",
+                tts: "Read-aloud narration",
+                sync: "Cross-device sync"
+            };
+
+            function qs(sel) { return document.querySelector(sel); }
+            function qsa(sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); }
+            function sectionKey(sectionId) { return state.chapterSlug + "::" + sectionId; }
+            function loadStylesheet(localHref, cdnHref) {
+                if (document.querySelector("link[href='" + localHref + "'], link[href='" + cdnHref + "']")) return;
+                var link = document.createElement("link");
+                link.rel = "stylesheet";
+                link.href = localHref;
+                link.onerror = function () {
+                    var fallback = document.createElement("link");
+                    fallback.rel = "stylesheet";
+                    fallback.href = cdnHref;
+                    document.head.appendChild(fallback);
+                };
+                document.head.appendChild(link);
+            }
+            function loadScript(localSrc, cdnSrc) {
+                return new Promise(function (resolve, reject) {
+                    if (window.Quill) {
+                        resolve(window.Quill);
+                        return;
+                    }
+                    var script = document.createElement("script");
+                    script.src = localSrc;
+                    script.onload = function () { resolve(window.Quill); };
+                    script.onerror = function () {
+                        var fallback = document.createElement("script");
+                        fallback.src = cdnSrc;
+                        fallback.onload = function () { resolve(window.Quill); };
+                        fallback.onerror = reject;
+                        document.head.appendChild(fallback);
+                    };
+                    document.head.appendChild(script);
+                });
+            }
+            function loadQuill() {
+                if (!state.quillPromise) {
+                    loadStylesheet("../vendor/quill/quill.snow.css", "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css");
+                    state.quillPromise = loadScript("../vendor/quill/quill.js", "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js");
+                }
+                return state.quillPromise;
+            }
+            function displayReason(reason) { return reasonText[reason] || "provider error"; }
+            function disabledMessage(service) {
+                return featureNames[service] + " is not available — " + displayReason((state.serviceStatus[service] || {}).reason) + ".";
+            }
+            function setMessage(id, text) {
+                var el = qs(id);
+                if (el) el.textContent = text || "";
+            }
+            function setAvailable(service, selectors) {
+                var status = state.serviceStatus[service] || { available: false, reason: "no_connectivity" };
+                selectors.forEach(function (selector) {
+                    qsa(selector).forEach(function (el) { el.disabled = !status.available; });
+                });
+                var msg = qs("[data-service-message='" + service + "']");
+                if (msg) msg.textContent = status.available ? "" : disabledMessage(service);
+            }
+            function statusFallback() {
+                ["tutor", "grading", "papers", "tts", "sync"].forEach(function (service) {
+                    state.serviceStatus[service] = { available: false, reason: "no_connectivity" };
+                });
+            }
+            async function fetchJson(url, options, timeoutMs) {
+                var controller = new AbortController();
+                var timer = setTimeout(function () { controller.abort(); }, timeoutMs || 3000);
+                try {
+                    var response = await fetch(url, Object.assign({}, options || {}, { signal: controller.signal }));
+                    var text = await response.text();
+                    var data = text ? JSON.parse(text) : {};
+                    if (!response.ok) {
+                        var error = new Error(data.error || response.statusText);
+                        error.status = response.status;
+                        error.data = data;
+                        throw error;
+                    }
+                    return data;
+                } finally {
+                    clearTimeout(timer);
+                }
+            }
+            async function refreshStatus() {
+                try {
+                    state.serviceStatus = await fetchJson("/api/services/status", {}, 6500);
+                } catch (err) {
+                    statusFallback();
+                }
+                applyStatus();
+                loadPaperCards();
+            }
+            function applyStatus() {
+                setAvailable("tutor", ["#tutor-submit", "#tutor-explain", "#tutor-check"]);
+                setAvailable("grading", ["#grade-submit"]);
+                setAvailable("tts", ["#tts-submit"]);
+                setAvailable("sync", ["#sync-push", "#sync-pull"]);
+                qsa(".paper-card[data-live='pending']").forEach(function (card) {
+                    card.querySelector(".paper-status").textContent = disabledMessage("papers");
+                });
+            }
+
+            function headingText(el) { return el ? el.textContent.replace(/\s+/g, " ").trim() : "Current section"; }
+            function chooseInitialSection() {
+                var headings = qsa(".markdown-body h1[id], .markdown-body h2[id], .markdown-body h3[id]");
+                state.currentHeading = headings[0] || null;
+                state.currentSectionId = state.currentHeading ? state.currentHeading.id : "top";
+                updateSectionUi();
+                if ("IntersectionObserver" in window && headings.length) {
+                    var visible = new Map();
+                    var observer = new IntersectionObserver(function (entries) {
+                        entries.forEach(function (entry) { visible.set(entry.target, entry.isIntersecting); });
+                        var active = headings.find(function (h) {
+                            return h.getBoundingClientRect().top >= 0 && h.getBoundingClientRect().top < window.innerHeight * 0.45;
+                        }) || headings.filter(function (h) { return h.getBoundingClientRect().top < window.innerHeight * 0.45; }).pop();
+                        if (active && active.id !== state.currentSectionId) {
+                            state.currentHeading = active;
+                            state.currentSectionId = active.id;
+                            updateSectionUi();
+                        }
+                    }, { rootMargin: "-10% 0px -65% 0px", threshold: [0, 1] });
+                    headings.forEach(function (h) { observer.observe(h); });
+                }
+            }
+            function getSectionText() {
+                var heading = state.currentHeading;
+                if (!heading) return qs(".markdown-body").textContent.slice(0, 5000);
+                var level = Number(heading.tagName.substring(1));
+                var parts = [headingText(heading)];
+                var node = heading.nextElementSibling;
+                while (node) {
+                    if (/^H[1-3]$/.test(node.tagName) && Number(node.tagName.substring(1)) <= level) break;
+                    parts.push(node.innerText || node.textContent || "");
+                    node = node.nextElementSibling;
+                }
+                return parts.join("\n").replace(/\n{3,}/g, "\n\n").slice(0, 9000);
+            }
+            function updateSectionUi() {
+                var id = state.currentSectionId || "top";
+                qs("#platform-section").textContent = headingText(state.currentHeading);
+                loadNote(id);
+                loadProgress(id);
+                loadTutorHistory(id);
+                setMessage("#grade-output", "");
+                setMessage("#tts-output", "");
+            }
+
+            async function loadNote(sectionId) {
+                var list = qs("#notes-list");
+                if (!list) return;
+                list.innerHTML = '<div class="platform-output">Loading notes...</div>';
+                try {
+                    var data = await fetchJson("/api/notes?chapter_slug=" + encodeURIComponent(state.chapterSlug) + "&section_id=" + encodeURIComponent(sectionId), {}, 1200);
+                    renderNotesList(data.notes || []);
+                } catch (err) {
+                    var localNotes = JSON.parse(localStorage.getItem("kp-notes::" + sectionKey(sectionId)) || "[]");
+                    renderNotesList(localNotes);
+                }
+            }
+            function stripHtml(html) {
+                var div = document.createElement("div");
+                div.innerHTML = html || "";
+                return div.textContent || div.innerText || "";
+            }
+            function renderNotesList(notes) {
+                var list = qs("#notes-list");
+                list.innerHTML = "";
+                if (!notes.length) {
+                    list.innerHTML = '<div class="platform-output">No notes for this section yet.</div>';
+                    return;
+                }
+                notes.forEach(function (note) {
+                    var button = document.createElement("button");
+                    button.type = "button";
+                    button.className = "note-link";
+                    button.dataset.noteId = note.id || "";
+                    var preview = stripHtml(note.preview || note.body || "").slice(0, 90);
+                    button.innerHTML = escapeHtml(note.title || "Untitled note") + (preview ? "<small>" + escapeHtml(preview) + "</small>" : "");
+                    button.addEventListener("click", function () { openNote(note.id); });
+                    list.appendChild(button);
+                });
+            }
+            async function ensureNoteEditor() {
+                var editor = qs("#note-editor");
+                if (state.noteQuill) return state.noteQuill;
+                editor.removeAttribute("contenteditable");
+                try {
+                    var QuillLib = await loadQuill();
+                    if (!QuillLib) throw new Error("Quill unavailable");
+                    state.noteQuill = new QuillLib("#note-editor", {
+                        theme: "snow",
+                        placeholder: "Write a full note for this section",
+                        modules: {
+                            toolbar: "#note-quill-toolbar",
+                            history: { delay: 800, maxStack: 150, userOnly: true }
+                        }
+                    });
+                    qs("#note-quill-toolbar").style.display = "";
+                    qs("#note-modal-status").textContent = "";
+                    return state.noteQuill;
+                } catch (err) {
+                    qs("#note-quill-toolbar").style.display = "none";
+                    editor.setAttribute("contenteditable", "true");
+                    qs("#note-modal-status").textContent = "Quill editor is not available; using basic editor.";
+                    return null;
+                }
+            }
+            function setEditorHtml(html) {
+                var editor = qs("#note-editor");
+                if (state.noteQuill) {
+                    state.noteQuill.clipboard.dangerouslyPasteHTML(html || "");
+                } else {
+                    editor.innerHTML = html || "";
+                }
+            }
+            function getEditorHtml() {
+                if (state.noteQuill) return state.noteQuill.root.innerHTML;
+                return qs("#note-editor").innerHTML;
+            }
+            function formatBytes(bytes) {
+                var value = Number(bytes || 0);
+                if (value < 1024) return value + " B";
+                if (value < 1024 * 1024) return (value / 1024).toFixed(1) + " KB";
+                return (value / (1024 * 1024)).toFixed(1) + " MB";
+            }
+            function renderAttachments(attachments) {
+                var list = qs("#note-attachments-list");
+                if (!list) return;
+                list.innerHTML = "";
+                if (!attachments.length) {
+                    list.innerHTML = '<div class="platform-output">No attachments yet.</div>';
+                    return;
+                }
+                attachments.forEach(function (item) {
+                    var row = document.createElement("div");
+                    row.className = "attachment-item";
+                    var preview = item.is_image
+                        ? '<img src="' + encodeURI(item.url) + '" alt="">'
+                        : escapeHtml((item.original_name || "file").split(".").pop().toUpperCase().slice(0, 6) || "FILE");
+                    row.innerHTML =
+                        '<div class="attachment-preview">' + preview + '</div>' +
+                        '<div class="attachment-meta">' +
+                            '<a href="' + encodeURI(item.url) + '" target="_blank" rel="noopener">' + escapeHtml(item.original_name || "Attachment") + '</a>' +
+                            '<small>' + escapeHtml(item.content_type || "file") + " · " + formatBytes(item.size_bytes) + '</small>' +
+                        '</div>';
+                    list.appendChild(row);
+                });
+            }
+            function setAttachmentMessage(message) {
+                var list = qs("#note-attachments-list");
+                if (list) list.innerHTML = '<div class="platform-output">' + escapeHtml(message) + '</div>';
+            }
+            async function loadAttachments(noteId) {
+                if (!noteId || String(noteId).indexOf("local-") === 0) {
+                    setAttachmentMessage("Save this note to the local server before attaching files.");
+                    return;
+                }
+                setAttachmentMessage("Loading attachments...");
+                try {
+                    var data = await fetchJson("/api/notes/" + encodeURIComponent(noteId) + "/attachments", {}, 2500);
+                    renderAttachments(data.attachments || []);
+                } catch (err) {
+                    setAttachmentMessage("Attachments are unavailable because the local server could not be reached.");
+                }
+            }
+            async function uploadAttachments() {
+                var input = qs("#note-attachment-input");
+                var files = Array.prototype.slice.call((input && input.files) || []);
+                if (!files.length) return;
+                var modal = qs("#note-modal");
+                var noteId = modal.dataset.noteId || "";
+                if (!noteId || noteId.indexOf("local-") === 0) {
+                    noteId = await saveNoteModal();
+                }
+                if (!noteId || String(noteId).indexOf("local-") === 0) {
+                    qs("#note-modal-status").textContent = "Attachments require a saved SQLite note. Start the local server and try again.";
+                    input.value = "";
+                    return;
+                }
+                qs("#note-modal-status").textContent = "Uploading attachments...";
+                try {
+                    for (var i = 0; i < files.length; i += 1) {
+                        var form = new FormData();
+                        form.append("file", files[i], files[i].name);
+                        await fetchJson("/api/notes/" + encodeURIComponent(noteId) + "/attachments", {
+                            method: "POST",
+                            body: form
+                        }, 60000);
+                    }
+                    input.value = "";
+                    await loadAttachments(noteId);
+                    loadNote(state.currentSectionId || "top");
+                    qs("#note-modal-status").textContent = "Attachments uploaded.";
+                } catch (err) {
+                    qs("#note-modal-status").textContent = err.status === 413 ? "Attachment is too large. Maximum size is 25 MB per file." : "Could not upload attachment.";
+                }
+            }
+            async function openNote(noteId) {
+                qs("#note-modal-backdrop").classList.add("open");
+                qs("#note-modal-status").textContent = "";
+                await ensureNoteEditor();
+                if (!noteId) {
+                    qs("#note-modal").dataset.noteId = "";
+                    qs("#note-title").value = "Untitled note";
+                    setEditorHtml("");
+                    loadAttachments(null);
+                    if (state.noteQuill) state.noteQuill.focus();
+                    else qs("#note-editor").focus();
+                    return;
+                }
+                try {
+                    var data = await fetchJson("/api/notes/" + encodeURIComponent(noteId), {}, 1500);
+                    var note = data.note;
+                    qs("#note-modal").dataset.noteId = note.id;
+                    qs("#note-title").value = note.title || "Untitled note";
+                    setEditorHtml(note.body || "");
+                    loadAttachments(note.id);
+                    if (state.noteQuill) state.noteQuill.focus();
+                    else qs("#note-editor").focus();
+                } catch (err) {
+                    qs("#note-modal-status").textContent = "Could not load this note.";
+                }
+            }
+            function closeNoteModal() {
+                qs("#note-modal-backdrop").classList.remove("open");
+            }
+            function commandNote(action, value) {
+                document.execCommand(action, false, value || null);
+                qs("#note-editor").focus();
+            }
+            async function saveNoteModal() {
+                var sectionId = state.currentSectionId || "top";
+                var modal = qs("#note-modal");
+                var noteId = modal.dataset.noteId;
+                var title = qs("#note-title").value.trim() || "Untitled note";
+                var body = getEditorHtml();
+                var payload = { chapter_slug: state.chapterSlug, section_id: sectionId, title: title, body: body };
+                qs("#note-modal-status").textContent = "Saving...";
+                try {
+                    var url = noteId ? "/api/notes/" + encodeURIComponent(noteId) : "/api/notes";
+                    var data = await fetchJson(url, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    }, 3000);
+                    if (!noteId && data.id) {
+                        modal.dataset.noteId = data.id;
+                        noteId = data.id;
+                    }
+                    qs("#note-modal-status").textContent = "Saved.";
+                    loadNote(sectionId);
+                    loadAttachments(noteId);
+                    return noteId;
+                } catch (err) {
+                    var key = "kp-notes::" + sectionKey(sectionId);
+                    var notes = JSON.parse(localStorage.getItem(key) || "[]");
+                    var localId = noteId || "local-" + Date.now();
+                    var existing = notes.find(function (n) { return String(n.id) === String(localId); });
+                    if (existing) {
+                        existing.title = title;
+                        existing.body = body;
+                        existing.preview = body;
+                    } else {
+                        notes.unshift({ id: localId, title: title, body: body, preview: body });
+                    }
+                    localStorage.setItem(key, JSON.stringify(notes));
+                    modal.dataset.noteId = localId;
+                    qs("#note-modal-status").textContent = "Saved locally in this browser. Start the server to sync to SQLite.";
+                    renderNotesList(notes);
+                    loadAttachments(localId);
+                    return localId;
+                }
+            }
+            async function loadProgress(sectionId) {
+                var checkbox = qs("#progress-complete");
+                var localKey = "kp-progress::" + sectionKey(sectionId);
+                try {
+                    var data = await fetchJson("/api/progress?chapter_slug=" + encodeURIComponent(state.chapterSlug) + "&section_id=" + encodeURIComponent(sectionId), {}, 1200);
+                    checkbox.checked = Boolean(data.completed);
+                } catch (err) {
+                    checkbox.checked = localStorage.getItem(localKey) === "1";
+                }
+            }
+            function saveProgress() {
+                var sectionId = state.currentSectionId || "top";
+                var completed = qs("#progress-complete").checked;
+                localStorage.setItem("kp-progress::" + sectionKey(sectionId), completed ? "1" : "0");
+                fetchJson("/api/progress", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ chapter_slug: state.chapterSlug, section_id: sectionId, completed: completed })
+                }, 1500).catch(function () {});
+            }
+
+            function renderHistory(messages) {
+                var history = qs("#tutor-history");
+                history.innerHTML = "";
+                messages.forEach(function (msg) {
+                    var div = document.createElement("div");
+                    div.className = "platform-turn";
+                    div.innerHTML = "<strong>" + (msg.role === "assistant" ? "Tutor" : "You") + ":</strong> " + escapeHtml(msg.body);
+                    history.appendChild(div);
+                });
+                history.scrollTop = history.scrollHeight;
+            }
+            async function loadTutorHistory(sectionId) {
+                try {
+                    var data = await fetchJson("/api/tutor/history?chapter_slug=" + encodeURIComponent(state.chapterSlug) + "&section_id=" + encodeURIComponent(sectionId), {}, 1400);
+                    renderHistory(data.messages || []);
+                } catch (err) {
+                    renderHistory([]);
+                }
+            }
+            async function askTutor(mode) {
+                if (!(state.serviceStatus.tutor || {}).available) return;
+                var input = qs("#tutor-question");
+                var question = input.value.trim();
+                if (!question && mode === "explain") question = "Explain this section differently, with a concrete example.";
+                if (!question) return;
+                setMessage("#tutor-output", "Thinking...");
+                var payload = {
+                    chapter_slug: state.chapterSlug,
+                    section_id: state.currentSectionId || "top",
+                    question: question,
+                    mode: mode || "ask",
+                    section_text: getSectionText()
+                };
+                try {
+                    var response = await fetch("/api/tutor/ask", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error("Tutor request failed");
+                    var reader = response.body.getReader();
+                    var decoder = new TextDecoder();
+                    var text = "";
+                    while (true) {
+                        var chunk = await reader.read();
+                        if (chunk.done) break;
+                        text += decoder.decode(chunk.value, { stream: true });
+                        setMessage("#tutor-output", text);
+                    }
+                    input.value = "";
+                    loadTutorHistory(payload.section_id);
+                } catch (err) {
+                    setMessage("#tutor-output", disabledMessage("tutor"));
+                }
+            }
+            async function gradeSubmission() {
+                if (!(state.serviceStatus.grading || {}).available) return;
+                var submission = qs("#grade-submission").value.trim();
+                if (!submission) return;
+                setMessage("#grade-output", "Grading...");
+                try {
+                    var data = await fetchJson("/api/exercises/grade", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            chapter_slug: state.chapterSlug,
+                            section_id: state.currentSectionId || "top",
+                            submission: submission,
+                            exercise_text: getSectionText()
+                        })
+                    }, 30000);
+                    setMessage("#grade-output", data.feedback || "");
+                } catch (err) {
+                    setMessage("#grade-output", disabledMessage("grading"));
+                }
+            }
+            async function playTts() {
+                if (!(state.serviceStatus.tts || {}).available) return;
+                setMessage("#tts-output", "Preparing audio...");
+                try {
+                    var response = await fetch("/api/tts", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            chapter_slug: state.chapterSlug,
+                            section_id: state.currentSectionId || "top",
+                            section_text: getSectionText()
+                        })
+                    });
+                    if (!response.ok) throw new Error("TTS request failed");
+                    var blob = await response.blob();
+                    var audio = new Audio(URL.createObjectURL(blob));
+                    audio.play();
+                    setMessage("#tts-output", "Playing this section.");
+                } catch (err) {
+                    setMessage("#tts-output", disabledMessage("tts"));
+                }
+            }
+            function slugify(text) {
+                return text.toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 90) || "paper";
+            }
+            function createPaperCards() {
+                if (state.chapterSlug === "settings") return;
+                qsa(".markdown-body h2, .markdown-body h3").forEach(function (heading) {
+                    if (!/Research paper/i.test(heading.textContent) || heading.dataset.paperCard) return;
+                    heading.dataset.paperCard = "1";
+                    var card = document.createElement("div");
+                    card.className = "paper-card";
+                    card.dataset.key = slugify(heading.textContent);
+                    card.dataset.query = heading.textContent.replace(/Research papers?:?/i, "").trim() || heading.textContent.trim();
+                    card.dataset.live = "pending";
+                    card.innerHTML = '<div class="paper-status">Research paper lookup is loading.</div>';
+                    heading.insertAdjacentElement("afterend", card);
+                });
+            }
+            async function loadPaperCards() {
+                createPaperCards();
+                qsa(".paper-card").forEach(async function (card) {
+                    var key = card.dataset.key;
+                    var query = card.dataset.query;
+                    try {
+                        var data = await fetchJson("/api/papers/" + encodeURIComponent(key) + "?query=" + encodeURIComponent(query), {}, 4500);
+                        var meta = data.metadata || {};
+                        card.dataset.live = "loaded";
+                        card.innerHTML = '<div class="paper-meta">' + (data.cached ? "cached — available offline" : "live scholarly lookup") + '</div>' +
+                            '<h4>' + escapeHtml(meta.title || query || "Research paper") + '</h4>' +
+                            '<p>' + escapeHtml([meta.authors, meta.year].filter(Boolean).join(" · ")) + '</p>' +
+                            '<p>' + escapeHtml(meta.abstract || "No abstract returned by the provider.") + '</p>' +
+                            (meta.url ? '<p><a href="' + meta.url + '" target="_blank" rel="noopener">Open paper</a></p>' : "");
+                    } catch (err) {
+                        card.dataset.live = "pending";
+                        card.innerHTML = '<div class="paper-status">' + disabledMessage("papers") + '</div><button class="platform-button paper-retry" type="button">Retry</button>';
+                        var retry = card.querySelector(".paper-retry");
+                        retry.addEventListener("click", function () { refreshStatus(); });
+                    }
+                });
+            }
+            async function sync(direction) {
+                var service = state.serviceStatus.sync || {};
+                if (!service.available) return;
+                setMessage("#sync-output", direction === "push" ? "Pushing..." : "Pulling...");
+                try {
+                    var data = await fetchJson("/api/sync/" + direction, { method: "POST" }, 15000);
+                    setMessage("#sync-output", data.message || "Sync complete.");
+                } catch (err) {
+                    setMessage("#sync-output", disabledMessage("sync"));
+                }
+            }
+            function escapeHtml(value) {
+                return String(value || "").replace(/[&<>"']/g, function (ch) {
+                    return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch];
+                });
+            }
+            function bindUi() {
+                qs("#platform-toggle").addEventListener("click", function () {
+                    qs("#platform-shell").classList.toggle("collapsed");
+                });
+                qs("#status-retry").addEventListener("click", refreshStatus);
+                qs("#note-new").addEventListener("click", function () { openNote(null); });
+                qs("#note-close").addEventListener("click", closeNoteModal);
+                qs("#note-save").addEventListener("click", saveNoteModal);
+                qs("#note-attachment-input").addEventListener("change", uploadAttachments);
+                qs("#note-modal-backdrop").addEventListener("click", function (event) {
+                    if (event.target.id === "note-modal-backdrop") closeNoteModal();
+                });
+                qs("#progress-complete").addEventListener("change", saveProgress);
+                qs("#tutor-submit").addEventListener("click", function () { askTutor("ask"); });
+                qs("#tutor-explain").addEventListener("click", function () { askTutor("explain"); });
+                qs("#tutor-check").addEventListener("click", function () { askTutor("check"); });
+                qs("#grade-submit").addEventListener("click", gradeSubmission);
+                qs("#tts-submit").addEventListener("click", playTts);
+                qs("#sync-push").addEventListener("click", function () { sync("push"); });
+                qs("#sync-pull").addEventListener("click", function () { sync("pull"); });
+            }
+            document.addEventListener("DOMContentLoaded", function () {
+                bindUi();
+                chooseInitialSection();
+                createPaperCards();
+                statusFallback();
+                applyStatus();
+                refreshStatus();
+                state.statusTimer = setInterval(refreshStatus, 60000);
+            });
+        })();
+    </script>
+
+
+    <!-- Math: local vendor copy preferred, CDN used only as a fallback when online. -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] }
+        };
+        (function loadMathJax() {
+            var local = document.createElement('script');
+            local.src = '../vendor/mathjax/tex-mml-chtml.js';
+            local.async = true;
+            local.onerror = function () {
+                var cdn = document.createElement('script');
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+                cdn.async = true;
+                document.head.appendChild(cdn);
+            };
+            document.head.appendChild(local);
+        })();
+    </script>
+
+    <!-- Diagrams: local vendor copy preferred, CDN used only as a fallback when online.
+         If neither loads (fully offline, no vendor file), the labeled diagram-source
+         panels above remain readable as plain text. -->
+    <script>
+        (function loadMermaid() {
+            function init(mermaid) {
+                mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+                document.querySelectorAll('.diagram-panel').forEach(function (panel) {
+                    var sourceEl = panel.querySelector('.mermaid-source');
+                    if (!sourceEl) return;
+                    var container = document.createElement('div');
+                    container.className = 'mermaid';
+                    container.textContent = sourceEl.textContent;
+                    panel.replaceChild(container, sourceEl);
+                });
+                mermaid.run();
+            }
+
+            var local = document.createElement('script');
+            local.src = '../vendor/mermaid.min.js';
+            local.onload = function () { init(window.mermaid); };
+            local.onerror = function () {
+                var cdn = document.createElement('script');
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+                cdn.onload = function () { init(window.mermaid); };
+                document.head.appendChild(cdn);
+            };
+            document.head.appendChild(local);
+        })();
+    </script>
+</body>
+</html>

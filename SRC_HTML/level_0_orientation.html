@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 0: Level 0 Orientation — Landing on Planet Regression</title>
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --panel: #151d30;
+            --border: #223150;
+            --text: #f1f5f9;
+            --text-muted: #cbd5e1;
+            --accent: #22d3ee;
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; overflow-x: hidden; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        code, pre, .mono {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        }
+        #content {
+            width: 100%;
+            max-width: 56rem;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+        nav.chapters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        nav.chapters a {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+        nav.chapters a:hover { border-color: rgba(34, 211, 238, 0.4); }
+        nav.chapters a.active {
+            color: var(--accent);
+            background: rgba(21, 29, 48, 0.8);
+            border-color: rgba(34, 211, 238, 0.4);
+        }
+        .markdown-body h1 { font-size: 2.25rem; font-weight: 800; color: #fff; margin: 0.5rem 0 1.5rem; }
+        .markdown-body h2 { font-size: 1.5rem; font-weight: 700; color: #fff; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin: 2.5rem 0 1rem; }
+        .markdown-body h3 { font-size: 1.25rem; font-weight: 600; color: #fff; margin: 2rem 0 0.75rem; }
+        .markdown-body h4 { font-size: 1.1rem; font-weight: 600; color: #fff; margin: 1.5rem 0 0.5rem; }
+        .markdown-body p { color: var(--text-muted); margin: 0 0 1rem; }
+        .markdown-body ul, .markdown-body ol { color: var(--text-muted); margin: 0 0 1rem; padding-left: 1.5rem; }
+        .markdown-body li { margin-bottom: 0.25rem; }
+        .markdown-body blockquote {
+            border-left: 4px solid var(--accent);
+            padding: 0.5rem 1rem;
+            font-style: italic;
+            background: rgba(34, 211, 238, 0.05);
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 1rem 0;
+        }
+        .markdown-body a { color: var(--accent); text-decoration: underline; }
+        .markdown-body a:hover { color: #67e8f9; }
+        .markdown-body :not(pre) > code {
+            font-size: 0.875rem;
+            color: #67e8f9;
+            background: var(--panel);
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+        }
+        .markdown-body pre {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+        .markdown-body pre code {
+            background: transparent;
+            padding: 0;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+        }
+        .markdown-body table { width: 100%; font-size: 0.875rem; border-collapse: collapse; margin: 1.5rem 0; }
+        .markdown-body th, .markdown-body td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: left; }
+        .markdown-body th { background: var(--panel); color: #fff; font-weight: 600; }
+        .markdown-body td { color: var(--text-muted); }
+        .markdown-body hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+        /* Mermaid diagram panel: readable offline as labeled source; mermaid.js
+           (if vendored) replaces the <pre> contents with a rendered <svg>. */
+        .diagram-panel {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+        .diagram-panel__label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: rgba(34, 211, 238, 0.08);
+            padding: 0.4rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .diagram-panel .mermaid {
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+        }
+        .diagram-panel pre.mermaid-source {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+            padding: 1rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+        }
+
+        .platform-shell {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            width: min(25rem, calc(100vw - 2rem));
+            max-height: calc(100vh - 2rem);
+            display: flex;
+            flex-direction: column;
+            background: rgba(12, 18, 30, 0.96);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            z-index: 50;
+        }
+        .platform-shell.collapsed { width: auto; }
+        .platform-shell.collapsed .platform-body { display: none; }
+        .platform-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.9);
+        }
+        .platform-title { font-size: 0.85rem; font-weight: 700; color: #fff; }
+        .platform-section { font-size: 0.72rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .platform-body { overflow-y: auto; padding: 0.85rem; }
+        .platform-group { border-top: 1px solid var(--border); padding-top: 0.85rem; margin-top: 0.85rem; }
+        .platform-group:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+        .platform-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+        .platform-label { display: block; margin-bottom: 0.35rem; font-size: 0.72rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.04em; }
+        .platform-button {
+            border: 1px solid rgba(34, 211, 238, 0.45);
+            background: rgba(34, 211, 238, 0.08);
+            color: var(--accent);
+            border-radius: 0.35rem;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.78rem;
+            font-weight: 650;
+            cursor: pointer;
+        }
+        .platform-button:hover:not(:disabled) { background: rgba(34, 211, 238, 0.14); }
+        .platform-button:disabled {
+            cursor: not-allowed;
+            color: #94a3b8;
+            border-color: #334155;
+            background: rgba(148, 163, 184, 0.08);
+        }
+        .platform-textarea {
+            width: 100%;
+            min-height: 4.5rem;
+            resize: vertical;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.55rem;
+            font: inherit;
+            font-size: 0.85rem;
+        }
+        .platform-message {
+            margin-top: 0.45rem;
+            color: #fbbf24;
+            font-size: 0.78rem;
+        }
+        .platform-output {
+            margin-top: 0.55rem;
+            white-space: pre-wrap;
+            color: var(--text-muted);
+            font-size: 0.84rem;
+        }
+        .platform-history {
+            max-height: 12rem;
+            overflow: auto;
+            display: grid;
+            gap: 0.45rem;
+            margin: 0.55rem 0;
+        }
+        .platform-turn {
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            padding: 0.45rem 0.55rem;
+            background: rgba(21, 29, 48, 0.55);
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+        .platform-turn strong { color: #fff; }
+        .paper-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 0.8rem;
+            margin: 1rem 0;
+            background: rgba(21, 29, 48, 0.55);
+        }
+        .paper-card h4 { margin: 0 0 0.3rem; font-size: 1rem; }
+        .paper-card p { margin: 0.35rem 0; font-size: 0.9rem; }
+        .paper-card .paper-meta { color: #93c5fd; font-size: 0.82rem; }
+        .paper-card .paper-status { color: #fbbf24; font-size: 0.8rem; }
+        .settings-grid {
+            display: grid;
+            gap: 1rem;
+        }
+        .settings-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: rgba(21, 29, 48, 0.55);
+            padding: 1rem;
+        }
+        .settings-card h2 {
+            margin-top: 0;
+        }
+        .settings-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .settings-field {
+            display: grid;
+            gap: 0.25rem;
+        }
+        .settings-field.full {
+            grid-column: 1 / -1;
+        }
+        .settings-field label,
+        .settings-check {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .settings-field input,
+        .settings-field select {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.5rem;
+            font: inherit;
+        }
+        .settings-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .settings-status {
+            color: #fbbf24;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        .settings-file-viewer {
+            margin-top: 1rem;
+            display: grid;
+            gap: 1rem;
+        }
+        .settings-file-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: rgba(21, 29, 48, 0.55);
+            padding: 1rem;
+        }
+        .settings-file-card h2 {
+            margin: 0 0 0.35rem;
+        }
+        .settings-file-card pre {
+            max-height: 26rem;
+            overflow: auto;
+            margin: 0.75rem 0 0;
+        }
+        .settings-file-meta {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .notes-list {
+            display: grid;
+            gap: 0.35rem;
+            margin-top: 0.55rem;
+        }
+        .note-link {
+            display: block;
+            width: 100%;
+            text-align: left;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: rgba(21, 29, 48, 0.5);
+            color: var(--accent);
+            padding: 0.45rem 0.55rem;
+            cursor: pointer;
+            font: inherit;
+        }
+        .note-link:hover { border-color: rgba(34, 211, 238, 0.5); }
+        .note-link small {
+            display: block;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.68);
+            z-index: 100;
+        }
+        .modal-backdrop.open { display: flex; }
+        .note-modal {
+            width: min(58rem, 100%);
+            max-height: min(46rem, calc(100vh - 2rem));
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: #0b0f19;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
+            overflow: hidden;
+        }
+        .note-modal-header,
+        .note-modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.9);
+        }
+        .note-modal-footer {
+            border-top: 1px solid var(--border);
+            border-bottom: 0;
+        }
+        .note-title-input {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.55rem;
+            font: inherit;
+            font-weight: 700;
+        }
+        .note-toolbar,
+        .note-modal .ql-toolbar.ql-snow {
+            border: 0;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.45);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-picker,
+        .note-modal .ql-toolbar.ql-snow button {
+            color: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-stroke {
+            stroke: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-fill {
+            fill: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-picker-options {
+            background: #0b0f19;
+            border-color: var(--border);
+        }
+        .note-modal .ql-container.ql-snow {
+            border: 0;
+            font: inherit;
+        }
+        .note-editor {
+            min-height: 18rem;
+            flex: 1 1 auto;
+            overflow: auto;
+            color: var(--text);
+            background: #080c14;
+            outline: none;
+        }
+        .note-editor .ql-editor,
+        .note-editor[contenteditable="true"] {
+            min-height: 18rem;
+            color: var(--text);
+            font-size: 1rem;
+            line-height: 1.6;
+            padding: 1rem;
+        }
+        .note-editor .ql-editor.ql-blank::before {
+            color: #64748b;
+            font-style: normal;
+        }
+        .note-editor:empty::before {
+            content: attr(data-placeholder);
+            color: #64748b;
+        }
+        .note-attachments {
+            border-top: 1px solid var(--border);
+            background: rgba(8, 12, 20, 0.95);
+            padding: 0.75rem;
+            max-height: 11rem;
+            overflow: auto;
+        }
+        .attachment-input {
+            max-width: 22rem;
+            color: var(--text-muted);
+            font: inherit;
+        }
+        .attachment-list {
+            display: grid;
+            gap: 0.5rem;
+            margin-top: 0.65rem;
+        }
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: rgba(21, 29, 48, 0.45);
+            padding: 0.5rem;
+        }
+        .attachment-preview {
+            width: 3.5rem;
+            height: 3.5rem;
+            flex: 0 0 3.5rem;
+            display: grid;
+            place-items: center;
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text-muted);
+            overflow: hidden;
+            font-size: 0.78rem;
+        }
+        .attachment-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .attachment-meta {
+            min-width: 0;
+        }
+        .attachment-meta a {
+            display: block;
+            color: var(--accent);
+            overflow-wrap: anywhere;
+        }
+        .attachment-meta small {
+            color: var(--text-muted);
+        }
+        @media (min-width: 72.01rem) {
+            body { padding-right: 27rem; }
+        }
+        @media (max-width: 72rem) {
+            .platform-shell { position: static; width: auto; max-height: none; margin: 0 1rem 1rem; }
+            .platform-shell.collapsed .platform-body { display: none; }
+        }
+
+    </style>
+</head>
+<body>
+    <div id="content">
+        <nav class="chapters">
+            <a href="chapter0.html" class="">Ch. 0</a>
+            <a href="level_0_orientation.html" class="active">Level 0 Orientation</a>
+            <a href="chapter1.html" class="">Ch. 1</a>
+            <a href="chapter2.html" class="">Ch. 2</a>
+            <a href="chapter3.html" class="">Ch. 3</a>
+            <a href="chapter4.html" class="">Ch. 4</a>
+            <a href="chapter4_5_interlude.html" class="">Ch. 4.5 Interlude</a>
+            <a href="chapter5.html" class="">Ch. 5</a>
+            <a href="chapter6.html" class="">Ch. 6</a>
+            <a href="settings.html" class="">Settings</a>
+        </nav>
+        <article class="markdown-body">
+<h1 id="chapter-0-level-0-orientation-landing-on-planet-regression">Chapter 0: Level 0 Orientation — Landing on Planet Regression</h1>
+<p>Hey there! Welcome. If you've ever looked at a messy spreadsheet and thought, <em>"I wonder if we can predict one column using the others without losing my mind,"</em> you're in the right place. </p>
+<p>This guide is designed to take you from a complete beginner—someone who doesn't know their features from their targets—to someone who can confidently sit down with PhD researchers, discuss causal estimation, and not break a sweat. All in about a week of focused work.</p>
+<p>But we have a strict rule here: <strong>no passive reading</strong>. You don't learn swimming by reading a manual on hydrodynamics; you learn it by jumping into the pool and swallowing a bit of water. In our case, the pool is full of data, and the water is Python code. </p>
+<p>Let's get oriented.</p>
+<hr />
+<h2 id="1-how-to-use-this-guide">1. How to Use This Guide</h2>
+<p>This is a self-paced, project-based curriculum. Instead of using toy datasets like Boston Housing (which has been beaten to death and has some pretty sketchy history anyway) or Iris flowers, we are going to work with three custom-built datasets based on Khyber Pakhtunkhwa (KP), Pakistan. </p>
+<p>For every single chapter, you should follow this rhythm:<br />
+1. <strong>Read the theory</strong> (informal, conceptual, but mathematically honest).<br />
+2. <strong>Explain it back</strong> (tell a rubber duck or your cat what the concept means).<br />
+3. <strong>Run the experiments</strong> (write the code yourself—no copy-pasting allowed).<br />
+4. <strong>Break it on purpose</strong> (what happens if you scale the target? what if you pass ID columns? find out!).<br />
+5. <strong>Solve the exercises</strong> (thoughtful, structured problems designed to build muscle memory).</p>
+<h3 id="your-toolkit">Your Toolkit</h3>
+<p>Make sure you have a working Python installation. We'll be using:<br />
+- <code>pandas</code> &amp; <code>numpy</code> (the bread and butter of data manipulation)<br />
+- <code>matplotlib</code> &amp; <code>seaborn</code> (for making plots that actually look good)<br />
+- <code>scikit-learn</code> (for machine learning)<br />
+- <code>statsmodels</code> (for statistical tests and classical econometrics)<br />
+- Advanced tools (which we will introduce as we go: <code>XGBoost</code>, <code>Optuna</code>, <code>SHAP</code>, <code>MAPIE</code>, etc.)</p>
+<hr />
+<h2 id="2-setup-and-data-generation">2. Setup and Data Generation</h2>
+<p>Suppose someone collected data across the beautiful valleys and plains of KP. Before we can do any math or fit any lines, we need to generate this data. </p>
+<h3 id="step-21-the-command-line-ritual">Step 2.1: The Command Line Ritual</h3>
+<p>Open your terminal and run the following commands to set up a clean, isolated environment. Don't install packages globally; that's how you break other projects and end up crying over dependency conflicts at 2 AM.</p>
+<pre><code class="language-bash"># Clone or navigate to your workspace
+cd /var/www/documentation/regression-tasks
+
+# Create a virtual environment
+python3 -m venv .venv
+
+# Activate the virtual environment
+source .venv/bin/activate
+
+# Install the essentials
+pip install --upgrade pip
+pip install pandas numpy matplotlib seaborn scikit-learn statsmodels
+</code></pre>
+<h3 id="step-22-generate-the-synthetic-kp-datasets">Step 2.2: Generate the Synthetic KP Datasets</h3>
+<p>The project directory contains a script called <a href="file:///var/www/documentation/regression-tasks/generate_data.py">generate_data.py</a>. This script simulates a mini-world with realistic statistical dependencies. Let's run it:</p>
+<pre><code class="language-bash">python generate_data.py
+</code></pre>
+<p>If successful, you will see output like this:</p>
+<pre><code class="language-text">Generating development dataset: data/kp_subdistrict_development_index.csv with 100000 records...
+Finished generating data/kp_subdistrict_development_index.csv.
+Generating agricultural dataset: data/kp_agricultural_yields.csv with 100000 records...
+Finished generating data/kp_agricultural_yields.csv.
+Generating infrastructure dataset: data/kp_infrastructure_projects.csv with 100000 records...
+Finished generating data/kp_infrastructure_projects.csv.
+All datasets generated successfully in the 'data' directory!
+</code></pre>
+<blockquote>
+<p>[!WARNING]<br />
+These datasets are <strong>synthetic</strong>. They are mathematically designed to teach you regression. They reflect realistic terrain constraints, crop scales, and budget overruns of Pakistan, but they are <strong>not</strong> real survey data. Do not present these as actual policy evidence to the KP Planning and Development Department unless you want to get laughed out of the room.</p>
+</blockquote>
+<hr />
+<h2 id="3-the-three-kp-regression-datasets">3. The Three KP Regression Datasets</h2>
+<p>Let's meet our three main characters. Each represents a distinct style of regression problem.</p>
+<h3 id="31-the-development-index-dataset">3.1 The Development Index Dataset</h3>
+<ul>
+<li><strong>File:</strong> <code>data/kp_subdistrict_development_index.csv</code></li>
+<li><strong>Target (What we want to find):</strong> <code>development_score</code> (a bounded index from 0 to 100).</li>
+<li><strong>Concept:</strong> <em>Suppose someone collected survey data from 100,000 communities in KP. They have indicators like literacy rate, school enrollment, average household income, distance to health facilities, and public funding. Now, they want to predict the overall community development score. What do we do?</em></li>
+<li><strong>The Reality Inside:</strong> This dataset is highly linear with some terrain-based penalties (e.g., mountainous regions face structural challenges). However, it contains severe <strong>multicollinearity</strong> (literacy rate and school enrollment are almost copies of each other).</li>
+</ul>
+<h3 id="32-the-agricultural-yields-dataset">3.2 The Agricultural Yields Dataset</h3>
+<ul>
+<li><strong>File:</strong> <code>data/kp_agricultural_yields.csv</code></li>
+<li><strong>Target:</strong> <code>crop_yield_tons_per_acre</code> (a positive continuous value).</li>
+<li><strong>Concept:</strong> <em>Suppose a researcher collected farm-level data including crop types (wheat, maize, sugarcane, apples, peaches), soil pH, rainfall, elevation, fertilizer application, and whether the farm is organic. They want to predict the yield per acre to advise farmers. What do we do?</em></li>
+<li><strong>The Reality Inside:</strong> This dataset is highly <strong>nonlinear</strong> and filled with <strong>interactions</strong>. Soil pH has an optimal point (curves downwards if pH is too acidic or basic). Apples and peaches die in high temperatures, while sugarcane thrives. Organic farms have strictly zero fertilizer and pesticides. A simple straight line will fail miserably here.</li>
+</ul>
+<h3 id="33-the-infrastructure-projects-dataset">3.3 The Infrastructure Projects Dataset</h3>
+<ul>
+<li><strong>File:</strong> <code>data/kp_infrastructure_projects.csv</code></li>
+<li><strong>Targets:</strong> <code>actual_cost_million_pkr</code> and <code>actual_duration_months</code> (two continuous values!).</li>
+<li><strong>Concept:</strong> <em>Suppose the government of KP tracked 100,000 public works projects (roads, schools, water supply). They have the approved budget, estimated duration, contractor experience, and year of initiation. They want to predict the actual final cost and duration before building starts to prevent budget overruns. What do we do?</em></li>
+<li><strong>The Reality Inside:</strong> The targets are heavily <strong>right-skewed</strong> (most projects are small, but a few mega-projects cost billions). It is a <strong>multi-output</strong> problem where cost and duration are intimately related, but actual duration is unknown when planning.</li>
+</ul>
+<hr />
+<h2 id="chapter-0-exercises-a-dress-rehearsal-not-a-preview">Chapter 0 Exercises: A Dress Rehearsal, Not a Preview</h2>
+<p>Here are your first hands-on challenges. Write python scripts (save them under <code>scratch/</code> or run them in an interactive environment) to solve them.</p>
+<blockquote>
+<p><strong>What this rehearsal is for.</strong> These three datasets are large, realistic, and deliberately disconnected from the running case the rest of the book uses. That's on purpose. Chapter 1 onward follows a single narrower thread — the MHP Cost Estimator — built from small, hand-inspectable datasets that grow chapter by chapter, not from these CSVs. You will not see <code>kp_subdistrict_development_index.csv</code>, <code>kp_agricultural_yields.csv</code>, or <code>kp_infrastructure_projects.csv</code> again after this chapter, and that's fine. The point here is to build the reflex — load it, check its shape, find the ID columns, read the generating code — on data with real scale and real messiness, <em>before</em> the stakes go up and that reflex has to be automatic. Think of it as a practice scrimmage before the season starts, not the season itself.</p>
+</blockquote>
+<h3 id="exercise-01-the-data-handshake">Exercise 0.1: The Data Handshake</h3>
+<p>Write a Python script <code>verify_setup.py</code> to load all three datasets and print their shapes, columns, and target variable ranges (minimum and maximum values).</p>
+<p><strong>Helpful Comments:</strong><br />
+* Use <code>pd.read_csv()</code> to load.<br />
+* Use <code>.shape</code>, <code>.columns</code>, and <code>.describe()</code> to extract statistics.<br />
+* <em>Comic Relief:</em> If your script throws a <code>FileNotFoundError</code>, verify you ran <code>generate_data.py</code> first. Data does not materialize out of thin air, no matter how hard you stare at the screen.</p>
+<h3 id="exercise-02-spotting-the-imposters-identifiers">Exercise 0.2: Spotting the Imposters (Identifiers)</h3>
+<p>Look closely at the columns of all three datasets. Identify the columns that represent unique IDs (identifiers). <br />
+1. Why must we drop these columns before feeding them to a regression model?<br />
+2. What happens if a model "memorizes" <code>community_id</code> to predict <code>development_score</code>?</p>
+<p><strong>Helpful Comments:</strong><br />
+* Unique identifiers have high cardinality (almost every row has a unique value).<br />
+* If you train a model with ID columns, it might find a spurious pattern (e.g., ID <code>COM-00042</code> has a high score just by luck) and fail when predicting on a new community <code>COM-99999</code>. This is the ultimate form of cheating and overfitting.</p>
+<h3 id="exercise-03-tracing-the-data-generating-code">Exercise 0.3: Tracing the Data-Generating Code</h3>
+<p>Open <a href="file:///var/www/documentation/regression-tasks/generate_data.py">generate_data.py</a> and search for the function <code>generate_development_dataset</code>. Look at how <code>raw_score</code> is calculated.<br />
+Write down the exact formula used to build <code>raw_score</code>.<br />
+What weights are given to <code>literacy_rate</code> vs <code>public_funding_allocated_million_pkr</code>?</p>
+<hr />
+<h2 id="handing-off-to-chapter-1">Handing Off to Chapter 1</h2>
+<p>One last thing before you turn the page. Everything in this chapter — the three CSVs, <code>generate_data.py</code>, the exercises above — belongs to this chapter alone. Chapter 1 opens a new, separate running case: the <strong>MHP Cost Estimator</strong>, predicting the cost of microhydro power projects from a handful of hand-built rows (eight, to start). It does not load anything you generated here, and it doesn't need to. Different dataset, same rules: read the theory, run the code yourself, break it on purpose. If Chapter 1 feels like a fresh start rather than a continuation, that's expected — you're not missing a step.</p>
+<hr />
+<h2 id="references">References</h2>
+<ol>
+<li><strong>Python Virtual Environments:</strong> <a href="https://docs.python.org/3/library/venv.html">Python venv Docs</a> - Read this if you still don't know why we use virtual environments.</li>
+<li><strong>pandas Basics:</strong> <a href="https://pandas.pydata.org/docs/getting_started/index.html">pandas Getting Started Guide</a> - Essential reading for data loading.</li>
+<li><strong>Pakistan Development Context:</strong> Planning &amp; Development Department, Khyber Pakhtunkhwa <a href="https://pndkp.gov.pk/">KP P&amp;D Website</a> - For background on how development funding and infrastructure projects are managed in KP.</li>
+</ol>
+        </article>
+    </div>
+
+    <aside id="platform-shell" class="platform-shell" aria-label="Learning tools">
+        <div class="platform-header">
+            <div>
+                <div class="platform-title">Learning Tools</div>
+                <div id="platform-section" class="platform-section">Current section</div>
+            </div>
+            <button id="platform-toggle" class="platform-button" type="button" title="Collapse tools">Tools</button>
+        </div>
+        <div class="platform-body">
+            <section class="platform-group">
+                <label class="platform-row"><input id="progress-complete" type="checkbox"> Mark current section complete</label>
+                <div class="platform-row">
+                    <div class="platform-label">Section notes</div>
+                    <button id="note-new" class="platform-button" type="button">New note</button>
+                </div>
+                <div id="notes-list" class="notes-list"></div>
+            </section>
+            <section class="platform-group">
+                <div class="platform-label">AI Tutor</div>
+                <div class="platform-row">
+                    <button id="tutor-explain" class="platform-button" type="button">Explain differently</button>
+                    <button id="tutor-check" class="platform-button" type="button">Check reasoning</button>
+                </div>
+                <div id="tutor-history" class="platform-history"></div>
+                <textarea id="tutor-question" class="platform-textarea" placeholder="Ask about this section or paste your reasoning"></textarea>
+                <button id="tutor-submit" class="platform-button" type="button">Ask tutor</button>
+                <div class="platform-message" data-service-message="tutor"></div>
+                <div id="tutor-output" class="platform-output"></div>
+            </section>
+            <section class="platform-group">
+                <div class="platform-label">Exercise grading</div>
+                <textarea id="grade-submission" class="platform-textarea" placeholder="Paste your answer, code, or derivation"></textarea>
+                <button id="grade-submit" class="platform-button" type="button">Grade my answer</button>
+                <div class="platform-message" data-service-message="grading"></div>
+                <div id="grade-output" class="platform-output"></div>
+            </section>
+            <section class="platform-group">
+                <div class="platform-label">Narration</div>
+                <button id="tts-submit" class="platform-button" type="button">Listen to this section</button>
+                <div class="platform-message" data-service-message="tts"></div>
+                <div id="tts-output" class="platform-output"></div>
+            </section>
+            <section class="platform-group">
+                <div class="platform-label">Cross-device sync</div>
+                <div class="platform-row">
+                    <button id="sync-push" class="platform-button" type="button">Push</button>
+                    <button id="sync-pull" class="platform-button" type="button">Pull</button>
+                    <button id="status-retry" class="platform-button" type="button">Retry services</button>
+                </div>
+                <div class="platform-message" data-service-message="sync"></div>
+                <div id="sync-output" class="platform-output">Opt-in only. Notes, progress, and tutor history stay local unless you push.</div>
+            </section>
+            <section class="platform-group">
+                <div class="platform-label">Spaced repetition</div>
+                <div class="platform-output">Stretch goal: reminder delivery is not built in this pass.</div>
+            </section>
+        </div>
+    </aside>
+    <div id="note-modal-backdrop" class="modal-backdrop">
+        <div id="note-modal" class="note-modal" role="dialog" aria-modal="true" aria-label="Edit note">
+            <div class="note-modal-header">
+                <input id="note-title" class="note-title-input" type="text" value="Untitled note" aria-label="Note title">
+                <button id="note-close" class="platform-button" type="button">Close</button>
+            </div>
+            <div id="note-quill-toolbar" class="note-toolbar">
+                <span class="ql-formats">
+                    <select class="ql-header">
+                        <option value="1"></option>
+                        <option value="2"></option>
+                        <option selected></option>
+                    </select>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-bold" type="button"></button>
+                    <button class="ql-italic" type="button"></button>
+                    <button class="ql-underline" type="button"></button>
+                    <button class="ql-strike" type="button"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-list" value="ordered" type="button"></button>
+                    <button class="ql-list" value="bullet" type="button"></button>
+                    <button class="ql-blockquote" type="button"></button>
+                    <button class="ql-code-block" type="button"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-link" type="button"></button>
+                    <button class="ql-clean" type="button"></button>
+                </span>
+            </div>
+            <div id="note-editor" class="note-editor" data-placeholder="Write a full note for this section"></div>
+            <div class="note-attachments">
+                <div class="platform-row">
+                    <div class="platform-label">Attachments</div>
+                    <input id="note-attachment-input" class="attachment-input" type="file" multiple>
+                </div>
+                <div id="note-attachments-list" class="attachment-list"></div>
+            </div>
+            <div class="note-modal-footer">
+                <div id="note-modal-status" class="settings-status"></div>
+                <button id="note-save" class="platform-button" type="button">Save note</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        window.KP_PLATFORM = {
+            chapterSlug: "level_0_orientation",
+            serviceStatus: {},
+            statusTimer: null,
+            currentSectionId: null,
+            currentHeading: null,
+            noteQuill: null,
+            quillPromise: null
+        };
+
+        (function platform() {
+            var state = window.KP_PLATFORM;
+            var reasonText = {
+                no_connectivity: "no internet connection",
+                no_api_key: "no API key configured",
+                provider_error: "provider error",
+                disabled: "service disabled"
+            };
+            var featureNames = {
+                tutor: "AI Tutor",
+                grading: "Exercise grading",
+                papers: "Research paper lookup",
+                tts: "Read-aloud narration",
+                sync: "Cross-device sync"
+            };
+
+            function qs(sel) { return document.querySelector(sel); }
+            function qsa(sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); }
+            function sectionKey(sectionId) { return state.chapterSlug + "::" + sectionId; }
+            function loadStylesheet(localHref, cdnHref) {
+                if (document.querySelector("link[href='" + localHref + "'], link[href='" + cdnHref + "']")) return;
+                var link = document.createElement("link");
+                link.rel = "stylesheet";
+                link.href = localHref;
+                link.onerror = function () {
+                    var fallback = document.createElement("link");
+                    fallback.rel = "stylesheet";
+                    fallback.href = cdnHref;
+                    document.head.appendChild(fallback);
+                };
+                document.head.appendChild(link);
+            }
+            function loadScript(localSrc, cdnSrc) {
+                return new Promise(function (resolve, reject) {
+                    if (window.Quill) {
+                        resolve(window.Quill);
+                        return;
+                    }
+                    var script = document.createElement("script");
+                    script.src = localSrc;
+                    script.onload = function () { resolve(window.Quill); };
+                    script.onerror = function () {
+                        var fallback = document.createElement("script");
+                        fallback.src = cdnSrc;
+                        fallback.onload = function () { resolve(window.Quill); };
+                        fallback.onerror = reject;
+                        document.head.appendChild(fallback);
+                    };
+                    document.head.appendChild(script);
+                });
+            }
+            function loadQuill() {
+                if (!state.quillPromise) {
+                    loadStylesheet("../vendor/quill/quill.snow.css", "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css");
+                    state.quillPromise = loadScript("../vendor/quill/quill.js", "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js");
+                }
+                return state.quillPromise;
+            }
+            function displayReason(reason) { return reasonText[reason] || "provider error"; }
+            function disabledMessage(service) {
+                return featureNames[service] + " is not available — " + displayReason((state.serviceStatus[service] || {}).reason) + ".";
+            }
+            function setMessage(id, text) {
+                var el = qs(id);
+                if (el) el.textContent = text || "";
+            }
+            function setAvailable(service, selectors) {
+                var status = state.serviceStatus[service] || { available: false, reason: "no_connectivity" };
+                selectors.forEach(function (selector) {
+                    qsa(selector).forEach(function (el) { el.disabled = !status.available; });
+                });
+                var msg = qs("[data-service-message='" + service + "']");
+                if (msg) msg.textContent = status.available ? "" : disabledMessage(service);
+            }
+            function statusFallback() {
+                ["tutor", "grading", "papers", "tts", "sync"].forEach(function (service) {
+                    state.serviceStatus[service] = { available: false, reason: "no_connectivity" };
+                });
+            }
+            async function fetchJson(url, options, timeoutMs) {
+                var controller = new AbortController();
+                var timer = setTimeout(function () { controller.abort(); }, timeoutMs || 3000);
+                try {
+                    var response = await fetch(url, Object.assign({}, options || {}, { signal: controller.signal }));
+                    var text = await response.text();
+                    var data = text ? JSON.parse(text) : {};
+                    if (!response.ok) {
+                        var error = new Error(data.error || response.statusText);
+                        error.status = response.status;
+                        error.data = data;
+                        throw error;
+                    }
+                    return data;
+                } finally {
+                    clearTimeout(timer);
+                }
+            }
+            async function refreshStatus() {
+                try {
+                    state.serviceStatus = await fetchJson("/api/services/status", {}, 6500);
+                } catch (err) {
+                    statusFallback();
+                }
+                applyStatus();
+                loadPaperCards();
+            }
+            function applyStatus() {
+                setAvailable("tutor", ["#tutor-submit", "#tutor-explain", "#tutor-check"]);
+                setAvailable("grading", ["#grade-submit"]);
+                setAvailable("tts", ["#tts-submit"]);
+                setAvailable("sync", ["#sync-push", "#sync-pull"]);
+                qsa(".paper-card[data-live='pending']").forEach(function (card) {
+                    card.querySelector(".paper-status").textContent = disabledMessage("papers");
+                });
+            }
+
+            function headingText(el) { return el ? el.textContent.replace(/\s+/g, " ").trim() : "Current section"; }
+            function chooseInitialSection() {
+                var headings = qsa(".markdown-body h1[id], .markdown-body h2[id], .markdown-body h3[id]");
+                state.currentHeading = headings[0] || null;
+                state.currentSectionId = state.currentHeading ? state.currentHeading.id : "top";
+                updateSectionUi();
+                if ("IntersectionObserver" in window && headings.length) {
+                    var visible = new Map();
+                    var observer = new IntersectionObserver(function (entries) {
+                        entries.forEach(function (entry) { visible.set(entry.target, entry.isIntersecting); });
+                        var active = headings.find(function (h) {
+                            return h.getBoundingClientRect().top >= 0 && h.getBoundingClientRect().top < window.innerHeight * 0.45;
+                        }) || headings.filter(function (h) { return h.getBoundingClientRect().top < window.innerHeight * 0.45; }).pop();
+                        if (active && active.id !== state.currentSectionId) {
+                            state.currentHeading = active;
+                            state.currentSectionId = active.id;
+                            updateSectionUi();
+                        }
+                    }, { rootMargin: "-10% 0px -65% 0px", threshold: [0, 1] });
+                    headings.forEach(function (h) { observer.observe(h); });
+                }
+            }
+            function getSectionText() {
+                var heading = state.currentHeading;
+                if (!heading) return qs(".markdown-body").textContent.slice(0, 5000);
+                var level = Number(heading.tagName.substring(1));
+                var parts = [headingText(heading)];
+                var node = heading.nextElementSibling;
+                while (node) {
+                    if (/^H[1-3]$/.test(node.tagName) && Number(node.tagName.substring(1)) <= level) break;
+                    parts.push(node.innerText || node.textContent || "");
+                    node = node.nextElementSibling;
+                }
+                return parts.join("\n").replace(/\n{3,}/g, "\n\n").slice(0, 9000);
+            }
+            function updateSectionUi() {
+                var id = state.currentSectionId || "top";
+                qs("#platform-section").textContent = headingText(state.currentHeading);
+                loadNote(id);
+                loadProgress(id);
+                loadTutorHistory(id);
+                setMessage("#grade-output", "");
+                setMessage("#tts-output", "");
+            }
+
+            async function loadNote(sectionId) {
+                var list = qs("#notes-list");
+                if (!list) return;
+                list.innerHTML = '<div class="platform-output">Loading notes...</div>';
+                try {
+                    var data = await fetchJson("/api/notes?chapter_slug=" + encodeURIComponent(state.chapterSlug) + "&section_id=" + encodeURIComponent(sectionId), {}, 1200);
+                    renderNotesList(data.notes || []);
+                } catch (err) {
+                    var localNotes = JSON.parse(localStorage.getItem("kp-notes::" + sectionKey(sectionId)) || "[]");
+                    renderNotesList(localNotes);
+                }
+            }
+            function stripHtml(html) {
+                var div = document.createElement("div");
+                div.innerHTML = html || "";
+                return div.textContent || div.innerText || "";
+            }
+            function renderNotesList(notes) {
+                var list = qs("#notes-list");
+                list.innerHTML = "";
+                if (!notes.length) {
+                    list.innerHTML = '<div class="platform-output">No notes for this section yet.</div>';
+                    return;
+                }
+                notes.forEach(function (note) {
+                    var button = document.createElement("button");
+                    button.type = "button";
+                    button.className = "note-link";
+                    button.dataset.noteId = note.id || "";
+                    var preview = stripHtml(note.preview || note.body || "").slice(0, 90);
+                    button.innerHTML = escapeHtml(note.title || "Untitled note") + (preview ? "<small>" + escapeHtml(preview) + "</small>" : "");
+                    button.addEventListener("click", function () { openNote(note.id); });
+                    list.appendChild(button);
+                });
+            }
+            async function ensureNoteEditor() {
+                var editor = qs("#note-editor");
+                if (state.noteQuill) return state.noteQuill;
+                editor.removeAttribute("contenteditable");
+                try {
+                    var QuillLib = await loadQuill();
+                    if (!QuillLib) throw new Error("Quill unavailable");
+                    state.noteQuill = new QuillLib("#note-editor", {
+                        theme: "snow",
+                        placeholder: "Write a full note for this section",
+                        modules: {
+                            toolbar: "#note-quill-toolbar",
+                            history: { delay: 800, maxStack: 150, userOnly: true }
+                        }
+                    });
+                    qs("#note-quill-toolbar").style.display = "";
+                    qs("#note-modal-status").textContent = "";
+                    return state.noteQuill;
+                } catch (err) {
+                    qs("#note-quill-toolbar").style.display = "none";
+                    editor.setAttribute("contenteditable", "true");
+                    qs("#note-modal-status").textContent = "Quill editor is not available; using basic editor.";
+                    return null;
+                }
+            }
+            function setEditorHtml(html) {
+                var editor = qs("#note-editor");
+                if (state.noteQuill) {
+                    state.noteQuill.clipboard.dangerouslyPasteHTML(html || "");
+                } else {
+                    editor.innerHTML = html || "";
+                }
+            }
+            function getEditorHtml() {
+                if (state.noteQuill) return state.noteQuill.root.innerHTML;
+                return qs("#note-editor").innerHTML;
+            }
+            function formatBytes(bytes) {
+                var value = Number(bytes || 0);
+                if (value < 1024) return value + " B";
+                if (value < 1024 * 1024) return (value / 1024).toFixed(1) + " KB";
+                return (value / (1024 * 1024)).toFixed(1) + " MB";
+            }
+            function renderAttachments(attachments) {
+                var list = qs("#note-attachments-list");
+                if (!list) return;
+                list.innerHTML = "";
+                if (!attachments.length) {
+                    list.innerHTML = '<div class="platform-output">No attachments yet.</div>';
+                    return;
+                }
+                attachments.forEach(function (item) {
+                    var row = document.createElement("div");
+                    row.className = "attachment-item";
+                    var preview = item.is_image
+                        ? '<img src="' + encodeURI(item.url) + '" alt="">'
+                        : escapeHtml((item.original_name || "file").split(".").pop().toUpperCase().slice(0, 6) || "FILE");
+                    row.innerHTML =
+                        '<div class="attachment-preview">' + preview + '</div>' +
+                        '<div class="attachment-meta">' +
+                            '<a href="' + encodeURI(item.url) + '" target="_blank" rel="noopener">' + escapeHtml(item.original_name || "Attachment") + '</a>' +
+                            '<small>' + escapeHtml(item.content_type || "file") + " · " + formatBytes(item.size_bytes) + '</small>' +
+                        '</div>';
+                    list.appendChild(row);
+                });
+            }
+            function setAttachmentMessage(message) {
+                var list = qs("#note-attachments-list");
+                if (list) list.innerHTML = '<div class="platform-output">' + escapeHtml(message) + '</div>';
+            }
+            async function loadAttachments(noteId) {
+                if (!noteId || String(noteId).indexOf("local-") === 0) {
+                    setAttachmentMessage("Save this note to the local server before attaching files.");
+                    return;
+                }
+                setAttachmentMessage("Loading attachments...");
+                try {
+                    var data = await fetchJson("/api/notes/" + encodeURIComponent(noteId) + "/attachments", {}, 2500);
+                    renderAttachments(data.attachments || []);
+                } catch (err) {
+                    setAttachmentMessage("Attachments are unavailable because the local server could not be reached.");
+                }
+            }
+            async function uploadAttachments() {
+                var input = qs("#note-attachment-input");
+                var files = Array.prototype.slice.call((input && input.files) || []);
+                if (!files.length) return;
+                var modal = qs("#note-modal");
+                var noteId = modal.dataset.noteId || "";
+                if (!noteId || noteId.indexOf("local-") === 0) {
+                    noteId = await saveNoteModal();
+                }
+                if (!noteId || String(noteId).indexOf("local-") === 0) {
+                    qs("#note-modal-status").textContent = "Attachments require a saved SQLite note. Start the local server and try again.";
+                    input.value = "";
+                    return;
+                }
+                qs("#note-modal-status").textContent = "Uploading attachments...";
+                try {
+                    for (var i = 0; i < files.length; i += 1) {
+                        var form = new FormData();
+                        form.append("file", files[i], files[i].name);
+                        await fetchJson("/api/notes/" + encodeURIComponent(noteId) + "/attachments", {
+                            method: "POST",
+                            body: form
+                        }, 60000);
+                    }
+                    input.value = "";
+                    await loadAttachments(noteId);
+                    loadNote(state.currentSectionId || "top");
+                    qs("#note-modal-status").textContent = "Attachments uploaded.";
+                } catch (err) {
+                    qs("#note-modal-status").textContent = err.status === 413 ? "Attachment is too large. Maximum size is 25 MB per file." : "Could not upload attachment.";
+                }
+            }
+            async function openNote(noteId) {
+                qs("#note-modal-backdrop").classList.add("open");
+                qs("#note-modal-status").textContent = "";
+                await ensureNoteEditor();
+                if (!noteId) {
+                    qs("#note-modal").dataset.noteId = "";
+                    qs("#note-title").value = "Untitled note";
+                    setEditorHtml("");
+                    loadAttachments(null);
+                    if (state.noteQuill) state.noteQuill.focus();
+                    else qs("#note-editor").focus();
+                    return;
+                }
+                try {
+                    var data = await fetchJson("/api/notes/" + encodeURIComponent(noteId), {}, 1500);
+                    var note = data.note;
+                    qs("#note-modal").dataset.noteId = note.id;
+                    qs("#note-title").value = note.title || "Untitled note";
+                    setEditorHtml(note.body || "");
+                    loadAttachments(note.id);
+                    if (state.noteQuill) state.noteQuill.focus();
+                    else qs("#note-editor").focus();
+                } catch (err) {
+                    qs("#note-modal-status").textContent = "Could not load this note.";
+                }
+            }
+            function closeNoteModal() {
+                qs("#note-modal-backdrop").classList.remove("open");
+            }
+            function commandNote(action, value) {
+                document.execCommand(action, false, value || null);
+                qs("#note-editor").focus();
+            }
+            async function saveNoteModal() {
+                var sectionId = state.currentSectionId || "top";
+                var modal = qs("#note-modal");
+                var noteId = modal.dataset.noteId;
+                var title = qs("#note-title").value.trim() || "Untitled note";
+                var body = getEditorHtml();
+                var payload = { chapter_slug: state.chapterSlug, section_id: sectionId, title: title, body: body };
+                qs("#note-modal-status").textContent = "Saving...";
+                try {
+                    var url = noteId ? "/api/notes/" + encodeURIComponent(noteId) : "/api/notes";
+                    var data = await fetchJson(url, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    }, 3000);
+                    if (!noteId && data.id) {
+                        modal.dataset.noteId = data.id;
+                        noteId = data.id;
+                    }
+                    qs("#note-modal-status").textContent = "Saved.";
+                    loadNote(sectionId);
+                    loadAttachments(noteId);
+                    return noteId;
+                } catch (err) {
+                    var key = "kp-notes::" + sectionKey(sectionId);
+                    var notes = JSON.parse(localStorage.getItem(key) || "[]");
+                    var localId = noteId || "local-" + Date.now();
+                    var existing = notes.find(function (n) { return String(n.id) === String(localId); });
+                    if (existing) {
+                        existing.title = title;
+                        existing.body = body;
+                        existing.preview = body;
+                    } else {
+                        notes.unshift({ id: localId, title: title, body: body, preview: body });
+                    }
+                    localStorage.setItem(key, JSON.stringify(notes));
+                    modal.dataset.noteId = localId;
+                    qs("#note-modal-status").textContent = "Saved locally in this browser. Start the server to sync to SQLite.";
+                    renderNotesList(notes);
+                    loadAttachments(localId);
+                    return localId;
+                }
+            }
+            async function loadProgress(sectionId) {
+                var checkbox = qs("#progress-complete");
+                var localKey = "kp-progress::" + sectionKey(sectionId);
+                try {
+                    var data = await fetchJson("/api/progress?chapter_slug=" + encodeURIComponent(state.chapterSlug) + "&section_id=" + encodeURIComponent(sectionId), {}, 1200);
+                    checkbox.checked = Boolean(data.completed);
+                } catch (err) {
+                    checkbox.checked = localStorage.getItem(localKey) === "1";
+                }
+            }
+            function saveProgress() {
+                var sectionId = state.currentSectionId || "top";
+                var completed = qs("#progress-complete").checked;
+                localStorage.setItem("kp-progress::" + sectionKey(sectionId), completed ? "1" : "0");
+                fetchJson("/api/progress", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ chapter_slug: state.chapterSlug, section_id: sectionId, completed: completed })
+                }, 1500).catch(function () {});
+            }
+
+            function renderHistory(messages) {
+                var history = qs("#tutor-history");
+                history.innerHTML = "";
+                messages.forEach(function (msg) {
+                    var div = document.createElement("div");
+                    div.className = "platform-turn";
+                    div.innerHTML = "<strong>" + (msg.role === "assistant" ? "Tutor" : "You") + ":</strong> " + escapeHtml(msg.body);
+                    history.appendChild(div);
+                });
+                history.scrollTop = history.scrollHeight;
+            }
+            async function loadTutorHistory(sectionId) {
+                try {
+                    var data = await fetchJson("/api/tutor/history?chapter_slug=" + encodeURIComponent(state.chapterSlug) + "&section_id=" + encodeURIComponent(sectionId), {}, 1400);
+                    renderHistory(data.messages || []);
+                } catch (err) {
+                    renderHistory([]);
+                }
+            }
+            async function askTutor(mode) {
+                if (!(state.serviceStatus.tutor || {}).available) return;
+                var input = qs("#tutor-question");
+                var question = input.value.trim();
+                if (!question && mode === "explain") question = "Explain this section differently, with a concrete example.";
+                if (!question) return;
+                setMessage("#tutor-output", "Thinking...");
+                var payload = {
+                    chapter_slug: state.chapterSlug,
+                    section_id: state.currentSectionId || "top",
+                    question: question,
+                    mode: mode || "ask",
+                    section_text: getSectionText()
+                };
+                try {
+                    var response = await fetch("/api/tutor/ask", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) throw new Error("Tutor request failed");
+                    var reader = response.body.getReader();
+                    var decoder = new TextDecoder();
+                    var text = "";
+                    while (true) {
+                        var chunk = await reader.read();
+                        if (chunk.done) break;
+                        text += decoder.decode(chunk.value, { stream: true });
+                        setMessage("#tutor-output", text);
+                    }
+                    input.value = "";
+                    loadTutorHistory(payload.section_id);
+                } catch (err) {
+                    setMessage("#tutor-output", disabledMessage("tutor"));
+                }
+            }
+            async function gradeSubmission() {
+                if (!(state.serviceStatus.grading || {}).available) return;
+                var submission = qs("#grade-submission").value.trim();
+                if (!submission) return;
+                setMessage("#grade-output", "Grading...");
+                try {
+                    var data = await fetchJson("/api/exercises/grade", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            chapter_slug: state.chapterSlug,
+                            section_id: state.currentSectionId || "top",
+                            submission: submission,
+                            exercise_text: getSectionText()
+                        })
+                    }, 30000);
+                    setMessage("#grade-output", data.feedback || "");
+                } catch (err) {
+                    setMessage("#grade-output", disabledMessage("grading"));
+                }
+            }
+            async function playTts() {
+                if (!(state.serviceStatus.tts || {}).available) return;
+                setMessage("#tts-output", "Preparing audio...");
+                try {
+                    var response = await fetch("/api/tts", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            chapter_slug: state.chapterSlug,
+                            section_id: state.currentSectionId || "top",
+                            section_text: getSectionText()
+                        })
+                    });
+                    if (!response.ok) throw new Error("TTS request failed");
+                    var blob = await response.blob();
+                    var audio = new Audio(URL.createObjectURL(blob));
+                    audio.play();
+                    setMessage("#tts-output", "Playing this section.");
+                } catch (err) {
+                    setMessage("#tts-output", disabledMessage("tts"));
+                }
+            }
+            function slugify(text) {
+                return text.toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 90) || "paper";
+            }
+            function createPaperCards() {
+                if (state.chapterSlug === "settings") return;
+                qsa(".markdown-body h2, .markdown-body h3").forEach(function (heading) {
+                    if (!/Research paper/i.test(heading.textContent) || heading.dataset.paperCard) return;
+                    heading.dataset.paperCard = "1";
+                    var card = document.createElement("div");
+                    card.className = "paper-card";
+                    card.dataset.key = slugify(heading.textContent);
+                    card.dataset.query = heading.textContent.replace(/Research papers?:?/i, "").trim() || heading.textContent.trim();
+                    card.dataset.live = "pending";
+                    card.innerHTML = '<div class="paper-status">Research paper lookup is loading.</div>';
+                    heading.insertAdjacentElement("afterend", card);
+                });
+            }
+            async function loadPaperCards() {
+                createPaperCards();
+                qsa(".paper-card").forEach(async function (card) {
+                    var key = card.dataset.key;
+                    var query = card.dataset.query;
+                    try {
+                        var data = await fetchJson("/api/papers/" + encodeURIComponent(key) + "?query=" + encodeURIComponent(query), {}, 4500);
+                        var meta = data.metadata || {};
+                        card.dataset.live = "loaded";
+                        card.innerHTML = '<div class="paper-meta">' + (data.cached ? "cached — available offline" : "live scholarly lookup") + '</div>' +
+                            '<h4>' + escapeHtml(meta.title || query || "Research paper") + '</h4>' +
+                            '<p>' + escapeHtml([meta.authors, meta.year].filter(Boolean).join(" · ")) + '</p>' +
+                            '<p>' + escapeHtml(meta.abstract || "No abstract returned by the provider.") + '</p>' +
+                            (meta.url ? '<p><a href="' + meta.url + '" target="_blank" rel="noopener">Open paper</a></p>' : "");
+                    } catch (err) {
+                        card.dataset.live = "pending";
+                        card.innerHTML = '<div class="paper-status">' + disabledMessage("papers") + '</div><button class="platform-button paper-retry" type="button">Retry</button>';
+                        var retry = card.querySelector(".paper-retry");
+                        retry.addEventListener("click", function () { refreshStatus(); });
+                    }
+                });
+            }
+            async function sync(direction) {
+                var service = state.serviceStatus.sync || {};
+                if (!service.available) return;
+                setMessage("#sync-output", direction === "push" ? "Pushing..." : "Pulling...");
+                try {
+                    var data = await fetchJson("/api/sync/" + direction, { method: "POST" }, 15000);
+                    setMessage("#sync-output", data.message || "Sync complete.");
+                } catch (err) {
+                    setMessage("#sync-output", disabledMessage("sync"));
+                }
+            }
+            function escapeHtml(value) {
+                return String(value || "").replace(/[&<>"']/g, function (ch) {
+                    return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch];
+                });
+            }
+            function bindUi() {
+                qs("#platform-toggle").addEventListener("click", function () {
+                    qs("#platform-shell").classList.toggle("collapsed");
+                });
+                qs("#status-retry").addEventListener("click", refreshStatus);
+                qs("#note-new").addEventListener("click", function () { openNote(null); });
+                qs("#note-close").addEventListener("click", closeNoteModal);
+                qs("#note-save").addEventListener("click", saveNoteModal);
+                qs("#note-attachment-input").addEventListener("change", uploadAttachments);
+                qs("#note-modal-backdrop").addEventListener("click", function (event) {
+                    if (event.target.id === "note-modal-backdrop") closeNoteModal();
+                });
+                qs("#progress-complete").addEventListener("change", saveProgress);
+                qs("#tutor-submit").addEventListener("click", function () { askTutor("ask"); });
+                qs("#tutor-explain").addEventListener("click", function () { askTutor("explain"); });
+                qs("#tutor-check").addEventListener("click", function () { askTutor("check"); });
+                qs("#grade-submit").addEventListener("click", gradeSubmission);
+                qs("#tts-submit").addEventListener("click", playTts);
+                qs("#sync-push").addEventListener("click", function () { sync("push"); });
+                qs("#sync-pull").addEventListener("click", function () { sync("pull"); });
+            }
+            document.addEventListener("DOMContentLoaded", function () {
+                bindUi();
+                chooseInitialSection();
+                createPaperCards();
+                statusFallback();
+                applyStatus();
+                refreshStatus();
+                state.statusTimer = setInterval(refreshStatus, 60000);
+            });
+        })();
+    </script>
+
+
+    <!-- Math: local vendor copy preferred, CDN used only as a fallback when online. -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] }
+        };
+        (function loadMathJax() {
+            var local = document.createElement('script');
+            local.src = '../vendor/mathjax/tex-mml-chtml.js';
+            local.async = true;
+            local.onerror = function () {
+                var cdn = document.createElement('script');
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+                cdn.async = true;
+                document.head.appendChild(cdn);
+            };
+            document.head.appendChild(local);
+        })();
+    </script>
+
+    <!-- Diagrams: local vendor copy preferred, CDN used only as a fallback when online.
+         If neither loads (fully offline, no vendor file), the labeled diagram-source
+         panels above remain readable as plain text. -->
+    <script>
+        (function loadMermaid() {
+            function init(mermaid) {
+                mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+                document.querySelectorAll('.diagram-panel').forEach(function (panel) {
+                    var sourceEl = panel.querySelector('.mermaid-source');
+                    if (!sourceEl) return;
+                    var container = document.createElement('div');
+                    container.className = 'mermaid';
+                    container.textContent = sourceEl.textContent;
+                    panel.replaceChild(container, sourceEl);
+                });
+                mermaid.run();
+            }
+
+            var local = document.createElement('script');
+            local.src = '../vendor/mermaid.min.js';
+            local.onload = function () { init(window.mermaid); };
+            local.onerror = function () {
+                var cdn = document.createElement('script');
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+                cdn.onload = function () { init(window.mermaid); };
+                document.head.appendChild(cdn);
+            };
+            document.head.appendChild(local);
+        })();
+    </script>
+</body>
+</html>
