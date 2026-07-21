@@ -511,221 +511,674 @@
             <a href="chapter1_companion.html" class="active">Ch. 1 Companion</a>
             <a href="chapter2_companion.html" class="">Ch. 2 Companion</a>
             <a href="chapter3_companion.html" class="">Ch. 3 Companion</a>
+            <a href="chapter4_companion.html" class="">Ch. 4 Companion</a>
+            <a href="chapter5_companion.html" class="">Ch. 5 Companion</a>
             <a href="chapter6_companion.html" class="">Ch. 6 Companion</a>
     </nav>
     
         <article class="markdown-body">
 <h1 id="chapter-1-companion-guide-from-a-question-to-ordinary-least-squares">Chapter 1 Companion Guide: From a Question to Ordinary Least Squares</h1>
-<h2 id="a-first-principles-mathematical-computational-reference-manual">A First-Principles Mathematical &amp; Computational Reference Manual</h2>
-<p>This companion guide is designed as an exhaustive, first-principles reference manual to accompany <strong>Chapter 1: From a Question to Ordinary Least Squares</strong> [cite: 12]. It unpacks the mathematical derivations, provides intuitive mental models, and breaks down the code for the Microhydro Power (MHP) Cost Estimator [cite: 12].</p>
-<p>All mathematical notation is strictly formatted using standard LaTeX delimiters (<code>$inline$</code> and <code>$$display$$</code>) for seamless rendering.</p>
-<hr />
-<h2 id="table-of-contents">Table of Contents</h2>
+<h2 id="a-beginner-first-guide-to-the-python-mathematics-statistics-and-judgement-behind-chapter-1">A beginner-first guide to the Python, mathematics, statistics, and judgement behind Chapter 1</h2>
+<p>This guide accompanies <code>chapter1.md</code>. It assumes that you have never programmed in Python, have not studied statistics, and may be uncomfortable with algebra. Nothing important is treated as “obvious.”</p>
+<p>The chapter's running example is a cost estimator for fictional microhydro power (MHP) projects in Khyber Pakhtunkhwa (KP). The goal is not merely to produce a number. It is to understand the complete chain:</p>
 <ol>
-<li><strong>Day 1: Defining the Question (Prediction vs. Causation)</strong></li>
-<li><strong>Day 2: Data Vocabulary and Matrix Shapes</strong></li>
-<li><strong>Day 3: Linear Predictions and the Intercept</strong></li>
-<li><strong>Day 4: Residuals, Loss, and OLS Geometry</strong></li>
-<li><strong>Day 5: Calculus of OLS and Rank Failure</strong></li>
-<li><strong>Master Rosetta Stone &amp; Formula Sheet</strong></li>
+<li>ask a precise question;</li>
+<li>represent the data correctly;</li>
+<li>form linear predictions;</li>
+<li>measure prediction errors;</li>
+<li>find the ordinary least-squares solution;</li>
+<li>check when that solution is meaningful; and</li>
+<li>communicate what the result can and cannot support.</li>
 </ol>
+<p>You do not need to memorise every formula on the first reading. Aim to translate each formula into a sentence and each line of code into a small operation you understand.</p>
 <hr />
-<h2 id="1-day-1-defining-the-question-prediction-vs-causation">1. Day 1: Defining the Question (Prediction vs. Causation)</h2>
-<p>Regression simply constructs a numerical relationship between a target variable $y$ and observed features $X$ [cite: 12]. However, the <em>purpose</em> of the regression dictates how you interpret the results [cite: 12].</p>
-<h3 id="the-three-jobs-of-regression">The Three Jobs of Regression</h3>
+<h2 id="how-to-use-this-guide">How to use this guide</h2>
+<p>For each day in Chapter 1:</p>
+<ol>
+<li>Read the corresponding section here first.</li>
+<li>Type the small examples yourself. Copying and pasting hides useful mistakes.</li>
+<li>Read the main chapter and run its longer code blocks.</li>
+<li>Change one number and predict what will happen before rerunning the code.</li>
+<li>Complete the “Check your understanding” questions without looking back.</li>
+<li>Keep a notebook containing new words, errors you encountered, and how you fixed them.</li>
+</ol>
+<p>When an equation feels difficult, use this three-part translation:</p>
 <ul>
-<li><strong>Prediction:</strong> Estimating an unknown outcome based on observed features [cite: 12].</li>
-<li><em>Success:</em> Low error on genuinely new projects [cite: 12].</li>
-<li><em>Danger:</em> The model may fail when external conditions change [cite: 12].</li>
-<li><strong>Explanation:</strong> Describing the conditional association between variables [cite: 12].</li>
-<li><em>Success:</em> Stable, interpretable coefficients with measured uncertainty [cite: 12].</li>
-<li><em>Danger:</em> Omitted variables and correlated features can distort interpretation [cite: 12].</li>
-<li><strong>Causal Inference:</strong> Estimating the effect of a specific intervention [cite: 12].</li>
-<li><em>Success:</em> A credible estimate comparing observed outcomes to an unobserved counterfactual [cite: 12].</li>
-<li><em>Danger:</em> Mistaking a mere association for the effect of a direct action [cite: 12].</li>
-</ul>
-<h3 id="confounding-and-simpsons-paradox">Confounding and Simpson's Paradox</h3>
-<ul>
-<li>A <strong>confounder</strong> is a hidden common cause related to both the decision/exposure and the outcome [cite: 12].</li>
-<li>For example, rugged terrain might cause both the use of helicopter transport and higher cost overruns [cite: 12].</li>
-<li>Ignoring this confounder makes helicopters look like the cause of the expense, even if they actually saved money compared to manual labor [cite: 12].</li>
-<li><strong>Simpson's Paradox</strong> occurs when an aggregated dataset shows one trend (e.g., a downward slope), but the trend reverses within specific subgroups (e.g., an upward slope for both accessible and remote terrain groups) [cite: 12].</li>
+<li><strong>objects:</strong> What are the numbers, vectors, or matrices?</li>
+<li><strong>operation:</strong> What arithmetic is performed?</li>
+<li><strong>meaning:</strong> What does the result say about an MHP project?</li>
 </ul>
 <hr />
-<h2 id="2-day-2-data-vocabulary-and-matrix-shapes">2. Day 2: Data Vocabulary and Matrix Shapes</h2>
-<p>Before applying statistics, data must be correctly represented as scalars, vectors, matrices, or tensors [cite: 12]. </p>
-<h3 id="the-vocabulary-of-regression">The Vocabulary of Regression</h3>
-<ul>
-<li><strong>Observation:</strong> One unit represented by a single row in the data (e.g., one completed MHP project) [cite: 12].</li>
-<li><strong>Feature:</strong> An input measured <em>before</em> the target is known (e.g., planned capacity) [cite: 12].</li>
-<li><strong>Target:</strong> The outcome variable to be estimated (e.g., actual project cost) [cite: 12].</li>
-<li><strong>Parameter:</strong> A value learned from the data by the fitting algorithm (e.g., cost coefficient for road distance) [cite: 12].</li>
-<li><strong>Hyperparameter:</strong> A setting chosen by the analyst outside the fitting calculation (e.g., whether to include an intercept) [cite: 12].</li>
-</ul>
-<h3 id="mathematical-array-shapes">Mathematical Array Shapes</h3>
-<ul>
-<li>$X \in \mathbb{R}^{n  imes p}$: A real-valued design matrix with $n$ rows (projects) and $p$ feature columns [cite: 12].</li>
-<li>$y \in \mathbb{R}^{n}$: A real-valued target vector with $n$ entries [cite: 12].</li>
-<li>$\beta \in \mathbb{R}^{p}$: A parameter vector with one entry per feature [cite: 12].</li>
-</ul>
-<p><strong>Shape Validation in Code:</strong><br />
-NumPy strictly distinguishes between shapes [cite: 12].<br />
-* <code>(3,)</code> is a 1D vector [cite: 12].<br />
-* <code>(3, 1)</code> is a 2D column matrix [cite: 12].<br />
-* <code>(1, 3)</code> is a 2D row matrix [cite: 12].</p>
-<h3 id="target-leakage">Target Leakage</h3>
-<ul>
-<li>Including a feature recorded <em>after</em> the outcome is known (e.g., "number of contract amendments" to predict final cost) is called <strong>target leakage</strong> [cite: 12].</li>
-<li>This creates a deceptively accurate model that cannot be used for early-stage prediction [cite: 12].</li>
-</ul>
-<hr />
-<h2 id="3-day-3-linear-predictions-and-the-intercept">3. Day 3: Linear Predictions and the Intercept</h2>
-<h3 id="the-linear-equation">The Linear Equation</h3>
-<p>For a single project $i$ with a single feature, the linear model is [cite: 12]:<br />
-$$\hat{y}_i = \beta_0 + \beta_1x_i$$<br />
-* $\beta_0$ is the <strong>intercept</strong>: the model's predicted target when $x_i = 0$ [cite: 12].<br />
-* $\beta_1$ is the <strong>slope</strong>: the predicted change in $y$ associated with a one-unit increase in $x$ [cite: 12].</p>
-<h3 id="why-we-add-a-column-of-ones">Why We Add a Column of Ones</h3>
-<ul>
-<li>To compute predictions using matrix multiplication ($\hat{y} = X\beta$), we prepend a column of $1$s to the design matrix $X$ [cite: 12].</li>
-<li>When multiplying $X\beta$, the parameter $\beta_0$ is multiplied by $1$ and added to every project's prediction, effectively creating an affine transformation (translation + scaling) [cite: 12].</li>
-<li>Without this column of ones, the model is forced through the origin ($\hat{y} = 0$ when $x = 0$), which may not fit the observed baseline [cite: 12].</li>
-</ul>
-<h3 id="unit-scaling">Unit Scaling</h3>
-<ul>
-<li>Changing a feature's units changes its coefficient, not the final prediction [cite: 12].</li>
-<li>If cable length is measured in meters instead of kilometers ($x_{metres} = 1000 x_{km}$), the parameter scales inversely ($\beta_{metres} = \frac{\beta_{km}}{1000}$) [cite: 12].</li>
-<li>Therefore, comparing coefficient magnitudes across differently scaled features is misleading [cite: 12].</li>
-</ul>
-<hr />
-<h2 id="4-day-4-residuals-loss-and-ols-geometry">4. Day 4: Residuals, Loss, and OLS Geometry</h2>
-<h3 id="residuals">Residuals</h3>
-<p>A residual is the difference between the actual observed value and the model's prediction [cite: 12].<br />
-$$e_i = y_i - \hat{y}_i$$<br />
-* Positive residual ($e_i &gt; 0$): The model underpredicted the actual cost [cite: 12].<br />
-* Negative residual ($e_i &lt; 0$): The model overpredicted the actual cost [cite: 12].</p>
-<h3 id="error-metrics">Error Metrics</h3>
-<ul>
-<li><strong>Sum of Squared Residuals (SSR):</strong> $SSR = \sum_{i=1}^{n} e_i^2 = e^T e$ [cite: 12].</li>
-<li><em>Why square?</em> It prevents positive and negative residuals from canceling out, heavily penalizes large outliers, and creates a smooth, differentiable surface [cite: 12].</li>
-<li><strong>Mean Squared Error (MSE):</strong> $\frac{1}{n} \sum e_i^2$ [cite: 12].</li>
-<li><strong>Root Mean Squared Error (RMSE):</strong> $\sqrt{MSE}$ (Interpretable in the original target units) [cite: 12].</li>
-<li><strong>Mean Absolute Error (MAE):</strong> $\frac{1}{n} \sum |e_i|$ (More robust to massive outliers than RMSE) [cite: 12].</li>
-</ul>
-<h3 id="the-geometric-proof-of-ols">The Geometric Proof of OLS</h3>
-<ul>
-<li><strong>Goal:</strong> OLS seeks the prediction vector $\hat{y}$ (in the column space of $X$) that is closest to the observed target $y$ [cite: 12].</li>
-<li><strong>Orthogonality:</strong> The shortest distance from $y$ to the column space is a perpendicular drop. Therefore, the residual vector $e$ must be perpendicular to every column of $X$ [cite: 12].<br />
-  $$X^T e = 0$$</li>
-<li><strong>Pythagorean Theorem:</strong> For any other prediction $q$ in the column space, let the displacement be $d = \hat{y} - q$ [cite: 12].</li>
-<li>$y - q = e + d$ [cite: 12].</li>
-<li>Because $e$ is perpendicular to $d$ ($e^T d = 0$), expanding the squared length yields: $\lVert y - q <br />
-Vert_2^2 = \lVert e <br />
-Vert_2^2 + \lVert d <br />
-Vert_2^2$ [cite: 12].</li>
-<li>Since $\lVert d <br />
-Vert_2^2 \ge 0$, no alternative prediction $q$ can be closer to $y$ than $\hat{y}$ [cite: 12].</li>
-</ul>
-<hr />
-<h2 id="5-day-5-calculus-of-ols-and-rank-failure">5. Day 5: Calculus of OLS and Rank Failure</h2>
-<p>While geometry tells us <em>what</em> OLS does, calculus tells us <em>how</em> to find the exact parameters [cite: 12].</p>
-<h3 id="the-matrix-derivative">The Matrix Derivative</h3>
-<ul>
-<li>The objective function is $S(\beta) = (y - X\beta)^T(y - X\beta)$ [cite: 12].</li>
-<li>Expanded: $S(\beta) = y^Ty - 2\beta^TX^Ty + \beta^TX^TX\beta$ [cite: 12].</li>
-<li>Differentiating with respect to $\beta$ yields the gradient: <br />
-  $$<br />
-abla_\beta S(\beta) = -2X^Ty + 2X^TX\beta$$</li>
-<li>Setting the gradient to zero at the minimum yields the <strong>Normal Equations</strong> [cite: 12]:<br />
-  $$X^TX\hat{\beta} = X^Ty$$</li>
-</ul>
-<h3 id="fitting-in-code-lstsq-vs-inverse">Fitting in Code: <code>lstsq</code> vs. Inverse</h3>
-<ul>
-<li>Mathematically, if $X^TX$ is invertible, the solution is $\hat{\beta} = (X^TX)^{-1}X^Ty$ [cite: 12].</li>
-<li>Computationally, explicitly calculating the inverse squares the condition number and causes numerical instability [cite: 12].</li>
-<li><strong>Best Practice:</strong> Use <code>np.linalg.lstsq(X, y)</code> directly, which utilizes stable matrix decomposition rather than raw inversion [cite: 12].</li>
-</ul>
-<h3 id="perfect-multicollinearity-rank-failure">Perfect Multicollinearity (Rank Failure)</h3>
-<ul>
-<li>If one column in the design matrix is an exact multiple of another (e.g., having both cable length in km and cable length in meters), the matrix loses <strong>full column rank</strong> [cite: 12].</li>
-<li>The model cannot uniquely identify the parameters because infinitely many coefficient pairs yield the exact same combined prediction [cite: 12].</li>
-<li>The solution is to remove the redundant feature from the matrix [cite: 12].</li>
-</ul>
-<hr />
-<h2 id="6-master-rosetta-stone-formula-sheet">6. Master Rosetta Stone &amp; Formula Sheet</h2>
-<h3 id="conceptual-formulas">Conceptual Formulas</h3>
+<h2 id="0-foundations-you-need-before-day-1">0. Foundations you need before Day 1</h2>
+<h3 id="01-the-running-case-and-its-units">0.1 The running case and its units</h3>
+<p>One <strong>observation</strong> is one completed MHP project. Possible input fields include:</p>
 <table>
 <thead>
 <tr>
-<th>Concept</th>
-<th>Equation</th>
-<th>Meaning</th>
+<th>Field</th>
+<th style="text-align: right;">Symbol</th>
+<th style="text-align: right;">Unit</th>
+<th>Plain-language meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Linear prediction</td>
-<td>$\hat{y}=X\beta$</td>
-<td>Weighted combination of design columns [cite: 12]</td>
+<td>Number of projects</td>
+<td style="text-align: right;">$n$</td>
+<td style="text-align: right;">projects</td>
+<td>Number of rows in the dataset</td>
 </tr>
 <tr>
-<td>Residual</td>
-<td>$e=y-\hat{y}$</td>
-<td>Actual minus predicted [cite: 12]</td>
+<td>Number of features</td>
+<td style="text-align: right;">$p$</td>
+<td style="text-align: right;">features</td>
+<td>Number of input columns before an intercept is added</td>
 </tr>
 <tr>
-<td>SSR</td>
-<td>$e^Te=\sum_i e_i^2$</td>
-<td>Total squared training error [cite: 12]</td>
+<td>Cable length</td>
+<td style="text-align: right;">$x_1$</td>
+<td style="text-align: right;">km</td>
+<td>Length of distribution cable</td>
 </tr>
 <tr>
-<td>MSE</td>
-<td>$SSR/n$</td>
-<td>Mean squared error [cite: 12]</td>
+<td>Hydraulic head</td>
+<td style="text-align: right;">$x_2$</td>
+<td style="text-align: right;">m</td>
+<td>Vertical fall used to drive the turbine</td>
 </tr>
 <tr>
-<td>RMSE</td>
-<td>$\sqrt{SSR/n}$</td>
-<td>Squared-error summary in target units [cite: 12]</td>
+<td>Road distance</td>
+<td style="text-align: right;">$x_3$</td>
+<td style="text-align: right;">km</td>
+<td>Distance from an all-weather road</td>
 </tr>
 <tr>
-<td>MAE</td>
-<td>$\frac{1}{n}\sum_i</td>
-<td>e_i</td>
+<td>Terrain difficulty</td>
+<td style="text-align: right;">$x_4$</td>
+<td style="text-align: right;">index 1–5</td>
+<td>An ordered assessment of access difficulty</td>
 </tr>
 <tr>
-<td>Orthogonality</td>
-<td>$X^Te=0$</td>
-<td>Residual perpendicular to every design column [cite: 12]</td>
+<td>Planned capacity</td>
+<td style="text-align: right;">$x_5$</td>
+<td style="text-align: right;">kW</td>
+<td>Intended electricity-generating capacity</td>
 </tr>
 <tr>
-<td>Normal equations</td>
-<td>$X^TX\hat{\beta}=X^Ty$</td>
-<td>First-order condition for OLS [cite: 12]</td>
-</tr>
-<tr>
-<td>Closed form</td>
-<td>$(X^TX)^{-1}X^Ty$</td>
-<td>Unique solution when $X$ has full column rank [cite: 12]</td>
-</tr>
-<tr>
-<td>Scalar slope</td>
-<td>$\frac{\sum_i(x_i-\bar{x})(y_i-\bar{y})}{\sum_i(x_i-\bar{x})^2}$</td>
-<td>One-feature slope with intercept [cite: 12]</td>
-</tr>
-<tr>
-<td>Scalar intercept</td>
-<td>$\bar{y}-\hat{\beta}_1\bar{x}$</td>
-<td>Makes the line pass through the means [cite: 12]</td>
-</tr>
-<tr>
-<td>Hessian</td>
-<td>$2X^TX$</td>
-<td>Curvature of the SSR surface [cite: 12]</td>
+<td>Actual project cost</td>
+<td style="text-align: right;">$y$</td>
+<td style="text-align: right;">million PKR</td>
+<td>Outcome that the model will estimate</td>
 </tr>
 </tbody>
 </table>
-<h3 id="pythonnumpy-implementations">Python/NumPy Implementations</h3>
+<p>Units are part of the meaning. If cost is measured in million PKR and road distance in km, a road-distance coefficient is measured in <strong>million PKR per km</strong>. A coefficient without units is incomplete.</p>
+<p>The chapter's projects are synthetic. They are suitable for learning but not for evaluating a real district, contractor, organisation, or community.</p>
+<h3 id="02-installing-and-running-python">0.2 Installing and running Python</h3>
+<p>Python executes instructions from top to bottom. Chapter 1 uses Python 3.11 or later, NumPy for numerical arrays, and Matplotlib for plots.</p>
+<p>In a terminal:</p>
+<pre><code class="language-bash">python -m venv .venv
+source .venv/bin/activate
+python -m pip install numpy matplotlib
+</code></pre>
+<p>On Windows PowerShell, activation is usually:</p>
+<pre><code class="language-powershell">.venv\Scripts\Activate.ps1
+</code></pre>
+<p>The virtual environment keeps this project's packages separate from other Python projects. You can run code in a <code>.py</code> file, a Jupyter notebook, or an editor's interactive Python window.</p>
+<h3 id="03-a-small-python-survival-kit">0.3 A small Python survival kit</h3>
+<h4 id="values-names-and-arithmetic">Values, names, and arithmetic</h4>
+<pre><code class="language-python">project_name = &quot;MHP-CH-003&quot;  # text, called a string
+road_distance = 18.5         # decimal number, called a float
+terrain_index = 4            # whole number, called an integer
+is_complete = True           # Boolean: True or False
+
+base_cost = 8.0
+cost_per_km = 4.0
+prediction = base_cost + cost_per_km * road_distance
+print(prediction)
+</code></pre>
+<p><code>=</code> assigns a value to a name. It does not mean “is mathematically equal forever.” <code>#</code> begins a comment that Python ignores. Common arithmetic operators are <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, and <code>**</code> for powers.</p>
+<h4 id="lists-and-numpy-arrays">Lists and NumPy arrays</h4>
+<pre><code class="language-python">import numpy as np
+
+cost_list = [19.0, 23.0, 30.0]
+cost_array = np.array(cost_list, dtype=float)
+
+print(cost_array[0])      # first value; Python counts from zero
+print(cost_array.shape)   # (3,)
+print(cost_array.mean())  # arithmetic mean
+</code></pre>
+<p>A Python list is general-purpose. A NumPy array is designed for numerical work and has a fixed shape. <code>dtype=float</code> asks NumPy to store floating-point numbers.</p>
+<h4 id="functions">Functions</h4>
+<pre><code class="language-python">def predict_cost(distance_km, base=8.0, rate=4.0):
+    &quot;&quot;&quot;Return a simple cost prediction in million PKR.&quot;&quot;&quot;
+    return base + rate * distance_km
+
+estimate = predict_cost(3.0)
+</code></pre>
+<p><code>def</code> creates a reusable function. Indentation defines the function body. Inputs are called arguments or parameters in Python terminology; do not confuse these with fitted statistical parameters. <code>return</code> sends a result back to the caller.</p>
+<h4 id="conditions-and-errors">Conditions and errors</h4>
+<pre><code class="language-python">def require_positive(value):
+    if value &lt;= 0:
+        raise ValueError(&quot;value must be positive&quot;)
+    return value
+</code></pre>
+<p>An exception stops an invalid calculation near its source. A clear early error is better than a plausible but wrong result later.</p>
+<h4 id="loops">Loops</h4>
+<pre><code class="language-python">total = 0.0
+for value in [2.0, 3.0, 4.0]:
+    total += value
+print(total)  # 9.0
+</code></pre>
+<p>The loop visits each item. <code>total += value</code> is shorthand for <code>total = total + value</code>.</p>
+<h4 id="classes-objects-and-dataclasses">Classes, objects, and dataclasses</h4>
+<p>The chapter builds an <code>MHPCostEstimator</code> class. A <strong>class</strong> is a blueprint; an <strong>object</strong> is one created instance. <code>self</code> means “this particular object.” A method is a function attached to a class.</p>
+<pre><code class="language-python">from dataclasses import dataclass
+
+@dataclass(frozen=True)
+class AnalysisContract:
+    purpose: str
+    target_name: str
+
+contract = AnalysisContract(
+    purpose=&quot;prediction&quot;,
+    target_name=&quot;actual_cost_m_pkr&quot;,
+)
+</code></pre>
+<p>The type annotations describe expected values but do not by themselves validate everything. <code>frozen=True</code> prevents accidental changes after creation. Names ending in <code>_</code>, such as <code>parameters_</code>, conventionally mean values learned during fitting.</p>
+<h4 id="assertions-and-floating-point-comparisons">Assertions and floating-point comparisons</h4>
+<pre><code class="language-python">result = 0.1 + 0.2
+assert np.isclose(result, 0.3)
+</code></pre>
+<p>An <code>assert</code> is an executable claim. Decimal arithmetic on a computer has tiny rounding errors, so use <code>np.isclose</code> or <code>np.allclose</code> for calculated floating-point results instead of exact <code>==</code>.</p>
+<h3 id="04-the-mathematical-language-used-in-the-chapter">0.4 The mathematical language used in the chapter</h3>
+<h4 id="symbols-and-subscripts">Symbols and subscripts</h4>
+<ul>
+<li>$x$ is usually an input feature.</li>
+<li>$y$ is the observed target.</li>
+<li>$\hat{y}$, read “y-hat,” is a prediction.</li>
+<li>$\beta$, read “beta,” is a parameter or vector of parameters.</li>
+<li>$i$ identifies a row or project.</li>
+<li>$j$ identifies a feature column.</li>
+<li>$x_{ij}$ means feature $j$ for project $i$.</li>
+</ul>
+<p>A hat means “estimated from data.” Thus $\hat{\beta}$ is the fitted parameter value, not the unknown population value $\beta$.</p>
+<h4 id="sums-means-powers-roots-and-absolute-values">Sums, means, powers, roots, and absolute values</h4>
+<p>The symbol $\sum$ means “add a sequence of values.” For example:</p>
+<p>$$
+\sum_{i=1}^{3}x_i=x_1+x_2+x_3.
+$$</p>
+<p>The arithmetic mean is:</p>
+<p>$$
+\bar{x}=\frac{1}{n}\sum_{i=1}^{n}x_i.
+$$</p>
+<p>$x^2$ means $x$ multiplied by itself. $\sqrt{x}$ is the nonnegative square root. $|x|$ is absolute value, the distance from zero: $|-3|=3$.</p>
+<h4 id="scalars-vectors-matrices-and-tensors">Scalars, vectors, matrices, and tensors</h4>
+<ul>
+<li>A <strong>scalar</strong> is one number, such as one project's cost.</li>
+<li>A <strong>vector</strong> is an ordered one-dimensional collection, such as all project costs.</li>
+<li>A <strong>matrix</strong> is a rectangular two-dimensional collection, such as projects by features.</li>
+<li>A <strong>tensor</strong> is the general term for an array with any number of axes.</li>
+</ul>
+<p>Do not confuse the number of tensor axes with <strong>matrix rank</strong>, which counts independent directions and is introduced on Day 5.</p>
+<h4 id="dot-products-and-matrix-multiplication">Dot products and matrix multiplication</h4>
+<p>For vectors $a=[a_1,a_2]$ and $b=[b_1,b_2]$:</p>
+<p>$$
+a^Tb=a_1b_1+a_2b_2.
+$$</p>
+<p>NumPy writes this as <code>a @ b</code>. A matrix-vector product performs one dot product for every matrix row.</p>
+<h4 id="transpose-and-length">Transpose and length</h4>
+<p>$X^T$ is the transpose of $X$: rows become columns. In NumPy it is <code>X.T</code>.</p>
+<p>The Euclidean length of a vector is:</p>
+<p>$$
+\lVert v\rVert_2=\sqrt{v_1^2+v_2^2+\cdots+v_n^2}.
+$$</p>
+<p>NumPy computes it with <code>np.linalg.norm(v)</code>.</p>
+<h4 id="functions-derivatives-gradients-and-hessians">Functions, derivatives, gradients, and Hessians</h4>
+<p>A mathematical function maps an input to an output. A derivative measures the local rate at which an output changes when one input changes. At the bottom of a smooth bowl, the slope is zero.</p>
+<p>When a function has several inputs, a <strong>partial derivative</strong> changes one input while holding the others fixed. A <strong>gradient</strong> collects all partial derivatives into a vector. A <strong>Hessian</strong> collects all second partial derivatives into a matrix and describes curvature.</p>
+<p>This intuition is enough to begin Day 5; the full derivation is developed there.</p>
+<hr />
+<h1 id="day-1-decide-what-question-regression-should-answer">Day 1 — Decide what question regression should answer</h1>
+<h2 id="11-regression-is-a-mechanism-not-a-purpose">1.1 Regression is a mechanism, not a purpose</h2>
+<p>Regression constructs a numerical relationship between a target $y$ and observed features $X$. The same fitted equation can be used for three different jobs:</p>
+<table>
+<thead>
+<tr>
+<th>Job</th>
+<th>Core question</th>
+<th>Evidence of success</th>
+<th>Main danger</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Prediction</td>
+<td>What outcome should we expect for a new project?</td>
+<td>Low error on genuinely new projects</td>
+<td>Memorising old data or failing when conditions change</td>
+</tr>
+<tr>
+<td>Explanation</td>
+<td>How is one feature associated with cost, conditional on included features?</td>
+<td>Stable, interpretable estimates with uncertainty</td>
+<td>Omitted or correlated variables distort interpretation</td>
+</tr>
+<tr>
+<td>Causal inference</td>
+<td>What would change if we intervened?</td>
+<td>A credible comparison with the relevant counterfactual</td>
+<td>Treating association as the effect of an action</td>
+</tr>
+</tbody>
+</table>
+<p>The calculation does not decide which question you meant. The purpose determines what data, design, validation, and wording are defensible.</p>
+<h2 id="12-prediction">1.2 Prediction</h2>
+<p>A prediction rule can be written as:</p>
+<p>$$
+\hat{y}_i=f(x_{i1},x_{i2},\ldots,x_{ip}).
+$$</p>
+<p>For project $i$, the function $f$ converts its feature values into an estimated cost $\hat{y}_i$.</p>
+<p>A useful predictor does not need every feature to be causal. River crossings may help predict transport difficulty even if “removing one crossing” is not a meaningful intervention. Prediction should be judged on projects that were not used to fit the model. Training accuracy alone may reward memorisation.</p>
+<h2 id="13-explanation-and-conditional-association">1.3 Explanation and conditional association</h2>
+<p>Consider:</p>
+<p>$$
+\hat{y}_i=\beta_0+\beta_1\,\text{road distance}_i
++\beta_2\,\text{capacity}_i.
+$$</p>
+<p>$\beta_1$ describes the fitted cost difference associated with one additional kilometre of road distance <strong>while the included capacity value is held fixed</strong>. This is a conditional association.</p>
+<p>“Holding included features fixed” does not control for omitted features, measurement errors, or structural differences between districts. Explanatory analysis also needs uncertainty. The same numerical coefficient is less persuasive when estimated from 6 projects than from 600 comparable projects.</p>
+<h2 id="14-causation-interventions-and-counterfactuals">1.4 Causation, interventions, and counterfactuals</h2>
+<p>A causal question compares outcomes under different actions. Suppose the action is completing an access road before construction. For one project, the causal effect would compare:</p>
+<p>$$
+Y_i(\text{road completed})-Y_i(\text{road not completed}).
+$$</p>
+<p>Only one of these outcomes can usually be observed for the same project. The unobserved alternative is the <strong>counterfactual</strong>. Causal inference needs a study design and assumptions that make another comparison stand in for this missing outcome.</p>
+<p>A regression coefficient is therefore not automatically a causal effect. A causal statement must define:</p>
+<ul>
+<li>the intervention;</li>
+<li>the affected population;</li>
+<li>the outcome and time horizon;</li>
+<li>the counterfactual alternative; and</li>
+<li>why the comparison identifies that effect.</li>
+</ul>
+<h2 id="15-confounding-mediators-and-colliders">1.5 Confounding, mediators, and colliders</h2>
+<p>A <strong>confounder</strong> is a common cause of both an exposure or decision and an outcome. Rugged terrain may make helicopter transport more likely and independently make a project more expensive. Ignoring terrain can make helicopters appear responsible for high cost even if they reduce cost relative to weeks of manual carriage.</p>
+<p>In a causal diagram:</p>
+<pre><code class="language-text">Rugged terrain ──&gt; Helicopter use
+       │
+       └─────────&gt; Project cost
+</code></pre>
+<p>Not every available variable should be controlled:</p>
+<ul>
+<li>A <strong>mediator</strong> lies on the pathway from action to outcome. Controlling it may remove part of the effect being studied.</li>
+<li>A <strong>collider</strong> is caused by two other variables. Conditioning on it can create a misleading association.</li>
+</ul>
+<p>The beginner-safe rule is not “control for everything.” It is “state the causal story and justify the adjustment set.”</p>
+<h2 id="16-simpsons-paradox">1.6 Simpson's paradox</h2>
+<p>Simpson's paradox occurs when an aggregated trend differs from, or reverses, trends within meaningful groups.</p>
+<table>
+<thead>
+<tr>
+<th>Terrain</th>
+<th style="text-align: right;">Cable km</th>
+<th style="text-align: right;">Cost, million PKR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Accessible</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">18</td>
+</tr>
+<tr>
+<td>Accessible</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">20</td>
+</tr>
+<tr>
+<td>Accessible</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">22</td>
+</tr>
+<tr>
+<td>Accessible</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">24</td>
+</tr>
+<tr>
+<td>Remote</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">30</td>
+</tr>
+<tr>
+<td>Remote</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">33</td>
+</tr>
+<tr>
+<td>Remote</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">36</td>
+</tr>
+<tr>
+<td>Remote</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">39</td>
+</tr>
+</tbody>
+</table>
+<p>Within accessible projects, cost rises by about 2 million PKR per km. Within remote projects, it rises by about 3 million PKR per km. Yet the combined slope is about -2 because costly remote projects mostly have shorter cables.</p>
+<p>For a line with one feature and an intercept:</p>
+<p>$$
+\hat{\beta}_1=
+\frac{\sum_i(x_i-\bar{x})(y_i-\bar{y})}
+{\sum_i(x_i-\bar{x})^2}.
+$$</p>
+<p>The numerator measures whether $x$ and $y$ move together. The denominator measures variation in $x$. The numerical reversal does not by itself identify a causal relationship; subject-matter knowledge explains why aggregation is misleading.</p>
+<h2 id="17-write-an-estimand-before-code">1.7 Write an estimand before code</h2>
+<p>An <strong>estimand</strong> is the precise quantity an analysis intends to estimate.</p>
+<ul>
+<li>Prediction: “The expected final cost, in million PKR at the stated price basis, of an approved project using design-stage information.”</li>
+<li>Explanation: “The adjusted difference in final cost associated with one additional kilometre from an all-weather road, conditional on planned capacity and measured terrain.”</li>
+<li>Causation: “The average change in final cost caused by completing an access road before civil works among approved remote projects.”</li>
+</ul>
+<p>Also state the unit of observation, intended use, prediction time, target units, and decision-maker. If these are vague, a more complicated model will not fix the question.</p>
+<h2 id="18-the-analysiscontract">1.8 The <code>AnalysisContract</code></h2>
+<p>The chapter begins the application with an immutable dataclass:</p>
+<pre><code class="language-python">from dataclasses import dataclass
+from typing import Literal
+
+AnalysisPurpose = Literal[&quot;prediction&quot;, &quot;explanation&quot;, &quot;causation&quot;]
+
+@dataclass(frozen=True)
+class AnalysisContract:
+    purpose: AnalysisPurpose
+    target_name: str
+    target_unit: str
+    unit_of_observation: str
+    intended_use: str
+
+    def __post_init__(self):
+        if self.purpose not in {&quot;prediction&quot;, &quot;explanation&quot;, &quot;causation&quot;}:
+            raise ValueError(&quot;invalid purpose&quot;)
+        for name, value in vars(self).items():
+            if not str(value).strip():
+                raise ValueError(f&quot;{name} cannot be empty&quot;)
+</code></pre>
+<p><code>Literal</code> documents the allowed choices. <code>__post_init__</code> runs after creation and validates them. <code>vars(self)</code> provides the object's fields as name-value pairs. <code>.strip()</code> removes surrounding whitespace, so a string containing only spaces is rejected.</p>
+<p>Deliberately try <code>purpose="forecasting"</code> and an empty intended use. Predict the errors first. This demonstrates a general engineering principle: make invalid states fail clearly and early.</p>
+<h2 id="day-1-check">Day 1 check</h2>
+<p>You should now be able to answer:</p>
+<ol>
+<li>Why can a feature help prediction without being causal?</li>
+<li>What does “holding the other included features fixed” mean?</li>
+<li>What is the missing counterfactual in an access-road study?</li>
+<li>How can rugged terrain confound a transport-cost comparison?</li>
+<li>Why can an aggregated slope have the opposite sign from group-specific slopes?</li>
+</ol>
+<p>Key idea: a coefficient is a causal effect only when the design and assumptions make the comparison equivalent to the stated intervention and counterfactual.</p>
+<hr />
+<h1 id="day-2-give-data-the-correct-roles-shapes-units-and-provenance">Day 2 — Give data the correct roles, shapes, units, and provenance</h1>
+<h2 id="21-regression-vocabulary">2.1 Regression vocabulary</h2>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+<th>MHP example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Observation</td>
+<td>One unit represented by one row</td>
+<td>One completed project</td>
+</tr>
+<tr>
+<td>Feature</td>
+<td>An input used to form a prediction</td>
+<td>Planned capacity</td>
+</tr>
+<tr>
+<td>Target</td>
+<td>The outcome to estimate</td>
+<td>Actual project cost</td>
+</tr>
+<tr>
+<td>Parameter</td>
+<td>A number learned during fitting</td>
+<td>Road-distance coefficient</td>
+</tr>
+<tr>
+<td>Hyperparameter/design choice</td>
+<td>A setting chosen outside fitting</td>
+<td>Whether to include an intercept</td>
+</tr>
+<tr>
+<td>Prediction</td>
+<td>Model output for one observation</td>
+<td>42 million PKR</td>
+</tr>
+<tr>
+<td>Residual</td>
+<td>Actual target minus prediction</td>
+<td>$45-42=3$ million PKR</td>
+</tr>
+<tr>
+<td>Loss</td>
+<td>Rule used to penalise error during fitting</td>
+<td>Squared residual</td>
+</tr>
+<tr>
+<td>Metric</td>
+<td>Summary used to report performance</td>
+<td>RMSE</td>
+</tr>
+<tr>
+<td>Estimator</td>
+<td>Procedure that learns parameters</td>
+<td>OLS</td>
+</tr>
+<tr>
+<td>Fitted model</td>
+<td>Estimator plus learned values</td>
+<td>OLS plus fitted intercept and slopes</td>
+</tr>
+</tbody>
+</table>
+<p>The distinction between a parameter and hyperparameter is procedural: fitting learns a parameter from data; the analyst chooses a hyperparameter or modeling design.</p>
+<h2 id="22-arrays-and-shape-notation">2.2 Arrays and shape notation</h2>
+<p>The central objects are:</p>
+<p>$$
+X\in\mathbb{R}^{n\times p},\qquad
+y\in\mathbb{R}^{n},\qquad
+\beta\in\mathbb{R}^{p}.
+$$</p>
+<p>$\mathbb{R}$ means real-valued numbers. $X$ has $n$ project rows and $p$ feature columns. $y$ has one target per row. $\beta$ has one weight per feature. After adding an intercept, $X$ and $\beta$ each gain one column or entry.</p>
+<p>For three projects and two features:</p>
+<p>$$
+X=
+\begin{bmatrix}
+12&amp;100\\
+25&amp;150\\
+8&amp;80
+\end{bmatrix},\qquad
+y=\begin{bmatrix}28\\44\\22\end{bmatrix}.
+$$</p>
+<p>Row 2 means that the second project has road distance 25 km, planned capacity 150 kW, and actual cost 44 million PKR.</p>
+<h2 id="23-numpy-shapes-are-not-decoration">2.3 NumPy shapes are not decoration</h2>
+<pre><code class="language-python">a = np.array([28.0, 44.0, 22.0])          # (3,)
+b = np.array([[28.0], [44.0], [22.0]])    # (3, 1)
+c = np.array([[28.0, 44.0, 22.0]])        # (1, 3)
+</code></pre>
+<ul>
+<li><code>(3,)</code> is a one-dimensional array.</li>
+<li><code>(3, 1)</code> is a two-dimensional column matrix.</li>
+<li><code>(1, 3)</code> is a two-dimensional row matrix.</li>
+</ul>
+<p>They contain the same numbers but behave differently during multiplication and broadcasting. In this application, <code>y</code> uses shape <code>(n,)</code> and <code>X</code> always becomes 2D.</p>
+<p>Useful shape tools:</p>
+<pre><code class="language-python">x = np.array([1.0, 2.0, 3.0])
+X_one_feature = x.reshape(-1, 1)  # infer rows, make one column
+X_two_features = np.column_stack([x, x ** 2])
+flat_again = X_one_feature.reshape(-1)
+</code></pre>
+<h2 id="24-the-design-matrix-and-row-alignment">2.4 The design matrix and row alignment</h2>
+<p>The feature matrix supplied to regression is the <strong>design matrix</strong>. The word “design” means the arrangement of predictor columns; it does not imply an experiment.</p>
+<p>The $i$th row of $X$ and the $i$th value of $y$ must describe the same project. Equal row counts are necessary but insufficient. If <code>X</code> is sorted by district and <code>y</code> by project ID, the program can run successfully while learning nonsense.</p>
+<p>Preserve <code>project_id</code> while assembling and checking data, even if it is not used as a numerical feature. Join or sort <code>X</code> and <code>y</code> together, then assert identifiers align.</p>
+<h2 id="25-a-data-dictionary-belongs-to-the-model">2.5 A data dictionary belongs to the model</h2>
+<p>A data dictionary should record:</p>
+<ul>
+<li>field name and plain-language definition;</li>
+<li>data type;</li>
+<li>unit or allowed categories;</li>
+<li>when the value becomes available;</li>
+<li>who measured it and how;</li>
+<li>missing-value rule;</li>
+<li>valid range; and</li>
+<li>price year or price basis for monetary targets.</li>
+</ul>
+<p>This information determines whether two rows mean the same thing and whether a feature is legitimate at prediction time.</p>
+<h3 id="target-leakage">Target leakage</h3>
+<p><strong>Target leakage</strong> occurs when training uses information that would not legitimately be available when a real prediction is made. “Number of contract amendments” may predict final cost well but is unavailable during initial budgeting and may be caused by the overrun itself.</p>
+<p>Leakage creates impressive-looking training or test results if the split does not reproduce the real timeline. Prevent it by stating the prediction time first, then checking every feature's availability and provenance.</p>
+<h2 id="26-parsing-nested-json">2.6 Parsing nested JSON</h2>
+<p>JSON represents nested records with objects and lists. Python's <code>json.loads</code> converts JSON text into dictionaries.</p>
+<pre><code class="language-python">import json
+
+record = json.loads(raw_json)
+distance = record[&quot;design&quot;][&quot;road_distance_km&quot;]
+
+X_one = np.array([[
+    record[&quot;design&quot;][&quot;road_distance_km&quot;],
+    record[&quot;design&quot;][&quot;planned_capacity_kw&quot;],
+    record[&quot;design&quot;][&quot;terrain_index&quot;],
+]], dtype=float)
+
+y_one = np.array([
+    record[&quot;completion&quot;][&quot;actual_cost_m_pkr&quot;]
+], dtype=float)
+
+assert X_one.shape == (1, 3)
+assert y_one.shape == (1,)
+</code></pre>
+<p>The double opening bracket means one row containing three columns. Assertions make the intended mathematical shapes executable.</p>
+<h2 id="27-matrix-vector-multiplication-is-repeated-weighted-addition">2.7 Matrix-vector multiplication is repeated weighted addition</h2>
+<p>Without an intercept:</p>
+<p>$$
+\hat{y}_i=\sum_{j=1}^{p}x_{ij}\beta_j.
+$$</p>
+<p>For each project, multiply every feature by its matching coefficient, then add the products.</p>
+<pre><code class="language-python">y_hat_loop = np.zeros(X.shape[0])
+for i in range(X.shape[0]):
+    total = 0.0
+    for j in range(X.shape[1]):
+        total += X[i, j] * beta[j]
+    y_hat_loop[i] = total
+
+y_hat_matrix = X @ beta
+assert np.allclose(y_hat_loop, y_hat_matrix)
+</code></pre>
+<p><code>X.shape[0]</code> is the number of rows and <code>X.shape[1]</code> the number of columns. The compact <code>@</code> expression performs the same nested-loop calculation.</p>
+<h2 id="28-input-validation-line-by-line">2.8 Input validation, line by line</h2>
+<p>The chapter's <code>_validate_inputs</code> method:</p>
+<ol>
+<li>converts input to floating-point NumPy arrays;</li>
+<li>turns 1D training <code>X</code> into one feature column;</li>
+<li>rejects arrays that are not 2D;</li>
+<li>rejects empty rows or columns;</li>
+<li>rejects <code>NaN</code> and infinity;</li>
+<li>flattens a one-column target to <code>(n,)</code>;</li>
+<li>rejects other target shapes; and</li>
+<li>checks equal row counts.</li>
+</ol>
+<p>Important expressions:</p>
+<pre><code class="language-python">X = np.asarray(X, dtype=float)
+X = X.reshape(-1, 1)
+np.isfinite(X).all()
+</code></pre>
+<p><code>np.asarray</code> accepts lists or arrays. <code>-1</code> asks NumPy to infer the needed dimension. <code>np.isfinite</code> is false for <code>NaN</code>, positive infinity, and negative infinity; <code>.all()</code> requires every entry to pass.</p>
+<p>Validation cannot detect correctly shaped but misaligned projects. That requires identifiers and data-provenance checks before numerical arrays discard labels.</p>
+<h2 id="day-2-failure-laboratory">Day 2 failure laboratory</h2>
+<p>Predict the result of each case:</p>
+<ul>
+<li>10 feature rows and 8 targets: row mismatch;</li>
+<li>a feature containing <code>np.nan</code>: non-finite input;</li>
+<li>shape <code>(0, 2)</code>: no observations;</li>
+<li>shape <code>(2, 2, 2)</code>: too many dimensions;</li>
+<li>equal-length <code>X</code> and reversed <code>y</code>: no shape error, but corrupted meaning.</li>
+</ul>
+<p>For 70 projects and 5 raw features, <code>X.shape == (70, 5)</code> and <code>y.shape == (70,)</code>. After adding an intercept, the design matrix is <code>(70, 6)</code> and the parameter vector is <code>(6,)</code>.</p>
+<hr />
+<h1 id="day-3-build-linear-predictions">Day 3 — Build linear predictions</h1>
+<h2 id="31-from-words-to-an-equation">3.1 From words to an equation</h2>
+<p>“Start with 8 million PKR and add 4 million PKR per kilometre of cable” becomes:</p>
+<p>$$
+\hat{y}_i=8+4x_i.
+$$</p>
+<p>The general one-feature model is:</p>
+<p>$$
+\hat{y}_i=\beta_0+\beta_1x_i.
+$$</p>
+<ul>
+<li>$\beta_0$ is the <strong>intercept</strong>, the prediction when $x=0$.</li>
+<li>$\beta_1$ is the <strong>slope</strong>, the predicted change for one unit more of $x$.</li>
+</ul>
+<p>If cost is million PKR and cable is km, the slope is million PKR per km. The intercept can improve predictions without describing a physically possible zero-feature project. It is an algebraic baseline, and interpreting it literally may require extrapolating beyond observed data.</p>
+<h2 id="32-several-features-are-still-one-weighted-sum">3.2 Several features are still one weighted sum</h2>
+<p>$$
+\hat{y}_i=\beta_0
++\beta_1\,\text{road distance}_i
++\beta_2\,\text{capacity}_i
++\beta_3\,\text{terrain}_i.
+$$</p>
+<p>For one project, this is a dot product. For all projects simultaneously:</p>
+<p>$$
+\hat{y}=X\beta.
+$$</p>
+<p>“Linear” means linear in the parameters: predictions are sums of parameter-weighted columns. A model may still include transformed features such as $x^2$, provided their coefficients enter linearly.</p>
+<h2 id="33-why-a-column-of-ones-creates-an-intercept">3.3 Why a column of ones creates an intercept</h2>
+<p>For three projects and one feature:</p>
+<p>$$
+X=
+\begin{bmatrix}
+1&amp;x_1\\
+1&amp;x_2\\
+1&amp;x_3
+\end{bmatrix},\qquad
+\beta=
+\begin{bmatrix}\beta_0\\\beta_1\end{bmatrix}.
+$$</p>
+<p>Multiplication gives:</p>
+<p>$$
+X\beta=
+\begin{bmatrix}
+\beta_0+x_1\beta_1\\
+\beta_0+x_2\beta_1\\
+\beta_0+x_3\beta_1
+\end{bmatrix}.
+$$</p>
+<p>Every prediction receives the same $\beta_0$ because every first-column value is 1. Without that column, the fitted line is forced through $(0,0)$. With it, the model is technically affine—a linear combination plus translation—but is conventionally called linear regression.</p>
+<p>In NumPy:</p>
+<pre><code class="language-python">X = np.column_stack([np.ones(x.size), x])
+y_hat = X @ beta
+</code></pre>
+<p>A column of twos would estimate $2\beta_0$ as the common offset, so its coefficient would be half the conventional intercept. Ones give the coefficient itself the natural intercept meaning.</p>
+<h2 id="34-shape-algebra">3.4 Shape algebra</h2>
+<p>If an intercept has been added:</p>
+<p>$$
+X\in\mathbb{R}^{n\times(p+1)},\qquad
+\beta\in\mathbb{R}^{p+1},\qquad
+X\beta\in\mathbb{R}^{n}.
+$$</p>
+<p>The inner dimensions must match:</p>
+<p>$$
+(n\times(p+1))(p+1\times1)=n\times1.
+$$</p>
+<p>Always check shapes before values. If <code>X.shape == (40, 6)</code> and <code>beta.shape == (5,)</code>, multiplication is impossible because six design columns need six parameters.</p>
+<h3 id="mathematics-to-numpy-map">Mathematics-to-NumPy map</h3>
 <table>
 <thead>
 <tr>
@@ -737,41 +1190,865 @@ abla_\beta S(\beta) = -2X^Ty + 2X^TX\beta$$</li>
 <tbody>
 <tr>
 <td>$X\beta$</td>
-<td>Matrix–vector product</td>
-<td><code>X @ beta</code> [cite: 12]</td>
+<td>Matrix-vector product</td>
+<td><code>X @ beta</code></td>
 </tr>
 <tr>
 <td>$X^T$</td>
 <td>Transpose</td>
-<td><code>X.T</code> [cite: 12]</td>
+<td><code>X.T</code></td>
 </tr>
 <tr>
 <td>$x^Ty$</td>
 <td>Dot product</td>
-<td><code>x @ y</code> or <code>np.dot(x, y)</code> [cite: 12]</td>
+<td><code>x @ y</code></td>
 </tr>
 <tr>
 <td>$I$</td>
 <td>Identity matrix</td>
-<td><code>np.eye(p)</code> [cite: 12]</td>
+<td><code>np.eye(p)</code></td>
 </tr>
 <tr>
 <td>$\mathbf{1}$</td>
-<td>Vector of ones</td>
-<td><code>np.ones(n)</code> [cite: 12]</td>
+<td>Ones vector</td>
+<td><code>np.ones(n)</code></td>
 </tr>
 <tr>
-<td>$\lVert v</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Vert_2$</td>
+<td>$\lVert v\rVert_2$</td>
 <td>Euclidean length</td>
-<td><code>np.linalg.norm(v)</code> [cite: 12]</td>
+<td><code>np.linalg.norm(v)</code></td>
 </tr>
 </tbody>
 </table>
+<h2 id="35-two-views-of-matrix-multiplication">3.5 Two views of matrix multiplication</h2>
+<p><strong>Row view:</strong> each row of $X$ is one project, and its dot product with $\beta$ makes one prediction.</p>
+<p><strong>Column view:</strong> if columns are $x_0,x_1,\ldots,x_p$, then:</p>
+<p>$$
+X\beta=\beta_0x_0+\beta_1x_1+\cdots+\beta_px_p.
+$$</p>
+<p>The columns are building blocks; the coefficients decide how much of each to combine. All possible combinations form the <strong>column space</strong> of $X$. This column view prepares the geometry of Day 4.</p>
+<p>Matrices can also represent rotations, stretches, reflections, and shears. That transformation viewpoint is useful, but in regression the immediate meaning of $X\beta$ is a weighted construction of a prediction vector.</p>
+<h2 id="36-with-and-without-an-intercept">3.6 With and without an intercept</h2>
+<p>For a one-feature fit through the origin:</p>
+<p>$$
+\hat{\beta}=\frac{x^Ty}{x^Tx}.
+$$</p>
+<p>This model must predict zero when $x=0$. A model with an intercept can translate vertically and will often fit a nonzero baseline better. Plotting both lines reveals whether forcing the origin creates systematic errors.</p>
+<p>The chapter uses:</p>
+<pre><code class="language-python">beta = np.linalg.solve(X.T @ X, X.T @ y)
+</code></pre>
+<p>This solves the linear system directly. Day 5 explains why application code should avoid <code>np.linalg.inv(X.T @ X) @ X.T @ y</code>.</p>
+<h2 id="37-scaling-and-unit-conversions">3.7 Scaling and unit conversions</h2>
+<p>If kilometres become metres:</p>
+<p>$$
+x_{m}=1000x_{km}.
+$$</p>
+<p>To preserve predictions:</p>
+<p>$$
+\beta_m=\frac{\beta_{km}}{1000}.
+$$</p>
+<p>Then $\beta_mx_m=\beta_{km}x_{km}$. Changing feature units changes the coefficient inversely, not the prediction. Changing the target from million PKR to PKR multiplies the intercept, slopes, residuals, RMSE, and MAE by one million; MSE and SSR multiply by one million squared.</p>
+<p>Coefficient magnitude alone does not measure importance when features have different units or scales.</p>
+<h2 id="38-prediction-code-and-shape-ambiguity">3.8 Prediction code and shape ambiguity</h2>
+<p>The chapter's <code>predict</code> method must:</p>
+<ol>
+<li>reject prediction before fitting;</li>
+<li>convert a single new project from <code>(p,)</code> to <code>(1, p)</code>;</li>
+<li>validate finite values and a 2D shape;</li>
+<li>require the same number and order of features used in fitting;</li>
+<li>add the intercept; and</li>
+<li>return <code>X_design @ parameters_</code>.</li>
+</ol>
+<p>There is a context-dependent ambiguity:</p>
+<ul>
+<li>during fitting, a 1D <code>X</code> means many observations of one feature;</li>
+<li>during prediction, a 1D <code>X</code> means one observation with many features.</li>
+</ul>
+<p>Explicit 2D input is safest: <code>[[20.0, 170.0, 4.0]]</code> clearly means one project with three features.</p>
+<h2 id="39-broadcasting-is-not-matrix-multiplication">3.9 Broadcasting is not matrix multiplication</h2>
+<pre><code class="language-python">correct = X @ beta
+elementwise = X * beta
+</code></pre>
+<p><code>@</code> returns one dot product per row, so its result is a prediction vector. <code>*</code> performs elementwise multiplication. NumPy may <strong>broadcast</strong> <code>beta</code> across every row, returning a matrix of unadded products. It can run without an error while answering the wrong question.</p>
+<p>This is a crucial debugging lesson: code that runs is not necessarily mathematically correct.</p>
+<h2 id="day-3-check">Day 3 check</h2>
+<p>Explain both statements in your own words:</p>
+<ul>
+<li><code>X @ beta</code> is one dot product per project.</li>
+<li><code>X @ beta</code> is a weighted combination of the columns of <code>X</code>.</li>
+</ul>
+<p>Then state the shapes of the raw features, design matrix, coefficient vector, and predictions for 40 projects and 5 features.</p>
+<hr />
+<h1 id="day-4-residuals-loss-metrics-and-ols-geometry">Day 4 — Residuals, loss, metrics, and OLS geometry</h1>
+<h2 id="41-residuals">4.1 Residuals</h2>
+<p>For project $i$:</p>
+<p>$$
+e_i=y_i-\hat{y}_i.
+$$</p>
+<ul>
+<li>$e_i&gt;0$: the actual cost is higher; the model underpredicted.</li>
+<li>$e_i&lt;0$: the actual cost is lower; the model overpredicted.</li>
+<li>$e_i=0$: prediction equals the observed target.</li>
+</ul>
+<p>For all projects:</p>
+<p>$$
+e=y-\hat{y}=y-X\beta.
+$$</p>
+<p>This guide follows <strong>actual minus predicted</strong>. Some software uses the opposite sign, so always check the convention.</p>
+<p>A residual is calculated after fitting from observed data. It is not exactly the same as an unobservable population error term, even though introductory writing sometimes uses the words interchangeably.</p>
+<h2 id="42-why-ols-squares-residuals">4.2 Why OLS squares residuals</h2>
+<p>The <strong>sum of squared residuals</strong> (SSR), also called RSS or SSE, is:</p>
+<p>$$
+SSR(\beta)=\sum_{i=1}^{n}(y_i-x_i^T\beta)^2
+=(y-X\beta)^T(y-X\beta)=e^Te.
+$$</p>
+<p>Squaring:</p>
+<ol>
+<li>stops positive and negative residuals cancelling;</li>
+<li>penalises large misses much more heavily;</li>
+<li>produces a smooth differentiable objective; and</li>
+<li>turns fitting into a squared Euclidean-distance problem.</li>
+</ol>
+<p>These are properties, not proof that squared loss is always institutionally correct. One data-entry error can dominate the result.</p>
+<h2 id="43-work-the-metrics-by-hand">4.3 Work the metrics by hand</h2>
+<p>Suppose:</p>
+<p>$$
+y=[3,5],\qquad \hat{y}=[4,3].
+$$</p>
+<p>Residuals are $e=[-1,2]$.</p>
+<p>$$
+SSR=(-1)^2+2^2=5,
+$$</p>
+<p>$$
+MSE=\frac{5}{2}=2.5,
+$$</p>
+<p>$$
+RMSE=\sqrt{2.5}\approx1.581,
+$$</p>
+<p>$$
+MAE=\frac{|-1|+|2|}{2}=1.5.
+$$</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Formula</th>
+<th>Units</th>
+<th>What it communicates</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SSR</td>
+<td>$\sum e_i^2$</td>
+<td>squared target units</td>
+<td>Total squared fitting objective</td>
+</tr>
+<tr>
+<td>MSE</td>
+<td>$SSR/n$</td>
+<td>squared target units</td>
+<td>Average squared loss</td>
+</tr>
+<tr>
+<td>RMSE</td>
+<td>$\sqrt{MSE}$</td>
+<td>target units</td>
+<td>Squared-loss summary in communicable units</td>
+</tr>
+<tr>
+<td>MAE</td>
+<td>$\sum</td>
+<td>e_i</td>
+<td>/n$</td>
+</tr>
+</tbody>
+</table>
+<p>RMSE reacts more strongly than MAE to large residuals. Neither is automatically “better.” Select and interpret metrics according to the decision and inspect unusual observations.</p>
+<p>Training MSE here divides by $n$. An estimate of residual variance may divide by $n-p-1$ when an intercept and $p$ raw features are fitted. These are different quantities; always state the denominator.</p>
+<h2 id="44-ols-searches-inside-the-column-space">4.4 OLS searches inside the column space</h2>
+<p>The target vector $y$ has one coordinate per project, so it lies in $\mathbb{R}^n$. Every possible prediction $X\beta$ is a weighted combination of design columns and therefore lies in the column space of $X$.</p>
+<p>OLS cannot choose any vector in $\mathbb{R}^n$. It chooses the attainable vector $\hat{y}=X\hat{\beta}$ closest to $y$ under squared Euclidean distance. This is an <strong>orthogonal projection</strong>.</p>
+<p>The geometric picture is:</p>
+<ul>
+<li>column space: a line, plane, or higher-dimensional flat surface of attainable predictions;</li>
+<li>$y$: the observed target vector, usually outside that surface;</li>
+<li>$\hat{y}$: the closest point on the surface;</li>
+<li>$e=y-\hat{y}$: the perpendicular arrow from prediction to observation.</li>
+</ul>
+<h2 id="45-the-pythagorean-minimum-proof">4.5 The Pythagorean minimum proof</h2>
+<p>Let $q$ be any other attainable prediction. Define:</p>
+<p>$$
+e=y-\hat{y},\qquad d=\hat{y}-q.
+$$</p>
+<p>Then:</p>
+<p>$$
+y-q=e+d.
+$$</p>
+<p>$e$ is perpendicular to the column space, while $d$ lies inside it, so $e^Td=0$. Expanding:</p>
+<p>$$
+\begin{aligned}
+\lVert y-q\rVert_2^2
+&amp;=(e+d)^T(e+d)\\
+&amp;=e^Te+e^Td+d^Te+d^Td\\
+&amp;=\lVert e\rVert_2^2+\lVert d\rVert_2^2\\
+&amp;\geq\lVert e\rVert_2^2.
+\end{aligned}
+$$</p>
+<p>The other prediction's squared distance equals the OLS distance plus another nonnegative squared length. Therefore it cannot be smaller.</p>
+<h2 id="46-orthogonality-and-the-normal-equations">4.6 Orthogonality and the normal equations</h2>
+<p>Perpendicular to every design column means:</p>
+<p>$$
+X^Te=0.
+$$</p>
+<p>Substitute $e=y-X\hat{\beta}$:</p>
+<p>$$
+X^T(y-X\hat{\beta})=0,
+$$</p>
+<p>so:</p>
+<p>$$
+X^TX\hat{\beta}=X^Ty.
+$$</p>
+<p>These are the <strong>normal equations</strong>. “Normal” means perpendicular here; it has nothing to do with the normal probability distribution.</p>
+<p>If the design includes a ones column, one orthogonality equation is:</p>
+<p>$$
+\mathbf{1}^Te=\sum_i e_i=0.
+$$</p>
+<p>Thus training residuals sum to approximately zero when an intercept is included. This does not imply a good fit: residuals of <code>[-100, 100]</code> sum to zero but are enormous.</p>
+<h2 id="47-verify-geometry-in-code">4.7 Verify geometry in code</h2>
+<pre><code class="language-python">beta_hat = np.linalg.solve(X.T @ X, X.T @ y)
+y_hat = X @ beta_hat
+e = y - y_hat
+
+assert np.allclose(X.T @ e, 0.0, atol=1e-10)
+assert np.isclose(e.sum(), 0.0, atol=1e-10)
+
+beta_other = beta_hat + np.array([2.0, -1.0])
+q = X @ beta_other
+d = y_hat - q
+
+assert np.isclose(e @ d, 0.0, atol=1e-10)
+assert np.isclose(
+    np.linalg.norm(y - q) ** 2,
+    np.linalg.norm(e) ** 2 + np.linalg.norm(d) ** 2,
+)
+</code></pre>
+<p><code>atol</code> is an absolute tolerance that allows tiny floating-point error. The chapter's three-dimensional plot makes the same relationships visible when there are three observations and two independent design columns.</p>
+<h2 id="48-metrics-in-the-estimator">4.8 Metrics in the estimator</h2>
+<p><code>_metrics_from_predictions</code> should flatten both arrays, require equal shapes, calculate <code>residuals = y - y_hat</code>, and return Python floats for SSR, MSE, RMSE, and MAE.</p>
+<p><code>evaluate(X, y)</code> validates supplied data, calls <code>predict</code>, then computes metrics. The method does not call them “test metrics” because an array's provenance—training, validation, or test—is the caller's responsibility.</p>
+<h2 id="49-outliers-and-data-investigation">4.9 Outliers and data investigation</h2>
+<p>Changing 26 to 260 creates a residual hundreds of times larger than the others. Its square can dominate SSR and RMSE and pull fitted coefficients toward it. MAE changes less because it does not square the miss.</p>
+<p>Do not immediately delete an outlier or declare MAE superior. Ask:</p>
+<ul>
+<li>Is it a data-entry error?</li>
+<li>Is it a genuine extreme project?</li>
+<li>Does it belong to a different project type?</li>
+<li>Is the chosen loss aligned with the real consequences of large budget misses?</li>
+<li>How do results change with and without it, and why?</li>
+</ul>
+<hr />
+<h1 id="day-5-derive-fit-and-stress-test-ordinary-least-squares">Day 5 — Derive, fit, and stress-test ordinary least squares</h1>
+<h2 id="51-a-one-parameter-error-bowl">5.1 A one-parameter error bowl</h2>
+<p>Start with no intercept:</p>
+<p>$$
+\hat{y}_i=\beta x_i.
+$$</p>
+<p>The objective is:</p>
+<p>$$
+S(\beta)=\sum_i(y_i-\beta x_i)^2.
+$$</p>
+<p>Expand the square:</p>
+<p>$$
+(y_i-\beta x_i)^2=y_i^2-2\beta x_iy_i+\beta^2x_i^2.
+$$</p>
+<p>After summing and differentiating:</p>
+<p>$$
+\frac{dS}{d\beta}=-2\sum_i x_iy_i+2\beta\sum_i x_i^2.
+$$</p>
+<p>At the bottom of a smooth bowl the derivative is zero. Solving gives:</p>
+<p>$$
+\hat{\beta}=\frac{\sum_i x_iy_i}{\sum_i x_i^2}.
+$$</p>
+<p>The second derivative is:</p>
+<p>$$
+\frac{d^2S}{d\beta^2}=2\sum_i x_i^2.
+$$</p>
+<p>If at least one $x_i$ is nonzero, this is positive, proving a unique minimum rather than a maximum. A grid search in the chapter independently checks that the formula lands at the bottom of the error bowl.</p>
+<h2 id="52-one-feature-with-an-intercept">5.2 One feature with an intercept</h2>
+<p>Now:</p>
+<p>$$
+S(\beta_0,\beta_1)=\sum_i(y_i-\beta_0-\beta_1x_i)^2.
+$$</p>
+<p>There are two unknowns, so set two partial derivatives to zero. The intercept equation gives:</p>
+<p>$$
+\hat{\beta}_0=\bar{y}-\hat{\beta}_1\bar{x}.
+$$</p>
+<p>Therefore the fitted line passes through $(\bar{x},\bar{y})$. Substitution into the slope equation gives:</p>
+<p>$$
+\hat{\beta}_1=
+\frac{\sum_i(x_i-\bar{x})(y_i-\bar{y})}
+{\sum_i(x_i-\bar{x})^2}.
+$$</p>
+<p>If all $x_i$ values are identical, the denominator is zero. The data contain no horizontal variation, so they cannot identify a slope.</p>
+<p>The centred numerator resembles covariance and the denominator resembles variance. Different textbook definitions divide these sums by $n$ or $n-1$, but that common factor cancels in the slope ratio.</p>
+<h2 id="53-expand-the-matrix-objective">5.3 Expand the matrix objective</h2>
+<p>For multiple features:</p>
+<p>$$
+S(\beta)=(y-X\beta)^T(y-X\beta).
+$$</p>
+<p>Because $(y-X\beta)^T=y^T-\beta^TX^T$:</p>
+<p>$$
+S(\beta)=y^Ty-y^TX\beta-\beta^TX^Ty+\beta^TX^TX\beta.
+$$</p>
+<p>The middle expressions are both one-number scalars and are transposes of one another, so they are equal:</p>
+<p>$$
+S(\beta)=y^Ty-2\beta^TX^Ty+\beta^TX^TX\beta.
+$$</p>
+<p>Check shapes as you read: $y^Ty$ is one number, $\beta^TX^Ty$ is one number, and $\beta^TX^TX\beta$ is one number. An objective function must return one number for each candidate parameter vector.</p>
+<h2 id="54-the-matrix-gradient">5.4 The matrix gradient</h2>
+<p>Use three derivative facts:</p>
+<ol>
+<li>$y^Ty$ contains no $\beta$, so its gradient is zero.</li>
+<li>For constant vector $c$, $\nabla_\beta(\beta^Tc)=c$.</li>
+<li>$\nabla_\beta(\beta^TA\beta)=(A+A^T)\beta$.</li>
+</ol>
+<p>Here $A=X^TX$, which is symmetric because $(X^TX)^T=X^TX$. Therefore:</p>
+<p>$$
+\nabla_\beta S(\beta)=-2X^Ty+2X^TX\beta.
+$$</p>
+<p>At a minimum the gradient is zero:</p>
+<p>$$
+-2X^Ty+2X^TX\hat{\beta}=0,
+$$</p>
+<p>which produces the same normal equations found geometrically:</p>
+<p>$$
+X^TX\hat{\beta}=X^Ty.
+$$</p>
+<h3 id="why-the-quadratic-derivative-has-two-terms">Why the quadratic derivative has two terms</h3>
+<p>Writing $\beta^TA\beta=\sum_j\sum_k\beta_jA_{jk}\beta_k$, a derivative with respect to $\beta_r$ finds occurrences on the left ($j=r$) and the right ($k=r$). Those contributions form $A\beta$ and $A^T\beta$. Symmetry makes them identical, producing $2A\beta$.</p>
+<h3 id="finite-difference-audit">Finite-difference audit</h3>
+<p>A centred finite difference estimates one gradient component:</p>
+<p>$$
+\frac{\partial S}{\partial\beta_j}\approx
+\frac{S(\beta+h u_j)-S(\beta-h u_j)}{2h}.
+$$</p>
+<p>$u_j$ has 1 in position $j$ and 0 elsewhere. Comparing this numerical estimate with <code>-2 * X.T @ (y - X @ beta)</code> helps catch derivative mistakes. Very large $h$ gives approximation error; extremely small $h$ suffers floating-point cancellation.</p>
+<h2 id="55-existence-uniqueness-convexity-and-rank">5.5 Existence, uniqueness, convexity, and rank</h2>
+<p>If $X^TX$ is invertible:</p>
+<p>$$
+\hat{\beta}=(X^TX)^{-1}X^Ty.
+$$</p>
+<p>This requires <strong>full column rank</strong>: no design column can be made exactly from the others, and the data contain enough independent directions to estimate every coefficient.</p>
+<p>The Hessian is:</p>
+<p>$$
+\nabla_\beta^2S(\beta)=2X^TX.
+$$</p>
+<p>For any vector $z$:</p>
+<p>$$
+z^TX^TXz=(Xz)^T(Xz)=\lVert Xz\rVert_2^2\geq0.
+$$</p>
+<p>Thus $X^TX$ is <strong>positive semidefinite</strong> and SSR is convex: it has no deceptive local minima. With full column rank, $Xz\neq0$ for every nonzero $z$, so the surface is strictly convex and the parameter minimiser is unique.</p>
+<p>Predictions can still have a unique closest projection when coefficients are non-unique. Rank deficiency mainly destroys the unique interpretation of individual coefficients.</p>
+<h2 id="56-why-code-should-use-lstsq">5.6 Why code should use <code>lstsq</code></h2>
+<p>Three related implementations are:</p>
+<pre><code class="language-python"># Useful as mathematical notation, usually avoid in application code
+beta_hat = np.linalg.inv(X.T @ X) @ X.T @ y
+
+# Solve the normal-equation system without explicit inversion
+beta_hat = np.linalg.solve(X.T @ X, X.T @ y)
+
+# Preferred here: solve least squares directly
+beta_hat, residual_sums, rank, singular_values = np.linalg.lstsq(
+    X, y, rcond=None
+)
+</code></pre>
+<p>Forming $X^TX$ squares the condition number and can magnify numerical instability. Explicit inversion also does unnecessary work. <code>lstsq</code> uses a decomposition designed for least squares and reports rank and singular values. It solves the same objective; it is not replacing the mathematics with magic.</p>
+<p><code>residual_sums</code> may be empty in exact-fit or rank-deficient cases, so the estimator computes training metrics explicitly from predictions.</p>
+<h2 id="57-fitting-assumptions-are-not-inference-assumptions">5.7 Fitting assumptions are not inference assumptions</h2>
+<p>Keep three layers separate:</p>
+<ol>
+<li><strong>Algebra:</strong> Did the program find a least-squares minimum?</li>
+<li><strong>Generalisation:</strong> Will the relationship work on future or wider-population projects?</li>
+<li><strong>Causation:</strong> Does the design identify an intervention effect?</li>
+</ol>
+<p>Normally distributed residuals are not required merely to calculate OLS. Full column rank is required for a unique coefficient vector. Claims about unbiasedness, confidence intervals, heteroskedasticity, clustering, sampling, or causal effects require additional assumptions and methods.</p>
+<p>A perfect training calculation proves only the first layer.</p>
+<h2 id="58-perfect-multicollinearity-and-rank-failure">5.8 Perfect multicollinearity and rank failure</h2>
+<p>If both kilometres and metres are columns:</p>
+<p>$$
+x_m=1000x_{km}.
+$$</p>
+<p>One column contains no new information. Infinitely many coefficient pairs can produce the same combined contribution, so the separate coefficients are unidentified.</p>
+<pre><code class="language-python">X_bad = np.column_stack([np.ones(x_km.size), x_km, 1000 * x_km])
+print(np.linalg.matrix_rank(X_bad))
+print(X_bad.shape[1])
+</code></pre>
+<p>If rank is less than the number of columns, the design is rank deficient. <code>np.linalg.solve</code> may fail because $X^TX$ is singular. <code>np.linalg.lstsq</code> can return one minimum-norm solution, but returned numbers do not make redundant coefficients meaningful.</p>
+<p>Usually remove or redesign the redundant feature. More columns do not necessarily mean more information.</p>
+<p>Near-collinearity is not exact rank failure but can create unstable coefficients and long, narrow SSR contours. Small data changes may then cause large coefficient changes while predictions move much less.</p>
+<h2 id="59-read-the-error-surface-figure">5.9 Read the error-surface figure</h2>
+<p>With an intercept and one slope, every point $(\beta_0,\beta_1)$ is a candidate model. A contour joins candidate pairs with equal SSR. The centre marks the minimum.</p>
+<ul>
+<li>Well-separated information produces compact elliptical contours.</li>
+<li>Highly correlated design columns produce a long, narrow valley.</li>
+<li>Perfect collinearity produces a flat direction with no unique centre.</li>
+</ul>
+<p>The contour plot is the two-parameter version of the one-parameter error bowl.</p>
+<h2 id="510-the-complete-estimator-method-by-method">5.10 The complete estimator, method by method</h2>
+<p>The final <code>MHPCostEstimator</code> in the chapter has these responsibilities:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AnalysisContract</code></td>
+<td>Record purpose, target, unit of observation, and intended use</td>
+</tr>
+<tr>
+<td><code>__init__</code></td>
+<td>Create empty learned attributes and fitted state</td>
+</tr>
+<tr>
+<td><code>_validate_inputs</code></td>
+<td>Enforce numerical shapes and finite values</td>
+</tr>
+<tr>
+<td><code>_add_intercept_column</code></td>
+<td>Prepend exactly one ones column</td>
+</tr>
+<tr>
+<td><code>_metrics_from_predictions</code></td>
+<td>Calculate residual-based metrics</td>
+</tr>
+<tr>
+<td><code>fit</code></td>
+<td>Check names, build design, call <code>lstsq</code>, reject rank deficiency, store results</td>
+</tr>
+<tr>
+<td><code>predict</code></td>
+<td>Require fitted state and compatible new features</td>
+</tr>
+<tr>
+<td><code>evaluate</code></td>
+<td>Predict and calculate metrics for supplied observations</td>
+</tr>
+<tr>
+<td><code>coefficients</code></td>
+<td>Pair intercept and feature names with learned values</td>
+</tr>
+</tbody>
+</table>
+<h3 id="important-safeguards-in-fit">Important safeguards in <code>fit</code></h3>
+<ul>
+<li>Feature-name count must equal raw feature count.</li>
+<li>Feature names cannot be empty or duplicated.</li>
+<li>The intercept is added internally; callers should not add another one.</li>
+<li>Required rank equals the number of design columns.</li>
+<li>Learned state is stored only after rank passes.</li>
+<li>Training predictions and metrics are calculated from the fitted design.</li>
+<li>Returning <code>self</code> permits <code>model = MHPCostEstimator(contract).fit(...)</code>.</li>
+</ul>
+<h3 id="important-safeguards-in-predict">Important safeguards in <code>predict</code></h3>
+<ul>
+<li>Calling before <code>fit</code> raises <code>RuntimeError</code>.</li>
+<li>New rows must have the same feature count and order as training data.</li>
+<li>Inputs must be finite.</li>
+<li>A single project becomes shape <code>(1, p)</code>.</li>
+</ul>
+<p>The implementation checks feature counts, not semantic column order. In production, labeled tables and schema checks should prevent accidentally swapping capacity and road-distance columns.</p>
+<h2 id="511-interpret-the-synthetic-kp-fit-carefully">5.11 Interpret the synthetic KP fit carefully</h2>
+<p>The chapter fits eight projects using road distance, planned capacity, and terrain index. This tiny synthetic set is inspectable, not deployment-ready.</p>
+<p>If the road-distance coefficient is positive, a prediction-oriented reading is:</p>
+<blockquote>
+<p>Holding the other included numerical features fixed, the fitted rule adds the coefficient's number of million PKR for each additional kilometre of recorded road distance.</p>
+</blockquote>
+<p>It does not establish that building a kilometre of road changes cost by that amount. “Distance from a road” and “constructing a road” are different variables and the latter is an intervention.</p>
+<p>Also ask whether fixed-capacity, fixed-terrain comparisons at different distances actually occur in the data. Regression can calculate contrasts in weakly supported regions.</p>
+<h2 id="512-tests-that-connect-code-to-mathematics">5.12 Tests that connect code to mathematics</h2>
+<p>The chapter verifies:</p>
+<pre><code class="language-python">assert np.allclose(model.parameters_, beta_from_normal_equations)
+assert np.allclose(X_design.T @ residuals, 0.0, atol=1e-9)
+assert np.isclose(residuals.sum(), 0.0, atol=1e-9)
+assert np.isclose(metrics[&quot;ssr&quot;], residuals @ residuals)
+assert np.isclose(metrics[&quot;rmse&quot;], np.sqrt(np.mean(residuals ** 2)))
+</code></pre>
+<p>Each test corresponds to a claim:</p>
+<ul>
+<li>two solution methods agree for this full-rank example;</li>
+<li>residuals are perpendicular to every design column;</li>
+<li>the intercept makes training residuals sum to zero;</li>
+<li>code matches the SSR definition; and</li>
+<li>code matches the RMSE definition.</li>
+</ul>
+<h2 id="513-what-this-estimator-still-cannot-do">5.13 What this estimator still cannot do</h2>
+<p>It does not yet:</p>
+<ul>
+<li>create training, validation, and test splits;</li>
+<li>handle categorical districts, contractors, or project types;</li>
+<li>standardise features or thoroughly diagnose numerical conditioning;</li>
+<li>quantify coefficient or prediction uncertainty;</li>
+<li>diagnose nonlinearity, heteroskedasticity, or influential observations;</li>
+<li>model inflation, time trends, repeated districts, or clustering;</li>
+<li>enforce data lineage, access permissions, and revision history;</li>
+<li>protect automatically against project-phase leakage;</li>
+<li>establish causal effects; or</li>
+<li>monitor drift when future construction conditions change.</li>
+</ul>
+<p>Acknowledging these limitations is part of a correct analysis, not an apology added after it.</p>
+<hr />
+<h1 id="week-1-capstone-a-beginners-execution-plan">Week 1 capstone: a beginner's execution plan</h1>
+<p>The capstone asks you to build, break, and rebuild an early-stage estimator for 40 synthetic projects.</p>
+<h2 id="pass-1-define">Pass 1: define</h2>
+<p>Write an <code>AnalysisContract</code> and a short data note answering:</p>
+<ul>
+<li>What exactly is one row?</li>
+<li>What is the target, unit, and price basis?</li>
+<li>At what project stage is the prediction made?</li>
+<li>Which decision will it support?</li>
+<li>Is the job prediction, explanation, or causation?</li>
+<li>What is the precise estimand?</li>
+</ul>
+<h2 id="pass-2-build">Pass 2: build</h2>
+<ol>
+<li>Select at least three features genuinely known at prediction time.</li>
+<li>Preserve project IDs while aligning rows.</li>
+<li>Validate shapes, finite values, units, and names.</li>
+<li>Fit the estimator.</li>
+<li>Report coefficients with units and conditional wording.</li>
+<li>Report training SSR, MSE, RMSE, and MAE.</li>
+<li>Verify orthogonality and the metric equations.</li>
+</ol>
+<h2 id="pass-3-break">Pass 3: break</h2>
+<p>Create one controlled example of each failure and explain why it matters:</p>
+<ol>
+<li>reverse target row order while leaving features unchanged;</li>
+<li>insert <code>NaN</code> or infinity;</li>
+<li>add a redundant metres version of a kilometre feature;</li>
+<li>add information recorded after construction begins;</li>
+<li>add one extreme target value.</li>
+</ol>
+<p>Record whether validation catches the failure. Row misalignment and leakage are especially dangerous because plain array-shape validation may not detect them.</p>
+<h2 id="pass-4-rebuild">Pass 4: rebuild</h2>
+<ol>
+<li>restore identifier alignment;</li>
+<li>investigate and document missing/extreme values;</li>
+<li>remove redundant information;</li>
+<li>remove leaked features or redefine prediction time;</li>
+<li>hold out projects not used for fitting;</li>
+<li>compare training and held-out RMSE and MAE; and</li>
+<li>write a recommendation separating supported prediction claims from unsupported explanatory or causal claims.</li>
+</ol>
+<p>High held-out error relative to training error is a warning about overfitting, dataset differences, or both. One small held-out set also has uncertainty; do not treat it as a permanent truth.</p>
+<h2 id="self-assessment-rubric">Self-assessment rubric</h2>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Ready when you can...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Question</td>
+<td>state purpose, estimand, timing, target, and intended use precisely</td>
+</tr>
+<tr>
+<td>Mathematics</td>
+<td>reproduce key derivations and explain every symbol</td>
+</tr>
+<tr>
+<td>Code</td>
+<td>validate shapes and rank and tie tests to equations</td>
+</tr>
+<tr>
+<td>Geometry</td>
+<td>connect column space, projection, orthogonality, and minimum distance</td>
+</tr>
+<tr>
+<td>Context</td>
+<td>discuss units, provenance, fairness, and institutional consequences</td>
+</tr>
+<tr>
+<td>Communication</td>
+<td>report results, uncertainty, and limits in plain language</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="formula-sheet-with-reading-instructions">Formula sheet with reading instructions</h1>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Formula</th>
+<th>Read it as...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linear prediction</td>
+<td>$\hat{y}=X\beta$</td>
+<td>Build predictions from weighted design columns</td>
+</tr>
+<tr>
+<td>Residual</td>
+<td>$e=y-\hat{y}$</td>
+<td>Actual minus predicted</td>
+</tr>
+<tr>
+<td>SSR</td>
+<td>$e^Te=\sum_i e_i^2$</td>
+<td>Total squared training error</td>
+</tr>
+<tr>
+<td>MSE</td>
+<td>$SSR/n$</td>
+<td>Average squared error</td>
+</tr>
+<tr>
+<td>RMSE</td>
+<td>$\sqrt{SSR/n}$</td>
+<td>Squared-error summary in target units</td>
+</tr>
+<tr>
+<td>MAE</td>
+<td>$\frac1n\sum_i</td>
+<td>e_i</td>
+</tr>
+<tr>
+<td>Orthogonality</td>
+<td>$X^Te=0$</td>
+<td>Residual is perpendicular to every design column</td>
+</tr>
+<tr>
+<td>Normal equations</td>
+<td>$X^TX\hat{\beta}=X^Ty$</td>
+<td>Zero-gradient/perpendicularity condition</td>
+</tr>
+<tr>
+<td>Closed form</td>
+<td>$(X^TX)^{-1}X^Ty$</td>
+<td>Unique coefficients when full column rank holds</td>
+</tr>
+<tr>
+<td>Through-origin slope</td>
+<td>$\frac{\sum_i x_iy_i}{\sum_i x_i^2}$</td>
+<td>One-feature slope when no intercept is allowed</td>
+</tr>
+<tr>
+<td>Intercept-model slope</td>
+<td>$\frac{\sum_i(x_i-\bar{x})(y_i-\bar{y})}{\sum_i(x_i-\bar{x})^2}$</td>
+<td>Co-movement divided by feature variation</td>
+</tr>
+<tr>
+<td>Intercept</td>
+<td>$\bar{y}-\hat{\beta}_1\bar{x}$</td>
+<td>Make the fitted line pass through the mean point</td>
+</tr>
+<tr>
+<td>Gradient</td>
+<td>$-2X^Ty+2X^TX\beta$</td>
+<td>Direction and rate of local SSR increase</td>
+</tr>
+<tr>
+<td>Hessian</td>
+<td>$2X^TX$</td>
+<td>Curvature of the SSR surface</td>
+</tr>
+</tbody>
+</table>
+<h2 id="shape-sheet">Shape sheet</h2>
+<p>For $n$ observations, $p$ raw features, and an intercept:</p>
+<table>
+<thead>
+<tr>
+<th>Object</th>
+<th>Shape</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Raw features</td>
+<td>$(n,p)$</td>
+</tr>
+<tr>
+<td>Ones column</td>
+<td>$(n,1)$</td>
+</tr>
+<tr>
+<td>Design matrix</td>
+<td>$(n,p+1)$</td>
+</tr>
+<tr>
+<td>Target</td>
+<td>$(n,)$</td>
+</tr>
+<tr>
+<td>Parameters</td>
+<td>$(p+1,)$</td>
+</tr>
+<tr>
+<td>Predictions</td>
+<td>$(n,)$</td>
+</tr>
+<tr>
+<td>Residuals</td>
+<td>$(n,)$</td>
+</tr>
+<tr>
+<td>$X^TX$</td>
+<td>$(p+1,p+1)$</td>
+</tr>
+<tr>
+<td>$X^Ty$</td>
+<td>$(p+1,)$</td>
+</tr>
+<tr>
+<td>$X^Te$</td>
+<td>$(p+1,)$</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="glossary-in-beginner-language">Glossary in beginner language</h1>
+<p><strong>Affine model:</strong> A linear combination plus a constant translation; regression with an intercept is affine in its inputs but conventionally called linear regression.</p>
+<p><strong>Association:</strong> A numerical relationship observed between variables. It need not be causal.</p>
+<p><strong>Broadcasting:</strong> NumPy's rules for expanding compatible shapes during elementwise operations. Convenient, but not a substitute for matrix multiplication.</p>
+<p><strong>Causal effect:</strong> Difference between outcomes under two interventions or conditions for a defined population and time horizon.</p>
+<p><strong>Column space:</strong> Every vector obtainable as a weighted combination of a matrix's columns.</p>
+<p><strong>Condition number:</strong> A measure of sensitivity to small numerical changes. A large value warns that coefficient calculations may be unstable.</p>
+<p><strong>Confounder:</strong> A common cause of an exposure or decision and an outcome.</p>
+<p><strong>Convex objective:</strong> A bowl-shaped objective with no deceptive local minima.</p>
+<p><strong>Counterfactual:</strong> The outcome that would have occurred under an alternative action or condition.</p>
+<p><strong>Data dictionary:</strong> Documentation of fields, meanings, units, timing, provenance, valid values, and missing-value rules.</p>
+<p><strong>Design matrix:</strong> The rectangular matrix whose columns are the building blocks of predictions.</p>
+<p><strong>Estimator:</strong> A procedure that converts data into parameter estimates; OLS is an estimator.</p>
+<p><strong>Estimand:</strong> The exact quantity an analysis intends to estimate.</p>
+<p><strong>Feature:</strong> An input variable used to form model predictions.</p>
+<p><strong>Finite difference:</strong> A numerical approximation to a derivative made by slightly changing an input.</p>
+<p><strong>Full column rank:</strong> No design column is an exact linear combination of the others.</p>
+<p><strong>Gradient:</strong> Vector containing all first partial derivatives of a scalar function.</p>
+<p><strong>Hessian:</strong> Matrix containing second partial derivatives and describing curvature.</p>
+<p><strong>Hyperparameter:</strong> A modeling setting chosen outside the fitting calculation.</p>
+<p><strong>Intercept:</strong> Constant amount added to every linear prediction.</p>
+<p><strong>Loss function:</strong> Numerical rule that penalises errors during model fitting.</p>
+<p><strong>Matrix rank:</strong> Number of independent directions represented by a matrix.</p>
+<p><strong>Metric:</strong> Numerical summary used to evaluate performance.</p>
+<p><strong>Multicollinearity:</strong> Linear dependence among features. Perfect multicollinearity causes rank deficiency; near-multicollinearity can make coefficients unstable.</p>
+<p><strong>Normal equations:</strong> $X^TX\hat{\beta}=X^Ty$, the OLS condition obtained from geometry or calculus.</p>
+<p><strong>Observation:</strong> One unit represented by one dataset row.</p>
+<p><strong>OLS:</strong> Ordinary least squares, which chooses parameters that minimise the sum of squared residuals.</p>
+<p><strong>Orthogonal:</strong> Perpendicular; two vectors have dot product zero.</p>
+<p><strong>Parameter:</strong> Numerical value learned by fitting, such as an intercept or slope.</p>
+<p><strong>Positive semidefinite:</strong> A matrix $A$ for which $z^TAz\geq0$ for every $z$.</p>
+<p><strong>Prediction:</strong> Estimated target value produced by the fitted model.</p>
+<p><strong>Projection:</strong> Closest point in a subspace to a given vector under Euclidean distance.</p>
+<p><strong>Provenance:</strong> Where, when, why, and by whom data were created or changed.</p>
+<p><strong>Rank deficiency:</strong> Fewer independent design directions than columns, so coefficients are not uniquely identified.</p>
+<p><strong>Residual:</strong> Observed target minus fitted prediction.</p>
+<p><strong>Scalar:</strong> One number.</p>
+<p><strong>Simpson's paradox:</strong> Aggregated and subgroup relationships differ or reverse because group composition matters.</p>
+<p><strong>Singular value:</strong> A quantity reported by matrix decompositions that helps describe independent directions and numerical conditioning.</p>
+<p><strong>Target:</strong> Outcome the model estimates.</p>
+<p><strong>Target leakage:</strong> Use of information unavailable or illegitimate at the real prediction time.</p>
+<p><strong>Tensor:</strong> An array with any number of axes; do not confuse tensor order with matrix rank.</p>
+<p><strong>Training data:</strong> Observations used to learn model parameters.</p>
+<p><strong>Validation/test data:</strong> Observations withheld from fitting and used to assess generalisation.</p>
+<p><strong>Vector:</strong> Ordered one-dimensional collection of numbers.</p>
+<hr />
+<h1 id="suggested-five-day-study-schedule">Suggested five-day study schedule</h1>
+<table>
+<thead>
+<tr>
+<th>Activity each day</th>
+<th style="text-align: right;">Approximate minutes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Recall yesterday's main idea</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr>
+<td>Work through today's derivation</td>
+<td style="text-align: right;">35</td>
+</tr>
+<tr>
+<td>Type, run, and alter proof code</td>
+<td style="text-align: right;">35</td>
+</tr>
+<tr>
+<td>Create or inspect the figure</td>
+<td style="text-align: right;">20</td>
+</tr>
+<tr>
+<td>Extend the estimator</td>
+<td style="text-align: right;">35</td>
+</tr>
+<tr>
+<td>Break and repair one failure</td>
+<td style="text-align: right;">25</td>
+</tr>
+<tr>
+<td>Complete exit check in writing</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td style="text-align: right;"><strong>180</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Three hours is a guide, not a race. If you cannot explain yesterday's exit check, retrieve that idea before adding new notation.</p>
+<p>Morning retrieval prompts:</p>
+<ul>
+<li>After Day 1: name the three regression jobs and one risk of each.</li>
+<li>After Day 2: draw the shapes of $X$, $y$, and $\beta$.</li>
+<li>After Day 3: expand one row of $X\beta$ and explain the ones column.</li>
+<li>After Day 4: explain why the OLS residual is perpendicular to $X$.</li>
+<li>After Day 5: state the normal equations and the condition for unique coefficients.</li>
+</ul>
+<hr />
+<h1 id="responsible-interpretation-in-the-kp-context">Responsible interpretation in the KP context</h1>
+<p>Ask these questions throughout the project:</p>
+<ul>
+<li>At what project stage is each field known?</li>
+<li>Who recorded it, using which definition and instrument?</li>
+<li>Does one row mean the same thing across districts and implementing partners?</li>
+<li>Are all costs expressed in the same currency and price year?</li>
+<li>Does a terrain index of 4 mean the same thing to every assessor?</li>
+<li>Does missingness reflect geography, staffing, or project difficulty?</li>
+<li>Could the estimator systematically disadvantage remote communities?</li>
+<li>Could a coefficient be used to unfairly judge a field team for structural conditions?</li>
+<li>Are comparisons supported by similar observed projects, or are they extrapolations?</li>
+<li>Has the analysis confused a predictive signal with an intervention effect?</li>
+</ul>
+<p>Technical correctness is necessary but not sufficient. Public-infrastructure analysis also requires traceable data, appropriate comparisons, careful language, and awareness of who bears the consequences of error.</p>
+<hr />
+<h1 id="where-week-2-begins">Where Week 2 begins</h1>
+<p>Week 1 gives you a transparent OLS calculation and an honest statement of its limits. The next topics naturally address weaknesses exposed here:</p>
+<ol>
+<li>feature scaling and numerical conditioning;</li>
+<li>QR and singular-value decompositions;</li>
+<li>probability models and maximum likelihood;</li>
+<li>gradient descent built from the OLS gradient;</li>
+<li>training, validation, and test separation;</li>
+<li>coefficient and prediction uncertainty; and</li>
+<li>residual diagnostics and model revision.</li>
+</ol>
+<p>The enduring chain is:</p>
+<pre><code class="language-text">precise question
+    -&gt; defensible data representation
+    -&gt; transparent mathematical model
+    -&gt; independent code and geometric checks
+    -&gt; bounded, responsible judgement
+</code></pre>
+<p>If you can move both ways through that chain—from a decision to equations and code, and from output back to a careful decision statement—you have achieved the central goal of Chapter 1.</p>
         </article>
     </div>
 
@@ -784,11 +2061,11 @@ abla_\beta S(\beta) = -2X^Ty + 2X^TX\beta$$</li>
         };
         (function loadMathJax() {
             var local = document.createElement('script');
-            local.src = '../vendor/mathjax/tex-mml-chtml.js';
+            local.src = '../vendor/mathjax/tex-mml-svg.js';
             local.async = true;
             local.onerror = function () {
                 var cdn = document.createElement('script');
-                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-svg.js';
                 cdn.async = true;
                 document.head.appendChild(cdn);
             };

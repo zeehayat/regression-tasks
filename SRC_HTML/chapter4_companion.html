@@ -1,0 +1,1913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 4 Companion Guide: From Probabilities to Accountable Decisions</title>
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --panel: #151d30;
+            --border: #223150;
+            --text: #f1f5f9;
+            --text-muted: #cbd5e1;
+            --accent: #22d3ee;
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; overflow-x: hidden; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        code, pre, .mono {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        }
+        #content {
+            width: 100%;
+            max-width: 56rem;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+        nav.chapters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        nav.chapters a {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+        nav.chapters a:hover { border-color: rgba(34, 211, 238, 0.4); }
+        nav.chapters a.active {
+            color: var(--accent);
+            background: rgba(21, 29, 48, 0.8);
+            border-color: rgba(34, 211, 238, 0.4);
+        }
+        .markdown-body h1 { font-size: 2.25rem; font-weight: 800; color: #fff; margin: 0.5rem 0 1.5rem; }
+        .markdown-body h2 { font-size: 1.5rem; font-weight: 700; color: #fff; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin: 2.5rem 0 1rem; }
+        .markdown-body h3 { font-size: 1.25rem; font-weight: 600; color: #fff; margin: 2rem 0 0.75rem; }
+        .markdown-body h4 { font-size: 1.1rem; font-weight: 600; color: #fff; margin: 1.5rem 0 0.5rem; }
+        .markdown-body p { color: var(--text-muted); margin: 0 0 1rem; }
+        .markdown-body ul, .markdown-body ol { color: var(--text-muted); margin: 0 0 1rem; padding-left: 1.5rem; }
+        .markdown-body li { margin-bottom: 0.25rem; }
+        .markdown-body blockquote {
+            border-left: 4px solid var(--accent);
+            padding: 0.5rem 1rem;
+            font-style: italic;
+            background: rgba(34, 211, 238, 0.05);
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 1rem 0;
+        }
+        .markdown-body a { color: var(--accent); text-decoration: underline; }
+        .markdown-body a:hover { color: #67e8f9; }
+        .markdown-body :not(pre) > code {
+            font-size: 0.875rem;
+            color: #67e8f9;
+            background: var(--panel);
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+        }
+        .markdown-body pre {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+        .markdown-body pre code {
+            background: transparent;
+            padding: 0;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+        }
+        .markdown-body table { width: 100%; font-size: 0.875rem; border-collapse: collapse; margin: 1.5rem 0; }
+        .markdown-body th, .markdown-body td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: left; }
+        .markdown-body th { background: var(--panel); color: #fff; font-weight: 600; }
+        .markdown-body td { color: var(--text-muted); }
+        .markdown-body hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+        /* Mermaid diagram panel: readable offline as labeled source; mermaid.js
+           (if vendored) replaces the <pre> contents with a rendered <svg>. */
+        .diagram-panel {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+        .diagram-panel__label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: rgba(34, 211, 238, 0.08);
+            padding: 0.4rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .diagram-panel .mermaid {
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+        }
+        .diagram-panel pre.mermaid-source {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+            padding: 1rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+        }
+
+        .platform-shell {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            width: min(25rem, calc(100vw - 2rem));
+            max-height: calc(100vh - 2rem);
+            display: flex;
+            flex-direction: column;
+            background: rgba(12, 18, 30, 0.96);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            z-index: 50;
+        }
+        .platform-shell.collapsed { width: auto; }
+        .platform-shell.collapsed .platform-body { display: none; }
+        .platform-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.9);
+        }
+        .platform-title { font-size: 0.85rem; font-weight: 700; color: #fff; }
+        .platform-section { font-size: 0.72rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .platform-body { overflow-y: auto; padding: 0.85rem; }
+        .platform-group { border-top: 1px solid var(--border); padding-top: 0.85rem; margin-top: 0.85rem; }
+        .platform-group:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+        .platform-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+        .platform-label { display: block; margin-bottom: 0.35rem; font-size: 0.72rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.04em; }
+        .platform-button {
+            border: 1px solid rgba(34, 211, 238, 0.45);
+            background: rgba(34, 211, 238, 0.08);
+            color: var(--accent);
+            border-radius: 0.35rem;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.78rem;
+            font-weight: 650;
+            cursor: pointer;
+        }
+        .platform-button:hover:not(:disabled) { background: rgba(34, 211, 238, 0.14); }
+        .platform-button:disabled {
+            cursor: not-allowed;
+            color: #94a3b8;
+            border-color: #334155;
+            background: rgba(148, 163, 184, 0.08);
+        }
+        .platform-textarea {
+            width: 100%;
+            min-height: 4.5rem;
+            resize: vertical;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.55rem;
+            font: inherit;
+            font-size: 0.85rem;
+        }
+        .platform-message {
+            margin-top: 0.45rem;
+            color: #fbbf24;
+            font-size: 0.78rem;
+        }
+        .platform-output {
+            margin-top: 0.55rem;
+            white-space: pre-wrap;
+            color: var(--text-muted);
+            font-size: 0.84rem;
+        }
+        .platform-history {
+            max-height: 12rem;
+            overflow: auto;
+            display: grid;
+            gap: 0.45rem;
+            margin: 0.55rem 0;
+        }
+        .platform-turn {
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            padding: 0.45rem 0.55rem;
+            background: rgba(21, 29, 48, 0.55);
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+        .platform-turn strong { color: #fff; }
+        .paper-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 0.8rem;
+            margin: 1rem 0;
+            background: rgba(21, 29, 48, 0.55);
+        }
+        .paper-card h4 { margin: 0 0 0.3rem; font-size: 1rem; }
+        .paper-card p { margin: 0.35rem 0; font-size: 0.9rem; }
+        .paper-card .paper-meta { color: #93c5fd; font-size: 0.82rem; }
+        .paper-card .paper-status { color: #fbbf24; font-size: 0.8rem; }
+        .settings-grid {
+            display: grid;
+            gap: 1rem;
+        }
+        .settings-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: rgba(21, 29, 48, 0.55);
+            padding: 1rem;
+        }
+        .settings-card h2 {
+            margin-top: 0;
+        }
+        .settings-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .settings-field {
+            display: grid;
+            gap: 0.25rem;
+        }
+        .settings-field.full {
+            grid-column: 1 / -1;
+        }
+        .settings-field label,
+        .settings-check {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .settings-field input,
+        .settings-field select {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.5rem;
+            font: inherit;
+        }
+        .settings-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .settings-status {
+            color: #fbbf24;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        .settings-file-viewer {
+            margin-top: 1rem;
+            display: grid;
+            gap: 1rem;
+        }
+        .settings-file-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: rgba(21, 29, 48, 0.55);
+            padding: 1rem;
+        }
+        .settings-file-card h2 {
+            margin: 0 0 0.35rem;
+        }
+        .settings-file-card pre {
+            max-height: 26rem;
+            overflow: auto;
+            margin: 0.75rem 0 0;
+        }
+        .settings-file-meta {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .notes-list {
+            display: grid;
+            gap: 0.35rem;
+            margin-top: 0.55rem;
+        }
+        .note-link {
+            display: block;
+            width: 100%;
+            text-align: left;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: rgba(21, 29, 48, 0.5);
+            color: var(--accent);
+            padding: 0.45rem 0.55rem;
+            cursor: pointer;
+            font: inherit;
+        }
+        .note-link:hover { border-color: rgba(34, 211, 238, 0.5); }
+        .note-link small {
+            display: block;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.68);
+            z-index: 100;
+        }
+        .modal-backdrop.open { display: flex; }
+        .note-modal {
+            width: min(58rem, 100%);
+            max-height: min(46rem, calc(100vh - 2rem));
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: #0b0f19;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
+            overflow: hidden;
+        }
+        .note-modal-header,
+        .note-modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.9);
+        }
+        .note-modal-footer {
+            border-top: 1px solid var(--border);
+            border-bottom: 0;
+        }
+        .note-title-input {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.55rem;
+            font: inherit;
+            font-weight: 700;
+        }
+        .note-toolbar,
+        .note-modal .ql-toolbar.ql-snow {
+            border: 0;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.45);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-picker,
+        .note-modal .ql-toolbar.ql-snow button {
+            color: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-stroke {
+            stroke: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-fill {
+            fill: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-picker-options {
+            background: #0b0f19;
+            border-color: var(--border);
+        }
+        .note-modal .ql-container.ql-snow {
+            border: 0;
+            font: inherit;
+        }
+        .note-editor {
+            min-height: 18rem;
+            flex: 1 1 auto;
+            overflow: auto;
+            color: var(--text);
+            background: #080c14;
+            outline: none;
+        }
+        .note-editor .ql-editor,
+        .note-editor[contenteditable="true"] {
+            min-height: 18rem;
+            color: var(--text);
+            font-size: 1rem;
+            line-height: 1.6;
+            padding: 1rem;
+        }
+        .note-editor .ql-editor.ql-blank::before {
+            color: #64748b;
+            font-style: normal;
+        }
+        .note-editor:empty::before {
+            content: attr(data-placeholder);
+            color: #64748b;
+        }
+        .note-attachments {
+            border-top: 1px solid var(--border);
+            background: rgba(8, 12, 20, 0.95);
+            padding: 0.75rem;
+            max-height: 11rem;
+            overflow: auto;
+        }
+        .attachment-input {
+            max-width: 22rem;
+            color: var(--text-muted);
+            font: inherit;
+        }
+        .attachment-list {
+            display: grid;
+            gap: 0.5rem;
+            margin-top: 0.65rem;
+        }
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: rgba(21, 29, 48, 0.45);
+            padding: 0.5rem;
+        }
+        .attachment-preview {
+            width: 3.5rem;
+            height: 3.5rem;
+            flex: 0 0 3.5rem;
+            display: grid;
+            place-items: center;
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text-muted);
+            overflow: hidden;
+            font-size: 0.78rem;
+        }
+        .attachment-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .attachment-meta {
+            min-width: 0;
+        }
+        .attachment-meta a {
+            display: block;
+            color: var(--accent);
+            overflow-wrap: anywhere;
+        }
+        .attachment-meta small {
+            color: var(--text-muted);
+        }
+        @media (min-width: 72.01rem) {
+            body { padding-right: 27rem; }
+        }
+        @media (max-width: 72rem) {
+            .platform-shell { position: static; width: auto; max-height: none; margin: 0 1rem 1rem; }
+            .platform-shell.collapsed .platform-body { display: none; }
+        }
+
+    </style>
+</head>
+<body>
+    <div id="content">
+
+    <nav class="chapters" style="margin-bottom: 1rem; padding-bottom: 1rem;">
+        <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.05em; width: 100%; margin-bottom: 0.5rem; display: block;">Book Chapters</span>
+                    <a href="chapter0.html" class="">Ch. 0</a>
+            <a href="level_0_orientation.html" class="">Level 0 Orientation</a>
+            <a href="chapter1.html" class="">Ch. 1</a>
+            <a href="chapter2.html" class="">Ch. 2</a>
+            <a href="chapter3.html" class="">Ch. 3</a>
+            <a href="chapter4.html" class="">Ch. 4</a>
+            <a href="chapter4_5_interlude.html" class="">Ch. 4.5 Interlude</a>
+            <a href="chapter5.html" class="">Ch. 5</a>
+            <a href="chapter6.html" class="">Ch. 6</a>
+            <a href="settings.html" class="">Settings</a>
+    </nav>
+    <nav class="chapters" style="margin-bottom: 2.5rem; padding-bottom: 1.5rem;">
+        <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.05em; width: 100%; margin-bottom: 0.5rem; display: block;">Companion Guides</span>
+                    <a href="chapter0_companion.html" class="">Ch. 0 Companion</a>
+            <a href="chapter1_companion.html" class="">Ch. 1 Companion</a>
+            <a href="chapter2_companion.html" class="">Ch. 2 Companion</a>
+            <a href="chapter3_companion.html" class="">Ch. 3 Companion</a>
+            <a href="chapter4_companion.html" class="active">Ch. 4 Companion</a>
+            <a href="chapter5_companion.html" class="">Ch. 5 Companion</a>
+            <a href="chapter6_companion.html" class="">Ch. 6 Companion</a>
+    </nav>
+    
+        <article class="markdown-body">
+<h1 id="chapter-4-companion-guide-from-probabilities-to-accountable-decisions">Chapter 4 Companion Guide: From Probabilities to Accountable Decisions</h1>
+<h2 id="a-beginner-first-guide-to-classification-probability-decisions-ensembles-explanations-fairness-and-validation">A beginner-first guide to classification, probability, decisions, ensembles, explanations, fairness, and validation</h2>
+<p>This guide accompanies <code>chapter4.md</code>. It assumes no fluency in Python, mathematics, or statistics. When Chapter 4 uses a compact formula or a library object, this guide slows down, names every part, and connects it to a small example.</p>
+<p>Chapter 4 is about much more than predicting <code>0</code> or <code>1</code>. It builds an accountable chain:</p>
+<pre><code class="language-text">define the event
+    -&gt; estimate a probability
+    -&gt; test probability quality
+    -&gt; choose an action rule
+    -&gt; examine who receives errors and actions
+    -&gt; test where the evidence transports
+</code></pre>
+<p>Each arrow can fail independently. A sophisticated model cannot repair a badly defined label. A well-calibrated probability does not choose an ethical policy. A fairness table cannot prove that an intervention helps.</p>
+<hr />
+<h2 id="how-to-use-this-guide">How to use this guide</h2>
+<p>For each day:</p>
+<ol>
+<li>Read the companion section before the matching chapter section.</li>
+<li>Work through the tiny numerical example with paper or a calculator.</li>
+<li>Type the code rather than only reading it.</li>
+<li>change one value and predict what will happen before rerunning it.</li>
+<li>Complete the chapter's larger build exercise.</li>
+<li>Deliberately create one of the listed failures.</li>
+<li>Explain the exit check in ordinary language.</li>
+</ol>
+<p>Keep these five objects separate throughout the chapter:</p>
+<ul>
+<li><strong>label:</strong> what later counts as an event;</li>
+<li><strong>features:</strong> what is known when the prediction is made;</li>
+<li><strong>score or probability:</strong> what the fitted model returns;</li>
+<li><strong>action rule:</strong> how a person or policy uses the output; and</li>
+<li><strong>claim:</strong> what the study's evidence actually supports.</li>
+</ul>
+<hr />
+<h2 id="0-foundations-for-a-complete-beginner">0. Foundations for a complete beginner</h2>
+<h3 id="01-the-running-example">0.1 The running example</h3>
+<p>One row represents one fictional microhydro power project. At technical appraisal, the model estimates the chance that final inflation-adjusted cost will exceed 115% of the approved appraisal budget.</p>
+<p>The positive label is:</p>
+<pre><code class="language-python">major_cost_overrun = 1
+</code></pre>
+<p>The negative label is:</p>
+<pre><code class="language-python">major_cost_overrun = 0
+</code></pre>
+<p>A high probability may send a project to senior engineering review. It must not automatically reject the project. Prediction and action are different stages.</p>
+<p>The data are simulated teaching data. District or access-mode patterns in them are not facts about real places.</p>
+<h3 id="02-essential-python-vocabulary">0.2 Essential Python vocabulary</h3>
+<p>Python evaluates expressions and stores results in names:</p>
+<pre><code class="language-python">probability = 0.20
+threshold = 0.15
+send_to_review = probability &gt;= threshold
+print(send_to_review)  # True
+</code></pre>
+<ul>
+<li><code>=</code> assigns a value.</li>
+<li><code>&gt;=</code> compares two values.</li>
+<li><code>True</code> and <code>False</code> are Boolean values.</li>
+<li><code>#</code> starts a comment that Python ignores.</li>
+<li>a function packages reusable instructions.</li>
+</ul>
+<pre><code class="language-python">def odds(p):
+    return p / (1 - p)
+
+print(odds(0.20))
+</code></pre>
+<p>The indented line belongs to the function. <code>return</code> sends a result back to the caller.</p>
+<h3 id="03-arrays-tables-and-labels">0.3 Arrays, tables, and labels</h3>
+<p>NumPy arrays store many values of the same general kind:</p>
+<pre><code class="language-python">import numpy as np
+
+y = np.array([1, 0, 1, 0])
+p = np.array([0.80, 0.30, 0.60, 0.10])
+</code></pre>
+<p>Here <code>y[i]</code> is an observed label and <code>p[i]</code> is a predicted probability for the same row.</p>
+<p>Pandas DataFrames are labelled tables:</p>
+<pre><code class="language-python">import pandas as pd
+
+projects = pd.DataFrame({
+    &quot;project_id&quot;: [&quot;P1&quot;, &quot;P2&quot;, &quot;P3&quot;],
+    &quot;probability&quot;: [0.72, 0.18, 0.41],
+})
+print(projects[&quot;probability&quot;].mean())
+</code></pre>
+<p>Important patterns used in Chapter 4:</p>
+<ul>
+<li><code>frame["column"]</code> selects one column;</li>
+<li><code>.mean()</code> calculates an average;</li>
+<li><code>.groupby("district")</code> forms groups;</li>
+<li><code>.fit(X, y)</code> learns from features <code>X</code> and labels <code>y</code>;</li>
+<li><code>.predict_proba(X)[:, 1]</code> selects the probability of class 1;</li>
+<li><code>random_state=...</code> makes randomized code reproducible.</li>
+</ul>
+<h3 id="04-mathematical-symbols-used-in-the-chapter">0.4 Mathematical symbols used in the chapter</h3>
+<ul>
+<li>$Y$ is a random binary outcome; $y_i$ is the observed label for row $i$.</li>
+<li>$X$ is the complete feature table; $x_i$ is one row.</li>
+<li>$n$ is the number of rows.</li>
+<li>$sum$ means “add these terms.”</li>
+<li>$prod$ means “multiply these terms.”</li>
+<li>$log$ is the natural logarithm.</li>
+<li>$e^z$ is the exponential function.</li>
+<li>$mathbb E$ means an average over a probability distribution.</li>
+<li>$P(A)$ means the probability of event $A$.</li>
+<li>$P(A\mid B)$ means the probability of $A$ among cases for which $B$ is true.</li>
+<li>$\mathbb 1{condition}$ is 1 when the condition is true and 0 otherwise.</li>
+<li>$\partial$ denotes a derivative when a function has several inputs.</li>
+<li>$X^\top$ is the transpose of a matrix: rows and columns exchange roles.</li>
+</ul>
+<h3 id="05-four-different-meanings-of-positive">0.5 Four different meanings of “positive”</h3>
+<p>Classification language can be misleading. “Positive” need not mean good.</p>
+<ul>
+<li><strong>actual positive:</strong> the event occurred, $Y=1$;</li>
+<li><strong>predicted positive:</strong> the action rule marked the case, $\hat Y=1$;</li>
+<li><strong>true positive:</strong> the event occurred and the rule marked it;</li>
+<li><strong>false positive:</strong> the rule marked it but the event did not occur.</li>
+</ul>
+<p>In this chapter, a positive event is a major cost overrun, while a positive action is senior review.</p>
+<h3 id="06-training-validation-calibration-and-test-data">0.6 Training, validation, calibration, and test data</h3>
+<ul>
+<li><strong>Training data</strong> fit model parameters.</li>
+<li><strong>Validation data</strong> compare models and tune settings.</li>
+<li><strong>Calibration data</strong> can learn a mapping from model scores to probabilities.</li>
+<li><strong>Test data</strong> estimate final performance after choices are frozen.</li>
+</ul>
+<p>One row may sometimes receive different roles through carefully designed cross-validation, but information from its evaluation role must not leak into its training role.</p>
+<h3 id="07-the-prediction-time-rule">0.7 The prediction-time rule</h3>
+<p>Imagine stopping the project clock at technical appraisal. A feature is allowed only if it is available then. Final material bills, final costs, and events learned during construction are prohibited, even if they make prediction easy.</p>
+<p>This simple question catches much leakage:</p>
+<blockquote>
+<p>Could a real reviewer know this value at the exact moment the prediction must be issued?</p>
+</blockquote>
+<h3 id="08-installing-the-software">0.8 Installing the software</h3>
+<p>From a terminal in the project directory, install the core packages:</p>
+<pre><code class="language-bash">python -m pip install numpy pandas scipy matplotlib scikit-learn
+</code></pre>
+<ul>
+<li>NumPy supplies arrays and numerical functions.</li>
+<li>pandas supplies labelled tables.</li>
+<li>SciPy supplies probability distributions and optimization utilities.</li>
+<li>Matplotlib draws diagnostic plots.</li>
+<li>scikit-learn supplies preprocessing, models, metrics, and validation tools.</li>
+</ul>
+<p>SHAP is optional and needed only for its interpretation laboratories:</p>
+<pre><code class="language-bash">python -m pip install shap
+</code></pre>
+<p>An installation command changes the current Python environment. Record Python, operating-system, and package versions so another learner can reproduce the run. A seed reproduces pseudo-random choices under the same software; it does not make a scientific result universally stable.</p>
+<h3 id="09-understanding-chapter4_datapy">0.9 Understanding <code>chapter4_data.py</code></h3>
+<p>The Chapter 4 generator begins with Chapter 3's fictional project table, then creates an appraisal budget from appraisal-time variables:</p>
+<pre><code class="language-python">df = make_mhp_practitioner_data(n=n, seed=seed)
+rng = np.random.default_rng(seed + 1)
+</code></pre>
+<p><code>n</code> is the number of rows. A separate random generator produces reproducible budget noise without silently reusing Chapter 3's random stream.</p>
+<p>A dictionary maps district labels to simulated budget adjustments:</p>
+<pre><code class="language-python">district_term = df[&quot;district&quot;].map(district_budget_adjustment).to_numpy()
+</code></pre>
+<p><code>.map(...)</code> looks up one adjustment per row. <code>.to_numpy()</code> converts the pandas Series into a NumPy array for arithmetic.</p>
+<p>The appraisal-budget expression combines linear, squared, categorical, time, and random terms. It deliberately uses only information available at appraisal. The binary event is constructed by comparison:</p>
+<pre><code class="language-python">df[&quot;major_cost_overrun&quot;] = (
+    df[&quot;actual_cost_2025_million_pkr&quot;]
+    &gt; 1.15 * df[&quot;appraisal_budget_2025_million_pkr&quot;]
+).astype(int)
+</code></pre>
+<p>The comparison first creates <code>True</code> or <code>False</code>; <code>.astype(int)</code> converts them to 1 and 0. Final cost is legitimate for constructing the later outcome but prohibited as a prediction feature.</p>
+<p>Finally:</p>
+<pre><code class="language-python">df.sort_values([&quot;start_year&quot;, &quot;project_id&quot;]).reset_index(drop=True)
+</code></pre>
+<p>puts earlier years first and gives rows a fresh numeric index. This ordering is essential for time-based splitting, but sorting alone does not make every generic cross-validator time-aware.</p>
+<p>The generator retains final-cost fields for teaching audits. Their presence in the same DataFrame does not authorize using them. Real data would need accounting review, inflation rules, close-out dates, contract-change treatment, and dispute policies.</p>
+<h3 id="010-pipelines-and-column-transformations">0.10 Pipelines and column transformations</h3>
+<p>A scikit-learn <code>Pipeline</code> runs steps in order:</p>
+<pre><code class="language-python">from sklearn.pipeline import Pipeline
+
+procedure = Pipeline([
+    (&quot;preprocess&quot;, preprocessor),
+    (&quot;model&quot;, classifier),
+])
+</code></pre>
+<p>When cross-validation calls <code>fit</code>, preprocessing learns only from that fold's training rows. Validation rows receive the stored transformation. This is why a pipeline is part of the scientific procedure, not merely convenient syntax.</p>
+<p>A <code>ColumnTransformer</code> can send numeric and categorical columns through different paths. Numeric columns may receive median imputation and standardization. Categorical columns may receive most-frequent imputation and one-hot encoding. <code>handle_unknown="ignore"</code> prevents a previously unseen validation category from crashing prediction, but it does not prove that the new category is represented adequately.</p>
+<p>For classifiers, the fitted procedure usually exposes:</p>
+<pre><code class="language-python">procedure.predict_proba(X_new)[:, 1]
+</code></pre>
+<p>Use the class-1 probability for probability metrics and registered action rules. <code>.predict(...)</code> normally applies an estimator default threshold and can discard information needed for calibration and decision analysis.</p>
+<hr />
+<h1 id="day-21-the-outcome-probability-and-prediction-contract">Day 21 — The outcome, probability, and prediction contract</h1>
+<h2 id="211-begin-with-time-not-an-algorithm">21.1 Begin with time, not an algorithm</h2>
+<p>A binary column hides a story. Define:</p>
+<ul>
+<li><strong>unit:</strong> what one row represents;</li>
+<li><strong>eligibility:</strong> which rows belong in the study;</li>
+<li><strong>index time:</strong> when prediction occurs;</li>
+<li><strong>event:</strong> what makes the outcome 1;</li>
+<li><strong>horizon:</strong> how long outcomes are observed;</li>
+<li><strong>negative rule:</strong> when 0 is justified;</li>
+<li><strong>unresolved rule:</strong> what happens before the outcome matures; and</li>
+<li><strong>competing outcomes:</strong> how cancellation, merger, or scope change are handled.</li>
+</ul>
+<p>An unfinished project is unknown, not automatically 0. Coding it negative gives older projects more time to become positive and contaminates the meaning of the label.</p>
+<p>If event timing and incomplete follow-up are central, a time-to-event model may be more honest than a fixed binary outcome.</p>
+<h2 id="212-label-construction-is-measurement">21.2 Label construction is measurement</h2>
+<p>“Overrun above 15%” is not a natural fact until accounting rules are specified. Ask:</p>
+<ul>
+<li>Is the original or revised budget the denominator?</li>
+<li>Are inflation and exchange rates handled consistently?</li>
+<li>Does approved scope expansion count?</li>
+<li>When is the final account considered closed?</li>
+<li>Can accounting practice differ across locations?</li>
+</ul>
+<p>The primary definition must be fixed before model comparison. Alternate 10%, 15%, and 20% definitions are useful sensitivity analyses, not invitations to choose the easiest result afterward.</p>
+<h2 id="213-probability-odds-and-log-odds">21.3 Probability, odds, and log odds</h2>
+<p>A probability $p$ lies from 0 to 1. Odds compare the event probability with the non-event probability:</p>
+<p>$$
+o=\frac{p}{1-p}.
+$$</p>
+<p>For $p=0.20$:</p>
+<p>$$
+o=\frac{0.20}{0.80}=0.25.
+$$</p>
+<p>This is “one event for four non-events.” It is not a 25% probability.</p>
+<p>Convert odds back to probability:</p>
+<p>$$
+p=\frac{o}{1+o}.
+$$</p>
+<p>Log odds are:</p>
+<p>$$
+\operatorname{logit}(p)=\log\left(\frac{p}{1-p}\right).
+$$</p>
+<p>Probabilities are bounded, but log odds range from negative infinity to positive infinity. At $p=0.5$, odds are 1 and log odds are 0.</p>
+<pre><code class="language-python">import numpy as np
+
+def probability_to_log_odds(p):
+    if not 0 &lt; p &lt; 1:
+        raise ValueError(&quot;p must be strictly between 0 and 1&quot;)
+    return np.log(p / (1 - p))
+
+def log_odds_to_probability(z):
+    return 1 / (1 + np.exp(-z))
+</code></pre>
+<h2 id="214-bernoulli-outcomes">21.4 Bernoulli outcomes</h2>
+<p>A Bernoulli variable has two possible values:</p>
+<p>$$
+Y\sim\operatorname{Bernoulli}(p),\qquad Y\in\{0,1\}.
+$$</p>
+<p>Its compact probability formula is:</p>
+<p>$$
+P(Y=y)=p^y(1-p)^{1-y}.
+$$</p>
+<p>Substitute both values:</p>
+<ul>
+<li>for $y=1$, it becomes $p$;</li>
+<li>for $y=0$, it becomes $1-p$.</li>
+</ul>
+<p>Its mean and variance are:</p>
+<p>$$
+\mathbb E[Y]=p,
+\qquad
+\operatorname{Var}(Y)=p(1-p).
+$$</p>
+<p>Variance is greatest at $p=0.5$ and small near 0 or 1. Binary data therefore do not have constant conditional variance.</p>
+<h2 id="215-prevalence-and-the-constant-baseline">21.5 Prevalence and the constant baseline</h2>
+<p>Prevalence is the event fraction in a named sample and time window:</p>
+<p>$$
+\hat\pi=\frac{\text{number of events}}{\text{number of eligible resolved rows}}.
+$$</p>
+<p>It can change by period, group, label definition, follow-up, and sampling plan.</p>
+<p>A no-feature probability model predicts training prevalence for every future row. If 18 of 100 training projects overrun, it predicts 0.18 for each validation project. This is a serious baseline for Brier score and log loss.</p>
+<p>Never calculate a fold's baseline using the full dataset; that reveals future prevalence.</p>
+<h2 id="216-selection-into-the-labelled-sample">21.6 Selection into the labelled sample</h2>
+<p>Let $S=1$ mean a resolved label is available. Training estimates:</p>
+<p>$$
+P(Y=1\mid X,S=1),
+$$</p>
+<p>while deployment may need $P(Y=1\mid X)$. These differ if fast-closing or well-documented projects are overrepresented.</p>
+<p>Compare labelled and unresolved eligible projects using appraisal-time features, year, group, and follow-up length. This does not prove selection is harmless, but it exposes obvious differences.</p>
+<h2 id="217-beginner-checklist">21.7 Beginner checklist</h2>
+<p>Before Day 22, be able to:</p>
+<ul>
+<li>describe the event without referring to a dataset column name;</li>
+<li>distinguish 0 from unknown;</li>
+<li>convert 0.20 to odds and log odds;</li>
+<li>explain why prevalence is not timeless;</li>
+<li>construct a training-only constant probability baseline; and</li>
+<li>name one way labelled projects could be unrepresentative.</li>
+</ul>
+<hr />
+<h1 id="day-22-logistic-regression-from-bernoulli-likelihood">Day 22 — Logistic regression from Bernoulli likelihood</h1>
+<h2 id="221-why-a-straight-probability-line-is-awkward">22.1 Why a straight probability line is awkward</h2>
+<p>A line $p=\beta_0+\beta_1x$ can predict $p&lt;0$ or $p&gt;1$. Logistic regression instead makes log odds linear:</p>
+<p>$$
+\log\left(\frac{p}{1-p}\right)=x^\top\beta.
+$$</p>
+<p>The sigmoid converts any real score $z=x^\top\beta$ into a valid probability:</p>
+<p>$$
+p=\sigma(z)=\frac{1}{1+e^{-z}}.
+$$</p>
+<p>“Linear logistic regression” means linear on the log-odds scale. The probability curve is S-shaped.</p>
+<h2 id="222-vectors-and-the-linear-score">22.2 Vectors and the linear score</h2>
+<p>With two features and an intercept:</p>
+<p>$$
+z=\beta_0+\beta_1x_1+\beta_2x_2.
+$$</p>
+<p>The shorthand $x^\top\beta$ means multiply matching feature and coefficient values and add them. The intercept is represented by a constant feature equal to 1.</p>
+<p>The sigmoid derivative is:</p>
+<p>$$
+\sigma'(z)=\sigma(z)[1-\sigma(z)]=p(1-p).
+$$</p>
+<p>It is largest at $p=0.5$. The same log-odds change has a larger probability effect near 0.5 than near 0 or 1.</p>
+<h2 id="223-likelihood-and-log-loss">22.3 Likelihood and log loss</h2>
+<p>Likelihood asks: under coefficients $\beta$, how plausible are all observed labels?</p>
+<p>$$
+L(\beta)=\prod_i p_i^{y_i}(1-p_i)^{1-y_i}.
+$$</p>
+<p>Products of many small probabilities are numerically awkward, so take logarithms. Logs turn products into sums:</p>
+<p>$$
+\ell(\beta)=\sum_i[y_i\log p_i+(1-y_i)\log(1-p_i)].
+$$</p>
+<p>Maximizing log likelihood is equivalent to minimizing negative average log likelihood:</p>
+<p>$$
+J(\beta)=-\frac1n\sum_i[y_i\log p_i+(1-y_i)\log(1-p_i)].
+$$</p>
+<p>This is binary cross-entropy or log loss. A confident wrong answer has very large loss. Code clips probabilities away from exact 0 and 1 before taking logs.</p>
+<h2 id="224-gradient-and-hessian-without-mystery">22.4 Gradient and Hessian without mystery</h2>
+<p>A derivative says how fast a quantity changes. A gradient collects one derivative for each coefficient:</p>
+<p>$$
+\nabla J=\frac1nX^\top(p-y).
+$$</p>
+<p>The vector $p-y$ contains probability errors. Multiplication by $X^\top$ accumulates how those errors align with each feature.</p>
+<p>The Hessian records curvature:</p>
+<p>$$
+H=\frac1nX^\top WX,
+\qquad W_{ii}=p_i(1-p_i).
+$$</p>
+<p>Because every diagonal weight is nonnegative, $H$ is positive semidefinite. The logistic negative log likelihood is convex: it has no deceptive local valleys, although separation or redundant columns can prevent a finite unique solution.</p>
+<h2 id="225-gradient-descent-newtons-method-and-irls">22.5 Gradient descent, Newton's method, and IRLS</h2>
+<p>Gradient descent repeatedly moves opposite the gradient:</p>
+<p>$$
+\beta_{new}=\beta_{old}-\eta\nabla J.
+$$</p>
+<p>$\eta$ is the learning rate. Too large can overshoot; too small can be slow.</p>
+<p>Newton's method also uses curvature:</p>
+<p>$$
+\beta_{new}=\beta_{old}-H^{-1}\nabla J.
+$$</p>
+<p>For generalized linear models, the Newton calculation can be written as iteratively reweighted least squares (IRLS). It repeatedly updates probabilities, weights, and a working least-squares problem. This is a computational device, not a claim that binary errors are Gaussian.</p>
+<h2 id="226-regularisation">22.6 Regularisation</h2>
+<p>An $L_2$ penalty adds:</p>
+<p>$$
+\frac{\lambda}{2}\sum_{j=1}^p\beta_j^2.
+$$</p>
+<p>It discourages very large slopes and stabilizes correlated or sparse designs. The intercept is usually not penalized. Scaling matters because the same numeric coefficient represents different changes in metres, kilometres, or rupees.</p>
+<p>In scikit-learn, <code>C</code> is inverse penalty strength:</p>
+<ul>
+<li>smaller <code>C</code> means stronger regularisation;</li>
+<li>larger <code>C</code> means weaker regularisation.</li>
+</ul>
+<p>Packages normalize loss differently, so identical numeric settings need not mean identical objectives.</p>
+<h2 id="227-coefficients-and-odds-ratios">22.7 Coefficients and odds ratios</h2>
+<p>A slope $\beta_j$ is the conditional log-odds change for a one-unit feature increase, holding represented covariates fixed. Exponentiating gives an odds ratio:</p>
+<p>$$
+OR=e^{\beta_j}.
+$$</p>
+<p>If $\beta_j=0.4$, then $OR\approx1.49$: odds multiply by 1.49. This is not a 49 percentage-point probability increase.</p>
+<p>The local probability slope is:</p>
+<p>$$
+\frac{\partial p}{\partial x_j}=\beta_jp(1-p).
+$$</p>
+<p>Therefore the probability change depends on starting risk. Coefficients are associational unless a separate causal design justifies a causal interpretation.</p>
+<h2 id="228-complete-and-quasi-complete-separation">22.8 Complete and quasi-complete separation</h2>
+<p>Complete separation occurs when a feature rule perfectly divides every 0 from every 1. Unpenalised coefficients can grow without bound while likelihood keeps improving. Quasi-separation leaves a few boundary ties.</p>
+<p>Warning signs:</p>
+<ul>
+<li>convergence warnings;</li>
+<li>huge coefficients or standard errors;</li>
+<li>probabilities nearly exactly 0 or 1;</li>
+<li>perfect training accuracy; and</li>
+<li>extreme sensitivity to a few rows.</li>
+</ul>
+<p>Check leakage and data errors first. Then consider justified category pooling, regularisation, bias-reduced inference, or more observations in sparse regions. Never celebrate perfect accuracy before this audit.</p>
+<h2 id="229-minimal-library-workflow">22.9 Minimal library workflow</h2>
+<pre><code class="language-python">from sklearn.linear_model import LogisticRegression
+
+model = LogisticRegression(C=1.0, max_iter=10_000)
+model.fit(X_train, y_train)
+probability = model.predict_proba(X_valid)[:, 1]
+</code></pre>
+<ul>
+<li><code>fit</code> learns from training rows.</li>
+<li><code>predict_proba</code> returns one column per class.</li>
+<li><code>[:, 1]</code> selects class-1 probabilities.</li>
+<li>a convergence warning is evidence to investigate, not text to suppress.</li>
+</ul>
+<hr />
+<h1 id="day-23-proper-scoring-and-calibration">Day 23 — Proper scoring and calibration</h1>
+<h2 id="231-three-different-evaluation-questions">23.1 Three different evaluation questions</h2>
+<ul>
+<li><strong>Discrimination:</strong> are event cases generally ranked higher?</li>
+<li><strong>Calibration:</strong> do stated probabilities match event frequencies?</li>
+<li><strong>Decision value:</strong> do resulting actions perform well under stated consequences?</li>
+</ul>
+<p>A model can rank perfectly but call a 20% event a 90% risk. It can be calibrated overall while barely separating cases. One number cannot represent all three goals.</p>
+<h2 id="232-calibration-in-ordinary-language">23.2 Calibration in ordinary language</h2>
+<p>Perfect calibration means:</p>
+<p>$$
+P(Y=1\mid P=p)=p.
+$$</p>
+<p>Among many comparable cases receiving 0.20, roughly 20% should experience the event. This validates repeated forecasts, not an individual claim that a particular case is “20% true.”</p>
+<p>Calibration belongs to a population and time. It can break after prevalence, workflow, or conditional relationships change.</p>
+<h2 id="233-brier-score-and-propriety">23.3 Brier score and propriety</h2>
+<p>The Brier score is mean squared probability error:</p>
+<p>$$
+\operatorname{Brier}=\frac1n\sum_i(p_i-y_i)^2.
+$$</p>
+<p>Lower is better. Suppose true probability is $q$ but someone reports $p$. Expected squared loss is:</p>
+<p>$$
+q(p-1)^2+(1-q)p^2=p^2-2pq+q.
+$$</p>
+<p>Its derivative is $2(p-q)$, which is zero only at $p=q$. Truthful reporting minimizes expected loss. That makes Brier score strictly proper.</p>
+<h2 id="234-log-loss-and-propriety">23.4 Log loss and propriety</h2>
+<p>For one row:</p>
+<p>$$
+-y\log p-(1-y)\log(1-p).
+$$</p>
+<p>If true probability is $q$, expected loss is:</p>
+<p>$$
+-q\log p-(1-q)\log(1-p).
+$$</p>
+<p>Its derivative is $(p-q)/[p(1-p)]$, giving the minimum at $p=q$. Log loss punishes extreme wrong confidence more strongly than Brier score.</p>
+<h2 id="235-reliability-tables-and-diagrams">23.5 Reliability tables and diagrams</h2>
+<p>A reliability table groups similar probabilities, then reports:</p>
+<ul>
+<li>number of cases;</li>
+<li>mean predicted probability; and</li>
+<li>observed event fraction.</li>
+</ul>
+<p>If a bin has mean prediction 0.31 and event rate 0.29, it is close in that bin. But binning is descriptive:</p>
+<ul>
+<li>tiny bins are uncertain;</li>
+<li>empty regions supply no evidence;</li>
+<li>equal-width and equal-count bins differ;</li>
+<li>results change with boundaries; and</li>
+<li>a diagonal-looking graph says nothing about ranking.</li>
+</ul>
+<p>Always show counts or data density and preferably uncertainty.</p>
+<h2 id="236-brier-decomposition">23.6 Brier decomposition</h2>
+<p>For deliberately binned forecasts, Brier score can be written as:</p>
+<p>$$
+\text{reliability}-\text{resolution}+\text{uncertainty}.
+$$</p>
+<ul>
+<li><strong>Reliability</strong> penalizes mean forecast/event-rate disagreement within bins.</li>
+<li><strong>Resolution</strong> rewards groups whose event rates differ from overall prevalence.</li>
+<li><strong>Uncertainty</strong> is $\bar y(1-\bar y)$, the variability associated with prevalence.</li>
+</ul>
+<p>With continuously varying forecasts, a binned decomposition depends on the grouping and can omit within-bin structure. Treat it as a diagnostic, not an invariant fingerprint.</p>
+<h2 id="237-calibration-intercept-and-slope">23.7 Calibration intercept and slope</h2>
+<p>On untouched validation data, form predicted log odds $z$ and fit:</p>
+<p>$$
+\operatorname{logit}P(Y=1)=a+bz.
+$$</p>
+<p>Ideally $a=0$ and $b=1$.</p>
+<ul>
+<li>$a&lt;0$ often means average risk is too high.</li>
+<li>$a&gt;0$ often means average risk is too low.</li>
+<li>$b&lt;1$ often means predictions are too extreme.</li>
+<li>$b&gt;1$ often means the risk range is too narrow.</li>
+</ul>
+<p>These are estimates with uncertainty. Training predictions make the assessment optimistic.</p>
+<h2 id="238-sigmoid-and-isotonic-calibration">23.8 Sigmoid and isotonic calibration</h2>
+<p>Sigmoid calibration fits a logistic mapping from score to probability. It is relatively stable but assumes an S-shaped correction.</p>
+<p>Isotonic calibration fits a flexible nondecreasing staircase. It assumes higher scores should never map to lower risks, but it can overfit small calibration sets.</p>
+<p>Valid calibration patterns use:</p>
+<ul>
+<li>a dedicated later calibration period;</li>
+<li>cross-fitted development predictions; or</li>
+<li>calibration entirely inside every outer validation fold.</li>
+</ul>
+<p>The final calibrated procedure must be judged on untouched data. Fitting and assessing a calibrator on the same probabilities is leakage.</p>
+<h2 id="239-why-ece-is-insufficient">23.9 Why ECE is insufficient</h2>
+<p>Expected calibration error averages absolute bin gaps. It changes with bins, can hide local failures, and is not a strictly proper scoring rule for choosing forecasts. Report a proper score, a reliability display, sample support, and uncertainty.</p>
+<hr />
+<h1 id="day-24-thresholds-ranking-and-class-imbalance">Day 24 — Thresholds, ranking, and class imbalance</h1>
+<h2 id="241-a-probability-is-not-an-action">24.1 A probability is not an action</h2>
+<p>A threshold rule is:</p>
+<p>$$
+a_i=\mathbb 1\{p_i\ge t\}.
+$$</p>
+<p>Changing $t$ changes actions without changing the probability model. A default 0.5 has no special ethical or economic status.</p>
+<h2 id="242-confusion-matrix-from-four-counts">24.2 Confusion matrix from four counts</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: right;">Event</th>
+<th style="text-align: right;">No event</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Review</td>
+<td style="text-align: right;">TP</td>
+<td style="text-align: right;">FP</td>
+</tr>
+<tr>
+<td>No review</td>
+<td style="text-align: right;">FN</td>
+<td style="text-align: right;">TN</td>
+</tr>
+</tbody>
+</table>
+<p>From these counts:</p>
+<p>$$
+\text{sensitivity}=\frac{TP}{TP+FN},
+\qquad
+\text{specificity}=\frac{TN}{TN+FP},
+$$</p>
+<p>$$
+\text{precision}=\frac{TP}{TP+FP},
+\qquad
+\text{accuracy}=\frac{TP+TN}{n}.
+$$</p>
+<p>Sensitivity asks what fraction of events were reviewed. Precision asks what fraction of reviewed projects actually had events. Their denominators differ.</p>
+<p>Balanced accuracy averages sensitivity and specificity, giving the two classes equal weight. Always report raw counts because rates can be unstable in small groups.</p>
+<h2 id="243-deriving-a-cost-threshold">24.3 Deriving a cost threshold</h2>
+<p>Suppose unnecessary review costs $C_{FP}$ and missed overrun costs $C_{FN}$. With calibrated risk $p$:</p>
+<p>$$
+C_{review}=C_{FP}(1-p),
+$$</p>
+<p>$$
+C_{no\ review}=C_{FN}p.
+$$</p>
+<p>Review when the first is no larger than the second. Rearranging gives:</p>
+<p>$$
+t=\frac{C_{FP}}{C_{FP}+C_{FN}}.
+$$</p>
+<p>If a miss costs five times an unnecessary review, $t=1/6\approx0.167$.</p>
+<p>Real systems can have limited capacity, varying event severity, delayed reviews, human behavior, and project-specific costs. Then use explicit expected utility or constrained allocation rather than pretending one threshold captures everything.</p>
+<h2 id="244-threshold-tables-and-f_1">24.4 Threshold tables and $F_1$</h2>
+<p>A validation threshold table should list review rate, sensitivity, specificity, precision, confusion counts, and cost for many plausible thresholds. Select according to the registered goal, never on the locked test.</p>
+<p>$F_1$ is the harmonic mean of precision and recall:</p>
+<p>$$
+F_1=2\frac{PR}{P+R}.
+$$</p>
+<p>It omits true negatives and is not a monetary cost, probability score, capacity rule, or severity model. Use it only when its trade-off matches the real task.</p>
+<h2 id="245-roc-curves-and-auc">24.5 ROC curves and AUC</h2>
+<p>An ROC curve plots true-positive rate against false-positive rate over thresholds. ROC AUC is the probability that a randomly chosen positive gets a higher score than a randomly chosen negative, with half credit for ties.</p>
+<p>ROC AUC measures ranking, not calibration. It averages threshold regions that operations may never use. A partial ROC region can be useful only if selected in advance.</p>
+<h2 id="246-precisionrecall-curves">24.6 Precision–recall curves</h2>
+<p>A PR curve plots precision against recall. Its no-skill precision baseline is prevalence, so it makes rare-event difficulty visible.</p>
+<p>Precision changes when prevalence changes, even if class-conditional score distributions remain fixed. Average precision is a particular weighted summary across recall increments and is not identical to every trapezoidal “PR AUC.” Name the implementation.</p>
+<h2 id="247-what-imbalance-does-and-does-not-mean">24.7 What imbalance does and does not mean</h2>
+<p>Class imbalance merely describes unequal class frequency. It can make accuracy misleading, rare-event estimates noisy, and random folds deficient in events.</p>
+<p>Possible responses answer different questions:</p>
+<ul>
+<li><strong>class weighting</strong> changes how fitting errors are valued;</li>
+<li><strong>over/undersampling</strong> changes the training distribution;</li>
+<li><strong>SMOTE</strong> synthesizes points between minority neighbors;</li>
+<li><strong>threshold movement</strong> changes actions while retaining the probability model.</li>
+</ul>
+<p>Resampling must occur inside each training fold. Synthetic cases are not new independent event evidence and may violate mixed, constrained, geographic, or temporal structure. Weighted or resampled outputs may require probability correction and representative calibration.</p>
+<h2 id="248-capacity-constrained-review">24.8 Capacity-constrained review</h2>
+<p>If only 30 cases can be reviewed, a top-30 policy ranks each cohort. Its effective threshold changes with the cohort.</p>
+<p>Evaluate event yield, recall among the top $k$, selection stability, subgroup allocation, and the usefulness of actual probabilities. Describe it as a rank allocation policy, not a fixed-threshold classifier.</p>
+<hr />
+<h1 id="day-25-nonlinear-kernel-and-multiple-class-models">Day 25 — Nonlinear, kernel, and multiple-class models</h1>
+<h2 id="251-several-meanings-of-nonlinear">25.1 Several meanings of nonlinear</h2>
+<p>Logistic regression has an S-shaped probability even when log odds are linear. Nonlinearity may instead enter through:</p>
+<ul>
+<li>polynomial terms such as $x^2$;</li>
+<li>interactions such as $x_1x_2$;</li>
+<li>spline basis functions;</li>
+<li>neighborhoods or kernels; or</li>
+<li>a complex learned decision surface.</li>
+</ul>
+<p>Always name the scale on which a relationship is linear or nonlinear.</p>
+<h2 id="252-polynomial-and-interaction-logistic-models">25.2 Polynomial and interaction logistic models</h2>
+<p>For a centered quadratic:</p>
+<p>$$
+\operatorname{logit}(p)=\beta_0+\beta_1x_c+\beta_2x_c^2.
+$$</p>
+<p>Centering means subtracting a meaningful reference, which makes coefficients and computation easier to interpret. The probability derivative is:</p>
+<p>$$
+\frac{\partial p}{\partial x}=p(1-p)(\beta_1+2\beta_2x_c).
+$$</p>
+<p>For an interaction:</p>
+<p>$$
+\operatorname{logit}(p)=\beta_0+\beta_1x_1+\beta_2x_2+\beta_3x_1x_2.
+$$</p>
+<p>The slope for $x_1$ depends on $x_2$. Log-odds interaction and probability interaction are not the same object, and neither proves causal effect modification.</p>
+<h2 id="253-splines-and-generalized-additive-models">25.3 Splines and generalized additive models</h2>
+<p>A spline represents a smooth curve using several basis columns $B_m(x)$:</p>
+<p>$$
+\operatorname{logit}(p)=\beta_0+\sum_m\theta_mB_m(x).
+$$</p>
+<p>A generalized additive model combines smooth feature functions:</p>
+<p>$$
+g(\mathbb E[Y\mid X])=\beta_0+f_1(x_1)+\cdots+f_p(x_p).
+$$</p>
+<p>For binary logistic GAMs, $g$ is the logit. Additivity improves readability but does not automatically learn interactions. Knot count, smoothness penalty, and chosen features belong inside validation. Plot curves with data density and uncertainty; smooth extrapolation beyond support is still unsupported.</p>
+<h2 id="254-k-nearest-neighbor-classification">25.4 K-nearest-neighbor classification</h2>
+<p>KNN finds the $k$ closest training points and averages their labels:</p>
+<p>$$
+\hat p(x)=\frac1k\sum_{i\in N_k(x)}y_i.
+$$</p>
+<p>Small $k$ is flexible and noisy. Large $k$ is smoother and drifts toward prevalence.</p>
+<p>Distance silently encodes assumptions about scaling, categories, missingness, and feature relevance. Without scaling, a variable measured in thousands can dominate one measured from 1 to 5.</p>
+<p>In high dimensions, points become sparse and distances often become similar: the curse of dimensionality. KNN needs disciplined features, adequate local data, and no claims beyond observed neighborhoods.</p>
+<h2 id="255-support-vector-machines">25.5 Support-vector machines</h2>
+<p>For labels encoded $-1,+1$, an SVM finds a separating score $f(x)$ with a wide margin. Soft-margin SVM uses hinge loss:</p>
+<p>$$
+\max(0,1-yf(x)).
+$$</p>
+<p>The objective balances a small weight norm with margin violations. In the common <code>C</code> parameterization:</p>
+<ul>
+<li>small <code>C</code> allows more violations and stronger regularisation;</li>
+<li>large <code>C</code> emphasizes fitting violations.</li>
+</ul>
+<p>Support vectors are points on or inside the margin that directly shape the solution.</p>
+<h2 id="256-kernels-and-the-rbf-kernel">25.6 Kernels and the RBF kernel</h2>
+<p>A kernel replaces an explicit inner product with a similarity function. The radial-basis-function kernel is:</p>
+<p>$$
+K(x,x')=\exp[-\gamma\lVert x-x'\rVert_2^2].
+$$</p>
+<p>Large $\gamma$ makes similarity very local and permits wiggly boundaries. Small $\gamma$ creates broader, smoother similarity. Scaling is essential, and <code>C</code> plus $\gamma$ need honest nested tuning.</p>
+<p>An SVM margin is not a probability. <code>probability=True</code> adds a calibration-like step and extra computation; its probability quality still requires untouched evaluation.</p>
+<h2 id="257-multiclass-classification-and-softmax">25.7 Multiclass classification and softmax</h2>
+<p>Multiclass outcomes have more than two mutually exclusive categories. Softmax turns class scores $z_k$ into probabilities summing to one:</p>
+<p>$$
+P(Y=k\mid x)=\frac{e^{z_k}}{\sum_j e^{z_j}}.
+$$</p>
+<p>Subtract the largest score before exponentiating for numerical stability. Cross-entropy sums the negative log probability assigned to each observed class.</p>
+<p>One-versus-rest and one-versus-one decompose the problem differently and can have different calibration behavior. Do not invent classes to hide censoring or competing-event problems.</p>
+<h2 id="258-macro-micro-and-weighted-metrics">25.8 Macro, micro, and weighted metrics</h2>
+<ul>
+<li><strong>Macro:</strong> calculate each class metric, then average classes equally.</li>
+<li><strong>Weighted macro:</strong> weight class metrics by class count.</li>
+<li><strong>Micro:</strong> pool all class decisions before calculating the metric.</li>
+</ul>
+<p>Macro can give ten examples the same influence as ten thousand; micro can conceal a rare-class failure. Report class support and per-class results.</p>
+<h2 id="259-multilabel-classification-and-chains">25.9 Multilabel classification and chains</h2>
+<p>Multilabel means several labels can be true for one row. Independent models ignore dependence. A classifier chain predicts labels sequentially and uses earlier predictions as later inputs.</p>
+<p>During training, true upstream future labels would leak information unavailable at deployment. Train downstream stages using out-of-fold upstream predictions, and feed only predictions at deployment. Chain order is itself a modeling choice.</p>
+<hr />
+<h1 id="day-26-classification-trees-and-random-forests">Day 26 — Classification trees and random forests</h1>
+<h2 id="261-how-a-tree-makes-probabilities">26.1 How a tree makes probabilities</h2>
+<p>A tree repeatedly splits feature space. Each terminal leaf predicts its event fraction:</p>
+<p>$$
+\hat p_L=\frac{\text{events in leaf }L}{\text{rows in leaf }L}.
+$$</p>
+<p>Every case in the leaf receives the same probability. A leaf with one event and no non-events reports 1.0 but has almost no support.</p>
+<h2 id="262-gini-impurity-and-entropy">26.2 Gini impurity and entropy</h2>
+<p>For class proportions $p_k$:</p>
+<p>$$
+I_G=1-\sum_kp_k^2.
+$$</p>
+<p>For two classes, $I_G=2p(1-p)$. It is 0 for a pure node and largest at an even split.</p>
+<p>Entropy is:</p>
+<p>$$
+I_H=-\sum_kp_k\log p_k,
+$$</p>
+<p>where $0\log0$ is defined as 0. Both measure mixing, but they need not choose the same split.</p>
+<h2 id="263-weighted-split-improvement">26.3 Weighted split improvement</h2>
+<p>A split is judged by parent impurity minus size-weighted child impurity:</p>
+<p>$$
+\Delta I=I_P-\frac{n_L}{n_P}I_L-\frac{n_R}{n_P}I_R.
+$$</p>
+<p>Weighting prevents a tiny pure child from receiving all the credit while leaving most cases mixed. The tree greedily chooses the best available split now; it does not search every possible future tree.</p>
+<h2 id="264-controlling-tree-complexity">26.4 Controlling tree complexity</h2>
+<ul>
+<li><code>max_depth</code> limits path length.</li>
+<li><code>min_samples_leaf</code> protects leaf support.</li>
+<li><code>min_samples_split</code> controls when splitting is considered.</li>
+<li><code>max_leaf_nodes</code> caps leaves.</li>
+<li><code>ccp_alpha</code> controls cost-complexity pruning.</li>
+</ul>
+<p>Large leaves often improve probability stability. Select complexity inside validation and inspect leaf event counts, not only accuracy.</p>
+<h2 id="265-preprocessing-and-extrapolation">26.5 Preprocessing and extrapolation</h2>
+<p>Numeric trees do not need standardization because feature order is unchanged by a strictly monotone transformation. But categorical handling, missing values, rare categories, and high-cardinality IDs remain implementation-specific.</p>
+<p>Beyond the training range, queries often fall into the same outer leaf, producing flat predictions. This is not evidence of safe extrapolation; it is one unsupported behavior.</p>
+<h2 id="266-bagging-and-why-correlation-matters">26.6 Bagging and why correlation matters</h2>
+<p>Bagging fits trees on bootstrap samples and averages probabilities:</p>
+<p>$$
+\hat p_{bag}(x)=\frac1M\sum_m\hat p_m(x).
+$$</p>
+<p>If tree predictions have variance $\sigma^2$ and pairwise correlation $\rho$, the average has idealized variance:</p>
+<p>$$
+\rho\sigma^2+\frac{1-\rho}{M}\sigma^2.
+$$</p>
+<p>More trees shrink the independent portion but cannot remove shared error. Diversity matters.</p>
+<h2 id="267-random-forests">26.7 Random forests</h2>
+<p>A random forest also offers each split only a random feature subset. Strong variables cannot dominate every tree, which can reduce correlation and let alternative patterns contribute.</p>
+<p>Important settings include tree count, candidate features per split, leaf size, depth, bootstrap size, and class weights. More trees reduce Monte Carlo noise; they do not repair leakage, bias, or miscalibration.</p>
+<h2 id="268-out-of-bag-prediction">26.8 Out-of-bag prediction</h2>
+<p>A bootstrap sample of size $n$ contains about 63.2% distinct rows. For each training row, an OOB prediction averages only trees that did not include that row.</p>
+<p>OOB estimates are useful internal evidence under bootstrap-like exchangeability, but ordinary bootstraps mix years and groups. They do not replace forward, grouped, geographic, or external validation.</p>
+<h2 id="269-forest-probability-quality-and-importance">26.9 Forest probability quality and importance</h2>
+<p>Forest probabilities average leaf proportions. Leaf size, class weighting, and sampling alter their spread, so good ROC AUC does not guarantee calibration.</p>
+<p>Impurity importance credits accumulated split gains. It can favor continuous or high-cardinality features and split credit strangely among correlated variables. Held-out permutation methods help, but no importance score is a causal effect.</p>
+<hr />
+<h1 id="day-27-gradient-boosting-and-honest-tuning">Day 27 — Gradient boosting and honest tuning</h1>
+<h2 id="271-bagging-versus-boosting">27.1 Bagging versus boosting</h2>
+<p>Bagging fits many learners mostly independently and averages them. Boosting builds sequentially:</p>
+<p>$$
+F_M(x)=F_0(x)+\eta\sum_{m=1}^Mh_m(x).
+$$</p>
+<p>Each new weak learner tries to reduce the current loss. $F$ is a raw score, $h_m$ is often a shallow tree, $\eta$ is learning rate, and $M$ is the number of stages.</p>
+<h2 id="272-gradient-descent-in-function-space">27.2 Gradient descent in function space</h2>
+<p>Boosting changes a function rather than one fixed coefficient vector. At stage $m$, calculate negative loss gradients:</p>
+<p>$$
+r_{im}=-\left.\frac{\partial L(y_i,F(x_i))}{\partial F(x_i)}\right|_{F=F_{m-1}}.
+$$</p>
+<p>Fit a weak learner to these pseudo-residuals, then add a small version of it. For squared error they equal ordinary residuals. For other losses they do not.</p>
+<h2 id="273-logistic-pseudo-residuals-and-initial-score">27.3 Logistic pseudo-residuals and initial score</h2>
+<p>For logistic loss, $p=\sigma(F)$ and:</p>
+<p>$$
+\frac{\partial L}{\partial F}=p-y.
+$$</p>
+<p>Therefore the negative gradient is:</p>
+<p>$$
+r=y-p.
+$$</p>
+<p>Boosting begins at training log prevalence:</p>
+<p>$$
+F_0=\log\left(\frac{\hat\pi}{1-\hat\pi}\right).
+$$</p>
+<p>Its sigmoid is the constant prevalence baseline. Each tree then adds structure.</p>
+<h2 id="274-interacting-complexity-controls">27.4 Interacting complexity controls</h2>
+<ul>
+<li>smaller learning rate usually needs more stages;</li>
+<li>deeper or larger trees learn higher-order interactions;</li>
+<li>minimum leaf size protects local support;</li>
+<li>row and feature subsampling add randomness;</li>
+<li>penalties and leaf rules depend on the implementation.</li>
+</ul>
+<p>There is no universal best range. A parameter setting only has meaning with a package version, dataset, preprocessing procedure, and search budget.</p>
+<h2 id="275-histogram-boosting">27.5 Histogram boosting</h2>
+<p>Histogram methods bin numeric feature values and search over bins, saving time and memory. Implementations differ in missing-value routing, categorical support, objectives, and regularisation. XGBoost, LightGBM, CatBoost, and scikit-learn estimators are related, not interchangeable.</p>
+<p>Read the documentation for the exact version. Raw strings are not automatically accepted merely because numeric missing values are.</p>
+<h2 id="276-early-stopping-is-model-selection">27.6 Early stopping is model selection</h2>
+<p>Early stopping chooses the training length using validation loss. A hidden random validation fraction can violate a temporal design.</p>
+<p>Use an order-respecting validation period, tune iteration count inside temporal folds, or implement expanding-window selection. The locked test must never decide when to stop.</p>
+<h2 id="277-grid-random-and-sequential-search">27.7 Grid, random, and sequential search</h2>
+<ul>
+<li><strong>Grid search</strong> evaluates a fixed Cartesian grid; transparent but wasteful in many dimensions.</li>
+<li><strong>Random search</strong> samples from stated distributions; often explores influential dimensions better for a fixed budget.</li>
+<li><strong>Bayesian/sequential search</strong> uses prior trials to choose promising next trials; efficient but still adaptive and capable of overfitting validation.</li>
+</ul>
+<p>Scale parameters often need log-uniform sampling. Uniformly sampling <code>C</code> from 0.0001 to 1000 spends almost all draws at the large end; uniformly sampling $\log_{10}C$ spreads trials across orders of magnitude.</p>
+<p>Record spaces, distributions, seed, trial count, failures, stopping, hardware, and every result.</p>
+<h2 id="278-nested-evaluation">27.8 Nested evaluation</h2>
+<p>The inner loop tunes preprocessing, features, hyperparameters, calibration, resampling, early stopping, and possibly threshold. The outer loop evaluates the resulting selection procedure.</p>
+<p>Outer splits must still match deployment. Random nested CV does not cure temporal or group mismatch.</p>
+<h2 id="279-fair-search-budgets-and-uncertainty">27.9 Fair search budgets and uncertainty</h2>
+<p>A default logistic model versus 1,000 boosted-model trials is a comparison of complete procedures and budgets, not pure algorithms. Report performance as well as computation.</p>
+<p>The best inner score is the minimum of many noisy estimates and is optimistically selected. Use a locked test or outer folds, report all fold scores and paired differences, align uncertainty with the sampling unit, and focus on practical differences.</p>
+<hr />
+<h1 id="day-28-interpreting-fitted-models-without-inventing-causes">Day 28 — Interpreting fitted models without inventing causes</h1>
+<h2 id="281-specify-the-explanation-request">28.1 Specify the explanation request</h2>
+<p>Before choosing a method, state:</p>
+<ul>
+<li>object: one prediction, global behavior, or performance dependence;</li>
+<li>audience: developer, reviewer, policymaker, or affected party;</li>
+<li>scale: probability, log odds, margin, loss, or action;</li>
+<li>reference: compared with what background;</li>
+<li>scope: fitted model or real-world mechanism; and</li>
+<li>use: debugging, contesting, understanding, or justifying.</li>
+</ul>
+<p>No explanation method turns prediction into causation.</p>
+<h2 id="282-intrinsic-and-post-hoc-interpretation">28.2 Intrinsic and post-hoc interpretation</h2>
+<p>Logistic coefficients, sparse scorecards, shallow trees, additive shape models, and monotonic models expose constrained structures. Post-hoc methods probe a fitted model afterward.</p>
+<p>A simple model can be readable and wrong. A post-hoc method can be useful but adds perturbation, approximation, and reference assumptions. Match fidelity and complexity to the use.</p>
+<h2 id="283-coefficients-are-not-generic-importance">28.3 Coefficients are not generic importance</h2>
+<p>Logistic coefficients depend on units, coding, correlated variables, interactions, regularisation, omissions, measurement error, and sampling. Comparing a one-kilometre coefficient with a one-million-rupee coefficient is meaningless without a defined perturbation.</p>
+<h2 id="284-permutation-importance">28.4 Permutation importance</h2>
+<p>On held-out data, shuffle feature $j$ and measure score deterioration:</p>
+<p>$$
+I_j=S(f,D)-S(f,D_j^{perm}).
+$$</p>
+<p>It asks how much this fitted model's held-out performance relies on information disrupted by this permutation. It does not ask how much the feature causes the outcome.</p>
+<p>Correlated substitutes can make each feature look weak. Unconditional shuffling can create impossible combinations. Consider grouped or conditional permutations and clearly state the added assumptions. Retraining without a feature asks a different question.</p>
+<h2 id="285-partial-dependence-and-ice">28.5 Partial dependence and ICE</h2>
+<p>Partial dependence replaces a focal feature across rows and averages predictions:</p>
+<p>$$
+PD_S(x_S)=\mathbb E_{X_C}[f(x_S,X_C)].
+$$</p>
+<p>Other features retain their row-specific values; they are not all fixed at one shared value. Correlated features can create unsupported synthetic combinations.</p>
+<p>ICE shows the corresponding curve for one row:</p>
+<p>$$
+ICE_i(x_S)=f(x_S,x_{iC}).
+$$</p>
+<p>Diverging ICE curves reveal model heterogeneity hidden by an average. Both remain model perturbations, not causal experiments. Show support and output scale.</p>
+<h2 id="286-accumulated-local-effects">28.6 Accumulated local effects</h2>
+<p>ALE estimates local prediction changes inside observed feature intervals, averages them, accumulates them across the range, and centers the result. It often stays closer to observed joint support than PDP under correlation.</p>
+<p>It still depends on bins, density, and meaningful local perturbations. Sparse regions remain uncertain.</p>
+<h2 id="287-local-surrogate-explanations">28.7 Local surrogate explanations</h2>
+<p>A local surrogate perturbs points near one case, queries the black box, weights by proximity, and fits a simple approximation. Results depend on neighborhood, scaling, perturbation distribution, kernel, surrogate family, and seed.</p>
+<p>Always report local fidelity. A readable but inaccurate surrogate does not explain the original model.</p>
+<h2 id="288-shapley-values-and-shap">28.8 Shapley values and SHAP</h2>
+<p>Shapley values average a feature's marginal contribution over every order in which features can join a coalition:</p>
+<p>$$
+\phi_j=\sum_{S\subseteq N\setminus\{j\}}
+\frac{|S|!(M-|S|-1)!}{M!}[v(S\cup\{j\})-v(S)].
+$$</p>
+<p>For two features, each can enter first or second, so average its contribution across the two orders. Additive SHAP explanations satisfy:</p>
+<p>$$
+f(x)=\phi_0+\sum_j\phi_j
+$$</p>
+<p>on the explainer's stated scale.</p>
+<p>The hard question is what $v(S)$ means when features are “missing.” Interventional-style explanations can break dependencies; conditional-style explanations preserve modeled dependencies and can credit proxies. Neither is automatically causal.</p>
+<p>State the algorithm, background population, dependence treatment, output scale, link, approximation, and version. Log-odds contributions cannot simply be read as probability-point contributions because the sigmoid is nonlinear.</p>
+<h2 id="289-stability-and-legitimacy">28.9 Stability and legitimacy</h2>
+<p>Repeat explanations across seeds, temporal folds, bootstrap fits, correlated substitutions, and plausible backgrounds. Instability may be the most decision-relevant finding.</p>
+<p>Explanations cannot repair an invalid label, excluded population, leakage, poor calibration, unfair allocation, lack of recourse, or an ineffective intervention. Explanation follows system validity; it does not substitute for it.</p>
+<hr />
+<h1 id="day-29-fairness-external-validation-and-the-locked-study">Day 29 — Fairness, external validation, and the locked study</h1>
+<h2 id="291-begin-before-metrics">29.1 Begin before metrics</h2>
+<p>Ask whether the task is legitimate, the label is equally measured, the action helps or burdens, important populations are absent, records and decisions can be contested, and an accountable institution can respond to harm.</p>
+<p>A parity number diagnoses one distributional property. It is not a complete ethical theory.</p>
+<h2 id="292-group-attributes-have-different-roles">29.2 Group attributes have different roles</h2>
+<p>Separate:</p>
+<ul>
+<li>attributes used as model features;</li>
+<li>attributes retained only for auditing;</li>
+<li>attributes used in decision policy; and</li>
+<li>governance or legal restrictions.</li>
+</ul>
+<p>Dropping a group attribute does not prevent proxies or historical labels from reproducing disparities. Retaining an attribute for audit does not require using it for prediction.</p>
+<h2 id="293-demographic-parity">29.3 Demographic parity</h2>
+<p>Demographic parity asks for equal positive-action rates:</p>
+<p>$$
+P(\hat Y=1\mid A=a)=P(\hat Y=1\mid A=b).
+$$</p>
+<p>It may matter for a scarce benefit or burden, but it ignores observed outcomes. If review is supportive and structural barriers create different risks, equal review rates could under-support a group. Meaning depends on the action.</p>
+<h2 id="294-equal-opportunity-and-equalized-odds">29.4 Equal opportunity and equalized odds</h2>
+<p>Equal opportunity asks for equal TPR among actual events:</p>
+<p>$$
+P(\hat Y=1\mid Y=1,A=a)=P(\hat Y=1\mid Y=1,A=b).
+$$</p>
+<p>Equalized odds requires both TPR and FPR equality, equivalently $\hat Y$ independent of $A$ given $Y$. These describe thresholded actions, not probability calibration.</p>
+<h2 id="295-predictive-parity-and-group-calibration">29.5 Predictive parity and group calibration</h2>
+<p>Predictive parity asks for equal precision among positive actions. Group calibration asks that within each group, cases assigned probability $p$ experience events at rate $p$.</p>
+<p>These condition on different quantities. With different base rates and imperfect prediction, several desirable parity properties generally cannot all hold. Choosing among them is a normative and operational decision, not metric shopping.</p>
+<h2 id="296-measurement-disparity-and-small-groups">29.6 Measurement disparity and small groups</h2>
+<p>If remote projects close accounts later and unresolved cases become 0, the dataset can manufacture group differences. Audit label completeness, follow-up, missing features, measurement errors, and appeals by group before adjusting algorithms.</p>
+<p>Intersectional groups can reveal hidden failures but create small samples and repeated comparisons. Report counts, confusion cells, uncertainty, pre-specified versus exploratory status, privacy rules, and collection plans. Lack of evidence is not evidence of equality.</p>
+<h2 id="297-types-of-validation">29.7 Types of validation</h2>
+<ul>
+<li><strong>Internal random:</strong> similar sampled rows from one source.</li>
+<li><strong>Internal grouped:</strong> whole known groups held out.</li>
+<li><strong>Temporal:</strong> later periods in the broad same system.</li>
+<li><strong>Geographic/external:</strong> independent represented locations or institutions.</li>
+<li><strong>Prospective:</strong> model frozen before future cases accrue.</li>
+<li><strong>Impact evaluation:</strong> causal comparison of using versus not using the intervention.</li>
+</ul>
+<p>A future-year test in the same districts is temporal, not broad geographic validation. Prospective prediction performance still does not prove that review improves outcomes.</p>
+<h2 id="298-dataset-shift">29.8 Dataset shift</h2>
+<p>Training and deployment distributions may differ:</p>
+<ul>
+<li><strong>covariate shift:</strong> $P(X)$ changes while $P(Y\mid X)$ is assumed stable;</li>
+<li><strong>label shift:</strong> $P(Y)$ changes while $P(X\mid Y)$ is assumed stable;</li>
+<li><strong>concept/conditional shift:</strong> $P(Y\mid X)$ changes.</li>
+</ul>
+<p>These are assumptions, not labels that an unlabeled dashboard proves. Monitor feature distributions, missingness, risk distribution, mature prevalence, calibration, actions, subgroup metrics, pipeline changes, overrides, and appeals.</p>
+<h2 id="299-the-locked-chapter-4-protocol">29.9 The locked Chapter 4 protocol</h2>
+<p>The chapter freezes:</p>
+<ul>
+<li>projects through 2022 for development;</li>
+<li>2019–2022 as forward validation years;</li>
+<li>2023–2025 as a locked temporal test;</li>
+<li>log loss as the primary metric, equally averaged across validation years;</li>
+<li>Brier, ROC AUC, and average precision as secondary views;</li>
+<li>a $1/6$ action threshold from FP cost 1 and FN cost 5;</li>
+<li>access mode and district audits with raw counts; and</li>
+<li>prior, logistic, engineered logistic, forest, and histogram-boosting candidates.</li>
+</ul>
+<p>The test is opened once after selection. Threshold, calibration, preprocessing, and candidates are part of the frozen procedure.</p>
+<h2 id="2910-reading-the-benchmark-code">29.10 Reading the benchmark code</h2>
+<p>The code:</p>
+<ol>
+<li>creates and time-sorts simulated projects;</li>
+<li>separates development from locked test;</li>
+<li>asserts prohibited future fields are not features;</li>
+<li>builds all candidate pipelines;</li>
+<li>fits each candidate on years before each validation year;</li>
+<li>selects by mean validation log loss;</li>
+<li>refits the selected procedure on all development rows;</li>
+<li>predicts the locked test once;</li>
+<li>compares with a fixed logistic reference using paired row losses;</li>
+<li>produces subgroup and reliability tables; and</li>
+<li>saves scores, predictions, audits, and environment metadata.</li>
+</ol>
+<p>The custom transformer learns centers only in <code>fit</code>, then reuses them in <code>transform</code>. <code>clone</code> creates a fresh unfitted copy. Pipelines ensure imputation, scaling, encoding, feature engineering, and modeling obey the same fold boundary.</p>
+<h2 id="2911-why-the-threshold-is-not-tuned">29.11 Why the threshold is not tuned</h2>
+<p>The threshold comes from a registered simplified cost ratio; the model is selected for probability quality. Tuning the threshold on the locked test would spend the test and blur probability estimation with action optimization.</p>
+<p>If costs are uncertain, pre-register sensitivity or decision-curve analyses over plausible costs rather than selecting whichever makes test results attractive.</p>
+<h2 id="2912-subgroups-and-uncertainty">29.12 Subgroups and uncertainty</h2>
+<p>For every group report sample size, events, prevalence, mean probability, Brier score, review rate, TP, FP, FN, TN, sensitivity, specificity, precision, and cost.</p>
+<p>Differences can arise from chance, prevalence, measurement, model error, threshold effects, or structural inequity. A rate alone cannot identify the mechanism.</p>
+<p>The chapter's paired bootstrap resamples rows. Shared year or district shocks violate simple row exchangeability, so its interval is descriptive. Better research aligns resampling with independent sampling units and collects more periods and sites.</p>
+<h2 id="2913-prospective-shadow-deployment">29.13 Prospective shadow deployment</h2>
+<p>Before influencing real decisions:</p>
+<ol>
+<li>freeze code, environment, feature definitions, and policy;</li>
+<li>issue timestamped predictions without changing decisions;</li>
+<li>verify feature availability and latency;</li>
+<li>record human actions, overrides, and reasons;</li>
+<li>wait until outcomes mature;</li>
+<li>assess probability, action, subgroup, and workflow results;</li>
+<li>establish contest, incident, pause, and retraining rules; and</li>
+<li>consider a separate ethical impact evaluation.</li>
+</ol>
+<p>Once a deployed system changes decisions, later labels reflect both the world and the intervention. Drift monitoring must account for that feedback.</p>
+<h2 id="2914-the-bounded-conclusion">29.14 The bounded conclusion</h2>
+<p>A defensible conclusion names the represented projects and period, selected procedure, locked probability and action results, subgroup limitations, and next validation step. It explicitly does not claim causal risk factors, fairness, intervention benefit, or transport to untested regions.</p>
+<h2 id="2915-structure-of-the-final-research-report">29.15 Structure of the final research report</h2>
+<p>The report should let a reader reconstruct decisions, not only admire the winning model:</p>
+<ol>
+<li><strong>Abstract:</strong> event, population, prediction time, design, locked result, and main limitation.</li>
+<li><strong>Label study:</strong> data source, window, unresolved cases, and group measurement audit.</li>
+<li><strong>Prediction contract:</strong> intended and prohibited uses, feature timing, and action.</li>
+<li><strong>Methods:</strong> complete candidates, folds, search budget, scores, threshold, and uncertainty.</li>
+<li><strong>Validation:</strong> every candidate and year, including failures and near ties.</li>
+<li><strong>Locked results:</strong> probability, ranking, calibration, and action evidence.</li>
+<li><strong>Subgroup audit:</strong> raw counts, rates, uncertainty, and exploratory labels.</li>
+<li><strong>Interpretation:</strong> method, output scale, background, support, fidelity, and stability.</li>
+<li><strong>Transport:</strong> temporal, geographic, workflow, and outcome-maturity limits.</li>
+<li><strong>Governance:</strong> human review, contestability, monitoring, incidents, and retraining.</li>
+<li><strong>Reproducibility:</strong> data and code versions, environment, seeds, predictions, and deviations.</li>
+<li><strong>Conclusion:</strong> a bounded statement separating prediction from cause and benefit.</li>
+</ol>
+<p>Save every locked-test probability, not only aggregate metrics. Predictions permit paired comparisons, reliability reconstruction, subgroup audit, and later error review. Preserve deviations from the protocol rather than quietly rewriting the plan.</p>
+<hr />
+<h1 id="chapter-4-synthesis-and-practical-laboratories">Chapter 4 synthesis and practical laboratories</h1>
+<h2 id="s1-the-six-evidence-layers">S.1 The six evidence layers</h2>
+<ol>
+<li><strong>Event measurement:</strong> Is the label valid and mature?</li>
+<li><strong>Probability estimation:</strong> Does the fitted procedure estimate supported risks?</li>
+<li><strong>Probability evaluation:</strong> Are ranking and calibration adequate on untouched data?</li>
+<li><strong>Decision policy:</strong> Are consequences, capacity, and human roles explicit?</li>
+<li><strong>Group and governance audit:</strong> Who receives errors, actions, recourse, and accountability?</li>
+<li><strong>Transport and impact:</strong> Does performance persist elsewhere, and does use help?</li>
+</ol>
+<p>Later layers cannot repair earlier ones.</p>
+<h2 id="s2-derivations-to-complete-by-hand">S.2 Derivations to complete by hand</h2>
+<ol>
+<li>Convert probability to odds, log odds, and back.</li>
+<li>Derive Bernoulli mean and variance from the two outcomes.</li>
+<li>Derive binary log loss from the likelihood.</li>
+<li>Derive $X^\top(p-y)/n$ and $X^\top WX/n$.</li>
+<li>Show why the Hessian is positive semidefinite.</li>
+<li>Derive $\partial p/\partial x_j=\beta_jp(1-p)$.</li>
+<li>Prove Brier and log-loss propriety.</li>
+<li>Derive the binned Brier decomposition and state its bin dependence.</li>
+<li>Derive the cost threshold.</li>
+<li>Use Bayes' rule to express precision through prevalence, sensitivity, and specificity.</li>
+<li>Derive binary Gini $2p(1-p)$.</li>
+<li>Derive variance of an average of equally correlated trees.</li>
+<li>Derive the logistic pseudo-residual $y-p$.</li>
+<li>Calculate all coalitions for a three-feature Shapley game.</li>
+<li>Express equalized odds as conditional independence.</li>
+</ol>
+<h2 id="s3-ten-laboratories">S.3 Ten laboratories</h2>
+<h3 id="laboratory-a-label-maturity">Laboratory A: label maturity</h3>
+<p>Simulate different close-out times. Compare coding incomplete cases as 0 with waiting for a fixed outcome window. Plot prevalence and calibration by project age.</p>
+<h3 id="laboratory-b-logistic-optimization">Laboratory B: logistic optimization</h3>
+<p>Compare gradient descent, Newton/IRLS, and a library solver under scaling, collinearity, and near separation. Record loss, gradient norm, iterations, and runtime.</p>
+<h3 id="laboratory-c-probability-quality">Laboratory C: probability quality</h3>
+<p>Build two forecasts with equal 0.5-threshold accuracy but different confidence. Compare Brier, log loss, reliability, calibration intercept, and slope.</p>
+<h3 id="laboratory-d-prevalence-shift">Laboratory D: prevalence shift</h3>
+<p>Keep positive and negative score distributions fixed while changing class frequency. Observe ROC stability and changes in precision, PR curves, probability calibration, and decision cost.</p>
+<h3 id="laboratory-e-nonlinear-support">Laboratory E: nonlinear support</h3>
+<p>Fit spline logistic, KNN, RBF SVM, forest, and boosting on a known two-dimensional probability surface. Evaluate within support and beyond it.</p>
+<h3 id="laboratory-f-forest-correlation">Laboratory F: forest correlation</h3>
+<p>Add redundant strong predictors and vary feature subsampling. Measure individual-tree performance, tree correlation, ensemble Brier score, and stability.</p>
+<h3 id="laboratory-g-adaptive-tuning">Laboratory G: adaptive tuning</h3>
+<p>Search 5, 50, and 500 configurations on noise. Compare best inner validation loss with outer and independent-test loss.</p>
+<h3 id="laboratory-h-explanation-disagreement">Laboratory H: explanation disagreement</h3>
+<p>Fit near-tied models using correlated features differently. Compare coefficients, impurity and permutation importance, PDP, ICE, ALE, and SHAP under multiple backgrounds.</p>
+<h3 id="laboratory-i-fairness-trade-offs">Laboratory I: fairness trade-offs</h3>
+<p>Simulate two groups with different prevalence. Compare one threshold, equal-TPR thresholds, equalized-odds post-processing, and equal review rates. Preserve every individual decision change.</p>
+<h3 id="laboratory-j-prospective-registry">Laboratory J: prospective registry</h3>
+<p>Store feature timestamps, data version, model version, probability, threshold, action, override, outcome-maturity date, and final event. Try reconstructing omitted fields later to see why prospective logging matters.</p>
+<h2 id="s4-model-family-comparison-questions">S.4 Model-family comparison questions</h2>
+<p>For every candidate ask:</p>
+<ul>
+<li>What representation does it assume?</li>
+<li>Does it need scaling or encoding?</li>
+<li>What probability target does fitting optimize?</li>
+<li>Which settings were learned from validation data?</li>
+<li>How does it behave outside feature support?</li>
+<li>Does it return probabilities or only scores?</li>
+<li>How will it be calibrated?</li>
+<li>What computation and monitoring does it require?</li>
+<li>How stable are its predictions and explanations?</li>
+<li>What claim does the evaluation design permit?</li>
+</ul>
+<hr />
+<h1 id="formula-sheet-with-plain-language-readings">Formula sheet with plain-language readings</h1>
+<table>
+<thead>
+<tr>
+<th>Formula</th>
+<th>Plain-language reading</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$p/(1-p)$</td>
+<td>event odds</td>
+</tr>
+<tr>
+<td>$\log[p/(1-p)]$</td>
+<td>log odds on the real line</td>
+</tr>
+<tr>
+<td>$1/(1+e^{-z})$</td>
+<td>turn a real score into probability</td>
+</tr>
+<tr>
+<td>$p^y(1-p)^{1-y}$</td>
+<td>probability of one binary observation</td>
+</tr>
+<tr>
+<td>$p(1-p)$</td>
+<td>Bernoulli variance</td>
+</tr>
+<tr>
+<td>$-[y\log p+(1-y)\log(1-p)]$</td>
+<td>penalty for one probability forecast</td>
+</tr>
+<tr>
+<td>$X^\top(p-y)/n$</td>
+<td>logistic-loss gradient</td>
+</tr>
+<tr>
+<td>$X^\top WX/n$</td>
+<td>logistic curvature</td>
+</tr>
+<tr>
+<td>$e^{\beta_j}$</td>
+<td>conditional odds multiplier for one unit</td>
+</tr>
+<tr>
+<td>$n^{-1}\sum(p_i-y_i)^2$</td>
+<td>Brier score</td>
+</tr>
+<tr>
+<td>$P(Y=1\mid P=p)=p$</td>
+<td>calibration definition</td>
+</tr>
+<tr>
+<td>$TP/(TP+FN)$</td>
+<td>sensitivity or recall</td>
+</tr>
+<tr>
+<td>$TN/(TN+FP)$</td>
+<td>specificity</td>
+</tr>
+<tr>
+<td>$TP/(TP+FP)$</td>
+<td>precision</td>
+</tr>
+<tr>
+<td>$(TPR+TNR)/2$</td>
+<td>balanced accuracy</td>
+</tr>
+<tr>
+<td>$2PR/(P+R)$</td>
+<td>$F_1$ summary</td>
+</tr>
+<tr>
+<td>$C_{FP}/(C_{FP}+C_{FN})$</td>
+<td>simplified cost threshold</td>
+</tr>
+<tr>
+<td>$1-\sum p_k^2$</td>
+<td>Gini impurity</td>
+</tr>
+<tr>
+<td>$I_P-(n_LI_L+n_RI_R)/n_P$</td>
+<td>split improvement</td>
+</tr>
+<tr>
+<td>$M^{-1}\sum_m\hat p_m(x)$</td>
+<td>bagged probability</td>
+</tr>
+<tr>
+<td>$\rho\sigma^2+(1-\rho)\sigma^2/M$</td>
+<td>variance left after averaging correlated learners</td>
+</tr>
+<tr>
+<td>$\exp[-\gamma\lVert x-x'\rVert^2]$</td>
+<td>RBF similarity</td>
+</tr>
+<tr>
+<td>$\max(0,1-yf)$</td>
+<td>hinge loss</td>
+</tr>
+<tr>
+<td>$e^{z_k}/\sum_je^{z_j}$</td>
+<td>softmax class probability</td>
+</tr>
+<tr>
+<td>$F_m=F_{m-1}+\eta h_m$</td>
+<td>one boosting update</td>
+</tr>
+<tr>
+<td>$y-p$</td>
+<td>logistic negative gradient</td>
+</tr>
+<tr>
+<td>$S(D)-S(D_j^{perm})$</td>
+<td>permutation score decrease</td>
+</tr>
+<tr>
+<td>$\mathbb E[f(x_S,X_C)]$</td>
+<td>partial dependence</td>
+</tr>
+<tr>
+<td>$f(x)=\phi_0+\sum_j\phi_j$</td>
+<td>additive SHAP explanation</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="expanded-glossary">Expanded glossary</h1>
+<p><strong>Action threshold</strong> — A rule converting probability or score into an action.</p>
+<p><strong>Average precision</strong> — A prevalence-sensitive weighted summary of precision over recall increments.</p>
+<p><strong>Bagging</strong> — Fitting learners on bootstrap samples and averaging their outputs.</p>
+<p><strong>Baseline</strong> — A simple reference procedure a candidate should improve upon.</p>
+<p><strong>Bernoulli distribution</strong> — A probability model for one outcome coded 0 or 1.</p>
+<p><strong>Brier score</strong> — Mean squared error of binary probability forecasts.</p>
+<p><strong>Calibration</strong> — Agreement between forecast probabilities and event frequencies in a stated population.</p>
+<p><strong>Classifier chain</strong> — A multilabel method that feeds earlier label predictions into later models.</p>
+<p><strong>Complete separation</strong> — Perfect feature-based class division that makes unpenalised logistic estimates diverge.</p>
+<p><strong>Concept shift</strong> — A change in $P(Y\mid X)$.</p>
+<p><strong>Confusion matrix</strong> — TP, FP, FN, and TN action counts.</p>
+<p><strong>Covariate shift</strong> — A change in $P(X)$ under an assumed stable $P(Y\mid X)$.</p>
+<p><strong>Cross-entropy</strong> — Negative log likelihood used to assess or fit class probabilities.</p>
+<p><strong>Demographic parity</strong> — Equality of positive-action rates across groups.</p>
+<p><strong>Discrimination</strong> — Ability to rank events above non-events.</p>
+<p><strong>Early stopping</strong> — Choosing training length using validation performance.</p>
+<p><strong>Equal opportunity</strong> — Equality of true-positive rates across groups.</p>
+<p><strong>Equalized odds</strong> — Equality of both true-positive and false-positive rates across groups.</p>
+<p><strong>Event horizon</strong> — The period during which a future event is assessed.</p>
+<p><strong>Generalized additive model</strong> — A linked outcome mean represented by a sum of smooth feature functions.</p>
+<p><strong>Gini impurity</strong> — A measure of class mixing within a tree node.</p>
+<p><strong>Gradient</strong> — The vector of first derivatives of an objective.</p>
+<p><strong>Gradient boosting</strong> — Sequential additive fitting along negative loss gradients.</p>
+<p><strong>Hessian</strong> — A matrix of second derivatives describing local curvature.</p>
+<p><strong>ICE</strong> — One row's fitted prediction curve as a focal feature is varied.</p>
+<p><strong>Impact evaluation</strong> — A causal design estimating the effect of using an intervention.</p>
+<p><strong>Index time</strong> — The moment at which eligibility, features, and prediction are anchored.</p>
+<p><strong>Isotonic calibration</strong> — A flexible nondecreasing mapping from score to probability.</p>
+<p><strong>Kernel</strong> — A function representing similarity or an implicit feature-space inner product.</p>
+<p><strong>Label shift</strong> — A prevalence change under assumed stable $P(X\mid Y)$.</p>
+<p><strong>Likelihood</strong> — Plausibility of observed data as a function of model parameters.</p>
+<p><strong>Log loss</strong> — Negative log probability assigned to observed classes.</p>
+<p><strong>Log odds</strong> — Logarithm of event odds.</p>
+<p><strong>Macro average</strong> — Equal-weight mean of class-specific metrics.</p>
+<p><strong>Multiclass</strong> — More than two mutually exclusive classes.</p>
+<p><strong>Multilabel</strong> — Several binary labels may be true for one row.</p>
+<p><strong>Nested validation</strong> — Inner model selection surrounded by outer procedure evaluation.</p>
+<p><strong>Odds ratio</strong> — Multiplicative change in conditional odds.</p>
+<p><strong>Out of bag</strong> — Rows omitted from a tree's bootstrap sample and usable for that tree's internal assessment.</p>
+<p><strong>Partial dependence</strong> — Average fitted output after replacing focal feature values across rows.</p>
+<p><strong>Permutation importance</strong> — Held-out score deterioration after shuffling feature information.</p>
+<p><strong>Precision</strong> — Event fraction among positive actions.</p>
+<p><strong>Prevalence</strong> — Event fraction in a specified population, sample, and window.</p>
+<p><strong>Proper scoring rule</strong> — A score whose expected optimum is truthful probability reporting.</p>
+<p><strong>Prospective validation</strong> — Evaluation on future cases after the procedure is frozen.</p>
+<p><strong>Pseudo-residual</strong> — Negative loss gradient used as a boosting-stage target.</p>
+<p><strong>Random forest</strong> — Bootstrap trees with random feature availability at splits.</p>
+<p><strong>Recall</strong> — Sensitivity or true-positive rate.</p>
+<p><strong>Reliability diagram</strong> — Binned mean probabilities compared with event rates.</p>
+<p><strong>ROC AUC</strong> — Ranking summary over true- and false-positive rates.</p>
+<p><strong>Sensitivity</strong> — Event fraction assigned positive action.</p>
+<p><strong>SHAP</strong> — Additive feature-attribution methods based on Shapley ideas.</p>
+<p><strong>Sigmoid</strong> — The function mapping a real score into a value between 0 and 1.</p>
+<p><strong>Specificity</strong> — Non-event fraction assigned negative action.</p>
+<p><strong>Support vector</strong> — A point on or within the SVM margin that shapes the solution.</p>
+<hr />
+<h1 id="research-paper-reading-ladder">Research-paper reading ladder</h1>
+<table>
+<thead>
+<tr>
+<th>Paper</th>
+<th>Main question to reconstruct</th>
+<th>Beginner replication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nelder &amp; Wedderburn (1972)</td>
+<td>How do distribution, linear predictor, link, and iterative fitting form a GLM?</td>
+<td>Implement IRLS and create separation</td>
+</tr>
+<tr>
+<td>Brier (1950)</td>
+<td>Why evaluate probability forecasts directly?</td>
+<td>Verify squared-loss propriety by simulation</td>
+</tr>
+<tr>
+<td>Niculescu-Mizil &amp; Caruana (2005)</td>
+<td>Why can ranking and calibration differ by algorithm?</td>
+<td>Calibrate four model families without leakage</td>
+</tr>
+<tr>
+<td>Davis &amp; Goadrich (2006)</td>
+<td>How are ROC and PR spaces related?</td>
+<td>Alter prevalence while keeping score distributions fixed</td>
+</tr>
+<tr>
+<td>Breiman (2001)</td>
+<td>How do forest strength and tree correlation affect error?</td>
+<td>Measure correlation while changing <code>max_features</code></td>
+</tr>
+<tr>
+<td>Friedman (2001)</td>
+<td>How is boosting function-space optimization?</td>
+<td>Fit stumps to $y-p$ stage by stage</td>
+</tr>
+<tr>
+<td>Grinsztajn et al. (2022)</td>
+<td>Under which benchmark design do tree methods excel on tabular data?</td>
+<td>Give four families equal search budgets</td>
+</tr>
+<tr>
+<td>Lundberg &amp; Lee (2017)</td>
+<td>Which axioms define additive feature attribution?</td>
+<td>Change background and dependence assumptions</td>
+</tr>
+<tr>
+<td>Hardt, Price &amp; Srebro (2016)</td>
+<td>What do equal opportunity and equalized odds require?</td>
+<td>Compare parity rules, utility, and changed decisions</td>
+</tr>
+</tbody>
+</table>
+<p>Read every paper in seven passes:</p>
+<ol>
+<li>State its question in one falsifiable sentence.</li>
+<li>Identify the mathematical object estimated or bounded.</li>
+<li>Rewrite the algorithm as pseudocode.</li>
+<li>List sampling, measurement, model, and optimization assumptions.</li>
+<li>Reproduce one derivation, table, or simulation.</li>
+<li>Construct a setting where the method should fail.</li>
+<li>State what new evidence application to MHP projects would require.</li>
+</ol>
+<hr />
+<h1 id="suggested-nine-day-study-rhythm">Suggested nine-day study rhythm</h1>
+<p>Use roughly three hours per day:</p>
+<ol>
+<li>15 minutes: retrieve yesterday's exit check.</li>
+<li>20 minutes: define the event or decision scenario.</li>
+<li>35 minutes: work a tiny numerical example.</li>
+<li>45 minutes: derive the central equation.</li>
+<li>55 minutes: type, run, and alter code.</li>
+<li>25 minutes: create one deliberate failure.</li>
+<li>20 minutes: reconstruct one paper claim.</li>
+<li>10 minutes: write one bounded conclusion.</li>
+</ol>
+<p>Do not compress all days into a model-comparison weekend. The label, probability, action, explanation, and governance distinctions need repeated retrieval.</p>
+<hr />
+<h1 id="common-beginner-misconceptions">Common beginner misconceptions</h1>
+<ul>
+<li>Binary does not mean fully observed.</li>
+<li>Unknown is not automatically 0.</li>
+<li>Odds are not probabilities.</li>
+<li>Logistic regression is linear on log odds, not probability.</li>
+<li>An odds ratio is not a percentage-point risk change.</li>
+<li>A convergence warning is not harmless formatting.</li>
+<li>Accuracy is not probability quality.</li>
+<li>ROC AUC is not calibration.</li>
+<li>A 0.5 threshold is not neutral.</li>
+<li>$F_1$ is not a general cost function.</li>
+<li>Class weighting and threshold movement are not interchangeable.</li>
+<li>SMOTE does not create independent event evidence.</li>
+<li>KNN and RBF kernels require meaningful scaling.</li>
+<li>SVM margins are not probabilities.</li>
+<li>Trees avoid numeric scaling but not preprocessing decisions.</li>
+<li>OOB evidence is not automatically temporal evidence.</li>
+<li>Classification boosting does not always fit ordinary residuals.</li>
+<li>Early stopping uses validation information.</li>
+<li>More tuning creates more selection opportunity.</li>
+<li>Coefficients and importance values are not causal effects.</li>
+<li>PDP changes a feature across rows; it does not hold all other features at one common value.</li>
+<li>SHAP depends on background, dependence treatment, and output scale.</li>
+<li>Dropping group attributes does not prove fairness.</li>
+<li>One parity metric does not define justice.</li>
+<li>Temporal validation is not broad external validation.</li>
+<li>Prospective prediction does not prove intervention benefit.</li>
+</ul>
+<hr />
+<h1 id="ethical-and-governance-questions">Ethical and governance questions</h1>
+<p>Discuss these with model developers, reviewers, funders, affected communities, and domain experts:</p>
+<ul>
+<li>Who defines a major overrun and can challenge that definition?</li>
+<li>Is review supportive, burdensome, or both?</li>
+<li>Should high predicted risk trigger more resources instead of restriction?</li>
+<li>Who supplies false-positive and false-negative costs?</li>
+<li>How is limited review capacity allocated?</li>
+<li>Who may correct a feature record or appeal an action?</li>
+<li>How are overrides recorded without punishing sound judgment?</li>
+<li>Which groups have incomplete labels or missing features?</li>
+<li>What disparities require investigation, mitigation, or stopping?</li>
+<li>Who can pause the system after an incident?</li>
+<li>When does a changed workflow require recalibration or full revalidation?</li>
+<li>How will an impact study determine whether review actually helps?</li>
+</ul>
+<hr />
+<h1 id="final-readiness-checklist">Final readiness checklist</h1>
+<p>You are ready to leave Chapter 4 when you can:</p>
+<ul>
+<li>defend unit, eligibility, event, time boundaries, and unresolved-outcome policy;</li>
+<li>move among probability, odds, and log odds;</li>
+<li>derive Bernoulli likelihood, log loss, logistic gradient, and Hessian;</li>
+<li>interpret coefficients without confusing odds and risk;</li>
+<li>recognize separation and respond safely;</li>
+<li>distinguish discrimination, calibration, and utility;</li>
+<li>prove Brier and log loss are proper;</li>
+<li>design calibration without leakage;</li>
+<li>calculate every confusion-matrix rate;</li>
+<li>derive and challenge a cost threshold;</li>
+<li>explain ROC and PR behavior under prevalence change;</li>
+<li>distinguish weighting, resampling, calibration, and thresholding;</li>
+<li>describe spline, KNN, SVM, softmax, and multilabel assumptions;</li>
+<li>derive Gini gain and forest averaging behavior;</li>
+<li>derive logistic boosting pseudo-residuals;</li>
+<li>place tuning and early stopping inside honest validation;</li>
+<li>define the perturbation and scale behind every explanation;</li>
+<li>calculate a small Shapley example;</li>
+<li>compare fairness definitions and explain their conflicts;</li>
+<li>distinguish internal, temporal, geographic, prospective, and impact evidence;</li>
+<li>run the locked benchmark without revising it after test exposure; and</li>
+<li>write a conclusion limited to the data, period, workflow, and action actually studied.</li>
+</ul>
+<p>The central lesson is simple even though the machinery is rich:</p>
+<blockquote>
+<p>A classifier is not only a model. It is an event definition, a probability procedure, an evaluation design, an action policy, and an accountable institution.</p>
+</blockquote>
+        </article>
+    </div>
+
+
+
+    <!-- Math: local vendor copy preferred, CDN used only as a fallback when online. -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] }
+        };
+        (function loadMathJax() {
+            var local = document.createElement('script');
+            local.src = '../vendor/mathjax/tex-mml-svg.js';
+            local.async = true;
+            local.onerror = function () {
+                var cdn = document.createElement('script');
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-svg.js';
+                cdn.async = true;
+                document.head.appendChild(cdn);
+            };
+            document.head.appendChild(local);
+        })();
+    </script>
+
+    <!-- Diagrams: local vendor copy preferred, CDN used only as a fallback when online.
+         If neither loads (fully offline, no vendor file), the labeled diagram-source
+         panels above remain readable as plain text. -->
+    <script>
+        (function loadMermaid() {
+            function init(mermaid) {
+                mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+                document.querySelectorAll('.diagram-panel').forEach(function (panel) {
+                    var sourceEl = panel.querySelector('.mermaid-source');
+                    if (!sourceEl) return;
+                    var container = document.createElement('div');
+                    container.className = 'mermaid';
+                    container.textContent = sourceEl.textContent;
+                    panel.replaceChild(container, sourceEl);
+                });
+                mermaid.run();
+            }
+
+            var local = document.createElement('script');
+            local.src = '../vendor/mermaid.min.js';
+            local.onload = function () { init(window.mermaid); };
+            local.onerror = function () {
+                var cdn = document.createElement('script');
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+                cdn.onload = function () { init(window.mermaid); };
+                document.head.appendChild(cdn);
+            };
+            document.head.appendChild(local);
+        })();
+    </script>
+</body>
+</html>

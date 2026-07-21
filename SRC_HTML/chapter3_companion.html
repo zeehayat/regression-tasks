@@ -511,277 +511,1793 @@
             <a href="chapter1_companion.html" class="">Ch. 1 Companion</a>
             <a href="chapter2_companion.html" class="">Ch. 2 Companion</a>
             <a href="chapter3_companion.html" class="active">Ch. 3 Companion</a>
+            <a href="chapter4_companion.html" class="">Ch. 4 Companion</a>
+            <a href="chapter5_companion.html" class="">Ch. 5 Companion</a>
             <a href="chapter6_companion.html" class="">Ch. 6 Companion</a>
     </nav>
     
         <article class="markdown-body">
 <h1 id="chapter-3-companion-guide-from-a-trustworthy-baseline-to-a-research-grade-regression-study">Chapter 3 Companion Guide: From a Trustworthy Baseline to a Research-Grade Regression Study</h1>
-<h2 id="a-first-principles-mathematical-computational-reference-manual">A First-Principles Mathematical &amp; Computational Reference Manual</h2>
-<p>This companion guide is an exhaustive, first-principles reference manual accompanying <strong>Chapter 3: From a Trustworthy Baseline to a Research-Grade Regression Study</strong> [cite: 18]. It unpacks mathematical derivations, feature engineering hypotheses, advanced regularized regression ($L_1$/$L_2$), robust diagnostic methodologies, and the mechanics of a pre-specified research benchmark for the Microhydro Power (MHP) Cost Estimator [cite: 18].</p>
-<p>All mathematical notation is strictly formatted using standard LaTeX delimiters (<code>$inline$</code> and <code>$$display$$</code>) for seamless rendering.</p>
-<hr />
-<h2 id="table-of-contents">Table of Contents</h2>
+<h2 id="a-beginner-first-guide-to-preprocessing-feature-design-regularisation-diagnostics-robust-inference-quantiles-and-auditable-research">A beginner-first guide to preprocessing, feature design, regularisation, diagnostics, robust inference, quantiles, and auditable research</h2>
+<p>This guide accompanies <code>chapter3.md</code>. It assumes you have completed Chapters 1 and 2, but it continues to explain new Python, mathematics, and statistics from first principles.</p>
+<p>Chapter 1 built ordinary least squares (OLS). Chapter 2 surrounded it with stable computation and honest evaluation. Chapter 3 develops the habits of a regression practitioner:</p>
 <ol>
-<li><strong>Day 13: Preprocessing Is Part of the Model</strong></li>
-<li><strong>Day 14: Feature Engineering as Model Specification</strong></li>
-<li><strong>Day 15: Ridge Regression: Shrinkage and Stability</strong></li>
-<li><strong>Day 16: Lasso, Elastic Net, and Sparse Models</strong></li>
-<li><strong>Day 17: Multicollinearity, Leverage, and Influence</strong></li>
-<li><strong>Day 18: Heteroskedasticity and Dependent Data</strong></li>
-<li><strong>Day 19: Robust and Quantile Regression</strong></li>
-<li><strong>Day 20: A Pre-Specified Regression Benchmark</strong></li>
-<li><strong>Master Rosetta Stone &amp; Formula Sheet</strong></li>
+<li>treat preprocessing as part of the fitted model;</li>
+<li>express substantive hypotheses through features;</li>
+<li>stabilise complex designs through regularisation;</li>
+<li>find projects and predictor directions that dominate results;</li>
+<li>match uncertainty calculations to variance and dependence;</li>
+<li>change the loss or conditional target when the decision requires it; and</li>
+<li>freeze the full comparison procedure before opening final evidence.</li>
 </ol>
+<p>The goal is not to collect model names. It is to make every link auditable:</p>
+<pre><code class="language-text">question
+    -&gt; data
+    -&gt; representation
+    -&gt; estimator
+    -&gt; validation
+    -&gt; uncertainty
+    -&gt; bounded claim
+</code></pre>
+<p>At every arrow ask: What was learned? From which rows? Which assumption entered? What could leak? What could shift? What evidence would change the decision?</p>
 <hr />
-<h2 id="1-day-13-preprocessing-is-part-of-the-model">1. Day 13: Preprocessing Is Part of the Model</h2>
-<p>Preprocessing (handling missing data and categorical variables) is not neutral "cleaning"; it mathematically alters the distribution of the data [cite: 18]. Therefore, preprocessing must be learned exclusively inside the training folds of cross-validation to prevent leakage [cite: 18].</p>
-<h3 id="missing-data-mechanisms">Missing Data Mechanisms</h3>
-<ul>
-<li><strong>MCAR (Missing Completely at Random):</strong> Missingness is unrelated to the observed or missing data [cite: 18].</li>
-<li><strong>MAR (Missing at Random):</strong> Missingness depends only on <em>observed</em> information (e.g., surveys from early years are missing more often) [cite: 18].</li>
-<li><strong>MNAR (Missing Not at Random):</strong> Missingness depends on the unobserved value itself (e.g., remote projects omit survey distances because the distance was too difficult to establish) [cite: 18].</li>
-</ul>
-<h3 id="handling-missing-data">Handling Missing Data</h3>
-<ul>
-<li><strong>Complete-Case Analysis (Deletion):</strong> Deleting rows with missing values can severely bias the model by excluding specific sub-populations (e.g., deleting all remote projects) [cite: 18].</li>
-<li><strong>Median Imputation + Missing Indicator:</strong> Imputing missing values with the training median ($x_{ij}^{imp} =  ext{median}(X_{j,train})$) changes the distribution (reduces variance) [cite: 18]. We add a binary missingness indicator ($M_{ij} = 1 - R_{ij}$) so the model can learn an offset for imputed rows [cite: 18].</li>
-</ul>
-<h3 id="categorical-encoding">Categorical Encoding</h3>
-<ul>
-<li><strong>One-Hot Encoding:</strong> Creates binary indicators. One category must be dropped as the reference to prevent exact collinearity [cite: 18].</li>
-<li><strong>Target Encoding:</strong> Replaces a category with the mean of the target variable for that category ($TE(c) = \frac{1}{n_c}\sum_{i:C_i=c}y_i$) [cite: 18]. </li>
-<li><em>Critical Rule:</em> Target encoding must use <strong>cross-fitting</strong> inside the training data to prevent same-row target leakage [cite: 18].</li>
-</ul>
-<hr />
-<h2 id="2-day-14-feature-engineering-as-model-specification">2. Day 14: Feature Engineering as Model Specification</h2>
-<p>Feature engineering alters the columns of the design matrix $X$. The regression remains <em>linear in parameters</em> ($\beta$) even if the engineered feature represents a non-linear relationship (like $x^2$) [cite: 18].</p>
-<h3 id="feature-transformations">Feature Transformations</h3>
-<ul>
-<li><strong>Polynomials (Quadratic):</strong> $\hat{y} = \beta_0 + \beta_1x + \beta_2x^2$ [cite: 18].</li>
-<li><em>Derivative Interpretation:</em> The slope is $\frac{df(x)}{dx} = \beta_1 + 2\beta_2x$. The curve has a stationary point at $x^* = -\frac{\beta_1}{2\beta_2}$ [cite: 18]. You must check if this turning point actually exists within the credible, observed data range [cite: 18].</li>
-<li><strong>Interactions:</strong> $\hat{y} = \beta_0 + \beta_1x_1 + \beta_2x_2 + \beta_3x_1x_2$ [cite: 18].</li>
-<li>The effect of $x_1$ now depends on the value of $x_2$: $\frac{\partial\hat{y}}{\partial x_1} = \beta_1 + \beta_3x_2$ [cite: 18].</li>
-<li><strong>The Hierarchy Principle:</strong> If a model includes a higher-order term (like $x^2$ or $x_1x_2$), it must generally retain the lower-order "main effects" ($x$, $x_1$, $x_2$) so the interaction's meaning is properly anchored [cite: 18].</li>
-</ul>
-<hr />
-<h2 id="3-day-15-ridge-regression-shrinkage-and-stability">3. Day 15: Ridge Regression: Shrinkage and Stability</h2>
-<p>When predictors are highly correlated, unpenalized OLS coefficients can become massive and unstable [cite: 18]. Ridge regression stabilizes this by adding a penalty on the squared Euclidean length of the parameter vector [cite: 18].</p>
-<h3 id="the-ridge-objective-and-solution">The Ridge Objective and Solution</h3>
-<p>The objective function adds an $L_2$ penalty controlled by hyperparameter $\lambda$ [cite: 18]:<br />
-$$J_{   ext{ridge}}(\beta) = \lVert y - X\beta <br />
-Vert_2^2 + \lambda\lVert\beta<br />
-Vert_2^2$$<br />
-Taking the derivative and setting it to zero yields the closed-form Ridge solution [cite: 18]:<br />
-$$\hat{\beta}_{ ext{ridge}} = (X^   op X + \lambda I)^{-1}X^    op y$$</p>
-<h3 id="why-it-works-svd-shrinkage">Why It Works: SVD Shrinkage</h3>
-<p>Using Singular Value Decomposition ($X=U\Sigma V^   op$), the Ridge fitted values become [cite: 18]:<br />
-$$\hat{y}_{ ext{ridge}} = U\,\operatorname{diag}\left(\frac{\sigma_j^2}{\sigma_j^2+\lambda}<br />
-ight)U^ op y$$<br />
-* In standard OLS, a tiny singular value ($\sigma_j$) massively amplifies noise [cite: 18].<br />
-* Ridge applies a shrinkage factor $s_j(\lambda) = \frac{\sigma_j^2}{\sigma_j^2+\lambda}$. Weak directions (small $\sigma$) are suppressed toward zero, stabilizing the predictions [cite: 18].</p>
-<p><strong>Crucial Scaling Requirement:</strong> Because the penalty applies to coefficient magnitude, all features must be standardized ($z = \frac{x-\mu}{s}$) before fitting Ridge. Otherwise, features with small arbitrary units (like millimeters) will be unfairly penalized [cite: 18].</p>
-<hr />
-<h2 id="4-day-16-lasso-elastic-net-and-sparse-models">4. Day 16: Lasso, Elastic Net, and Sparse Models</h2>
-<h3 id="the-lasso-objective">The Lasso Objective</h3>
-<p>Lasso replaces the $L_2$ penalty with an $L_1$ penalty (sum of absolute values) [cite: 18]:<br />
-$$J_{   ext{lasso}}(\beta) = \frac{1}{2n}\lVert y - X\beta <br />
-Vert_2^2 + \alpha\lVert\beta<br />
-Vert_1$$</p>
-<h3 id="soft-thresholding-and-exact-zeros">Soft Thresholding and Exact Zeros</h3>
-<p>The $L_1$ penalty has sharp "corners" in its geometric constraint [cite: 18]. When optimized, coefficients can be pushed to <strong>exactly zero</strong> [cite: 18]. For orthonormal features, the coordinate solution is the soft-thresholding operator [cite: 18]:<br />
-$$\hat{\beta}_j = \operatorname{sign}(z_j)\max(|z_j| - \alpha, 0)$$<br />
-* <strong>WARNING:</strong> A zero lasso coefficient does <em>not</em> prove a feature has no scientific relationship with the target. It merely means the feature was dropped under this specific penalty and correlation structure [cite: 18].</p>
-<h3 id="elastic-net">Elastic Net</h3>
-<p>Combines both penalties using a mixing ratio $<br />
-ho$ [cite: 18]:<br />
-$$J_{   ext{EN}}(\beta) =   ext{Loss} + \alpha<br />
-ho\lVert\beta<br />
-Vert_1 + \frac{\alpha(1-<br />
-ho)}{2}\lVert\beta<br />
-Vert_2^2$$<br />
-This provides the exact sparsity of Lasso while maintaining the correlated-feature stability of Ridge [cite: 18].</p>
-<hr />
-<h2 id="5-day-17-multicollinearity-leverage-and-influence">5. Day 17: Multicollinearity, Leverage, and Influence</h2>
-<h3 id="variance-inflation-factor-vif">Variance Inflation Factor (VIF)</h3>
-<p>VIF measures how much a feature's coefficient variance is inflated due to correlation with other features [cite: 18]:<br />
-$$\operatorname{VIF}_j = \frac{1}{1 - R_j^2}$$<br />
-* A VIF of 9 means the standard error is inflated by a factor of $\sqrt{9} = 3$ [cite: 18]. <br />
-* There is no universal "cutoff" for VIF. High VIF does not inherently bias predictions, it simply increases parameter uncertainty [cite: 18].</p>
-<h3 id="leverage-vs-influence">Leverage vs. Influence</h3>
-<ul>
-<li><strong>Leverage ($h_{ii}$):</strong> Measures how unusual a row's predictor configuration is. Extracted from the diagonal of the Hat Matrix $H = X(X^ op X)^{-1}X^    op$ [cite: 18].</li>
-<li><strong>Influence (Cook's Distance $D_i$):</strong> Measures how much the fitted model would change if observation $i$ were deleted [cite: 18]. It combines both the residual size and the leverage [cite: 18]:<br />
-  $$D_i = \frac{e_i^2}{k s^2} \frac{h_{ii}}{(1 - h_{ii})^2}$$</li>
-</ul>
-<hr />
-<h2 id="6-day-18-heteroskedasticity-and-dependent-data">6. Day 18: Heteroskedasticity and Dependent Data</h2>
-<h3 id="robust-covariance-hc0-hc3">Robust Covariance (HC0 - HC3)</h3>
-<p>If error variance changes across observations (Heteroskedasticity), standard OLS standard errors are incorrect [cite: 18]. The <strong>Sandwich Estimator</strong> corrects this [cite: 18]:<br />
-$$\operatorname{Var}(\hat{\beta}) = (X^ op X)^{-1} X^   op \Omega X (X^ op X)^{-1}$$<br />
-* <strong>HC3</strong> adjusts the "meat" of the sandwich by heavily weighting squared residuals by their leverage [cite: 18]: $\frac{e_i^2}{(1 - h_{ii})^2}$.<br />
-* <em>Limitation:</em> HC3 fixes variance estimation; it <em>does not</em> fix a misspecified mean model (e.g., missing a curved relationship) [cite: 18].</p>
-<h3 id="cluster-robust-standard-errors">Cluster-Robust Standard Errors</h3>
-<p>If projects in the same district share unobserved shocks, we must group errors by cluster $g$ [cite: 18]:<br />
-$$  ext{Meat} = \sum_{g=1}^G (X_g^  op e_g)(X_g^    op e_g)^    op$$<br />
-* <em>Limitation:</em> Asymptotic cluster confidence requires many independent clusters [cite: 18]. Five districts are too few for reliable large-$G$ asymptotic confidence [cite: 18].</p>
-<hr />
-<h2 id="7-day-19-robust-and-quantile-regression">7. Day 19: Robust and Quantile Regression</h2>
-<h3 id="huber-regression-robust-to-outliers">Huber Regression (Robust to Outliers)</h3>
-<p>Squared loss highly penalizes outliers. <strong>Huber Loss</strong> transitions from quadratic (near zero) to linear (in the tails) beyond a threshold $\delta$ [cite: 18]:<br />
-$$L_\delta(r) = \begin{cases} \frac{1}{2}r^2 &amp; |r| \le \delta \ \delta(|r| - \frac{1}{2}\delta) &amp; |r| &gt; \delta \end{cases}$$<br />
-Huber downweights vertical outliers, preventing extreme cost values from pulling the entire regression line [cite: 18].</p>
-<h3 id="quantile-regression">Quantile Regression</h3>
-<p>OLS estimates the conditional <em>mean</em> [cite: 18]. Quantile regression uses asymmetric <strong>Pinball Loss</strong> to estimate a specific conditional quantile $ au$ [cite: 18]:<br />
-$$<br />
-ho_ au(u) = \begin{cases}   au u &amp; u \ge 0 \ (  au - 1)u &amp; u &lt; 0 \end{cases}$$<br />
-* If $  au = 0.80$, underpredicting the cost is penalized 4 times more than overpredicting [cite: 18]. This yields the 80th-percentile cost prediction, which is ideal for conservative contingency budgeting [cite: 18].</p>
-<hr />
-<h2 id="8-day-20-a-pre-specified-regression-benchmark">8. Day 20: A Pre-Specified Regression Benchmark</h2>
-<p>Exploratory modeling can easily turn noise into a publishable result [cite: 18]. To build a research-grade study, use a <strong>Pre-Specified Prediction Contract</strong> [cite: 18]:</p>
+<h2 id="how-to-use-this-guide">How to use this guide</h2>
+<p>For Days 13–20:</p>
 <ol>
-<li><strong>Temporal Boundary:</strong> Validate only on data chronologically <em>before</em> the validation year [cite: 18].</li>
-<li><strong>Locked Test Set:</strong> The final test set (e.g., 2023-2025 projects) must not be touched until all feature engineering, imputation, and hyperparameter tuning is complete [cite: 18].</li>
-<li><strong>Pipeline Encapsulation:</strong> All missing-data handling, target encoding, standardizing, and modeling must occur inside a <code>Pipeline</code> to prevent train-test leakage [cite: 18].</li>
-<li><strong>Subgroup Audits:</strong> Overall MAE can hide failures. Always audit performance by operational subgroups (e.g., remote vs. accessible sites) [cite: 18].</li>
+<li>Read the matching guide section.</li>
+<li>Reproduce the central equation on paper.</li>
+<li>Type and alter the smallest code example.</li>
+<li>Run the main chapter's complete laboratory.</li>
+<li>Create the stated failure deliberately.</li>
+<li>Write one supported conclusion and one unsupported conclusion.</li>
+<li>Complete the exit check without notes.</li>
 </ol>
+<p>When evaluating a technique, separate these layers:</p>
+<ul>
+<li><strong>representation:</strong> which columns enter the model;</li>
+<li><strong>target:</strong> mean, median, or another quantile;</li>
+<li><strong>fitting criterion:</strong> squared, Huber, pinball, or penalised loss;</li>
+<li><strong>uncertainty:</strong> classical, heteroskedasticity-consistent, clustered, bootstrap, or none;</li>
+<li><strong>evaluation:</strong> which untouched cases simulate deployment; and</li>
+<li><strong>interpretation:</strong> predictive, explanatory, or causal.</li>
+</ul>
+<p>Methods acting on different layers are not interchangeable.</p>
 <hr />
-<h2 id="9-master-rosetta-stone-formula-sheet">9. Master Rosetta Stone &amp; Formula Sheet</h2>
+<h1 id="0-prerequisite-and-software-foundations">0. Prerequisite and software foundations</h1>
+<h2 id="01-retrieve-these-chapter-1-and-2-ideas">0.1 Retrieve these Chapter 1 and 2 ideas</h2>
+<p>Before proceeding, explain without notes:</p>
+<ul>
+<li>$\hat y=X\hat\beta$ and $e=y-\hat y$;</li>
+<li>the OLS objective and gradient;</li>
+<li>full rank, singular values, and condition number;</li>
+<li>why scaling and imputation fit only on training data;</li>
+<li>train, validation, test, grouped CV, temporal CV, and nested CV;</li>
+<li>error term versus residual;</li>
+<li>coefficient confidence interval versus project prediction interval; and</li>
+<li>ME, MAE, RMSE, held-out $R^2$, and subgroup evaluation.</li>
+</ul>
+<p>Chapter 3 relies on these rather than replacing them.</p>
+<h2 id="02-the-mhp-prediction-contract">0.2 The MHP prediction contract</h2>
+<p>One row is one fictional microhydro power project. The model predicts final project cost in constant 2025 million PKR at technical appraisal, before procurement and construction.</p>
+<p>Chapter 3 adds:</p>
+<ul>
+<li>missing road-distance surveys;</li>
+<li>contractor experience counts;</li>
+<li>categorical access mode;</li>
+<li>a correlated route-length measurement;</li>
+<li>curved capacity costs;</li>
+<li>cable-by-road interactions;</li>
+<li>larger variability for remote projects; and</li>
+<li>a few extreme but legitimate logistics events.</li>
+</ul>
+<p>The complete hidden <code>road_distance_km</code> remains in the synthetic generator only so learners can audit how missingness was created. In a real incomplete dataset, the true missing values are unavailable. Using the hidden column as a feature would be leakage.</p>
+<h2 id="03-software-setup">0.3 Software setup</h2>
+<pre><code class="language-bash">python -m pip install numpy pandas scipy matplotlib scikit-learn statsmodels
+</code></pre>
+<p>Scikit-learn supports predictive pipelines and regularised estimators. Statsmodels supplies mature inferential and influence diagnostics. Educational from-scratch functions reveal mechanisms; verify them against tested libraries before relying on them.</p>
+<p>Record Python and package versions, seeds, input-data versions, and output files for every benchmark.</p>
+<h2 id="04-understanding-the-practitioner-data-generator">0.4 Understanding the practitioner data generator</h2>
+<p><code>make_mhp_practitioner_data</code> extends Chapter 2's synthetic data.</p>
+<pre><code class="language-python">df[&quot;contractor_experience_projects&quot;] = rng.poisson(lam=5.0, size=n)
+df[&quot;access_mode&quot;] = np.select(conditions, choices, default=&quot;porter_or_air&quot;)
+df[&quot;road_distance_observed_km&quot;] = df[&quot;road_distance_km&quot;].mask(missing_road)
+</code></pre>
+<ul>
+<li>A Poisson draw creates nonnegative event counts.</li>
+<li><code>np.select</code> applies the first true condition and otherwise uses a default.</li>
+<li><code>.mask(condition)</code> replaces true positions with missing values.</li>
+</ul>
+<p>Missingness is more likely for difficult access and early years. Extreme logistics events are added only to some remote projects. These are genuine outcomes within the simulated population, not automatic deletion candidates.</p>
+<p>Always distinguish:</p>
+<ul>
+<li><strong>latent complete value:</strong> available to the simulation author;</li>
+<li><strong>observed appraisal value:</strong> available to the fitted procedure; and</li>
+<li><strong>post-appraisal field:</strong> prohibited at prediction time.</li>
+</ul>
+<h2 id="05-new-mathematical-language">0.5 New mathematical language</h2>
+<h3 id="norms">Norms</h3>
+<p>For coefficient vector $\beta$:</p>
+<p>$$
+\lVert\beta\rVert_1=\sum_j|\beta_j|,
+\qquad
+\lVert\beta\rVert_2^2=\sum_j\beta_j^2.
+$$</p>
+<p>The $L_1$ norm sums magnitudes. Squared $L_2$ sums squares. Lasso and ridge use them as penalties.</p>
+<h3 id="trace">Trace</h3>
+<p>The trace of a square matrix is the sum of diagonal elements:</p>
+<p>$$
+\operatorname{tr}(A)=\sum_j A_{jj}.
+$$</p>
+<p>Trace appears in average leverage and ridge effective degrees of freedom.</p>
+<h3 id="indicator-functions">Indicator functions</h3>
+<p>$\mathbb 1{condition}$ equals 1 when the condition is true and 0 otherwise. It is the mathematical version of a Boolean converted to a number.</p>
+<h3 id="partial-derivatives-and-conditional-slopes">Partial derivatives and conditional slopes</h3>
+<p>If a prediction depends on several inputs, $\partial\hat y/\partial x_j$ measures the local change in prediction as $x_j$ changes while other displayed inputs remain fixed.</p>
+<h3 id="subgradients">Subgradients</h3>
+<p>$|b|$ has no single derivative at zero because its left slope is -1 and right slope is +1. A subgradient uses every slope in the interval $[-1,1]$ at that kink. This permits the lasso optimum to remain exactly zero.</p>
+<h3 id="positive-definite-matrices">Positive definite matrices</h3>
+<p>A symmetric matrix $A$ is positive definite when:</p>
+<p>$$
+v^TAv&gt;0
+$$</p>
+<p>for every nonzero $v$. Such curvature gives a unique minimum for a quadratic problem.</p>
+<h3 id="map-estimation">MAP estimation</h3>
+<p>Maximum a posteriori (MAP) estimation maximises a Bayesian posterior density. Under particular priors, its objective matches ridge or lasso. A MAP point is not a full posterior distribution and does not by itself quantify uncertainty.</p>
+<h2 id="06-new-python-and-scikit-learn-patterns">0.6 New Python and scikit-learn patterns</h2>
+<h3 id="custom-transformers">Custom transformers</h3>
+<p>A scikit-learn transformer implements <code>fit</code> and <code>transform</code>:</p>
+<pre><code class="language-python">from sklearn.base import BaseEstimator, TransformerMixin
+
+class ExampleTransformer(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        self.learned_value_ = X[&quot;column&quot;].median()
+        return self
+
+    def transform(self, X):
+        X = X.copy()
+        X[&quot;centered&quot;] = X[&quot;column&quot;] - self.learned_value_
+        return X
+</code></pre>
+<p>The trailing underscore marks learned state. <code>fit</code> must use only the current training fold. <code>transform</code> applies stored state to validation, test, or deployment rows.</p>
+<h3 id="statsmodels"><code>statsmodels</code></h3>
+<pre><code class="language-python">import statsmodels.api as sm
+
+X_design = sm.add_constant(X, has_constant=&quot;add&quot;)
+result = sm.OLS(y, X_design).fit()
+print(result.summary())
+</code></pre>
+<p>Statsmodels generally expects you to add the intercept explicitly. Its summary is not automatically valid merely because it prints p-values; design and covariance assumptions still matter.</p>
+<h3 id="logarithmic-grids">Logarithmic grids</h3>
+<pre><code class="language-python">alphas = np.logspace(-4, 4, 100)
+</code></pre>
+<p>This creates penalty values from $10^{-4}$ to $10^4$. Regularisation strength often needs orders-of-magnitude exploration rather than equally spaced values.</p>
+<hr />
+<h1 id="day-13-preprocessing-is-part-of-the-model">Day 13 — Preprocessing is part of the model</h1>
+<h2 id="131-missingness-is-data">13.1 Missingness is data</h2>
+<p>For feature $j$ and row $i$:</p>
+<p>$$
+R_{ij}=
+\begin{cases}
+1,&amp;X_{ij}\text{ observed},\\
+0,&amp;X_{ij}\text{ missing}.
+\end{cases}
+$$</p>
+<p>The missingness mechanism describes how $R$ relates to observed and unobserved values. It is not a moral label for data collectors.</p>
+<h2 id="132-mcar-mar-and-mnar">13.2 MCAR, MAR, and MNAR</h2>
+<p>Let $X_{obs}$ be observed data and $X_{mis}$ missing values.</p>
+<h3 id="missing-completely-at-random-mcar">Missing completely at random (MCAR)</h3>
+<p>$$
+P(R\mid X_{obs},X_{mis})=P(R).
+$$</p>
+<p>Missingness is unrelated to observed and missing values, such as an independent random scanner failure.</p>
+<h3 id="missing-at-random-mar">Missing at random (MAR)</h3>
+<p>$$
+P(R\mid X_{obs},X_{mis})=P(R\mid X_{obs}).
+$$</p>
+<p>After conditioning on observed information, missingness no longer depends on the unseen value. “At random” does not mean “for no reason.” Early year and observed access mode might explain recording probability.</p>
+<h3 id="missing-not-at-random-mnar">Missing not at random (MNAR)</h3>
+<p>Even after conditioning on observed information, missingness depends on an unseen value or unobserved factor. Extremely long access distances may be omitted precisely because they are hard to measure.</p>
+<p>Observed data generally cannot prove which mechanism holds or rule out MNAR. Sensitivity analysis must state alternative assumptions.</p>
+<h2 id="133-complete-case-analysis-changes-the-population">13.3 Complete-case analysis changes the population</h2>
+<p>Deleting every incomplete row can:</p>
+<ul>
+<li>reduce precision;</li>
+<li>change district and access-mode composition;</li>
+<li>remove remote projects systematically; and</li>
+<li>bias estimates unless deletion is justified for the analysis.</li>
+</ul>
+<p>Compare retained and excluded rows on observed fields, including year, terrain, access mode, and retrospective outcomes where appropriate for an audit. This can reveal selection but cannot prove deletion safe.</p>
+<p>Do not use the target in a deployment-time imputer merely because it was legitimate in a retrospective missingness investigation.</p>
+<h2 id="134-median-imputation-is-a-learned-model">13.4 Median imputation is a learned model</h2>
+<p>$$
+x_{ij}^{imp}=
+\begin{cases}
+x_{ij},&amp;R_{ij}=1,\\
+\operatorname{median}(X_{j,train}),&amp;R_{ij}=0.
+\end{cases}
+$$</p>
+<p>Median imputation preserves rows and offers a useful predictive baseline, but it does not recover truth:</p>
+<ul>
+<li>values pile up at the median;</li>
+<li>variance shrinks;</li>
+<li>relationships with other variables weaken; and</li>
+<li>ordinary formulas treating imputed values as observed understate uncertainty.</li>
+</ul>
+<p>The median must be learned independently inside every training fold.</p>
+<h2 id="135-missingness-indicators">13.5 Missingness indicators</h2>
+<p>$$
+M_{ij}=1-R_{ij}.
+$$</p>
+<p>Adding $M$ lets a model learn an offset for rows whose value was imputed. In scikit-learn:</p>
+<pre><code class="language-python">SimpleImputer(strategy=&quot;median&quot;, add_indicator=True)
+</code></pre>
+<p>The future missing value gets the training median plus indicator 1. An observed future value remains unchanged and gets indicator 0.</p>
+<p>An indicator can exploit stable predictive information in recording patterns. It does not make MNAR ignorable, identify a cause, or restore the missing distribution.</p>
+<h2 id="136-single-and-multiple-imputation-serve-different-purposes">13.6 Single and multiple imputation serve different purposes</h2>
+<p>Single imputation makes one completed feature matrix. Multiple imputation creates $m$ plausible completed datasets, runs the analysis on each, and pools estimates and uncertainty.</p>
+<p>For estimate $\hat Q_l$ and within-imputation variance $U_l$:</p>
+<p>$$
+\bar Q=\frac1m\sum_{l=1}^m\hat Q_l,
+$$</p>
+<p>$$
+\bar U=\frac1m\sum_{l=1}^mU_l,
+$$</p>
+<p>$$
+B=\frac1{m-1}\sum_{l=1}^m(\hat Q_l-\bar Q)^2,
+$$</p>
+<p>$$
+T=\bar U+\left(1+\frac1m\right)B.
+$$</p>
+<p>$\bar U$ is ordinary within-completed-data uncertainty. $B$ measures sensitivity to plausible missing values. The final factor acknowledges finite imputations.</p>
+<p>Generating several datasets is not enough. Imputation and analysis models must support the estimand, include relevant missingness predictors, respect deployment timing, and fit separately inside evaluation folds. Prediction performance is scored on observed held-out outcomes.</p>
+<h2 id="137-categorical-encodings-impose-hypotheses">13.7 Categorical encodings impose hypotheses</h2>
+<h3 id="one-hot-encoding">One-hot encoding</h3>
+<p>With A as reference:</p>
+<p>$$
+\hat y=\beta_0+\beta_BI(B)+\beta_CI(C).
+$$</p>
+<p>$\beta_B$ is B minus A conditional on other features. Changing reference changes coefficient labels but not fitted values. With an intercept, dropping one category prevents exact redundant coding.</p>
+<h3 id="ordinal-encoding">Ordinal encoding</h3>
+<p>Mapping low, medium, high to 0, 1, 2 imposes order. A linear coefficient additionally imposes equal gaps. Never assign numbers to districts merely because software needs numeric input.</p>
+<h3 id="frequency-encoding">Frequency encoding</h3>
+<p>Replace a category with its training frequency. This says category commonness is predictive and makes equally frequent categories indistinguishable.</p>
+<h3 id="target-encoding">Target encoding</h3>
+<p>$$
+TE(c)=\frac1{n_c}\sum_{i:C_i=c}y_i.
+$$</p>
+<p>This uses outcome information. Naively encoding training rows with their own category mean leaks each row's target, especially for rare or unique categories.</p>
+<h2 id="138-smoothed-and-cross-fitted-target-encoding">13.8 Smoothed and cross-fitted target encoding</h2>
+<p>Smoothed category mean:</p>
+<p>$$
+\widetilde{TE}(c)
+=\frac{n_c\bar y_c+m\bar y}{n_c+m}.
+$$</p>
+<p>Rare categories shrink toward the global training mean. Smoothing reduces variance but does not eliminate same-row leakage.</p>
+<p>Cross-fitting procedure:</p>
+<ol>
+<li>split development training data into internal folds;</li>
+<li>calculate category statistics on the other folds;</li>
+<li>encode the held-out fold;</li>
+<li>combine out-of-fold training encodings;</li>
+<li>fit a final mapping on all development rows only for future transformation; and</li>
+<li>map unseen categories to a pre-specified fallback such as training global mean.</li>
+</ol>
+<p>The internal splitter must also respect groups and time. Random target-encoding folds can leak district or future information while avoiding same-row leakage.</p>
+<p>Target encoding therefore needs two protections:</p>
+<ul>
+<li>cross-fitting within development; and</li>
+<li>complete separation from the final test.</li>
+</ul>
+<h2 id="139-a-leakproof-mixed-type-pipeline">13.9 A leakproof mixed-type pipeline</h2>
+<p>Numeric branch:</p>
+<pre><code class="language-text">median imputation + missing indicators -&gt; standardisation
+</code></pre>
+<p>Categorical branch:</p>
+<pre><code class="language-text">most-frequent imputation -&gt; one-hot encoding
+</code></pre>
+<p><code>ColumnTransformer</code> combines branches, then a model fits transformed columns. Every cross-validation fold learns its own medians, indicator availability, scales, and categories.</p>
+<p><code>handle_unknown="ignore"</code> prevents unseen categories from crashing. It does not demonstrate good transfer to them.</p>
+<h2 id="1310-research-discussion-rubin-on-missing-data">13.10 Research discussion: Rubin on missing data</h2>
+<p>Rubin formalised when a missingness process may be ignored for particular likelihood or sampling analyses.</p>
+<p>Beginner lessons:</p>
+<ol>
+<li>MAR is conditional on observed information.</li>
+<li>Ignorability depends on the mechanism and inferential framework.</li>
+<li>Observed values generally cannot rule out MNAR.</li>
+<li>Filling blanks is not propagating missing-value uncertainty.</li>
+</ol>
+<p>MHP implication: missing remote-road surveys require recording-process knowledge and sensitivity analysis, not only a median-filled column.</p>
+<p>Replication: simulate identical complete data followed by MCAR, MAR, and MNAR deletion. Compare complete cases, median imputation, median-plus-indicator prediction, and multiple-imputation interval coverage. Keep predictive error separate from coefficient bias.</p>
+<h2 id="day-13-exit-check">Day 13 exit check</h2>
+<p>Explain why MAR is not “missing for no reason,” why a missing indicator does not solve MNAR, and why target encoding needs cross-fitting plus final-test separation.</p>
+<hr />
+<h1 id="day-14-feature-engineering-is-model-specification">Day 14 — Feature engineering is model specification</h1>
+<h2 id="141-linear-in-parameters-can-be-nonlinear-in-a-feature">14.1 Linear in parameters can be nonlinear in a feature</h2>
+<p>$$
+\hat y=\beta_0+\beta_1x+\beta_2x^2
+$$</p>
+<p>is curved in $x$ but linear in coefficients. The design matrix simply contains $1,x,x^2$. OLS or regularised linear regression can fit it using familiar machinery.</p>
+<p>Creating a column changes the family of possible relationships. It is a mathematical hypothesis, not free accuracy.</p>
+<h2 id="142-centre-before-powers-and-interactions">14.2 Centre before powers and interactions</h2>
+<p>Let:</p>
+<p>$$
+x_c=x-c,
+$$</p>
+<p>where $c$ is a meaningful reference such as the training median.</p>
+<p>$$
+\hat y=\gamma_0+\gamma_1x_c+\gamma_2x_c^2.
+$$</p>
+<p>Then:</p>
+<ul>
+<li>$\gamma_0$ is prediction at $x=c$;</li>
+<li>$\gamma_1$ is slope at $x=c$;</li>
+<li>$x_c$ and $x_c^2$ are often less correlated; and</li>
+<li>numerical interpretation improves.</li>
+</ul>
+<p>Data-derived centres are learned preprocessing and fit only inside training folds.</p>
+<h2 id="143-interpret-quadratics-through-derivatives">14.3 Interpret quadratics through derivatives</h2>
+<p>For:</p>
+<p>$$
+f(x)=\beta_0+\beta_1x+\beta_2x^2,
+$$</p>
+<p>the local slope is:</p>
+<p>$$
+f'(x)=\beta_1+2\beta_2x.
+$$</p>
+<p>A stationary point occurs at:</p>
+<p>$$
+x^*=-\frac{\beta_1}{2\beta_2},
+$$</p>
+<p>when $\beta_2\neq0$.</p>
+<ul>
+<li>$\beta_2&gt;0$: convex, stationary point is a minimum.</li>
+<li>$\beta_2&lt;0$: concave, stationary point is a maximum.</li>
+</ul>
+<p>Before interpreting, check whether $x^*$ lies inside observed and credible deployment support, whether uncertainty is acceptable, whether the specification fits, and whether a causal claim is identified. The sign of $\beta_2$ alone proves none of these.</p>
+<h2 id="144-continuous-by-continuous-interactions">14.4 Continuous-by-continuous interactions</h2>
+<p>$$
+\hat y=\beta_0+\beta_1x_1+\beta_2x_2+\beta_3x_1x_2.
+$$</p>
+<p>Conditional slopes:</p>
+<p>$$
+\frac{\partial\hat y}{\partial x_1}=\beta_1+\beta_3x_2,
+$$</p>
+<p>$$
+\frac{\partial\hat y}{\partial x_2}=\beta_2+\beta_3x_1.
+$$</p>
+<p>$\beta_1$ is the slope of $x_1$ only at $x_2=0$. Centring makes zero a meaningful reference. An MHP cable-by-road interaction allows cable cost slope to vary with remoteness.</p>
+<h2 id="145-continuous-by-binary-interactions">14.5 Continuous-by-binary interactions</h2>
+<p>Let $D=1$ for porter/air access and 0 for reference access:</p>
+<p>$$
+\hat y=\beta_0+\beta_1x+\beta_2D+\beta_3xD.
+$$</p>
+<p>For $D=0$:</p>
+<p>$$
+\hat y=\beta_0+\beta_1x.
+$$</p>
+<p>For $D=1$:</p>
+<p>$$
+\hat y=(\beta_0+\beta_2)+(\beta_1+\beta_3)x.
+$$</p>
+<p>$\beta_2$ changes intercept and $\beta_3$ changes slope.</p>
+<h2 id="146-hierarchy-principle">14.6 Hierarchy principle</h2>
+<p>When including $x^2$, normally retain $x$. When including $x_1x_2$, retain both main effects.</p>
+<p>This:</p>
+<ul>
+<li>anchors higher-order interpretation;</li>
+<li>avoids unintended constraints; and</li>
+<li>makes predictions invariant to harmless shifts of feature origin.</li>
+</ul>
+<p>Hierarchy is a disciplined default, not an absolute theorem. Depart only for a defensible substantive constraint.</p>
+<h2 id="147-ratios-make-strong-assumptions">14.7 Ratios make strong assumptions</h2>
+<p>$$
+r=\frac{x_1}{x_2}.
+$$</p>
+<p>Risks:</p>
+<ul>
+<li>denominator near zero creates instability;</li>
+<li>both measurements may contain error;</li>
+<li>separate size information is lost;</li>
+<li>denominator may be post-outcome and leak; and</li>
+<li>low ratio error may not imply low total-budget error.</li>
+</ul>
+<p>“Cost per kW” changes the estimand from total cost. Converting it back requires capacity weighting and careful loss interpretation.</p>
+<h2 id="148-log-transformations">14.8 Log transformations</h2>
+<p>For positive $x$, use $\log x<code>. For nonnegative counts, $\log(1+x)</code> is common.</p>
+<p>Interpretations for small changes:</p>
+<ul>
+<li>level–log: $y=\beta_0+\beta_1\log x$; 1% more $x$ corresponds to about $0.01\beta_1$ target units;</li>
+<li>log–level: $\log y=\beta_0+\beta_1x$; one more unit of $x$ corresponds to about $100\beta_1$ percent change when $\beta_1$ is small;</li>
+<li>log–log: coefficient is elasticity.</li>
+</ul>
+<p>Logs compress large values but do not guarantee normality, and normal features are not an OLS requirement. Exponentiating a predicted log target generally returns a conditional median under log-error assumptions, not automatically the mean. Retransformation bias requires treatment.</p>
+<h2 id="149-piecewise-linear-hinges-and-splines">14.9 Piecewise linear hinges and splines</h2>
+<p>Hinge at knot $k$:</p>
+<p>$$
+(x-k)_+=\max(0,x-k).
+$$</p>
+<p>Model:</p>
+<p>$$
+\hat y=\beta_0+\beta_1x+\beta_2(x-k)_+.
+$$</p>
+<ul>
+<li>below $k$: slope $\beta_1$;</li>
+<li>above $k$: slope $\beta_1+\beta_2$.</li>
+</ul>
+<p>Splines use basis functions:</p>
+<p>$$
+f(x)=\sum_{m=1}^M\theta_mB_m(x).
+$$</p>
+<p>Once knots and degree define the bases, coefficients remain linearly fitted. Knot count, placement, and degree control flexibility and belong inside model selection unless pre-specified.</p>
+<p>Splines usually behave more locally than high-degree global polynomials, but no fitted curve certifies unsupported extrapolation.</p>
+<h2 id="1410-feature-explosion">14.10 Feature explosion</h2>
+<p>Degree-2 expansion of $p$ inputs can create:</p>
+<ul>
+<li>$p$ main effects;</li>
+<li>$p$ squares; and</li>
+<li>$p(p-1)/2$ pairwise interactions.</li>
+</ul>
+<p>This increases computation, collinearity, search opportunities, and noise fitting. Domain knowledge limits candidates; regularisation stabilises them; validation evaluates the complete procedure.</p>
+<h2 id="1411-read-mhpfeatureengineer">14.11 Read <code>MHPFeatureEngineer</code></h2>
+<p>Its <code>fit</code> validates required columns and learns training medians. <code>transform</code> creates:</p>
+<ul>
+<li>centred capacity and its square;</li>
+<li>centred cable-by-road interaction;</li>
+<li>an 18 km road hinge; and</li>
+<li><code>log1p</code> contractor experience.</li>
+</ul>
+<p>Pipeline order matters: a feature transformer operating on missing road values must either follow imputation or handle missing values deliberately. Every generated column needs an information receipt:</p>
+<ul>
+<li>raw fields used;</li>
+<li>whether target was used;</li>
+<li>rows used to learn constants;</li>
+<li>units;</li>
+<li>mechanism represented;</li>
+<li>valid range; and</li>
+<li>availability at appraisal.</li>
+</ul>
+<h2 id="1412-extrapolation-audit">14.12 Extrapolation audit</h2>
+<p>Plot fitted functions inside and outside observed ranges. A quadratic and hinge can agree over 80–850 kW yet diverge severely at 1,300 kW. Validation on existing support cannot certify a region with no comparable projects.</p>
+<h2 id="day-14-exit-check">Day 14 exit check</h2>
+<p>Interpret a quadratic through its derivative, explain an interaction using conditional slopes, apply hierarchy, and state why feature generation repeats inside every validation training fold.</p>
+<hr />
+<h1 id="day-15-ridge-regression-shrinkage-and-stability">Day 15 — Ridge regression: shrinkage and stability</h1>
+<h2 id="151-why-accept-bias">15.1 Why accept bias?</h2>
+<p>Nearly redundant predictors can yield large opposite OLS coefficients that cancel in predictions. Small sample changes reassign their contribution. Ridge accepts deliberate bias to reduce coefficient variance and possibly improve future prediction.</p>
+<h2 id="152-ridge-objective">15.2 Ridge objective</h2>
+<p>For centred target and standardised features, with intercept separated:</p>
+<p>$$
+J_{ridge}(\beta)
+=\lVert y-X\beta\rVert_2^2
++\lambda\lVert\beta\rVert_2^2,
+\qquad\lambda\geq0.
+$$</p>
+<ul>
+<li>$\lambda=0$: OLS where unique.</li>
+<li>small positive $\lambda$: mild shrinkage.</li>
+<li>large $\lambda$: penalised slopes approach zero.</li>
+<li>intercept is ordinarily not penalised.</li>
+</ul>
+<p>Packages normalise loss differently using $n$, 2, or $2n$. Therefore <code>alpha</code> and $\lambda$ values are not portable without checking the documented objective.</p>
+<h2 id="153-derive-the-ridge-solution">15.3 Derive the ridge solution</h2>
+<p>Gradient:</p>
+<p>$$
+\nabla J
+=-2X^Ty+2X^TX\beta+2\lambda\beta.
+$$</p>
+<p>Set to zero:</p>
+<p>$$
+(X^TX+\lambda I)\hat\beta_{ridge}=X^Ty.
+$$</p>
+<p>Thus:</p>
+<p>$$
+\hat\beta_{ridge}
+=(X^TX+\lambda I)^{-1}X^Ty.
+$$</p>
+<p>In code, solve the system; do not explicitly invert.</p>
+<h3 id="why-a-unique-solution-exists">Why a unique solution exists</h3>
+<p>For nonzero $v$ and $\lambda&gt;0$:</p>
+<p>$$
+v^T(X^TX+\lambda I)v
+=\lVert Xv\rVert_2^2+\lambda\lVert v\rVert_2^2&gt;0.
+$$</p>
+<p>The system is positive definite even when $X^TX$ is singular. Ridge chooses a unique coefficient vector but does not create scientific information to distinguish identical features.</p>
+<h2 id="154-scaling-defines-the-penalty">15.4 Scaling defines the penalty</h2>
+<p>The same distance measured in metres needs a coefficient one-thousandth the per-kilometre coefficient. Penalising raw magnitudes treats arbitrary units differently.</p>
+<p>Standardising inside each fold makes one coefficient unit correspond to one training standard deviation. It does not make features causal, equally useful, Gaussian, or outlier-free.</p>
+<h2 id="155-svd-explains-ridge-shrinkage">15.5 SVD explains ridge shrinkage</h2>
+<p>For $X=U\Sigma V^T$:</p>
+<p>$$
+\hat\beta_{ridge}
+=V\operatorname{diag}\left(\frac{\sigma_j}{\sigma_j^2+\lambda}\right)U^Ty.
+$$</p>
+<p>Fitted values:</p>
+<p>$$
+\hat y_{ridge}
+=U\operatorname{diag}\left(
+\frac{\sigma_j^2}{\sigma_j^2+\lambda}
+\right)U^Ty.
+$$</p>
+<p>Direction-specific retention:</p>
+<p>$$
+s_j(\lambda)=\frac{\sigma_j^2}{\sigma_j^2+\lambda}.
+$$</p>
+<p>Large singular directions retain more. Weak directions shrink more. OLS's $1/\sigma_j<code>amplification is replaced by $\sigma_j/(\sigma_j^2+\lambda)</code>.</p>
+<h2 id="156-effective-degrees-of-freedom">15.6 Effective degrees of freedom</h2>
+<p>Ridge smoother matrix:</p>
+<p>$$
+H_\lambda=X(X^TX+\lambda I)^{-1}X^T.
+$$</p>
+<p>Effective flexibility:</p>
+<p>$$
+df_{eff}(\lambda)
+=\operatorname{tr}(H_\lambda)
+=\sum_{j=1}^r\frac{\sigma_j^2}{\sigma_j^2+\lambda}.
+$$</p>
+<p>This need not be an integer. It equals rank at zero penalty for the centred component and decreases as shrinkage grows.</p>
+<h2 id="157-constrained-geometry">15.7 Constrained geometry</h2>
+<p>Ridge is equivalent for a corresponding $t$ to:</p>
+<p>$$
+\min_\beta\lVert y-X\beta\rVert_2^2
+\quad\text{subject to}\quad
+\lVert\beta\rVert_2^2\leq t.
+$$</p>
+<p>In two dimensions the constraint is a circle. SSR contours are ellipses. Their first contact gives the ridge solution. A smooth circle generally does not touch at an axis, so ridge shrinks but rarely makes exact zeros.</p>
+<h2 id="158-read-ridgefromscratch">15.8 Read <code>RidgeFromScratch</code></h2>
+<p>It:</p>
+<ol>
+<li>validates nonnegative alpha;</li>
+<li>learns training means and scales;</li>
+<li>centres target;</li>
+<li>solves $Z^TZ+\alpha I$;</li>
+<li>converts standardised slopes back to raw units; and</li>
+<li>reconstructs the intercept.</li>
+</ol>
+<p>Constant columns receive scale 1 to avoid division by zero, but should still be investigated. Predictions should match <code>StandardScaler</code> plus scikit-learn <code>Ridge</code> under the same objective.</p>
+<h2 id="159-coefficient-paths-and-tuning">15.9 Coefficient paths and tuning</h2>
+<p>Plot standardised coefficients against log penalty. Paths reveal whether correlated slopes stabilise and how quickly weak directions shrink.</p>
+<p>The path is development information. Select alpha with pre-specified validation, never by choosing an attractive final-test coefficient.</p>
+<h2 id="1510-biasvariance-trade-off">15.10 Bias–variance trade-off</h2>
+<p>Ridge increases bias. If variance falls by more, expected prediction error improves. It is not universally superior: adequate sample size, few well-conditioned features, and correct linear structure may favour OLS.</p>
+<h2 id="1511-bayesian-map-interpretation">15.11 Bayesian MAP interpretation</h2>
+<p>Gaussian likelihood:</p>
+<p>$$
+y\mid X,\beta\sim\mathcal N(X\beta,\sigma^2I).
+$$</p>
+<p>Gaussian prior on standardised slopes:</p>
+<p>$$
+\beta\sim\mathcal N(0,\tau^2I).
+$$</p>
+<p>Negative log posterior is proportional to:</p>
+<p>$$
+\frac1{2\sigma^2}\lVert y-X\beta\rVert_2^2
++\frac1{2\tau^2}\lVert\beta\rVert_2^2.
+$$</p>
+<p>Thus MAP has ridge form with $\lambda=\sigma^2/\tau^2$. Smaller prior variance means stronger shrinkage. This interpretation depends on that prior and does not provide the whole posterior.</p>
+<h2 id="1512-ridge-limitations">15.12 Ridge limitations</h2>
+<p>Ridge does not automatically provide causality, valid post-tuning p-values, leakage protection, outlier resistance, missing-data validity, or variable selection. Tuning makes selection part of the estimator; fixed-model uncertainty formulas do not automatically include it.</p>
+<h2 id="1513-research-discussion-hoerl-and-kennard">15.13 Research discussion: Hoerl and Kennard</h2>
+<p>Their proposal showed how biased estimates can lower coefficient mean squared error in nonorthogonal problems. Read separately:</p>
+<ul>
+<li>instability being addressed;</li>
+<li>diagonal modification of normal equations;</li>
+<li>coefficient MSE versus modern test prediction error;</li>
+<li>original ridge-constant choice versus nested/temporal validation; and</li>
+<li>dependence on feature units and linear assumptions.</li>
+</ul>
+<p>Replication: across many samples with $x_2=x_1+\epsilon$, compare OLS and ridge coefficient bias, variance, coefficient MSE, and test prediction error as correlation increases.</p>
+<h2 id="day-15-exit-check">Day 15 exit check</h2>
+<p>Derive ridge normal equations, explain singular-direction shrinkage and effective degrees of freedom, and state why scaling defines penalty meaning.</p>
+<hr />
+<h1 id="day-16-lasso-elastic-net-and-sparse-models">Day 16 — Lasso, elastic net, and sparse models</h1>
+<h2 id="161-lasso-objective">16.1 Lasso objective</h2>
+<p>For centred target and standardised design:</p>
+<p>$$
+J_{lasso}(\beta)
+=\frac1{2n}\lVert y-X\beta\rVert_2^2
++\alpha\lVert\beta\rVert_1.
+$$</p>
+<p>This matches scikit-learn's convention. The intercept is separate and unpenalised. Because absolute value has a kink at zero, there is no ordinary closed-form matrix inverse—and exact zero coefficients become possible.</p>
+<h2 id="162-subgradient-condition">16.2 Subgradient condition</h2>
+<p>For nonzero $b$:</p>
+<p>$$
+\frac{d|b|}{db}=\operatorname{sign}(b).
+$$</p>
+<p>At zero:</p>
+<p>$$
+\partial|b|=[-1,1].
+$$</p>
+<p>Optimality:</p>
+<p>$$
+-\frac1nX^T(y-X\hat\beta)+\alpha z=0,
+$$</p>
+<p>where $z_j=1<code>for positive coefficients, -1 for negative coefficients, and any value in $[-1,1]</code> at zero. A coefficient remains zero when its residual correlation lies within the penalty threshold.</p>
+<h2 id="163-derive-soft-thresholding">16.3 Derive soft thresholding</h2>
+<p>For orthonormal standardised columns:</p>
+<p>$$
+\frac1nX^TX=I,
+\qquad
+z_j=\frac1nx_j^Ty.
+$$</p>
+<p>One-coordinate objective becomes:</p>
+<p>$$
+\frac12(\beta_j-z_j)^2+\alpha|\beta_j|.
+$$</p>
+<p>Cases:</p>
+<ul>
+<li>$z_j&gt;\alpha$: $\hat\beta_j=z_j-\alpha$;</li>
+<li>$z_j&lt;-\alpha$: $\hat\beta_j=z_j+\alpha$;</li>
+<li>$|z_j|\leq\alpha$: $\hat\beta_j=0$.</li>
+</ul>
+<p>Combined:</p>
+<p>$$
+S(z,\alpha)
+=\operatorname{sign}(z)\max(|z|-\alpha,0).
+$$</p>
+<p>Soft thresholding both shrinks and selects.</p>
+<h2 id="164-why-l_1-geometry-produces-zeros">16.4 Why $L_1$ geometry produces zeros</h2>
+<p>The constrained form uses a diamond:</p>
+<p>$$
+\min_\beta\lVert y-X\beta\rVert_2^2
+\quad\text{subject to}\quad
+\lVert\beta\rVert_1\leq t.
+$$</p>
+<p>Diamond corners lie on coordinate axes. Expanding elliptical SSR contours often first touch a corner. Ridge's circular boundary usually touches away from axes.</p>
+<h2 id="165-coordinate-descent">16.5 Coordinate descent</h2>
+<p>For coordinate $j$, calculate the partial residual excluding it:</p>
+<p>$$
+r^{(j)}=y-\sum_{k\neq j}x_k\beta_k.
+$$</p>
+<p>Update:</p>
+<p>$$
+\beta_j\leftarrow
+\frac{S\left(x_j^Tr^{(j)}/n,\alpha\right)}{x_j^Tx_j/n}.
+$$</p>
+<p>Cycle through coefficients until convergence. The from-scratch class centres and scales, caches column energy, updates one coordinate at a time, and checks maximum coefficient change.</p>
+<p>Production solvers also examine optimality through a duality gap. Verify educational predictions against scikit-learn with identical scaling, alpha, tolerance, and objective normalisation.</p>
+<h2 id="166-correlated-predictors-make-selection-unstable">16.6 Correlated predictors make selection unstable</h2>
+<p>When road distance and surveyed route carry overlapping information, lasso can select either one across resamples while predictions remain similar.</p>
+<p>A zero means:</p>
+<blockquote>
+<p>This feature was not used by this penalised fit at this penalty, sample, and representation.</p>
+</blockquote>
+<p>It does not mean no relationship, no importance, or no causal role.</p>
+<p>Selection-frequency bootstraps are descriptive unless embedded in a formal stability-selection method. Use transformed feature names from the fitted pipeline rather than guessing coefficient order.</p>
+<h2 id="167-elastic-net">16.7 Elastic net</h2>
+<p>$$
+J_{EN}(\beta)
+=\frac1{2n}\lVert y-X\beta\rVert_2^2
++\alpha\rho\lVert\beta\rVert_1
++\frac{\alpha(1-\rho)}2\lVert\beta\rVert_2^2.
+$$</p>
+<p>Scikit-learn calls $\rho$ <code>l1_ratio</code>.</p>
+<ul>
+<li>$\rho=1$: lasso.</li>
+<li>$\rho=0<code>: ridge-like, though use</code>Ridge<code>for pure $L_2</code>.</li>
+<li>between 0 and 1: sparsity plus correlated-feature stabilisation.</li>
+</ul>
+<p>Both alpha and ratio belong inside tuning.</p>
+<h2 id="168-bayesian-lasso-interpretation">16.8 Bayesian lasso interpretation</h2>
+<p>With Gaussian outcome errors and independent Laplace priors:</p>
+<p>$$
+p(\beta_j\mid b)=\frac1{2b}\exp\left(-\frac{|\beta_j|}{b}\right),
+$$</p>
+<p>the posterior mode has lasso form after matching normalisations. A continuous Laplace prior assigns zero probability to the event $\beta_j=0$ exactly; a zero MAP is not posterior proof of absence.</p>
+<h2 id="169-paths-and-the-one-standard-error-rule">16.9 Paths and the one-standard-error rule</h2>
+<p>A validation minimum may be broad and noisy. The one-standard-error rule selects the most regularised candidate whose estimated validation loss is within one estimated standard error of the minimum.</p>
+<p>It encodes a simplicity/stability preference under near-ties; it is not a theorem of optimality. Temporal folds are dependent and heterogeneous, so report year scores and describe any standard-error approximation.</p>
+<h2 id="1610-post-selection-inference-warning">16.10 Post-selection inference warning</h2>
+<p>Selecting three variables from forty with lasso, then fitting ordinary OLS on those three using the same data, makes classical intervals too optimistic because they pretend selection never occurred.</p>
+<p>Options:</p>
+<ul>
+<li>focus on honestly held-out prediction;</li>
+<li>confirm on a new sample;</li>
+<li>use valid selective/debiased methods with assumptions; or</li>
+<li>pre-specify a low-dimensional explanatory model.</li>
+</ul>
+<p>Regularisation solves fitting and prediction problems, not inference after searching.</p>
+<h2 id="1611-research-discussion-tibshirani-and-lars">16.11 Research discussion: Tibshirani and LARS</h2>
+<p>Tibshirani's lasso combines ridge-like shrinkage with subset-like sparsity through an $L_1$ constraint. Read its motivation, geometry, evidence, original computation, and causal/inferential boundaries.</p>
+<p>Efron and colleagues later introduced least-angle regression (LARS), efficiently tracing a lasso path under suitable conditions. Coordinate descent and LARS illuminate different computational geometry.</p>
+<p>Replication: generate correlated feature pairs, repeat samples, and compare lasso versus elastic net on MAE, active-set size, selection frequency, and correlation of predictions across fits.</p>
+<h2 id="day-16-exit-check">Day 16 exit check</h2>
+<p>Derive soft thresholding, explain the diamond geometry, and explain why prediction stability and variable-selection stability are different.</p>
+<hr />
+<h1 id="day-17-multicollinearity-leverage-and-influence">Day 17 — Multicollinearity, leverage, and influence</h1>
+<h2 id="171-four-diagnostic-questions">17.1 Four diagnostic questions</h2>
+<table>
+<thead>
+<tr>
+<th>Idea</th>
+<th>Question</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Multicollinearity</td>
+<td>Are predictor directions weakly distinguished?</td>
+</tr>
+<tr>
+<td>Target outlier</td>
+<td>Is the outcome surprising under this model?</td>
+</tr>
+<tr>
+<td>Leverage</td>
+<td>Is the predictor combination unusual?</td>
+</tr>
+<tr>
+<td>Influence</td>
+<td>Would removing this row substantially change the fit?</td>
+</tr>
+</tbody>
+</table>
+<p>A row can have high leverage with a small residual, or a large residual with ordinary leverage. Influence usually combines discrepancy and leverage. Every label is relative to a particular fitted design.</p>
+<h2 id="172-consequences-of-collinearity-depend-on-purpose">17.2 Consequences of collinearity depend on purpose</h2>
+<ul>
+<li>Exact collinearity: rank deficiency and non-unique OLS coefficients.</li>
+<li>Near collinearity: unique but unstable coefficients.</li>
+<li>In-range prediction: combined fitted values may remain stable.</li>
+<li>Interpretation: conditional slopes are uncertain.</li>
+<li>Extrapolation: cancellation between large slopes may fail.</li>
+<li>Computation: rounding errors can be amplified.</li>
+</ul>
+<p>Under the classical model, collinearity increases variance; it does not itself bias OLS.</p>
+<h2 id="173-variance-inflation-factor">17.3 Variance inflation factor</h2>
+<p>Regress feature $x_j$ on other predictors and obtain auxiliary $R_j^2$. Then:</p>
+<p>$$
+VIF_j=\frac1{1-R_j^2}.
+$$</p>
+<p>Slope variance can be written:</p>
+<p>$$
+\operatorname{Var}(\hat\beta_j\mid X)
+=\frac{\sigma^2}
+{\sum_i(x_{ij}-\bar x_j)^2(1-R_j^2)}.
+$$</p>
+<p>Relative to a corresponding orthogonal reference, variance is inflated by VIF and standard error by $\sqrt{VIF_j}$. VIF 9 means threefold standard-error inflation, not “90% wrong.”</p>
+<p>There is no universal cutoff. High VIF is structurally expected with polynomials and interactions and may affect explanation more than interpolation. Do not remove a necessary confounder just to lower it.</p>
+<p>Calculate VIF on the actual transformed design, not merely raw inputs. Singular-value diagnostics reveal multi-feature weak directions that individual VIFs may summarise incompletely.</p>
+<h2 id="174-hat-matrix-and-leverage">17.4 Hat matrix and leverage</h2>
+<p>$$
+\hat y=X(X^TX)^{-1}X^Ty=Hy,
+$$</p>
+<p>$$
+H=X(X^TX)^{-1}X^T.
+$$</p>
+<p>Row $i$ leverage:</p>
+<p>$$
+h_{ii}=x_i^T(X^TX)^{-1}x_i.
+$$</p>
+<p>For a full-rank design with $k$ columns:</p>
+<p>$$
+0\leq h_{ii}\leq1,
+\qquad
+\sum_i h_{ii}=\operatorname{tr}(H)=k.
+$$</p>
+<p>Average leverage is $k/n$. Rules like $2k/n$ and $3k/n$ are screening conventions, not automatic exclusions. Rare deployment-relevant projects may legitimately have high leverage.</p>
+<h2 id="175-studentised-residuals">17.5 Studentised residuals</h2>
+<p>Since $e=(I-H)\varepsilon$ under the model:</p>
+<p>$$
+\operatorname{Var}(e_i\mid X)=\sigma^2(1-h_{ii}).
+$$</p>
+<p>Internally studentised residual:</p>
+<p>$$
+r_i=\frac{e_i}{s\sqrt{1-h_{ii}}},
+\qquad
+s^2=\frac{\sum_i e_i^2}{n-k}.
+$$</p>
+<p>It adjusts raw residuals for their model-implied variance. External studentisation estimates variance after deleting row $i$ and is useful in formal outlier tests, which also require multiple-testing care.</p>
+<h2 id="176-cooks-distance">17.6 Cook's distance</h2>
+<p>$$
+D_i
+=\frac{e_i^2}{ks^2}
+\frac{h_{ii}}{(1-h_{ii})^2}.
+$$</p>
+<p>It is proportional to aggregate fitted-value change after deleting row $i$:</p>
+<p>$$
+D_i
+=\frac{\sum_m(\hat y_m-\hat y_{m(i)})^2}{ks^2}.
+$$</p>
+<p>$D_i&gt;4/n$ is an investigation flag, not a deletion rule.</p>
+<h2 id="177-read-the-diagnostic-code">17.7 Read the diagnostic code</h2>
+<p>The educational function computes:</p>
+<ol>
+<li>OLS coefficients and fitted values;</li>
+<li>residuals;</li>
+<li>leverage with row-wise quadratic forms;</li>
+<li>residual MSE;</li>
+<li>studentised residuals; and</li>
+<li>Cook's distance.</li>
+</ol>
+<p>Use <code>statsmodels.get_influence()</code> as a reference. The explicit inverse mirrors formulas; production implementations should use stable factorizations.</p>
+<h2 id="178-diagnostic-quartet">17.8 Diagnostic quartet</h2>
+<ol>
+<li>Residual versus fitted: curvature, spread, groups.</li>
+<li>Normal Q–Q: tail departure when normal inference matters.</li>
+<li>Scale–location: $\sqrt{|r_i|}$ versus fitted for changing variance.</li>
+<li>Residual versus leverage with Cook contours: influential combinations.</li>
+</ol>
+<p>Plots suggest mechanisms but do not select remedies. A funnel may reflect multiplicative noise, omitted groups, wrong mean structure, or data errors.</p>
+<h2 id="179-influence-investigation-protocol">17.9 Influence investigation protocol</h2>
+<ol>
+<li>Verify source, units, duplicate status, and transcription.</li>
+<li>Confirm target-population and prediction-time eligibility.</li>
+<li>Understand why predictors are rare or outcome surprising.</li>
+<li>compare pre-justified specifications.</li>
+<li>report sensitivity of coefficients, validation, and conclusions.</li>
+<li>preserve valid in-scope rows in the primary analysis.</li>
+</ol>
+<p>Document any data-error deletion rule so it can be applied without viewing a desired result.</p>
+<h2 id="1710-regularised-influence-differs">17.10 Regularised influence differs</h2>
+<p>OLS formulas apply to unpenalised OLS. Ridge uses $H_\lambda$ and effective degrees of freedom. Lasso changes active set nonlinearly, so copying OLS Cook formulas is unsafe. Assess complex selected pipelines through case-deletion refits or carefully designed resampling.</p>
+<h2 id="day-17-exit-check">Day 17 exit check</h2>
+<p>Distinguish residual, leverage, and influence; derive average leverage; and explain VIF as conditional variance inflation rather than a variable-deletion command.</p>
+<hr />
+<h1 id="day-18-heteroskedasticity-and-dependent-data">Day 18 — Heteroskedasticity and dependent data</h1>
+<h2 id="181-coefficients-and-uncertainty-are-separate-layers">18.1 Coefficients and uncertainty are separate layers</h2>
+<p>If the conditional mean is correctly linear and:</p>
+<p>$$
+\mathbb E[\varepsilon\mid X]=0,
+$$</p>
+<p>OLS can remain unbiased even when error variance changes.</p>
+<p>Under homoskedastic independent errors:</p>
+<p>$$
+\operatorname{Var}(\varepsilon\mid X)=\sigma^2I,
+$$</p>
+<p>$$
+\operatorname{Var}(\hat\beta\mid X)=\sigma^2(X^TX)^{-1}.
+$$</p>
+<p>When variance or dependence differs, OLS coefficients stay the same but covariance, standard errors, tests, and intervals change.</p>
+<h2 id="182-general-sandwich-covariance">18.2 General sandwich covariance</h2>
+<p>For general error covariance $\Omega$:</p>
+<p>$$
+\operatorname{Var}(\hat\beta\mid X)
+=(X^TX)^{-1}X^T\Omega X(X^TX)^{-1}.
+$$</p>
+<p>Outer matrices are bread; middle is meat. For independent heteroskedastic observations, $\Omega$ is diagonal with different variances.</p>
+<h2 id="183-hc0-through-hc3">18.3 HC0 through HC3</h2>
+<p>HC0:</p>
+<p>$$
+\widehat{Var}_{HC0}(\hat\beta)
+=(X^TX)^{-1}
+\left(\sum_i e_i^2x_ix_i^T\right)
+(X^TX)^{-1}.
+$$</p>
+<table>
+<thead>
+<tr>
+<th>Estimator</th>
+<th style="text-align: right;">Residual contribution</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HC0</td>
+<td style="text-align: right;">$e_i^2$</td>
+<td>Basic asymptotic sandwich</td>
+</tr>
+<tr>
+<td>HC1</td>
+<td style="text-align: right;">$\frac n{n-k}e_i^2$</td>
+<td>Degrees-of-freedom scaling</td>
+</tr>
+<tr>
+<td>HC2</td>
+<td style="text-align: right;">$e_i^2/(1-h_{ii})$</td>
+<td>Leverage-related residual shrinkage</td>
+</tr>
+<tr>
+<td>HC3</td>
+<td style="text-align: right;">$e_i^2/(1-h_{ii})^2$</td>
+<td>Stronger leave-one-out-like correction</td>
+</tr>
+</tbody>
+</table>
+<p>HC3 is often reasonable in modest samples, not universally guaranteed.</p>
+<h2 id="184-build-and-verify-hc-covariance">18.4 Build and verify HC covariance</h2>
+<p>The chapter function:</p>
+<ol>
+<li>computes bread $(X^TX)^{-1}$;</li>
+<li>fits OLS and residuals;</li>
+<li>calculates leverage;</li>
+<li>chooses the HC residual weights;</li>
+<li>computes <code>X.T @ (omega[:, None] * X)</code> as meat; and</li>
+<li>sandwiches the result.</li>
+</ol>
+<p>Compare coefficients and covariance with <code>statsmodels.OLS(...).fit(cov_type="HC3")</code>.</p>
+<h2 id="185-what-hc-standard-errors-do-not-fix">18.5 What HC standard errors do not fix</h2>
+<p>They do not repair:</p>
+<ul>
+<li>wrong conditional mean;</li>
+<li>omitted variables or endogeneity;</li>
+<li>leakage;</li>
+<li>measurement-error bias;</li>
+<li>unsupported causal contrasts;</li>
+<li>row dependence when using independent-row HC; or</li>
+<li>out-of-sample prediction.</li>
+</ul>
+<p>“Robust” always means robust to a stated violation while retaining other assumptions.</p>
+<h2 id="186-heteroskedasticity-tests">18.6 Heteroskedasticity tests</h2>
+<p>Breusch–Pagan relates squared residuals to predictors. White's test allows a richer variance auxiliary model.</p>
+<ul>
+<li>small samples may lack power;</li>
+<li>huge samples flag trivial departures;</li>
+<li>rejection may reflect mean misspecification; and</li>
+<li>non-rejection does not prove equal variance.</li>
+</ul>
+<p>Use design knowledge and plots. If changing variance is expected by construction, pre-specifying HC3 can be more coherent than choosing covariance after a significance test.</p>
+<h2 id="187-cluster-dependence">18.7 Cluster dependence</h2>
+<p>For cluster $g$:</p>
+<p>$$
+\text{meat}
+=\sum_{g=1}^G(X_g^Te_g)(X_g^Te_g)^T.
+$$</p>
+<p>Cluster-robust covariance permits arbitrary within-cluster covariance while relying on approximate independence across clusters. The number of independent clusters, not row count, drives asymptotic justification.</p>
+<h2 id="188-five-districts-are-too-few-for-casual-asymptotics">18.8 Five districts are too few for casual asymptotics</h2>
+<p>Five clusters can produce a software number without reliable reference distribution. Possible responses:</p>
+<ul>
+<li>gather more independent districts;</li>
+<li>state a hierarchical model explicitly;</li>
+<li>use justified small-cluster methods such as wild cluster bootstrap;</li>
+<li>use randomisation inference when design permits; or</li>
+<li>limit claims and show district sensitivity descriptively.</li>
+</ul>
+<p>No technique converts five independent shocks into fifty.</p>
+<h2 id="189-choose-cluster-level-from-dependence">18.9 Choose cluster level from dependence</h2>
+<ul>
+<li>shared district shocks: district;</li>
+<li>repeated rows per project: project;</li>
+<li>village-level treatment: assignment unit constrains inference;</li>
+<li>dependence across district and year: one-way clustering may be insufficient.</li>
+</ul>
+<p>Do not choose the level that makes significance attractive. Time and spatial dependence need methods with their own bandwidth and asymptotic assumptions.</p>
+<h2 id="1810-prediction-intervals-need-a-variance-model">18.10 Prediction intervals need a variance model</h2>
+<p>HC covariance improves uncertainty of estimated mean coefficients. It does not automatically make project-level interval widths adapt to remoteness.</p>
+<p>Options include conditional scale models, quantile regression, conformal methods under stated exchangeability/shift assumptions, or hierarchical probability models.</p>
+<h2 id="1811-research-discussion-white">18.11 Research discussion: White</h2>
+<p>White developed consistent OLS covariance estimation under unknown heteroskedasticity subject to regularity conditions.</p>
+<p>Read:</p>
+<ul>
+<li>target asymptotic distribution;</li>
+<li>failure of homoskedastic covariance;</li>
+<li>squared-residual construction;</li>
+<li>sensitivity to sample size and leverage; and</li>
+<li>assumptions that remain beyond variance form.</li>
+</ul>
+<p>Replication: under variance $\left(0.5+|x|\right)^2$, compare classical and HC3 95% slope-interval coverage across repeated samples. Then omit a true quadratic term and observe that HC3 does not repair mean bias.</p>
+<h2 id="day-18-exit-check">Day 18 exit check</h2>
+<p>Construct the sandwich, explain HC3's leverage correction, and explain why few clusters are a design limitation.</p>
+<hr />
+<h1 id="day-19-robust-and-quantile-regression">Day 19 — Robust and quantile regression</h1>
+<h2 id="191-three-meanings-of-robust">19.1 Three meanings of “robust”</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Fitted target/loss</th>
+<th>Changed layer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OLS + HC3</td>
+<td>OLS mean/squared loss</td>
+<td>covariance only</td>
+</tr>
+<tr>
+<td>Huber regression</td>
+<td>robust conditional location</td>
+<td>coefficient fit/loss</td>
+</tr>
+<tr>
+<td>Quantile regression</td>
+<td>chosen conditional quantile</td>
+<td>target and loss</td>
+</tr>
+</tbody>
+</table>
+<p>They answer different questions.</p>
+<h2 id="192-why-squared-loss-reacts-strongly">19.2 Why squared loss reacts strongly</h2>
+<p>OLS uses $\frac12r^2<code>, whose derivative with respect to residual is $r</code>. Residual magnitude 20 contributes twenty times the local gradient magnitude of residual 1.</p>
+<p>Large residuals may be errors, omitted mechanisms, heavy tails, mixed regimes, rare genuine events, or out-of-scope rows. Changing loss reduces sensitivity but does not diagnose the cause.</p>
+<h2 id="193-huber-loss-and-score">19.3 Huber loss and score</h2>
+<p>$$
+L_\delta(r)=
+\begin{cases}
+\frac12r^2,&amp;|r|\leq\delta,\\
+\delta\left(|r|-\frac12\delta\right),&amp;|r|&gt;\delta.
+\end{cases}
+$$</p>
+<p>Derivative:</p>
+<p>$$
+\psi_\delta(r)=
+\begin{cases}
+r,&amp;|r|\leq\delta,\\
+\delta\operatorname{sign}(r),&amp;|r|&gt;\delta.
+\end{cases}
+$$</p>
+<p>Large gradients are clipped. Huber remains smooth at $\pm\delta$ and is less sensitive to vertical outliers.</p>
+<h2 id="194-iteratively-reweighted-least-squares-intuition">19.4 Iteratively reweighted least squares intuition</h2>
+<p>For $r\neq0$:</p>
+<p>$$
+w(r)=\frac{\psi_\delta(r)}r
+=\begin{cases}
+1,&amp;|r|\leq\delta,\\
+\delta/|r|,&amp;|r|&gt;\delta.
+\end{cases}
+$$</p>
+<p>Iterate:</p>
+<ol>
+<li>fit current coefficients;</li>
+<li>calculate residuals and weights;</li>
+<li>solve weighted least squares; and</li>
+<li>repeat.</li>
+</ol>
+<p>Production Huber regression accounts for scale because a numerical threshold changes meaning when target units change.</p>
+<h2 id="195-huber-is-not-robust-to-every-leverage-point">19.5 Huber is not robust to every leverage point</h2>
+<p>A predictor-space outlier can pull the fitted surface toward itself and end with a modest residual. Residual clipping alone may not protect against it. Combine Huber with leverage, case deletion, provenance, and deployment-population checks.</p>
+<p>In scikit-learn, <code>epsilon</code> sets the scaled-residual transition and <code>alpha</code> adds $L_2$ regularisation. Both tune inside validation. Smaller epsilon is not automatically better.</p>
+<h2 id="196-conditional-quantiles">19.6 Conditional quantiles</h2>
+<p>OLS targets:</p>
+<p>$$
+\mathbb E[Y\mid X=x].
+$$</p>
+<p>Conditional quantile:</p>
+<p>$$
+Q_Y(\tau\mid x)
+=\inf\{q:P(Y\leq q\mid X=x)\geq\tau\}.
+$$</p>
+<ul>
+<li>0.5: conditional median.</li>
+<li>0.8: upper planning quantile.</li>
+<li>0.95: more conservative upper quantile.</li>
+</ul>
+<p>A quantile is not a confidence interval for a mean.</p>
+<h2 id="197-derive-pinball-loss">19.7 Derive pinball loss</h2>
+<p>For residual $u=y-q$:</p>
+<p>$$
+\rho_\tau(u)
+=u(\tau-\mathbb 1\{u&lt;0\})
+=\begin{cases}
+\tau u,&amp;u\geq0,\\
+(\tau-1)u,&amp;u&lt;0.
+\end{cases}
+$$</p>
+<p>At $\tau=0.8$, underprediction costs 0.8 per unit and overprediction 0.2: four times as much. Expected risk derivative is:</p>
+<p>$$
+R'(q)=F_Y(q)-\tau.
+$$</p>
+<p>The optimum satisfies the quantile condition. At jumps, a subgradient produces the set-valued definition.</p>
+<h2 id="198-linear-quantile-regression">19.8 Linear quantile regression</h2>
+<p>Assume:</p>
+<p>$$
+Q_Y(\tau\mid X=x)=x^T\beta_\tau.
+$$</p>
+<p>Fit:</p>
+<p>$$
+\hat\beta_\tau
+=\arg\min_\beta\sum_i\rho_\tau(y_i-x_i^T\beta),
+$$</p>
+<p>possibly with regularisation. Coefficients can differ across quantiles because spread and distribution shape change with features.</p>
+<p>Scikit-learn <code>QuantileRegressor.alpha</code> controls $L_1$ regularisation, so scaling and validation remain necessary.</p>
+<h2 id="199-evaluate-quantile-predictions">19.9 Evaluate quantile predictions</h2>
+<p>Use mean pinball loss at the target quantile. Check held-out empirical coverage:</p>
+<p>$$
+\frac1m\sum_i\mathbb 1\{y_i\leq\hat q_\tau(x_i)\}.
+$$</p>
+<p>For a calibrated stable 0.8 conditional-quantile model, overall coverage should be near 0.8. Also report coverage by pre-specified group and predicted-quantile bins with counts and uncertainty.</p>
+<p>Coverage alone is insufficient: an enormous upper prediction covers everything but is useless. Pinball loss balances calibration and sharpness according to the target.</p>
+<h2 id="1910-quantile-crossing">19.10 Quantile crossing</h2>
+<p>Separately fitted models can yield:</p>
+<p>$$
+\hat Q(0.5\mid x)&gt;\hat Q(0.8\mid x).
+$$</p>
+<p>This violates ordering. Check within deployment-like ranges. Remedies include joint non-crossing fitting, full-distribution models, validated rearrangement, or simpler representation. Sorting predictions post hoc changes the procedure and must be validated.</p>
+<h2 id="1911-decision-basis-for-an-upper-quantile">19.11 Decision basis for an upper quantile</h2>
+<p>If underprediction costs $c_u<code>per unit and overprediction costs $c_o</code>:</p>
+<p>$$
+\tau=\frac{c_u}{c_u+c_o}.
+$$</p>
+<p>When underbudgeting costs four times as much, $\tau=0.8$. This is a decision-based choice made before outcomes, not a quantile chosen for attractive test coverage.</p>
+<h2 id="1912-research-discussions-huber-and-koenkerbassett">19.12 Research discussions: Huber and Koenker–Bassett</h2>
+<p>Huber's robust-location work formalised an efficiency-versus-contamination trade-off, explaining linear central score and clipped tails. Its location setting does not automatically solve regression leverage.</p>
+<p>Replication: contaminate 5% of normal observations with a much wider distribution and compare mean, median, and Huber location across repeats.</p>
+<p>Koenker and Bassett generalised sample quantiles to regression through asymmetric absolute loss, allowing conditional effects at different distribution points.</p>
+<p>Replication: simulate heteroskedastic $Y=2+3X+(0.5+X)\varepsilon$, fit 0.1, 0.5, and 0.9 regressions, compare theoretical slopes, and check held-out coverage.</p>
+<h2 id="day-19-exit-check">Day 19 exit check</h2>
+<p>Distinguish HC3, Huber, and quantile regression; derive Huber and pinball losses; and evaluate an upper quantile overall and by subgroup.</p>
+<hr />
+<h1 id="day-20-a-pre-specified-regression-benchmark">Day 20 — A pre-specified regression benchmark</h1>
+<h2 id="201-exploration-confirmation-and-benchmarks">20.1 Exploration, confirmation, and benchmarks</h2>
+<ul>
+<li><strong>Exploratory:</strong> choices adapt to observed results; findings generate hypotheses.</li>
+<li><strong>Confirmatory:</strong> primary question and analysis are fixed in advance; deviations recorded.</li>
+<li><strong>Predictive benchmark:</strong> candidate procedures and selection rule are fixed; locked test evaluates the selected result.</li>
+</ul>
+<p>Exploration is essential. Mislabeling an adaptive result as pre-specified is the problem.</p>
+<h2 id="202-registered-prediction-contract">20.2 Registered prediction contract</h2>
+<p>Freeze:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Choice</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Unit</td>
+<td>One eligible MHP project</td>
+</tr>
+<tr>
+<td>Prediction time</td>
+<td>Technical appraisal</td>
+</tr>
+<tr>
+<td>Target</td>
+<td>Final constant-2025 cost</td>
+</tr>
+<tr>
+<td>Development</td>
+<td>Start through 2022</td>
+</tr>
+<tr>
+<td>Locked test</td>
+<td>2023–2025</td>
+</tr>
+<tr>
+<td>Validation</td>
+<td>Expanding years 2019–2022</td>
+</tr>
+<tr>
+<td>Point metric</td>
+<td>Equal-year-average MAE</td>
+</tr>
+<tr>
+<td>Secondary metrics</td>
+<td>RMSE, signed error, year spread</td>
+</tr>
+<tr>
+<td>Planning target</td>
+<td>Conditional 80th percentile</td>
+</tr>
+<tr>
+<td>Planning metric</td>
+<td>0.8 pinball loss; coverage diagnostic</td>
+</tr>
+<tr>
+<td>Subgroups</td>
+<td>Access mode and district with counts</td>
+</tr>
+<tr>
+<td>Exclusions</td>
+<td>Documented eligibility/source errors only</td>
+</tr>
+<tr>
+<td>Test use</td>
+<td>Once after selection</td>
+</tr>
+</tbody>
+</table>
+<p>Equal year weighting gives each year equal influence. Project weighting answers a different question. Either can be justified if fixed in advance.</p>
+<h2 id="203-compare-complete-procedures">20.3 Compare complete procedures</h2>
+<p>A candidate includes:</p>
+<ol>
+<li>imputation and indicators;</li>
+<li>categorical encoding;</li>
+<li>centring and engineered features;</li>
+<li>standardisation;</li>
+<li>estimator and loss;</li>
+<li>penalty and other hyperparameters; and</li>
+<li>convergence settings.</li>
+</ol>
+<p>The chapter pre-specifies historical mean, raw and engineered OLS, ridge grid, elastic-net grid, Huber grid, and median/0.8 quantile grids.</p>
+<p>Point candidates need not estimate the same scientific functional: squared loss targets mean, MAE's population optimum is median, and Huber targets a robust location. Comparing them under operational MAE is legitimate for a point decision, but do not relabel an MAE-selected robust location as expected cost.</p>
+<h2 id="204-temporal-boundary">20.4 Temporal boundary</h2>
+<p>For validation year $t<code>, fit every learned transformation and estimator only on years before $t</code>. Aggregate the pre-specified year losses, select one procedure, refit through 2022, and test on 2023–2025 once.</p>
+<p>Feature design, influence decisions, and metric choice cannot use locked-test information.</p>
+<h2 id="205-read-the-end-to-end-code">20.5 Read the end-to-end code</h2>
+<h3 id="constants-and-feature-lists">Constants and feature lists</h3>
+<p>They make target, validation years, test boundary, seed, eligible raw features, engineered features, and categories explicit. Assertions prohibit latent road distance and post-construction material bill.</p>
+<h3 id="feature-engineer">Feature engineer</h3>
+<p>Learns capacity/year centres per fold and creates capacity square, time centre, road hinge, cable-road interaction, and log experience.</p>
+<h3 id="candidate-factories">Candidate factories</h3>
+<p>Return fresh complete pipelines for point and quantile procedures. A modest theory-guided grid controls selection opportunity.</p>
+<h3 id="expanding-window-scoring">Expanding-window scoring</h3>
+<p>Clones and refits every candidate for every year. It stores candidate, year, validation count, and loss rather than keeping only an average.</p>
+<h3 id="selection">Selection</h3>
+<p>Ranks candidates by equal-year mean and worst-year tie breaker. A broad practical tie should be reported rather than over-precisely ranked.</p>
+<h3 id="locked-test">Locked test</h3>
+<p>Refits winner on all development rows, predicts test once, and compares with pre-specified raw OLS reference.</p>
+<h3 id="quantile-track">Quantile track</h3>
+<p>Selects median and 80th-quantile procedures separately by matching pinball loss, then records coverage and crossing.</p>
+<h3 id="outputs">Outputs</h3>
+<p>Writes validation fold scores, summaries, row-level locked predictions, subgroup audit, and JSON metadata containing environment and selections.</p>
+<p>Assertions protect only their stated contract. They do not replace a full audit.</p>
+<h2 id="206-read-validation-before-winner">20.6 Read validation before winner</h2>
+<p>Ask:</p>
+<ul>
+<li>Is the lead consistent or one-year-driven?</li>
+<li>Is it operationally meaningful?</li>
+<li>Does raw OLS nearly tie?</li>
+<li>Did candidates converge?</li>
+<li>Does the tie rule prefer a stable simpler model?</li>
+</ul>
+<p>Minimum validation loss after a search is optimistic as a performance estimate. The locked test evaluates the chosen procedure.</p>
+<h2 id="207-interpret-the-locked-test-narrowly">20.7 Interpret the locked test narrowly</h2>
+<p>Report:</p>
+<ul>
+<li>date ranges and sample sizes;</li>
+<li>full candidate families and selected procedure;</li>
+<li>MAE, RMSE, signed error;</li>
+<li>comparison with raw OLS;</li>
+<li>median and 0.8 pinball loss;</li>
+<li>overall/subgroup 0.8 coverage;</li>
+<li>crossing rate;</li>
+<li>shift evidence; and</li>
+<li>plan deviations.</li>
+</ul>
+<p>It estimates performance in the represented later period, not permanent universal superiority.</p>
+<h2 id="208-paired-bootstrap-difference">20.8 Paired bootstrap difference</h2>
+<p>$$
+\Delta=MAE_{selected}-MAE_{raw\ OLS}.
+$$</p>
+<p>Negative favours selected. Resample projects as paired rows because both models predict the same cases. The supplied row-bootstrap interval is descriptive and assumes row exchangeability; it ignores district/time dependence. Show year/district results and avoid unjustified precision.</p>
+<h2 id="209-subgroup-audit-without-leaderboard-fishing">20.9 Subgroup audit without leaderboard fishing</h2>
+<p>Pre-specify groups for operational reasons. Report counts, errors, quantile coverage, and crossing. Do not search many slices until one looks dramatic, then present it as confirmed. Post-hoc findings become hypotheses for new evidence.</p>
+<h2 id="2010-model-card-and-reproducibility">20.10 Model card and reproducibility</h2>
+<p>Model card should state:</p>
+<ul>
+<li>purpose and prohibited uses;</li>
+<li>prediction time and target units;</li>
+<li>training period/population;</li>
+<li>features and missingness policy;</li>
+<li>candidate selection and metrics;</li>
+<li>overall and subgroup performance;</li>
+<li>quantile calibration;</li>
+<li>limitations and monitoring;</li>
+<li>human override and accountability.</li>
+</ul>
+<p>Reproducibility checklist includes source code, seed, versions, data generator/input hash, frozen contract, candidate grid, all fold scores, row predictions, metadata, and deviation log.</p>
+<p>Reproducibility means another researcher can repeat the procedure. It does not prove the procedure is scientifically correct.</p>
+<h2 id="2011-research-discussion-varma-and-simon">20.11 Research discussion: Varma and Simon</h2>
+<p>Their work demonstrates selection bias when cross-validation both tunes and reports performance. Nested CV or a locked independent evaluation separates tuning from assessment.</p>
+<p>Replication: increase candidate settings from 5 to 50 to 500 and compare best inner score with outer/independent performance. Selection optimism should grow with search opportunity.</p>
+<h2 id="2012-research-report-structure">20.12 Research report structure</h2>
+<ol>
+<li>Question and deployment decision.</li>
+<li>Data and eligibility.</li>
+<li>Registered contract and deviations.</li>
+<li>Complete candidate procedures.</li>
+<li>Validation design and selection rule.</li>
+<li>Locked results, diagnostics, influence, convergence.</li>
+<li>Pre-specified sensitivity and labeled post-hoc analysis.</li>
+<li>Limitations: sampling, dependence, shift, causality, synthetic status.</li>
+<li>Reproducibility artifacts.</li>
+<li>Bounded conclusion.</li>
+</ol>
+<p>Conclusion template:</p>
+<blockquote>
+<p>Under expanding-window comparison through 2022, procedure A had the lowest pre-specified average validation MAE. After refitting on all development projects, its 2023–2025 MAE was X million PKR versus Y for raw OLS. Performance was weakest for subgroup Z based on n projects. The 80th-quantile procedure covered C% overall and C-Z% in subgroup Z. Results support appraisal prediction within represented districts and ranges; they do not identify causal effects or establish transfer to new regions.</p>
+</blockquote>
+<p>Fill every placeholder and retain unfavourable results.</p>
+<h2 id="day-20-exit-check">Day 20 exit check</h2>
+<p>You are finished when another researcher can trace every number from frozen contract through pipeline, fold scores, selected procedure, locked predictions, subgroup audit, metadata, and limitations.</p>
+<hr />
+<h1 id="chapter-3-synthesis-and-laboratories">Chapter 3 synthesis and laboratories</h1>
+<h2 id="how-the-techniques-form-one-system">How the techniques form one system</h2>
+<ul>
+<li>Preprocessing changes information received.</li>
+<li>Feature engineering changes expressible relationships.</li>
+<li>Regularisation changes fitting criterion.</li>
+<li>Diagnostics reveal weak directions and dominating cases.</li>
+<li>Robust covariance changes uncertainty, not coefficients.</li>
+<li>Huber changes loss and fitted location.</li>
+<li>Quantile regression changes conditional target.</li>
+<li>Validation evaluates the whole procedure.</li>
+<li>Locked evidence bounds the final claim.</li>
+</ul>
+<h2 id="derivation-workshop">Derivation workshop</h2>
+<p>Complete on paper and verify numerically:</p>
+<ol>
+<li>ridge normal equations;</li>
+<li>ridge SVD coefficient and fitted-value factors;</li>
+<li>positive definiteness of $X^TX+\lambda I$;</li>
+<li>lasso soft thresholding under $X^TX/n=I$;</li>
+<li>$\sum_i h_{ii}=k$;</li>
+<li>$\operatorname{Var}(e_i\mid X)=\sigma^2(1-h_{ii})$;</li>
+<li>sandwich covariance from the OLS coefficient expression;</li>
+<li>pinball expected-risk derivative;</li>
+<li>cost ratio leading to $\tau=c_u/(c_u+c_o)$; and</li>
+<li>slope when a predictor appears in a square and interaction.</li>
+</ol>
+<h2 id="practical-laboratories">Practical laboratories</h2>
+<h3 id="a-missingness-as-information">A — Missingness as information</h3>
+<p>Compare MCAR and remote-dependent missingness using complete cases, median, median-plus-indicator, and multiple imputation. Separate prediction error from inferential coverage.</p>
+<h3 id="b-regularisation-under-correlation">B — Regularisation under correlation</h3>
+<p>Vary predictor correlation from 0 to 0.999. Across repeats report OLS/ridge coefficient variance and bias, lasso selection frequency, and elastic-net prediction.</p>
+<h3 id="c-influence-map">C — Influence map</h3>
+<p>Create ordinary, vertical-outlier, high-leverage-on-line, and high-leverage-large-residual rows. Compare residual, leverage, and Cook distance.</p>
+<h3 id="d-covariance-failure">D — Covariance failure</h3>
+<p>Compare classical, HC0, and HC3 coverage under equal/changing variance and several leverage patterns.</p>
+<h3 id="e-dependence">E — Dependence</h3>
+<p>Increase projects per district while fixing district count. Observe why row count does not replace independent clusters.</p>
+<h3 id="f-robust-target-choice">F — Robust target choice</h3>
+<p>Contaminate outcomes and compare OLS, Huber, median, and ridge under mean- and median-target losses.</p>
+<h3 id="g-quantile-calibration">G — Quantile calibration</h3>
+<p>Fit median and 0.8 quantiles under equal/changing spread. Check loss, overall/group coverage, and crossing.</p>
+<h3 id="h-selection-optimism">H — Selection optimism</h3>
+<p>Compare 5, 50, and 500 candidate searches using inner versus outer performance.</p>
+<h2 id="self-assessment-rubric">Self-assessment rubric</h2>
+<table>
+<thead>
+<tr>
+<th>Dimension</th>
+<th>Ready for this level when you can...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Prediction contract</td>
+<td>make population, decision, timing, target, units, and exclusions executable</td>
+</tr>
+<tr>
+<td>Preprocessing</td>
+<td>justify missingness assumptions, category policy, unknown levels, and fold boundaries</td>
+</tr>
+<tr>
+<td>Feature design</td>
+<td>state mechanism, hierarchy, derivative, support, units, and extrapolation limits</td>
+</tr>
+<tr>
+<td>Regularisation</td>
+<td>derive objectives, explain paths and scaling, and tune without test access</td>
+</tr>
+<tr>
+<td>Diagnostics</td>
+<td>separate collinearity, residual size, leverage, and influence and audit provenance</td>
+</tr>
+<tr>
+<td>Uncertainty</td>
+<td>justify classical, HC, or clustered covariance and state remaining assumptions</td>
+</tr>
+<tr>
+<td>Robust targets</td>
+<td>distinguish mean, robust location, median, and upper quantile and use matching losses</td>
+</tr>
+<tr>
+<td>Validation</td>
+<td>preserve temporal selection, locked test, search budget, tie rule, and adaptation log</td>
+</tr>
+<tr>
+<td>Reporting</td>
+<td>retain predictions, failed candidates, subgroup counts, uncertainty limits, and deviations</td>
+</tr>
+<tr>
+<td>Reproducibility</td>
+<td>enable another researcher to trace every claim to code and saved output</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="formula-sheet-with-plain-language-readings">Formula sheet with plain-language readings</h1>
 <table>
 <thead>
 <tr>
 <th>Concept</th>
 <th>Formula</th>
-<th>Use</th>
+<th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td>Missing observed indicator</td>
+<td>$R_{ij}\in{0,1}$</td>
+<td>Whether a value is observed</td>
+</tr>
+<tr>
+<td>Missing indicator</td>
+<td>$M_{ij}=1-R_{ij}$</td>
+<td>Whether imputation occurred</td>
+</tr>
+<tr>
+<td>Rubin pooled estimate</td>
+<td>$\bar Q=m^{-1}\sum_l\hat Q_l$</td>
+<td>Average across imputations</td>
+</tr>
+<tr>
+<td>Rubin pooled variance</td>
+<td>$T=\bar U+(1+1/m)B$</td>
+<td>Within plus missing-value uncertainty</td>
+</tr>
+<tr>
+<td>Smoothed target encoding</td>
+<td>$(n_c\bar y_c+m\bar y)/(n_c+m)$</td>
+<td>Shrink rare category means</td>
+</tr>
+<tr>
+<td>Quadratic slope</td>
+<td>$\beta_1+2\beta_2x$</td>
+<td>Local change at $x$</td>
+</tr>
+<tr>
+<td>Turning point</td>
+<td>$-\beta_1/(2\beta_2)$</td>
+<td>Zero local quadratic slope</td>
+</tr>
+<tr>
+<td>Interaction slope</td>
+<td>$\beta_1+\beta_3x_2$</td>
+<td>Effect of $x_1<code>conditional on $x_2</code></td>
+</tr>
+<tr>
+<td>Hinge</td>
+<td>$(x-k)_+=\max(0,x-k)$</td>
+<td>Add a slope change at knot $k$</td>
+</tr>
+<tr>
 <td>Standardisation</td>
-<td>$z_{ij}=(x_{ij}-\bar x_j)/s_j$</td>
-<td>Comparable penalty scale using training statistics [cite: 18]</td>
+<td>$(x_{ij}-\bar x_j)/s_j$</td>
+<td>Define comparable penalty scale</td>
 </tr>
 <tr>
 <td>Ridge objective</td>
-<td>$\lVert y-X\beta</td>
-<td></td>
-</tr>
-<tr>
-<td>Vert_2^2+\lambda\lVert\beta</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Vert_2^2$</td>
-<td>Stable $L_2$ shrinkage [cite: 18]</td>
-<td></td>
+<td>$\lVert y-X\beta\rVert^2+\lambda\lVert\beta\rVert_2^2$</td>
+<td>Fit plus squared shrinkage</td>
 </tr>
 <tr>
 <td>Ridge estimate</td>
-<td>$(X^ op X+\lambda I)^{-1}X^  op y$</td>
-<td>Closed form for centred penalised slopes [cite: 18]</td>
+<td>$(X^TX+\lambda I)^{-1}X^Ty$</td>
+<td>Closed-form centred slopes</td>
 </tr>
 <tr>
-<td>Ridge shrinkage</td>
+<td>Ridge retention</td>
 <td>$\sigma_j^2/(\sigma_j^2+\lambda)$</td>
-<td>Fitted-value retention in singular direction $j$ [cite: 18]</td>
+<td>Fitted-value signal retained in direction $j$</td>
+</tr>
+<tr>
+<td>Ridge effective df</td>
+<td>$tr(H_\lambda)$</td>
+<td>Smooth flexibility</td>
 </tr>
 <tr>
 <td>Lasso objective</td>
-<td>$\frac{\lVert y-X\beta</td>
-<td></td>
-</tr>
-<tr>
-<td>Vert_2^2}{2n}+\alpha\lVert\beta</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Vert_1$</td>
-<td>Sparse shrinkage [cite: 18]</td>
-<td></td>
+<td>$\lVert y-X\beta\rVert^2/(2n)+\alpha\lVert\beta\rVert_1$</td>
+<td>Fit plus sparse shrinkage</td>
 </tr>
 <tr>
 <td>Soft threshold</td>
-<td>$S(z,\alpha)=\operatorname{sign}(z)(\lvert z</td>
-<td></td>
-</tr>
-<tr>
-<td>vert-\alpha)_+$</td>
-<td>One-coordinate lasso solution [cite: 18]</td>
-<td></td>
+<td>$sign(z)\max(</td>
+<td>z</td>
 </tr>
 <tr>
 <td>Elastic net</td>
-<td>Loss $+\alpha</td>
-<td></td>
-</tr>
-<tr>
-<td>ho\lVert\beta</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Vert_1+\frac{\alpha(1-</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>ho)}{2}\lVert\beta</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>Vert_2^2$</td>
-<td>Sparsity plus correlated-feature stabilisation [cite: 18]</td>
-<td></td>
+<td>Loss $+\alpha\rho L_1+\alpha(1-\rho)L_2^2/2$</td>
+<td>Sparsity plus correlated-feature stability</td>
 </tr>
 <tr>
 <td>VIF</td>
 <td>$1/(1-R_j^2)$</td>
-<td>Conditional variance inflation for slope $j$ [cite: 18]</td>
+<td>Slope-variance inflation</td>
 </tr>
 <tr>
 <td>Hat matrix</td>
-<td>$H=X(X^  op X)^{-1}X^    op$</td>
-<td>Maps outcomes to OLS fitted values [cite: 18]</td>
+<td>$X(X^TX)^{-1}X^T$</td>
+<td>Maps outcomes to OLS fits</td>
 </tr>
 <tr>
 <td>Average leverage</td>
 <td>$k/n$</td>
-<td>Reference leverage for $k$ design columns [cite: 18]</td>
+<td>Mean design leverage</td>
 </tr>
 <tr>
 <td>Studentised residual</td>
 <td>$e_i/[s\sqrt{1-h_{ii}}]$</td>
-<td>Residual adjusted for its model variance [cite: 18]</td>
+<td>Variance-adjusted residual</td>
 </tr>
 <tr>
-<td>Cook's distance</td>
+<td>Cook distance</td>
 <td>$e_i^2h_{ii}/[ks^2(1-h_{ii})^2]$</td>
-<td>Aggregate case influence [cite: 18]</td>
+<td>Case influence on fitted values</td>
 </tr>
 <tr>
 <td>General sandwich</td>
-<td>$(X^   op X)^{-1}X^    op\Omega X(X^   op X)^{-1}$</td>
-<td>Coefficient covariance under general error covariance [cite: 18]</td>
+<td>$(X^TX)^{-1}X^T\Omega X(X^TX)^{-1}$</td>
+<td>Coefficient covariance for general error covariance</td>
+</tr>
+<tr>
+<td>HC0 meat</td>
+<td>$\sum_i e_i^2x_ix_i^T$</td>
+<td>Independent heteroskedastic residual contribution</td>
 </tr>
 <tr>
 <td>HC3 residual square</td>
 <td>$e_i^2/(1-h_{ii})^2$</td>
-<td>Stronger leverage correction for heteroskedasticity [cite: 18]</td>
+<td>Leverage-corrected contribution</td>
+</tr>
+<tr>
+<td>Cluster meat</td>
+<td>$\sum_g(X_g^Te_g)(X_g^Te_g)^T$</td>
+<td>Arbitrary within-cluster covariance</td>
 </tr>
 <tr>
 <td>Huber loss</td>
-<td>quadratic inside $\delta$, linear outside</td>
-<td>Reduce large-residual gradient [cite: 18]</td>
+<td>Quadratic centre, linear tails</td>
+<td>Clip large-residual gradients</td>
+</tr>
+<tr>
+<td>Conditional quantile</td>
+<td>$\inf{q:P(Y\leq q\mid X=x)\geq\tau}$</td>
+<td>Outcome distribution point at level $\tau$</td>
 </tr>
 <tr>
 <td>Pinball loss</td>
-<td>$u(    au-\mathbb1{u&lt;0})$</td>
-<td>Proper loss for a conditional quantile $ au$ [cite: 18]</td>
+<td>$u(\tau-\mathbb1{u&lt;0})$</td>
+<td>Proper asymmetric quantile loss</td>
+</tr>
+<tr>
+<td>Quantile coverage</td>
+<td>$m^{-1}\sum_i\mathbb1{y_i\leq\hat q_\tau(x_i)}$</td>
+<td>Held-out calibration diagnostic</td>
 </tr>
 </tbody>
 </table>
+<p>Penalty values depend on loss normalisation. Never copy <code>alpha</code> or $\lambda$ across implementations without checking the exact objective.</p>
+<hr />
+<h1 id="expanded-glossary">Expanded glossary</h1>
+<p><strong>Active set:</strong> Features with nonzero lasso or elastic-net coefficients at one tuning value and fit.</p>
+<p><strong>Bias–variance trade-off:</strong> Deliberate estimator bias may reduce sample sensitivity enough to improve prediction.</p>
+<p><strong>Complete-case analysis:</strong> Restrict analysis to rows with every required value observed.</p>
+<p><strong>Conditional quantile:</strong> Quantile of outcome distribution for a specified feature vector.</p>
+<p><strong>Cook's distance:</strong> Scaled aggregate fitted-value change caused by deleting one observation.</p>
+<p><strong>Cross-fitting:</strong> Build each training-row representation using a fit that excluded its fold.</p>
+<p><strong>Elastic net:</strong> Regression combining $L_1<code>and squared $L_2</code> penalties.</p>
+<p><strong>Effective degrees of freedom:</strong> Smooth flexibility measure such as $\operatorname{tr}(H_\lambda)$.</p>
+<p><strong>Frequency encoding:</strong> Replace category with its training frequency.</p>
+<p><strong>Hat matrix:</strong> Linear map from outcomes to OLS fitted outcomes.</p>
+<p><strong>HC covariance:</strong> Heteroskedasticity-consistent coefficient covariance estimator.</p>
+<p><strong>Heteroskedasticity:</strong> Conditional error variance changes across observations.</p>
+<p><strong>Hierarchy principle:</strong> Retain lower-order terms defining polynomial or interaction effects.</p>
+<p><strong>Huber loss:</strong> Quadratic near zero and linear for large absolute residuals.</p>
+<p><strong>Influence:</strong> Sensitivity of a fitted result to an observation's presence.</p>
+<p><strong>Leverage:</strong> Unusualness of a predictor combination relative to the design.</p>
+<p><strong>Lasso:</strong> Least squares with an $L_1$ penalty capable of exact zeros.</p>
+<p><strong>MAP:</strong> Posterior-mode estimate under a Bayesian model.</p>
+<p><strong>MAR:</strong> Missingness no longer depends on missing values after conditioning on observed information.</p>
+<p><strong>MCAR:</strong> Missingness independent of observed and missing data under the model.</p>
+<p><strong>MNAR:</strong> Missingness still depends on unobserved information after conditioning.</p>
+<p><strong>Multiple imputation:</strong> Several plausible completions used to propagate missing-value uncertainty.</p>
+<p><strong>One-hot encoding:</strong> Binary columns representing nominal categories.</p>
+<p><strong>Pinball loss:</strong> Asymmetric absolute loss whose population minimiser is a chosen quantile.</p>
+<p><strong>Post-selection inference:</strong> Inference accounting for data-driven model or hypothesis selection.</p>
+<p><strong>Quantile crossing:</strong> Predicted lower quantile exceeds a higher quantile at the same features.</p>
+<p><strong>Regularisation:</strong> Penalty or constraint controlling flexibility or encoding prior preference.</p>
+<p><strong>Ridge:</strong> Least squares with squared $L_2$ penalty.</p>
+<p><strong>Sandwich covariance:</strong> Bread matrices surrounding estimated score/error covariance meat.</p>
+<p><strong>Shrinkage:</strong> Pull coefficients toward a reference, usually zero.</p>
+<p><strong>Soft thresholding:</strong> Reduce magnitude by a threshold and set smaller values to zero.</p>
+<p><strong>Spline:</strong> Curve represented by weighted local basis functions.</p>
+<p><strong>Studentised residual:</strong> Residual divided by its estimated model-based standard deviation.</p>
+<p><strong>Target encoding:</strong> Category represented by smoothed, cross-fitted outcome summaries.</p>
+<p><strong>VIF:</strong> Conditional slope-variance inflation relative to an orthogonal reference.</p>
+<hr />
+<h1 id="research-paper-reading-ladder">Research-paper reading ladder</h1>
+<table>
+<thead>
+<tr>
+<th>Paper</th>
+<th>Problem</th>
+<th>Replication focus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rubin (1976)</td>
+<td>Missing-data mechanisms and ignorability</td>
+<td>Prediction and coverage under MCAR/MAR/MNAR</td>
+</tr>
+<tr>
+<td>Hoerl &amp; Kennard (1970)</td>
+<td>Biased shrinkage for nonorthogonal regression</td>
+<td>Stability under collinearity</td>
+</tr>
+<tr>
+<td>Tibshirani (1996)</td>
+<td>$L_1$ shrinkage and selection</td>
+<td>Sparse prediction and unstable selection</td>
+</tr>
+<tr>
+<td>Efron et al. (2004)</td>
+<td>Efficient geometric lasso paths</td>
+<td>LARS versus coordinate paths</td>
+</tr>
+<tr>
+<td>White (1980)</td>
+<td>Heteroskedasticity-consistent covariance</td>
+<td>Interval coverage under changing variance</td>
+</tr>
+<tr>
+<td>Huber (1964)</td>
+<td>Robust location under contamination</td>
+<td>Efficiency versus contamination</td>
+</tr>
+<tr>
+<td>Koenker &amp; Bassett (1978)</td>
+<td>Regression quantiles</td>
+<td>Conditional spread and coverage</td>
+</tr>
+<tr>
+<td>Varma &amp; Simon (2006)</td>
+<td>Selection bias in CV estimates</td>
+<td>Nested versus non-nested evaluation</td>
+</tr>
+</tbody>
+</table>
+<p>Six reading passes:</p>
+<ol>
+<li>record citation, question, venue, and vocabulary;</li>
+<li>scan abstract, introduction, figures, and conclusion;</li>
+<li>build a symbol table;</li>
+<li>reproduce one central derivation;</li>
+<li>reconstruct one simulation or result; and</li>
+<li>list assumptions, failure modes, and transfer limits.</li>
+</ol>
+<p>Reading means reconstructing an argument well enough to identify where it could fail.</p>
+<hr />
+<h1 id="suggested-eight-day-study-rhythm">Suggested eight-day study rhythm</h1>
+<table>
+<thead>
+<tr>
+<th>Segment</th>
+<th style="text-align: right;">Minutes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Retrieve previous exit check</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr>
+<td>Construct concept and intuition</td>
+<td style="text-align: right;">35</td>
+</tr>
+<tr>
+<td>Mathematical derivation</td>
+<td style="text-align: right;">40</td>
+</tr>
+<tr>
+<td>Code laboratory</td>
+<td style="text-align: right;">55</td>
+</tr>
+<tr>
+<td>Failure laboratory</td>
+<td style="text-align: right;">25</td>
+</tr>
+<tr>
+<td>Research reading</td>
+<td style="text-align: right;">20</td>
+</tr>
+<tr>
+<td>Bounded reflection</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td style="text-align: right;"><strong>200</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Regularisation and covariance days may require two sessions. Slow reconstruction is preferable to treating formulas as incantations.</p>
+<hr />
+<h1 id="common-beginner-misconceptions">Common beginner misconceptions</h1>
+<table>
+<thead>
+<tr>
+<th>Misconception</th>
+<th>Correction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Imputation neutrally fills blanks</td>
+<td>It is a learned representation with assumptions</td>
+</tr>
+<tr>
+<td>MAR means no reason for missingness</td>
+<td>MAR allows dependence on observed information</td>
+</tr>
+<tr>
+<td>Smoothing target encoding prevents leakage</td>
+<td>Cross-fitting is still required</td>
+</tr>
+<tr>
+<td>Polynomial regression is nonlinear estimation</td>
+<td>It is linear in coefficients after feature expansion</td>
+</tr>
+<tr>
+<td>Negative quadratic coefficient proves an optimum</td>
+<td>Derivative, support, uncertainty, and causality still matter</td>
+</tr>
+<tr>
+<td>Scaling makes raw features important</td>
+<td>It defines conditioning and penalty units</td>
+</tr>
+<tr>
+<td>Ridge discovers the true correlated feature</td>
+<td>It stabilises a combined direction, not causal identity</td>
+</tr>
+<tr>
+<td>Lasso zero proves no relationship</td>
+<td>Zero is sample-, penalty-, and representation-dependent</td>
+</tr>
+<tr>
+<td>VIF above 5 requires deletion</td>
+<td>Cutoffs are conventions; respond to consequences</td>
+</tr>
+<tr>
+<td>Large residual means high leverage</td>
+<td>Residual concerns outcome; leverage concerns predictors</td>
+</tr>
+<tr>
+<td>Cook flag means delete</td>
+<td>It triggers provenance and sensitivity investigation</td>
+</tr>
+<tr>
+<td>HC3 is robust regression</td>
+<td>HC3 changes covariance, not fitted OLS coefficients</td>
+</tr>
+<tr>
+<td>Many rows fix five-cluster inference</td>
+<td>Independent cluster count remains five</td>
+</tr>
+<tr>
+<td>Quantile is a confidence interval</td>
+<td>It is a conditional outcome-distribution target</td>
+</tr>
+<tr>
+<td>Global 80% coverage proves calibration everywhere</td>
+<td>Subgroups can severely under-cover</td>
+</tr>
+<tr>
+<td>Reproducible means scientifically correct</td>
+<td>Reproducibility repeats both good and bad designs</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="ethical-and-contextual-questions">Ethical and contextual questions</h1>
+<p>The KP setting is fictional and cannot evaluate actual districts. A real study requires local technical, financial, administrative, and community knowledge.</p>
+<p>Ask:</p>
+<ul>
+<li>Who bears harm when remote cost is underpredicted?</li>
+<li>Does historical underinvestment become encoded as a district effect?</li>
+<li>Are appraisal fields measured consistently across locations?</li>
+<li>Is an access mode “rare” because data collection excluded it?</li>
+<li>Are missing surveys evidence of structural access barriers?</li>
+<li>Could contractor or district coefficients create unfair rankings?</li>
+<li>Are extreme projects genuine obligations rather than disposable outliers?</li>
+<li>Who may override the model, for which reasons, and with what record?</li>
+<li>Which groups need minimum calibration or error safeguards?</li>
+<li>Would deployment redirect resources away from poorly represented communities?</li>
+</ul>
+<p>Technical competence without contextual accountability is not research readiness.</p>
+<hr />
+<h1 id="where-chapter-4-begins">Where Chapter 4 begins</h1>
+<p>Chapter 4 can introduce classification and generalised linear models while reusing everything learned here:</p>
+<ul>
+<li>Bernoulli likelihood, probability, odds, and log odds;</li>
+<li>logistic regression gradients and convex optimisation;</li>
+<li>regularised classification;</li>
+<li>calibration and proper scoring rules;</li>
+<li>decision thresholds and class imbalance;</li>
+<li>precision–recall analysis;</li>
+<li>subgroup error and fairness definitions;</li>
+<li>nonlinear tree benchmarks;</li>
+<li>external/prospective validation; and</li>
+<li>a locked classification study.</li>
+</ul>
+<p>The practitioner does not leave linear-model thinking behind. Design matrices, interactions, penalties, influence, temporal validation, and post-selection caution all remain.</p>
+<p>Research readiness begins when another person can inspect the complete argument, reproduce every number, identify every assumption, and understand exactly how strongly the evidence supports the final decision.</p>
         </article>
     </div>
 
@@ -794,11 +2310,11 @@ ho_ au(u) = \begin{cases}   au u &amp; u \ge 0 \ (  au - 1)u &amp; u &lt; 0 \end
         };
         (function loadMathJax() {
             var local = document.createElement('script');
-            local.src = '../vendor/mathjax/tex-mml-chtml.js';
+            local.src = '../vendor/mathjax/tex-mml-svg.js';
             local.async = true;
             local.onerror = function () {
                 var cdn = document.createElement('script');
-                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-svg.js';
                 cdn.async = true;
                 document.head.appendChild(cdn);
             };

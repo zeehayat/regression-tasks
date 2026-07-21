@@ -11,6 +11,7 @@ mermaid.js is dropped into vendor/mermaid.min.js (see vendor/README.md), the
 page automatically upgrades to a live-rendered SVG diagram. The same
 local-first/CDN-fallback pattern is used for MathJax.
 """
+import html
 import re
 from pathlib import Path
 
@@ -34,10 +35,23 @@ CHAPTER_ORDER = [
     "chapter6",
 ]
 
+COMPANION_FILES = {
+    "chapter0": "Chapter_0_Companion_Guide_v2.md",
+    "chapter1": "Chapter_1_Companion_Guide.md",
+    "chapter2": "Chapter_2_Companion_Guide.md",
+    "chapter3": "Chapter_3_Companion_Guide.md",
+    "chapter4": "Chapter_4_Companion_Guide.md",
+    "chapter5": "Chapter_5_Companion_Guide.md",
+    "chapter6": "Chapter_6_Companion_Guide.md",
+}
+EMBEDDED_COMPANION_CHAPTERS = {
+    "chapter1", "chapter2", "chapter3", "chapter4", "chapter5", "chapter6"
+}
+
 # Local vendor paths (relative to SRC_HTML/*.html) checked before falling
 # back to a CDN. Drop the real files in vendor/ to go fully offline.
 VENDOR_MERMAID_REL = "../vendor/mermaid.min.js"
-VENDOR_MATHJAX_REL = "../vendor/mathjax/tex-mml-chtml.js"
+VENDOR_MATHJAX_REL = "../vendor/mathjax/tex-mml-svg.js"
 VENDOR_QUILL_JS_REL = "../vendor/quill/quill.js"
 VENDOR_QUILL_CSS_REL = "../vendor/quill/quill.snow.css"
 
@@ -1480,7 +1494,7 @@ TEMPLATE = """<!DOCTYPE html>
             local.async = true;
             local.onerror = function () {{
                 var cdn = document.createElement('script');
-                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-svg.js';
                 cdn.async = true;
                 document.head.appendChild(cdn);
             }};
@@ -1540,7 +1554,7 @@ def build_nav(current_slug: str) -> str:
     
     # 2. Companion guides navigation group
     companion_links = []
-    companion_order = ["chapter0_companion", "chapter1_companion", "chapter2_companion", "chapter3_companion", "chapter6_companion"]
+    companion_order = ["chapter0_companion", "chapter1_companion", "chapter2_companion", "chapter3_companion", "chapter4_companion", "chapter5_companion", "chapter6_companion"]
     for slug in companion_order:
         label = slug.replace("chapter", "Ch. ").replace("_companion", " Companion")
         active = slug == current_slug
@@ -1592,6 +1606,267 @@ def clean_control_characters(text: str) -> str:
     return text.replace("\x08", "\\b").replace("\x0c", "\\f").replace("\x07", "\\a")
 
 
+def render_markdown(md_text: str) -> str:
+    """Render Markdown without letting it reinterpret display-math syntax.
+
+    Python-Markdown does not understand MathJax delimiters.  In a block such
+    as ``$$\\hat{y}_i=f(x_{i1}, ...)$$`` it can therefore turn underscores
+    into ``<em>`` tags before MathJax runs.  Replace display equations with
+    inert tokens during Markdown conversion, then restore escaped TeX into the
+    generated HTML for MathJax to typeset in the browser.
+    """
+    math_blocks: list[str] = []
+
+    def stash(match: "re.Match[str]") -> str:
+        token = f"CODEXDISPLAYMATH{len(math_blocks):06d}PLACEHOLDER"
+        math_blocks.append("\n".join(line.rstrip() for line in match.group(0).splitlines()))
+        return f"\n\n{token}\n\n"
+
+    protected = re.sub(r"(?<!\\)\$\$(.*?)(?<!\\)\$\$", stash, md_text, flags=re.DOTALL)
+    rendered = markdown.markdown(
+        protected,
+        extensions=["fenced_code", "tables", "toc", "sane_lists", "attr_list", "nl2br"],
+    )
+    for index, math_block in enumerate(math_blocks):
+        token = f"CODEXDISPLAYMATH{index:06d}PLACEHOLDER"
+        rendered = rendered.replace(token, html.escape(math_block, quote=False))
+    return rendered
+
+
+def strip_legacy_companion_markup(md_text: str) -> str:
+    """Remove the old hand-copied modal implementation from a chapter.
+
+    Chapters 1–3 historically copied a small companion summary, its CSS, and
+    its JavaScript into the end of each Markdown file.  The compiled modal now
+    reads the maintained companion guide instead, so retaining that block would
+    duplicate content and register two competing click handlers.
+    """
+    md_text = re.sub(
+        r'^\s*<button class="read-details-btn"[^>]*>.*?</button>\s*$',
+        "",
+        md_text,
+        flags=re.MULTILINE,
+    )
+    legacy_style = re.search(r"^<style>\s*\n\.read-details-btn\s*\{", md_text, re.MULTILINE)
+    if legacy_style:
+        md_text = md_text[: legacy_style.start()].rstrip() + "\n"
+    return md_text
+
+
+def companion_sections(md_text: str) -> dict[str, str]:
+    """Split a companion guide into overview, day, capstone, and reference parts."""
+    headings = list(re.finditer(r"^#\s+(.+?)\s*$", md_text, re.MULTILINE))
+    if not headings:
+        return {"overview": md_text}
+
+    chunks: list[tuple[str, str]] = []
+    for index, heading in enumerate(headings):
+        end = headings[index + 1].start() if index + 1 < len(headings) else len(md_text)
+        chunks.append((heading.group(1).strip(), md_text[heading.start():end].strip()))
+
+    first_day = next(
+        (index for index, (title, _) in enumerate(chunks) if re.match(r"Day\s+\d+\b", title, re.I)),
+        len(chunks),
+    )
+    sections: dict[str, str] = {
+        "overview": "\n\n".join(chunk for _, chunk in chunks[:first_day])
+    }
+    reference_chunks: list[str] = []
+
+    for title, chunk in chunks[first_day:]:
+        day = re.match(r"Day\s+(\d+)\b", title, re.I)
+        if day:
+            sections[f"day-{day.group(1)}"] = chunk
+        elif "capstone" in title.lower():
+            sections["capstone"] = chunk
+        else:
+            reference_chunks.append(chunk)
+
+    if reference_chunks:
+        sections["reference"] = "\n\n".join(reference_chunks)
+    return {key: value for key, value in sections.items() if value.strip()}
+
+
+def add_companion_buttons(md_text: str, available: set[str]) -> str:
+    """Add contextual modal launchers after chapter-level Markdown headings."""
+    if "overview" in available:
+        md_text = re.sub(
+            r"^(#\s+.+)$",
+            r'\1\n\n<button type="button" class="companion-more-button" '
+            r'data-companion-section="overview">✦ Read the beginner companion overview</button>',
+            md_text,
+            count=1,
+            flags=re.MULTILINE,
+        )
+
+    def add_day_button(match: "re.Match[str]") -> str:
+        heading, day = match.group(1), match.group(2)
+        key = f"day-{day}"
+        if key not in available:
+            return heading
+        return (
+            f'{heading}\n\n<button type="button" class="companion-more-button" '
+            f'data-companion-section="{key}">✦ Read the beginner companion for Day {day}</button>'
+        )
+
+    md_text = re.sub(
+        r"^(#\s+Day\s+(\d+)\s+.+)$",
+        add_day_button,
+        md_text,
+        flags=re.MULTILINE,
+    )
+
+    if "capstone" in available:
+        md_text = re.sub(
+            r"^(#{1,3}\s+[^\n]*Capstone[^\n]*)$",
+            r'\1\n\n<button type="button" class="companion-more-button" '
+            r'data-companion-section="capstone">✦ Read the beginner capstone companion</button>',
+            md_text,
+            count=1,
+            flags=re.MULTILINE | re.IGNORECASE,
+        )
+
+    if "reference" in available:
+        reference_heading = re.compile(
+            r"^(#\s+(?:Formula\s+sheet|Glossary|Chapter\s+\d+\s+Synthesis).*)$",
+            re.MULTILINE | re.IGNORECASE,
+        )
+        md_text = reference_heading.sub(
+            r'\1\n\n<button type="button" class="companion-more-button" '
+            r'data-companion-section="reference">✦ Open the companion reference material</button>',
+            md_text,
+            count=1,
+        )
+    return md_text
+
+
+def build_companion_modal(slug: str) -> tuple[str, set[str]]:
+    """Compile a chapter's maintained companion guide into hidden templates."""
+    filename = COMPANION_FILES.get(slug)
+    if not filename:
+        return "", set()
+    companion_path = SRC_DIR / filename
+    if not companion_path.exists():
+        return "", set()
+
+    guide_text = clean_control_characters(companion_path.read_text(encoding="utf-8"))
+    sections = companion_sections(guide_text)
+    templates = []
+    for key, section_md in sections.items():
+        section_html = render_markdown(convert_mermaid_fences(section_md))
+        templates.append(
+            f'<template id="companion-template-{key}">{section_html}</template>'
+        )
+
+    modal = f"""
+<style>
+.companion-more-button {{
+    display: inline-flex; align-items: center; gap: .45rem;
+    margin: .5rem 0 1.25rem; padding: .55rem .85rem;
+    border: 1px solid rgba(34, 211, 238, .42); border-radius: .45rem;
+    background: rgba(34, 211, 238, .09); color: #67e8f9;
+    font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer;
+}}
+.companion-more-button:hover, .companion-more-button:focus-visible {{
+    background: rgba(34, 211, 238, .18); border-color: #22d3ee;
+}}
+.companion-more-modal[hidden] {{ display: none; }}
+.companion-more-modal {{
+    position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center;
+    padding: 1rem; background: rgba(5, 9, 17, .88); backdrop-filter: blur(7px);
+}}
+.companion-more-dialog {{
+    width: min(64rem, 96vw); max-height: 92vh; display: flex; flex-direction: column;
+    overflow: hidden; border: 1px solid #334155; border-radius: .8rem;
+    background: #111827; box-shadow: 0 24px 70px rgba(0, 0, 0, .55);
+}}
+.companion-more-header {{
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: .8rem 1rem; border-bottom: 1px solid #334155; background: #172033;
+}}
+.companion-more-header strong {{ color: #fff; }}
+.companion-more-actions {{ display: flex; align-items: center; gap: .75rem; }}
+.companion-more-actions a {{ color: #67e8f9; font-size: .82rem; }}
+.companion-more-close {{
+    width: 2.1rem; height: 2.1rem; border: 1px solid #475569; border-radius: .4rem;
+    background: #0b1220; color: #e2e8f0; font-size: 1.35rem; cursor: pointer;
+}}
+.companion-more-body {{ overflow: auto; padding: 1.25rem 1.5rem 2rem; }}
+.companion-more-body > :first-child {{ margin-top: 0; }}
+.companion-more-body table {{ display: block; overflow-x: auto; }}
+.companion-more-body pre {{ max-width: 100%; overflow-x: auto; }}
+@media (max-width: 640px) {{
+    .companion-more-modal {{ padding: 0; }}
+    .companion-more-dialog {{ width: 100vw; max-height: 100vh; height: 100vh; border-radius: 0; }}
+    .companion-more-body {{ padding: 1rem; }}
+    .companion-more-actions a {{ display: none; }}
+}}
+</style>
+<div class="companion-more-modal" id="companion-more-modal" hidden>
+  <section class="companion-more-dialog" role="dialog" aria-modal="true" aria-labelledby="companion-more-title">
+    <header class="companion-more-header">
+      <strong id="companion-more-title">Beginner companion</strong>
+      <div class="companion-more-actions">
+        <a href="{slug}_companion.html">Open the complete guide</a>
+        <button type="button" class="companion-more-close" aria-label="Close companion">&times;</button>
+      </div>
+    </header>
+    <div class="companion-more-body" id="companion-more-body"></div>
+  </section>
+</div>
+{''.join(templates)}
+<script>
+(function () {{
+    var modal = document.getElementById('companion-more-modal');
+    var body = document.getElementById('companion-more-body');
+    var close = modal && modal.querySelector('.companion-more-close');
+    var previousFocus = null;
+    if (!modal || !body || !close) return;
+
+    function closeModal() {{
+        modal.hidden = true;
+        body.replaceChildren();
+        document.body.style.overflow = '';
+        if (previousFocus) previousFocus.focus();
+    }}
+
+    document.querySelectorAll('.companion-more-button').forEach(function (button) {{
+        button.addEventListener('click', function () {{
+            var key = button.getAttribute('data-companion-section');
+            var template = document.getElementById('companion-template-' + key);
+            if (!template) return;
+            previousFocus = button;
+            body.replaceChildren(template.content.cloneNode(true));
+            modal.hidden = false;
+            document.body.style.overflow = 'hidden';
+            close.focus();
+            if (window.MathJax && window.MathJax.typesetPromise) {{
+                window.MathJax.typesetPromise([body]);
+            }}
+        }});
+    }});
+    close.addEventListener('click', closeModal);
+    modal.addEventListener('click', function (event) {{
+        if (event.target === modal) closeModal();
+    }});
+    document.addEventListener('keydown', function (event) {{
+        if (event.key === 'Escape' && !modal.hidden) closeModal();
+    }});
+    var requestedSection = new URLSearchParams(window.location.search).get('companion');
+    if (requestedSection) {{
+        var requestedButton = Array.from(
+            document.querySelectorAll('.companion-more-button')
+        ).find(function (button) {{
+            return button.getAttribute('data-companion-section') === requestedSection;
+        }});
+        if (requestedButton) requestedButton.click();
+    }}
+}})();
+</script>
+"""
+    return modal, set(sections)
+
+
 def compile_chapter(slug: str) -> None:
     src_path = SRC_DIR / f"{slug}.md"
     if not src_path.exists():
@@ -1600,13 +1875,17 @@ def compile_chapter(slug: str) -> None:
 
     md_text = src_path.read_text(encoding="utf-8")
     md_text = clean_control_characters(md_text)
+    companion_modal, companion_keys = ("", set())
+    if slug in EMBEDDED_COMPANION_CHAPTERS:
+        companion_modal, companion_keys = build_companion_modal(slug)
+    if companion_modal:
+        md_text = strip_legacy_companion_markup(md_text)
+        md_text = add_companion_buttons(md_text, companion_keys)
     title = title_from_markdown(md_text, fallback=slug)
     md_text = convert_mermaid_fences(md_text)
 
-    body_html = markdown.markdown(
-        md_text,
-        extensions=["fenced_code", "tables", "toc", "sane_lists", "attr_list", "nl2br"],
-    )
+    body_html = render_markdown(md_text)
+    body_html += companion_modal
 
     html = TEMPLATE.format(
         title=title,
@@ -1636,10 +1915,7 @@ def compile_companion(slug: str, filename: str) -> None:
     title = title_from_markdown(md_text, fallback=slug)
     md_text = convert_mermaid_fences(md_text)
 
-    body_html = markdown.markdown(
-        md_text,
-        extensions=["fenced_code", "tables", "toc", "sane_lists", "attr_list", "nl2br"],
-    )
+    body_html = render_markdown(md_text)
 
     html = TEMPLATE.format(
         title=title,
@@ -1689,8 +1965,8 @@ def ensure_vendor_readme() -> None:
         "while fully offline, drop these two files in this directory:\n\n"
         "- `vendor/mermaid.min.js` — from https://www.jsdelivr.com/package/npm/mermaid\n"
         "  (dist/mermaid.min.js)\n"
-        "- `vendor/mathjax/tex-mml-chtml.js` — from https://www.jsdelivr.com/package/npm/mathjax\n"
-        "  (es5/tex-mml-chtml.js)\n\n"
+        "- `vendor/mathjax/tex-mml-svg.js` — pinned MathJax 3.2.2 bundle from\n"
+        "  https://www.jsdelivr.com/package/npm/mathjax (es5/tex-mml-svg.js)\n\n"
         "The compiled pages check for these local files first and only reach out\n"
         "to a CDN as a fallback if they're missing and the machine has network\n"
         "access. Re-run `python3 compile_src.py` after adding the files (or just\n"
@@ -1705,15 +1981,8 @@ def main() -> None:
     for slug in CHAPTER_ORDER:
         compile_chapter(slug)
     
-    COMPANIONS = {
-        "chapter0_companion": "Chapter_0_Companion_Guide_v2.md",
-        "chapter1_companion": "Chapter_1_Companion_Guide.md",
-        "chapter2_companion": "Chapter_2_Companion_Guide.md",
-        "chapter3_companion": "Chapter_3_Companion_Guide.md",
-        "chapter6_companion": "Chapter_6_Companion_Guide.md",
-    }
-    for slug, filename in COMPANIONS.items():
-        compile_companion(slug, filename)
+    for chapter_slug, filename in COMPANION_FILES.items():
+        compile_companion(f"{chapter_slug}_companion", filename)
     compile_settings_page()
     print("SRC markdown compilation complete.")
 

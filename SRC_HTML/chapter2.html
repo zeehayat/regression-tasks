@@ -511,11 +511,14 @@
             <a href="chapter1_companion.html" class="">Ch. 1 Companion</a>
             <a href="chapter2_companion.html" class="">Ch. 2 Companion</a>
             <a href="chapter3_companion.html" class="">Ch. 3 Companion</a>
+            <a href="chapter4_companion.html" class="">Ch. 4 Companion</a>
+            <a href="chapter5_companion.html" class="">Ch. 5 Companion</a>
             <a href="chapter6_companion.html" class="">Ch. 6 Companion</a>
     </nav>
     
         <article class="markdown-body">
 <h1 id="chapter-2-from-a-fitted-line-to-a-trustworthy-model">Chapter 2 — From a Fitted Line to a Trustworthy Model</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="overview">✦ Read the beginner companion overview</button></p>
 <h2 id="level-2-model-builder-the-next-seven-days-of-the-mhp-cost-estimator">Level 2 Model Builder: the next seven days of the MHP Cost Estimator</h2>
 <blockquote>
 <p><strong>Central promise.</strong> Chapter 1 taught you to derive and fit ordinary least squares (OLS). By the end of this chapter, you will be able to explain when that calculation is numerically stable, connect least squares to probability, fit it by gradient descent, measure performance on genuinely unseen projects, compare it with honest baselines and a shallow decision tree, quantify several kinds of uncertainty, diagnose failure patterns, and defend an evaluation design before a technical reviewer.</p>
@@ -780,11 +783,11 @@ print(&quot;scikit-learn:&quot;, sklearn.__version__)
 <p>A paper or report is not computationally reproducible if the data, code, random seeds, and software environment cannot be identified.</p>
 <hr />
 <h1 id="day-6-scaling-and-numerical-conditioning">Day 6 — Scaling and Numerical Conditioning</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-6">✦ Read the beginner companion for Day 6</button></p>
 <blockquote>
 <p><strong>Today’s central idea:</strong> Algebra asks whether a solution exists. Numerical analysis asks whether a computer can calculate that solution reliably with finite precision.</p>
 </blockquote>
 <h2 id="61-computers-approximate-most-real-numbers">6.1 Computers approximate most real numbers</h2>
-<p><button class="read-details-btn" data-section="2a-1">✦ Read Details</button></p>
 <p>A computer stores floating-point numbers with a limited number of binary digits. Many ordinary decimal values cannot be represented exactly. This is why:</p>
 <pre><code class="language-python">print(0.1 + 0.2)
 print((0.1 + 0.2) == 0.3)
@@ -792,12 +795,11 @@ print((0.1 + 0.2) == 0.3)
 <p>prints a value close to 0.3 but the equality test is false.</p>
 <p>This does not mean numerical computing is unreliable. It means calculations must be designed so that tiny representation errors are not unnecessarily magnified.</p>
 <h2 id="62-a-well-posed-problem-can-still-be-ill-conditioned">6.2 A well-posed problem can still be ill-conditioned</h2>
-<p><button class="read-details-btn" data-section="2a-2">✦ Read Details</button></p>
 <p>Suppose two datasets differ by a tiny amount. If their fitted coefficients also differ only slightly, the problem is well-conditioned. If a tiny data change causes a large coefficient change, it is ill-conditioned.</p>
 <p>Conditioning belongs to the <strong>problem and its representation</strong>. Numerical stability belongs to the <strong>algorithm</strong> used to solve it. A stable algorithm cannot create information that nearly redundant features do not contain, but it can avoid making the situation worse.</p>
 <p>For a full-column-rank matrix, the two-norm condition number is:</p>
-<p>$$<br />
-\kappa_2(X)=\frac{\sigma_{\max}(X)}{\sigma_{\min}(X)},<br />
+<p>$$
+\kappa_2(X)=\frac{\sigma_{\max}(X)}{\sigma_{\min}(X)},
 $$</p>
 <p>where:</p>
 <ul>
@@ -807,7 +809,6 @@ $$</p>
 </ul>
 <p>A condition number near 1 is favourable. There is no universal number at which a model suddenly becomes invalid. Interpretation depends on floating-point precision, units, noise, and the decision. The condition number is a warning instrument, not a courtroom verdict.</p>
 <h2 id="63-different-units-can-create-a-numerical-imbalance">6.3 Different units can create a numerical imbalance</h2>
-<p><button class="read-details-btn" data-section="2a-3">✦ Read Details</button></p>
 <p>In the same design matrix we might store:</p>
 <ul>
 <li>planned capacity around hundreds of kW;</li>
@@ -816,8 +817,8 @@ $$</p>
 </ul>
 <p>The columns then occupy very different numerical ranges. OLS predictions are not automatically wrong, but optimisation can become harder and coefficient comparison can become misleading.</p>
 <p>Standardisation transforms feature $j$ using:</p>
-<p>$$<br />
-z_{ij}=\frac{x_{ij}-\mu_j}{s_j},<br />
+<p>$$
+z_{ij}=\frac{x_{ij}-\mu_j}{s_j},
 $$</p>
 <p>where $\mu_j$ and $s_j$ must be calculated from the <strong>training data</strong>.</p>
 <p>After transformation:</p>
@@ -882,11 +883,11 @@ assert np.allclose(scaler.inverse_transform(Z_train), X_train)
 </code></pre>
 <h3 id="population-standard-deviation-versus-sample-standard-deviation">Population standard deviation versus sample standard deviation</h3>
 <p>Two common formulas differ in the denominator:</p>
-<p>$$<br />
-s_{\text{population}}=\sqrt{\frac{1}{n}\sum_i(x_i-\bar{x})^2},<br />
+<p>$$
+s_{\text{population}}=\sqrt{\frac{1}{n}\sum_i(x_i-\bar{x})^2},
 $$</p>
-<p>$$<br />
-s_{\text{sample}}=\sqrt{\frac{1}{n-1}\sum_i(x_i-\bar{x})^2}.<br />
+<p>$$
+s_{\text{sample}}=\sqrt{\frac{1}{n-1}\sum_i(x_i-\bar{x})^2}.
 $$</p>
 <p>The second is used in classical estimation of a population variance. A feature scaler is performing a deterministic transformation of the observed training column, so many software libraries use the first convention. The important point is not to memorise one denominator for every purpose; it is to know which quantity is being calculated and why.</p>
 <h2 id="65-why-the-test-set-must-not-teach-the-scaler">6.5 Why the test set must not teach the scaler</h2>
@@ -912,28 +913,27 @@ print(&quot;Leaky test values:  &quot;, leaky_scaler.transform(X_test).ravel())
 </code></pre>
 <p>The second result may look numerically more moderate. That is precisely the problem: it uses information the deployed model would not have had when it was trained.</p>
 <h2 id="66-scaling-changes-coefficient-units">6.6 Scaling changes coefficient units</h2>
-<p><button class="read-details-btn" data-section="2a-6">✦ Read Details</button></p>
 <p>Suppose the scaled model is:</p>
-<p>$$<br />
-\hat y=\gamma_0+\sum_{j=1}^{p}\gamma_j z_j,<br />
+<p>$$
+\hat y=\gamma_0+\sum_{j=1}^{p}\gamma_j z_j,
 $$</p>
 <p>and $z_j=(x_j-\mu_j)/s_j$. Substitute:</p>
-<p>$$<br />
-\hat y<br />
-=\gamma_0+\sum_j\gamma_j\frac{x_j-\mu_j}{s_j}.<br />
+<p>$$
+\hat y
+=\gamma_0+\sum_j\gamma_j\frac{x_j-\mu_j}{s_j}.
 $$</p>
 <p>Rearrange:</p>
-<p>$$<br />
-\hat y<br />
-=\left(\gamma_0-\sum_j\frac{\gamma_j\mu_j}{s_j}\right)<br />
-+\sum_j\frac{\gamma_j}{s_j}x_j.<br />
+<p>$$
+\hat y
+=\left(\gamma_0-\sum_j\frac{\gamma_j\mu_j}{s_j}\right)
++\sum_j\frac{\gamma_j}{s_j}x_j.
 $$</p>
 <p>Therefore the original-unit coefficients are:</p>
-<p>$$<br />
-\beta_j=\frac{\gamma_j}{s_j},<br />
+<p>$$
+\beta_j=\frac{\gamma_j}{s_j},
 $$</p>
-<p>$$<br />
-\beta_0=\gamma_0-\sum_j\frac{\gamma_j\mu_j}{s_j}.<br />
+<p>$$
+\beta_0=\gamma_0-\sum_j\frac{\gamma_j\mu_j}{s_j}.
 $$</p>
 <p>The fitted predictions can remain the same while the coefficient numbers and their units change.</p>
 <h3 id="code-proof-raw-and-scaled-ols-give-the-same-predictions">Code proof: raw and scaled OLS give the same predictions</h3>
@@ -1039,7 +1039,6 @@ print(&quot;Condition number:&quot;, np.linalg.cond(X_near_duplicate))
 </table>
 <p>This is not a licence to scale before splitting. Any learned transformation belongs inside the training procedure.</p>
 <h2 id="610-day-6-build-break-and-reflect">6.10 Day 6 build, break, and reflect</h2>
-<p><button class="read-details-btn" data-section="2a-1">✦ Read Details</button></p>
 <p><strong>Build</strong></p>
 <ol>
 <li>Load the synthetic project data.</li>
@@ -1067,29 +1066,29 @@ print(&quot;Condition number:&quot;, np.linalg.cond(X_near_duplicate))
 </ol>
 <hr />
 <h1 id="day-7-qr-svd-rank-and-the-pseudoinverse">Day 7 — QR, SVD, Rank, and the Pseudoinverse</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-7">✦ Read the beginner companion for Day 7</button></p>
 <blockquote>
 <p><strong>Today’s central idea:</strong> Least squares is one mathematical problem with several computational routes. QR and SVD expose the geometry and rank more safely than explicitly forming $(X^TX)^{-1}$.</p>
 </blockquote>
 <h2 id="71-return-to-the-least-squares-problem">7.1 Return to the least-squares problem</h2>
 <p>Chapter 1 minimised:</p>
-<p>$$<br />
-\lVert y-X\beta\rVert_2^2.<br />
+<p>$$
+\lVert y-X\beta\rVert_2^2.
 $$</p>
 <p>The normal equations are:</p>
-<p>$$<br />
-X^TX\hat\beta=X^Ty.<br />
+<p>$$
+X^TX\hat\beta=X^Ty.
 $$</p>
 <p>They are mathematically correct. But forming $X^TX$ roughly squares the condition number:</p>
-<p>$$<br />
-\kappa_2(X^TX)=\kappa_2(X)^2<br />
+<p>$$
+\kappa_2(X^TX)=\kappa_2(X)^2
 $$</p>
 <p>when $X$ has full column rank. A problem with condition number $10^6$ can therefore produce a normal-equation matrix with condition number about $10^{12}$.</p>
 <p>This motivates decompositions that operate on $X$ directly.</p>
 <h2 id="72-qr-decomposition-rotate-then-solve-a-triangular-system">7.2 QR decomposition: rotate, then solve a triangular system</h2>
-<p><button class="read-details-btn" data-section="2b-2">✦ Read Details</button></p>
 <p>For an $n\times p$ full-column-rank design matrix with $n\ge p$, the reduced QR decomposition is:</p>
-<p>$$<br />
-X=QR,<br />
+<p>$$
+X=QR,
 $$</p>
 <p>where:</p>
 <ul>
@@ -1098,12 +1097,12 @@ $$</p>
 <li>$R$ is a $p\times p$ upper-triangular matrix.</li>
 </ul>
 <p>Insert $X=QR$ into the objective:</p>
-<p>$$<br />
-\lVert y-QR\beta\rVert_2^2.<br />
+<p>$$
+\lVert y-QR\beta\rVert_2^2.
 $$</p>
 <p>The fitted component of $y$ in the column space is $QQ^Ty$. Therefore:</p>
-<p>$$<br />
-R\hat\beta=Q^Ty.<br />
+<p>$$
+R\hat\beta=Q^Ty.
 $$</p>
 <p>Because $R$ is triangular, solve it by back substitution rather than inversion.</p>
 <div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart LR
@@ -1135,19 +1134,18 @@ assert np.allclose(beta_qr, beta_lstsq)
 </code></pre>
 <h2 id="74-what-orthonormal-means">7.4 What “orthonormal” means</h2>
 <p>For two different columns $q_j$ and $q_k$ of $Q$:</p>
-<p>$$<br />
-q_j^Tq_k=0.<br />
+<p>$$
+q_j^Tq_k=0.
 $$</p>
 <p>Each column also has length 1:</p>
-<p>$$<br />
-q_j^Tq_j=1.<br />
+<p>$$
+q_j^Tq_j=1.
 $$</p>
 <p>Thus $Q$ describes perpendicular unit directions spanning the same column space as $X$. Multiplying by $Q^T$ measures how much of $y$ lies along each direction.</p>
 <h2 id="75-svd-reveal-every-informed-direction">7.5 SVD: reveal every informed direction</h2>
-<p><button class="read-details-btn" data-section="2b-5">✦ Read Details</button></p>
 <p>The singular value decomposition writes:</p>
-<p>$$<br />
-X=U\Sigma V^T.<br />
+<p>$$
+X=U\Sigma V^T.
 $$</p>
 <p>For the reduced SVD of an $n\times p$ matrix:</p>
 <ul>
@@ -1164,14 +1162,13 @@ $$</p>
 
 <p>A very small singular value identifies a parameter direction that changes predictions only slightly. The data contain little information for distinguishing coefficients along that direction.</p>
 <h2 id="76-the-pseudoinverse">7.6 The pseudoinverse</h2>
-<p><button class="read-details-btn" data-section="2b-6">✦ Read Details</button></p>
 <p>If every singular value is positive, invert the diagonal entries:</p>
-<p>$$<br />
-X^+=V\Sigma^{-1}U^T.<br />
+<p>$$
+X^+=V\Sigma^{-1}U^T.
 $$</p>
 <p>For a rank-deficient matrix, use the Moore–Penrose pseudoinverse. Singular values treated as zero are not inverted:</p>
-<p>$$<br />
-\hat\beta=X^+y=V\Sigma^+U^Ty.<br />
+<p>$$
+\hat\beta=X^+y=V\Sigma^+U^Ty.
 $$</p>
 <p>When multiple coefficient vectors achieve the same minimum residual norm, the pseudoinverse returns the minimum-Euclidean-norm solution. That is a precise selection rule, not proof that the individual coefficients have become identifiable.</p>
 <h2 id="77-construct-an-svd-least-squares-solver">7.7 Construct an SVD least-squares solver</h2>
@@ -1350,28 +1347,29 @@ class StableOLS:
 </ul>
 <h3 id="day-7-exit-check">Day 7 exit check</h3>
 <p>Without looking back, complete the chain:</p>
-<p>$$<br />
-X=QR\quad\Rightarrow\quad \underline{\hspace{3cm}}<br />
+<p>$$
+X=QR\quad\Rightarrow\quad \underline{\hspace{3cm}}
 $$</p>
 <p>and:</p>
-<p>$$<br />
-X=U\Sigma V^T\quad\Rightarrow\quad \hat\beta=\underline{\hspace{3cm}}.<br />
+<p>$$
+X=U\Sigma V^T\quad\Rightarrow\quad \hat\beta=\underline{\hspace{3cm}}.
 $$</p>
 <p>Then explain what a tiny singular value means in one sentence a nontechnical manager could understand.</p>
 <hr />
 <h1 id="day-8-probability-likelihood-and-uncertainty">Day 8 — Probability, Likelihood, and Uncertainty</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-8">✦ Read the beginner companion for Day 8</button></p>
 <blockquote>
 <p><strong>Today’s central idea:</strong> OLS can be fitted without a probability model. To make classical probability statements about coefficients and future outcomes, we must add assumptions and state them openly.</p>
 </blockquote>
 <h2 id="81-deterministic-fit-versus-stochastic-model">8.1 Deterministic fit versus stochastic model</h2>
 <p>So far, $y$ and $X$ have been arrays and OLS has been a geometric optimisation:</p>
-<p>$$<br />
-\hat\beta=\arg\min_\beta \lVert y-X\beta\rVert_2^2.<br />
+<p>$$
+\hat\beta=\arg\min_\beta \lVert y-X\beta\rVert_2^2.
 $$</p>
 <p>No probability distribution was required to calculate that projection.</p>
 <p>A statistical model adds a claim about how outcomes vary:</p>
-<p>$$<br />
-y=X\beta+\varepsilon.<br />
+<p>$$
+y=X\beta+\varepsilon.
 $$</p>
 <p>Here:</p>
 <ul>
@@ -1382,24 +1380,24 @@ $$</p>
 <p>The word <em>error</em> does not mean a data-entry mistake. It means the difference between the outcome and the model’s conditional mean in the assumed data-generating process.</p>
 <h2 id="82-error-terms-are-not-residuals">8.2 Error terms are not residuals</h2>
 <p>The unobserved error for project $i$ is:</p>
-<p>$$<br />
-\varepsilon_i=y_i-x_i^T\beta.<br />
+<p>$$
+\varepsilon_i=y_i-x_i^T\beta.
 $$</p>
 <p>The observed residual after fitting is:</p>
-<p>$$<br />
-e_i=y_i-x_i^T\hat\beta.<br />
+<p>$$
+e_i=y_i-x_i^T\hat\beta.
 $$</p>
 <p>We never observe the true $\beta$, so we do not observe the true errors. Residuals are estimates shaped by the fitted model. For OLS with an intercept, they also obey constraints such as summing to zero. Treating residuals as independent raw observations is therefore unsafe.</p>
 <h2 id="83-a-probability-distribution-describes-possible-values">8.3 A probability distribution describes possible values</h2>
 <p>For a continuous random variable $Y$, a probability density $f(y)$ describes relative density around possible values. Probability over an interval is area:</p>
-<p>$$<br />
-P(a\le Y\le b)=\int_a^b f(y)\,dy.<br />
+<p>$$
+P(a\le Y\le b)=\int_a^b f(y)\,dy.
 $$</p>
 <p>For a Gaussian—or normal—random variable with mean $\mu$ and variance $\sigma^2$:</p>
-<p>$$<br />
-f(y\mid\mu,\sigma^2)<br />
-=\frac{1}{\sqrt{2\pi\sigma^2}}<br />
-\exp\left[-\frac{(y-\mu)^2}{2\sigma^2}\right].<br />
+<p>$$
+f(y\mid\mu,\sigma^2)
+=\frac{1}{\sqrt{2\pi\sigma^2}}
+\exp\left[-\frac{(y-\mu)^2}{2\sigma^2}\right].
 $$</p>
 <p>Read the equation in parts:</p>
 <ul>
@@ -1409,14 +1407,13 @@ $$</p>
 <li>the exponential makes large deviations progressively less likely under the model.</li>
 </ul>
 <h2 id="84-the-classical-gaussian-linear-model">8.4 The classical Gaussian linear model</h2>
-<p><button class="read-details-btn" data-section="2c-4">✦ Read Details</button></p>
 <p>One common model assumes:</p>
-<p>$$<br />
-Y_i\mid X_i=x_i \sim \mathcal N(x_i^T\beta,\sigma^2).<br />
+<p>$$
+Y_i\mid X_i=x_i \sim \mathcal N(x_i^T\beta,\sigma^2).
 $$</p>
 <p>Equivalently:</p>
-<p>$$<br />
-\varepsilon\sim\mathcal N(0,\sigma^2I).<br />
+<p>$$
+\varepsilon\sim\mathcal N(0,\sigma^2I).
 $$</p>
 <p>This compact statement contains several assumptions:</p>
 <ol>
@@ -1428,7 +1425,6 @@ $$</p>
 </ol>
 <p>These assumptions are not automatically true because <code>LinearRegression()</code> ran successfully.</p>
 <h2 id="85-likelihood-reverses-the-question">8.5 Likelihood reverses the question</h2>
-<p><button class="read-details-btn" data-section="2c-5">✦ Read Details</button></p>
 <p>A probability model asks:</p>
 <blockquote>
 <p>If $\beta$ and $\sigma^2$ were known, how plausible would different datasets be?</p>
@@ -1438,30 +1434,30 @@ $$</p>
 <p>Given the dataset we observed, which parameter values make it most plausible under the model?</p>
 </blockquote>
 <p>For independent observations, multiply their Gaussian densities:</p>
-<p>$$<br />
-L(\beta,\sigma^2\mid X,y)<br />
-=\prod_{i=1}^{n}<br />
-\frac{1}{\sqrt{2\pi\sigma^2}}<br />
-\exp\left[-\frac{(y_i-x_i^T\beta)^2}{2\sigma^2}\right].<br />
+<p>$$
+L(\beta,\sigma^2\mid X,y)
+=\prod_{i=1}^{n}
+\frac{1}{\sqrt{2\pi\sigma^2}}
+\exp\left[-\frac{(y_i-x_i^T\beta)^2}{2\sigma^2}\right].
 $$</p>
 <p>The likelihood is a function of the parameters with the observed data held fixed. It is not the probability that a fixed parameter is true.</p>
 <h2 id="86-why-we-use-the-log-likelihood">8.6 Why we use the log-likelihood</h2>
 <p>Products of many small densities can underflow numerically. The logarithm turns products into sums and preserves the location of the maximum because the logarithm is strictly increasing.</p>
 <p>Take logs:</p>
-<p>$$<br />
-\ell(\beta,\sigma^2)<br />
-=-\frac{n}{2}\log(2\pi)<br />
--\frac{n}{2}\log(\sigma^2)<br />
--\frac{1}{2\sigma^2}<br />
-\sum_{i=1}^{n}(y_i-x_i^T\beta)^2.<br />
+<p>$$
+\ell(\beta,\sigma^2)
+=-\frac{n}{2}\log(2\pi)
+-\frac{n}{2}\log(\sigma^2)
+-\frac{1}{2\sigma^2}
+\sum_{i=1}^{n}(y_i-x_i^T\beta)^2.
 $$</p>
 <p>For a fixed $\sigma^2$, the first two terms do not depend on $\beta$. Maximising the log-likelihood therefore means minimising:</p>
-<p>$$<br />
-\sum_i(y_i-x_i^T\beta)^2.<br />
+<p>$$
+\sum_i(y_i-x_i^T\beta)^2.
 $$</p>
 <p>Thus, under the Gaussian equal-variance model:</p>
-<p>$$<br />
-\boxed{\text{maximum likelihood for }\beta=\text{ordinary least squares}.}<br />
+<p>$$
+\boxed{\text{maximum likelihood for }\beta=\text{ordinary least squares}.}
 $$</p>
 <p>This is a bridge between optimisation and probability—not a claim that every least-squares dataset is Gaussian.</p>
 <h2 id="87-code-proof-the-likelihood-and-ssr-choose-the-same-slope">8.7 Code proof: the likelihood and SSR choose the same slope</h2>
@@ -1510,55 +1506,53 @@ assert best_ssr[1] == best_likelihood[1]
 <p>The grid is intentionally inefficient. Its purpose is to verify the equivalence by two independently calculated criteria.</p>
 <h2 id="88-estimating-the-unexplained-variance">8.8 Estimating the unexplained variance</h2>
 <p>After fitting $k$ parameters, including the intercept, calculate:</p>
-<p>$$<br />
-SSR=e^Te.<br />
+<p>$$
+SSR=e^Te.
 $$</p>
 <p>Under the classical linear model, an unbiased estimator of $\sigma^2$ is:</p>
-<p>$$<br />
-s^2=\frac{SSR}{n-k}.<br />
+<p>$$
+s^2=\frac{SSR}{n-k}.
 $$</p>
 <p>Why $n-k$ rather than $n$? Fitting $k$ independent parameters imposes $k$ constraints and uses $k$ degrees of freedom. Only $n-k$ residual degrees of freedom remain for estimating noise.</p>
 <p>The maximum-likelihood estimator of $\sigma^2$ under the Gaussian model uses $SSR/n$. The two formulas answer slightly different estimation criteria. This is another example of why denominators must be connected to purpose.</p>
 <h2 id="89-sampling-variability-of-the-ols-coefficients">8.9 Sampling variability of the OLS coefficients</h2>
 <p>Under the classical assumptions and treating $X$ as fixed:</p>
-<p>$$<br />
-\hat\beta\sim\mathcal N\left(\beta,\sigma^2(X^TX)^{-1}\right).<br />
+<p>$$
+\hat\beta\sim\mathcal N\left(\beta,\sigma^2(X^TX)^{-1}\right).
 $$</p>
 <p>Replace unknown $\sigma^2$ with $s^2$:</p>
-<p>$$<br />
-\widehat{\operatorname{Var}}(\hat\beta)<br />
-=s^2(X^TX)^{-1}.<br />
+<p>$$
+\widehat{\operatorname{Var}}(\hat\beta)
+=s^2(X^TX)^{-1}.
 $$</p>
 <p>The standard error of coefficient $j$ is the square root of diagonal element $j$:</p>
-<p>$$<br />
-SE(\hat\beta_j)<br />
-=\sqrt{\left[s^2(X^TX)^{-1}\right]_{jj}}.<br />
+<p>$$
+SE(\hat\beta_j)
+=\sqrt{\left[s^2(X^TX)^{-1}\right]_{jj}}.
 $$</p>
 <p>A large standard error can arise from substantial outcome noise, limited sample size, narrow feature variation, or multicollinearity. It is not simply a sign that the fitting code failed.</p>
 <h2 id="810-confidence-interval-for-a-coefficient">8.10 Confidence interval for a coefficient</h2>
-<p><button class="read-details-btn" data-section="2c-10">✦ Read Details</button></p>
 <p>A two-sided $100(1-\alpha)\%$ interval is:</p>
-<p>$$<br />
-\hat\beta_j<br />
-\pm<br />
-t_{1-\alpha/2,\,n-k}\,SE(\hat\beta_j).<br />
+<p>$$
+\hat\beta_j
+\pm
+t_{1-\alpha/2,\,n-k}\,SE(\hat\beta_j).
 $$</p>
 <p>In a frequentist interpretation, the parameter is fixed and the interval is random before sampling. If the entire sampling-and-interval procedure were repeated under its assumptions, a proportion $1-\alpha$ of those intervals would contain the true parameter. It is not strictly correct to say there is a 95% probability that this one fixed-parameter interval contains $\beta_j$.</p>
 <h2 id="811-confidence-interval-versus-prediction-interval">8.11 Confidence interval versus prediction interval</h2>
-<p><button class="read-details-btn" data-section="2c-11">✦ Read Details</button></p>
 <p>For a new feature row $x_0$, the estimated conditional mean is:</p>
-<p>$$<br />
-\hat y_0=x_0^T\hat\beta.<br />
+<p>$$
+\hat y_0=x_0^T\hat\beta.
 $$</p>
 <p>The standard error for the <strong>mean response</strong> is:</p>
-<p>$$<br />
-SE_{\text{mean}}(x_0)<br />
-=s\sqrt{x_0^T(X^TX)^{-1}x_0}.<br />
+<p>$$
+SE_{\text{mean}}(x_0)
+=s\sqrt{x_0^T(X^TX)^{-1}x_0}.
 $$</p>
 <p>The standard error for one <strong>new project outcome</strong> is:</p>
-<p>$$<br />
-SE_{\text{prediction}}(x_0)<br />
-=s\sqrt{1+x_0^T(X^TX)^{-1}x_0}.<br />
+<p>$$
+SE_{\text{prediction}}(x_0)
+=s\sqrt{1+x_0^T(X^TX)^{-1}x_0}.
 $$</p>
 <p>The extra 1 represents irreducible project-to-project noise. Therefore a prediction interval for an individual new project is wider than a confidence interval for the mean cost of many comparable projects.</p>
 <div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart TD
@@ -1734,6 +1728,7 @@ plt.show()
 </ul>
 <hr />
 <h1 id="day-9-gradient-descent-from-the-ols-gradient">Day 9 — Gradient Descent from the OLS Gradient</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-9">✦ Read the beginner companion for Day 9</button></p>
 <blockquote>
 <p><strong>Today’s central idea:</strong> Gradient descent repeatedly moves parameters downhill. The OLS gradient derived in Chapter 1 tells us both the direction and the size of the local slope.</p>
 </blockquote>
@@ -1741,15 +1736,14 @@ plt.show()
 <p>For a moderate linear regression, QR or SVD is usually preferable. Gradient descent is introduced because the same optimisation logic extends to models that have no convenient closed-form solution and to datasets too large for some direct operations.</p>
 <p>The learner should not conclude that iterative means better. The method must match the problem.</p>
 <h2 id="92-choose-the-objective-carefully">9.2 Choose the objective carefully</h2>
-<p><button class="read-details-btn" data-section="2d-2">✦ Read Details</button></p>
 <p>Use mean squared error as the training objective:</p>
-<p>$$<br />
-J(\beta)=\frac{1}{n}\lVert y-X\beta\rVert_2^2.<br />
+<p>$$
+J(\beta)=\frac{1}{n}\lVert y-X\beta\rVert_2^2.
 $$</p>
 <p>Chapter 1 derived the gradient of SSR. Dividing by $n$ gives:</p>
-<p>$$<br />
-\nabla_\beta J(\beta)<br />
-=\frac{2}{n}X^T(X\beta-y).<br />
+<p>$$
+\nabla_\beta J(\beta)
+=\frac{2}{n}X^T(X\beta-y).
 $$</p>
 <p>Shapes:</p>
 <table>
@@ -1780,11 +1774,10 @@ $$</p>
 </table>
 <p>The gradient has one component per parameter.</p>
 <h2 id="93-the-update-rule">9.3 The update rule</h2>
-<p><button class="read-details-btn" data-section="2d-3">✦ Read Details</button></p>
 <p>Starting from $\beta^{(0)}$, repeat:</p>
-<p>$$<br />
-\beta^{(t+1)}<br />
-=\beta^{(t)}-\eta\nabla J\left(\beta^{(t)}\right),<br />
+<p>$$
+\beta^{(t+1)}
+=\beta^{(t)}-\eta\nabla J\left(\beta^{(t)}\right),
 $$</p>
 <p>where $\eta&gt;0$ is the learning rate.</p>
 <ul>
@@ -2066,13 +2059,14 @@ plt.show()
 <p>Write the MSE gradient and update rule from memory. Then identify which quantities are learned parameters and which are chosen hyperparameters.</p>
 <hr />
 <h1 id="day-10-generalisation-baselines-and-model-complexity">Day 10 — Generalisation, Baselines, and Model Complexity</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-10">✦ Read the beginner companion for Day 10</button></p>
 <blockquote>
 <p><strong>Today’s central idea:</strong> Machine learning is not the production of a small training error. It is the construction of a rule that performs usefully on new cases drawn from the conditions for which it is intended.</p>
 </blockquote>
 <h2 id="101-training-is-an-information-boundary">10.1 Training is an information boundary</h2>
 <p>Let a learning procedure receive training data $D_{\text{train}}$ and return a fitted prediction function:</p>
-<p>$$<br />
-\hat f=\mathcal A(D_{\text{train}}).<br />
+<p>$$
+\hat f=\mathcal A(D_{\text{train}}).
 $$</p>
 <p>Here $\mathcal A$ includes more than the named algorithm. It may include:</p>
 <ul>
@@ -2087,38 +2081,37 @@ $$</p>
 <p>The whole procedure learns from data. An honest evaluation must reproduce that procedure using only the permitted training information.</p>
 <h2 id="102-empirical-risk-and-generalisation-risk">10.2 Empirical risk and generalisation risk</h2>
 <p>For a loss function $L$, training—or empirical—risk is:</p>
-<p>$$<br />
-\widehat R_{\text{train}}(f)<br />
-=\frac{1}{n_{\text{train}}}<br />
-\sum_{i\in\text{train}}L(y_i,f(x_i)).<br />
+<p>$$
+\widehat R_{\text{train}}(f)
+=\frac{1}{n_{\text{train}}}
+\sum_{i\in\text{train}}L(y_i,f(x_i)).
 $$</p>
 <p>The population generalisation risk is:</p>
-<p>$$<br />
-R(f)=\mathbb E_{(X,Y)\sim P_{\text{deployment}}}<br />
-\left[L(Y,f(X))\right].<br />
+<p>$$
+R(f)=\mathbb E_{(X,Y)\sim P_{\text{deployment}}}
+\left[L(Y,f(X))\right].
 $$</p>
 <p>The expectation is over the deployment distribution—the projects the model will actually face. That distribution is not visible in full. A held-out sample is useful only insofar as its construction represents the deployment question.</p>
 <h2 id="103-the-constant-baseline-is-a-real-model">10.3 The constant baseline is a real model</h2>
-<p><button class="read-details-btn" data-section="2e-3">✦ Read Details</button></p>
 <p>A baseline is not an insult to the data. It defines the minimum comparison a feature-using model must beat.</p>
 <p>For a constant squared-error predictor $c$, minimise:</p>
-<p>$$<br />
-S(c)=\sum_{i=1}^{n}(y_i-c)^2.<br />
+<p>$$
+S(c)=\sum_{i=1}^{n}(y_i-c)^2.
 $$</p>
 <p>Differentiate:</p>
-<p>$$<br />
-\frac{dS}{dc}=-2\sum_i(y_i-c).<br />
+<p>$$
+\frac{dS}{dc}=-2\sum_i(y_i-c).
 $$</p>
 <p>Set the derivative to zero:</p>
-<p>$$<br />
-\sum_i y_i-nc=0<br />
-\quad\Rightarrow\quad<br />
-\hat c=\bar y.<br />
+<p>$$
+\sum_i y_i-nc=0
+\quad\Rightarrow\quad
+\hat c=\bar y.
 $$</p>
 <p>Therefore the training mean is the best constant prediction under squared error.</p>
 <p>For absolute error:</p>
-<p>$$<br />
-A(c)=\sum_i|y_i-c|,<br />
+<p>$$
+A(c)=\sum_i|y_i-c|,
 $$</p>
 <p>any sample median minimises the objective. Intuitively, moving $c$ right reduces the error for points to its right but increases the error for points to its left; a median balances those counts.</p>
 <h2 id="104-code-proof-search-for-the-best-constant">10.4 Code proof: search for the best constant</h2>
@@ -2142,8 +2135,8 @@ assert np.isclose(best_absolute, np.median(y), atol=0.001)
 <p>The outlying value 60 pulls the mean much more than the median. Baseline choice and evaluation loss should match the decision problem.</p>
 <h2 id="105-what-better-than-baseline-means">10.5 What “better than baseline” means</h2>
 <p>Fit the baseline on the training target only:</p>
-<p>$$<br />
-\hat y_i^{\text{baseline}}=\bar y_{\text{train}}.<br />
+<p>$$
+\hat y_i^{\text{baseline}}=\bar y_{\text{train}}.
 $$</p>
 <p>Then evaluate both baseline and candidate model on the same held-out rows with the same metric.</p>
 <p>A candidate that fails to beat the baseline may have:</p>
@@ -2157,7 +2150,6 @@ $$</p>
 </ul>
 <p>Failure to beat a baseline is a diagnostic result, not permission to hide the baseline.</p>
 <h2 id="106-underfitting-and-overfitting">10.6 Underfitting and overfitting</h2>
-<p><button class="read-details-btn" data-section="2e-6">✦ Read Details</button></p>
 <p><strong>Underfitting</strong> occurs when the learned rule is too restricted to capture useful structure. Both training and validation errors may be high.</p>
 <p><strong>Overfitting</strong> occurs when a flexible procedure adapts to idiosyncrasies of the training sample that do not repeat. Training error can be low while validation error is high.</p>
 <div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart TD
@@ -2168,21 +2160,20 @@ $$</p>
 
 <p>The model with the smallest training error is almost never a defensible automatic choice.</p>
 <h2 id="107-biasvariance-decomposition-a-first-research-level-view">10.7 Bias–variance decomposition: a first research-level view</h2>
-<p><button class="read-details-btn" data-section="2e-7">✦ Read Details</button></p>
 <p>Assume squared-error prediction at a fixed input $x_0$ and a data-generating relationship:</p>
-<p>$$<br />
-Y=f(x_0)+\varepsilon,<br />
-\qquad<br />
-\mathbb E[\varepsilon]=0,<br />
-\qquad<br />
-\operatorname{Var}(\varepsilon)=\sigma^2.<br />
+<p>$$
+Y=f(x_0)+\varepsilon,
+\qquad
+\mathbb E[\varepsilon]=0,
+\qquad
+\operatorname{Var}(\varepsilon)=\sigma^2.
 $$</p>
 <p>Imagine repeatedly drawing new training datasets and fitting $\hat f$. The expected test error at $x_0$ decomposes as:</p>
-<p>$$<br />
-\mathbb E\left[(Y-\hat f(x_0))^2\right]<br />
-=\underbrace{\left(\mathbb E[\hat f(x_0)]-f(x_0)\right)^2}<em _text_variance="\text{variance">{\text{squared bias}}<br />
-+\underbrace{\operatorname{Var}(\hat f(x_0))}</em>}<br />
-+\underbrace{\sigma^2}_{\text{irreducible noise}}.<br />
+<p>$$
+\mathbb E\left[(Y-\hat f(x_0))^2\right]
+=\underbrace{\left(\mathbb E[\hat f(x_0)]-f(x_0)\right)^2}_{\text{squared bias}}
++\underbrace{\operatorname{Var}(\hat f(x_0))}_{\text{variance}}
++\underbrace{\sigma^2}_{\text{irreducible noise}}.
 $$</p>
 <p>Step-by-step:</p>
 <ol>
@@ -2194,17 +2185,17 @@ $$</p>
 <p>This is an expectation over repeated datasets, not something fully observed from one train/test split. “High bias” and “high variance” should not be assigned casually from a single plot.</p>
 <h2 id="108-a-shallow-decision-tree-as-a-nonlinear-comparator">10.8 A shallow decision tree as a nonlinear comparator</h2>
 <p>A regression tree divides feature space into regions. At a node, it considers a feature $j$ and threshold $s$:</p>
-<p>$$<br />
-R_{\text{left}}(j,s)={x:x_j\le s},<br />
+<p>$$
+R_{\text{left}}(j,s)=\{x:x_j\le s\},
 $$</p>
-<p>$$<br />
-R_{\text{right}}(j,s)={x:x_j&gt;s}.<br />
+<p>$$
+R_{\text{right}}(j,s)=\{x:x_j&gt;s\}.
 $$</p>
 <p>For squared error, each leaf predicts the mean target among its training observations. A candidate split is chosen to minimise the combined within-child squared error:</p>
-<p>$$<br />
-\sum_{i:x_i\in R_{\text{left}}}(y_i-\bar y_{\text{left}})^2<br />
-+<br />
-\sum_{i:x_i\in R_{\text{right}}}(y_i-\bar y_{\text{right}})^2.<br />
+<p>$$
+\sum_{i:x_i\in R_{\text{left}}}(y_i-\bar y_{\text{left}})^2
++
+\sum_{i:x_i\in R_{\text{right}}}(y_i-\bar y_{\text{right}})^2.
 $$</p>
 <p>A tree is a piecewise-constant model. It can represent thresholds and interactions without manually adding polynomial or interaction columns.</p>
 <div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart TD
@@ -2364,11 +2355,11 @@ plt.show()
 <p>You should now be able to derive the mean baseline, explain why the median baseline differs, and identify a situation in which the best training model is the worst responsible choice.</p>
 <hr />
 <h1 id="day-11-honest-splitting-leakage-and-cross-validation">Day 11 — Honest Splitting, Leakage, and Cross-Validation</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-11">✦ Read the beginner companion for Day 11</button></p>
 <blockquote>
 <p><strong>Today’s central idea:</strong> A split is a simulation of deployment. Choose it by asking what will be new when the model is used: a new project, a new district, a future period, or some combination.</p>
 </blockquote>
 <h2 id="111-three-roles-for-data">11.1 Three roles for data</h2>
-<p><button class="read-details-btn" data-section="2f-1">✦ Read Details</button></p>
 <table>
 <thead>
 <tr>
@@ -2403,7 +2394,6 @@ plt.show()
 
 <p>The exact percentages are not universal. A 60/20/20 split is a teaching example, not a law. Sample size, group structure, time, and the cost of uncertainty determine a defensible design.</p>
 <h2 id="112-random-split-new-exchangeable-projects">11.2 Random split: new exchangeable projects</h2>
-<p><button class="read-details-btn" data-section="2f-2">✦ Read Details</button></p>
 <p>A random split asks whether the fitted procedure generalises to new observations assumed to arise from roughly the same distribution as the training observations.</p>
 <p>It may be reasonable when:</p>
 <ul>
@@ -2416,14 +2406,14 @@ plt.show()
 <h2 id="113-group-split-new-independent-groups">11.3 Group split: new independent groups</h2>
 <p>Projects within one district may share roads, contractors, administrative practices, survey teams, and shocks. A random split can place highly related projects on both sides. Performance then partly measures recognition of shared group structure.</p>
 <p>If deployment is to a district absent from training, hold out entire districts:</p>
-<p>$$<br />
-G_{\text{train}}\cap G_{\text{test}}=\varnothing.<br />
+<p>$$
+G_{\text{train}}\cap G_{\text{test}}=\varnothing.
 $$</p>
 <p>The group used for splitting need not be an input feature. It identifies dependence or the unit of intended transfer.</p>
 <h2 id="114-temporal-split-future-conditions">11.4 Temporal split: future conditions</h2>
 <p>When predicting future projects, preserve time order:</p>
-<p>$$<br />
-\max(t_{\text{train}})&lt;\min(t_{\text{test}}).<br />
+<p>$$
+\max(t_{\text{train}})&lt;\min(t_{\text{test}}).
 $$</p>
 <p>An expanding-window evaluation is often useful:</p>
 <div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart TD
@@ -2467,7 +2457,6 @@ $$</p>
 </table>
 <p>When the desired deployment has little or no analogue in the data, no clever splitter can manufacture evidence. The correct conclusion may be that external validation data are needed.</p>
 <h2 id="116-leakage-information-crosses-the-boundary">11.6 Leakage: information crosses the boundary</h2>
-<p><button class="read-details-btn" data-section="2f-6">✦ Read Details</button></p>
 <p>Leakage occurs when the training or selection process receives information it would not legitimately possess at deployment or final evaluation.</p>
 <h3 id="target-leakage">Target leakage</h3>
 <p>A feature contains the target or a post-outcome proxy. The final material bill is an obvious MHP example.</p>
@@ -2570,12 +2559,11 @@ linear_pipeline = Pipeline(
 <li>aggregate the held-out losses.</li>
 </ol>
 <p>For fold losses $L_1,\ldots,L_K$:</p>
-<p>$$<br />
-\widehat L_{CV}=\frac{1}{K}\sum_{k=1}^{K}L_k.<br />
+<p>$$
+\widehat L_{CV}=\frac{1}{K}\sum_{k=1}^{K}L_k.
 $$</p>
 <p>Cross-validation reuses observations for efficient development, but each prediction is generated by a model that did not train on that observation.</p>
 <h2 id="1110-cross-validation-is-a-family-not-one-method">11.10 Cross-validation is a family, not one method</h2>
-<p><button class="read-details-btn" data-section="2f-1">✦ Read Details</button></p>
 <table>
 <thead>
 <tr>
@@ -2609,7 +2597,6 @@ $$</p>
 </table>
 <p>Stratification is mainly discussed in classification. For regression, analysts sometimes bin the target for approximate balance, but target-informed splitting must be designed cautiously and documented. It does not replace group or temporal structure.</p>
 <h2 id="1111-grouped-cross-validation-in-code">11.11 Grouped cross-validation in code</h2>
-<p><button class="read-details-btn" data-section="2f-1">✦ Read Details</button></p>
 <pre><code class="language-python">import numpy as np
 from sklearn.model_selection import GroupKFold, cross_validate
 
@@ -2644,7 +2631,6 @@ print(&quot;Held-out district R² values:&quot;, scores[&quot;test_r2&quot;])
 </code></pre>
 <p>Do not report only the mean. Each fold corresponds to a district and may reveal an operationally important failure.</p>
 <h2 id="1112-temporal-validation-in-code">11.12 Temporal validation in code</h2>
-<p><button class="read-details-btn" data-section="2f-1">✦ Read Details</button></p>
 <pre><code class="language-python">import numpy as np
 from sklearn.base import clone
 from sklearn.metrics import mean_absolute_error
@@ -2671,16 +2657,14 @@ print(&quot;Mean forward-validation MAE:&quot;, np.mean(forward_mae))
 </code></pre>
 <p>The folds have different training sizes and time periods. Their losses are not identically distributed replications. Inspecting the sequence can be more informative than compressing it to one average.</p>
 <h2 id="1113-hyperparameter-selection-and-the-validation-set">11.13 Hyperparameter selection and the validation set</h2>
-<p><button class="read-details-btn" data-section="2f-1">✦ Read Details</button></p>
 <p>For a decision tree, consider depths $1,2,3,4,6,8$. Selecting the depth with the best validation score is a data-dependent operation:</p>
-<p>$$<br />
-\hat d<br />
-=\arg\min_{d\in\mathcal D}<br />
-\widehat L_{\text{validation}}(d).<br />
+<p>$$
+\hat d
+=\arg\min_{d\in\mathcal D}
+\widehat L_{\text{validation}}(d).
 $$</p>
 <p>If the same validation data are used to report final performance, the estimate is optimistically biased because the best-looking setting partly benefited from validation noise.</p>
 <h2 id="1114-nested-cross-validation">11.14 Nested cross-validation</h2>
-<p><button class="read-details-btn" data-section="2f-1">✦ Read Details</button></p>
 <p>Nested CV separates two loops:</p>
 <ul>
 <li>the <strong>inner loop</strong> selects hyperparameters;</li>
@@ -2695,7 +2679,6 @@ $$</p>
 
 <p>The object being evaluated is not “a depth-3 tree” chosen in advance. It is “the procedure that searches specified depths using specified inner folds and then refits the winner.”</p>
 <h2 id="1115-manual-nested-group-cross-validation">11.15 Manual nested group cross-validation</h2>
-<p><button class="read-details-btn" data-section="2f-1">✦ Read Details</button></p>
 <p>This explicit version keeps the mechanics visible.</p>
 <pre><code class="language-python">import numpy as np
 from sklearn.base import clone
@@ -2766,7 +2749,6 @@ print(&quot;Nested group-CV mean MAE:&quot;, np.mean(outer_results))
 </code></pre>
 <p>This is computationally more expensive because selection is repeated inside each outer training set. That repetition is the protection, not wasted work.</p>
 <h2 id="1116-research-paper-discussion-2-cawley-and-talbot-on-selection-bias">11.16 Research paper discussion 2: Cawley and Talbot on selection bias</h2>
-<p><button class="read-details-btn" data-section="2f-1">✦ Read Details</button></p>
 <p><strong>Paper:</strong> Gavin C. Cawley and Nicola L. C. Talbot (2010), <a href="https://www.jmlr.org/papers/v11/cawley10a.html">“On Over-fitting in Model Selection and Subsequent Selection Bias in Performance Evaluation”</a>, <em>Journal of Machine Learning Research</em> 11, 2079–2107.</p>
 <h3 id="the-question_1">The question</h3>
 <p>Can the model-selection criterion itself be overfit, and can this produce biased performance comparisons?</p>
@@ -2774,8 +2756,8 @@ print(&quot;Nested group-CV mean MAE:&quot;, np.mean(outer_results))
 <p>When many candidate settings are compared, random variation in the selection criterion becomes an opportunity. The selected candidate can look best partly because it benefited from noise. The paper shows that this selection overfitting can be comparable in magnitude to reported differences between algorithms.</p>
 <h3 id="the-important-change-in-the-unit-of-comparison">The important change in the unit of comparison</h3>
 <p>The paper argues that empirical comparisons should evaluate the combination:</p>
-<p>$$<br />
-\text{learning algorithm} + \text{model-selection procedure},<br />
+<p>$$
+\text{learning algorithm} + \text{model-selection procedure},
 $$</p>
 <p>not the named algorithm in isolation.</p>
 <p>For the MHP example, “decision tree” is incomplete. A reproducible procedure includes:</p>
@@ -2794,7 +2776,6 @@ $$</p>
 <h3 id="reproduction-prompt_1">Reproduction prompt</h3>
 <p>On repeated synthetic datasets, search increasingly large collections of irrelevant hyperparameters. Compare the best inner-CV score with outer held-out performance. Plot the optimism as the search space grows.</p>
 <h2 id="1117-a-locked-test-protocol">11.17 A locked-test protocol</h2>
-<p><button class="read-details-btn" data-section="2f-1">✦ Read Details</button></p>
 <p>Before opening the final test result, write and timestamp an evaluation contract containing:</p>
 <ol>
 <li>target and units;</li>
@@ -2810,7 +2791,6 @@ $$</p>
 </ol>
 <p>If the test result triggers model revision, that is allowed—but the old test set has become development information. A new independent test is then needed for a fresh final claim.</p>
 <h2 id="1118-day-11-build-break-and-reflect">11.18 Day 11 build, break, and reflect</h2>
-<p><button class="read-details-btn" data-section="2f-1">✦ Read Details</button></p>
 <p><strong>Build</strong></p>
 <ol>
 <li>Write the deployment question before splitting.</li>
@@ -2838,13 +2818,14 @@ $$</p>
 <p>You are ready for Day 12 when you can draw the inner and outer loops of nested CV, state what each loop is allowed to influence, and explain why a pipeline is part of statistical validity rather than code tidiness.</p>
 <hr />
 <h1 id="day-12-metrics-diagnostics-and-responsible-revision">Day 12 — Metrics, Diagnostics, and Responsible Revision</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-12">✦ Read the beginner companion for Day 12</button></p>
 <blockquote>
 <p><strong>Today’s central idea:</strong> A metric compresses errors according to a value judgement. Responsible evaluation keeps the individual errors available, measures uncertainty, looks for structured failure, and revises the model without contaminating the final test.</p>
 </blockquote>
 <h2 id="121-begin-with-signed-errors">12.1 Begin with signed errors</h2>
 <p>For a held-out observation:</p>
-<p>$$<br />
-e_i=y_i-\hat y_i.<br />
+<p>$$
+e_i=y_i-\hat y_i.
 $$</p>
 <p>With this convention:</p>
 <ul>
@@ -2852,43 +2833,42 @@ $$</p>
 <li>$e_i&lt;0$: the prediction exceeded the actual cost, so the model <strong>overpredicted</strong>.</li>
 </ul>
 <p>The mean signed error is:</p>
-<p>$$<br />
-ME=\frac{1}{n}\sum_i e_i.<br />
+<p>$$
+ME=\frac{1}{n}\sum_i e_i.
 $$</p>
 <p>Positive and negative misses cancel, so ME is useful for directional bias but not as a total accuracy measure.</p>
 <h2 id="122-mean-absolute-error">12.2 Mean absolute error</h2>
-<p>$$<br />
-MAE=\frac{1}{n}\sum_{i=1}^{n}|y_i-\hat y_i|.<br />
+<p>$$
+MAE=\frac{1}{n}\sum_{i=1}^{n}|y_i-\hat y_i|.
 $$</p>
 <p>If MAE is 4.2 million PKR, the average magnitude of the held-out miss is 4.2 million PKR. MAE weights an error of 10 twice as much as an error of 5.</p>
 <p>MAE is not immune to extreme values; every extreme error still enters. It is simply less dominated by them than a squared-error metric.</p>
 <h2 id="123-mean-squared-error-and-root-mean-squared-error">12.3 Mean squared error and root mean squared error</h2>
-<p>$$<br />
-MSE=\frac{1}{n}\sum_{i=1}^{n}(y_i-\hat y_i)^2,<br />
+<p>$$
+MSE=\frac{1}{n}\sum_{i=1}^{n}(y_i-\hat y_i)^2,
 $$</p>
-<p>$$<br />
-RMSE=\sqrt{MSE}.<br />
+<p>$$
+RMSE=\sqrt{MSE}.
 $$</p>
 <p>RMSE returns to the target’s units. Because errors are squared before averaging, large misses receive disproportionate weight.</p>
 <p>Do not describe RMSE as “the average error” without qualification. It is the square root of the mean squared error, not the arithmetic mean of absolute misses.</p>
 <h2 id="124-median-absolute-error">12.4 Median absolute error</h2>
-<p><button class="read-details-btn" data-section="2g-4">✦ Read Details</button></p>
-<p>$$<br />
-MedAE=\operatorname{median}\left(|y_i-\hat y_i|\right).<br />
+<p>$$
+MedAE=\operatorname{median}\left(|y_i-\hat y_i|\right).
 $$</p>
 <p>MedAE describes a typical central miss and can remain small even when a minority of projects fail badly. Reporting it beside MAE and a high error quantile makes that contrast visible.</p>
 <p>For example:</p>
-<p>$$<br />
-Q_{0.90}(|e|)<br />
+<p>$$
+Q_{0.90}(|e|)
 $$</p>
 <p>is the 90th percentile of absolute error: 90% of held-out projects have an absolute miss at or below that value.</p>
 <h2 id="125-r2-on-held-out-data">12.5 $R^2$ on held-out data</h2>
 <p>For evaluation outcomes $y_1,\ldots,y_n$:</p>
-<p>$$<br />
-R^2<br />
-=1-<br />
-\frac{\sum_i(y_i-\hat y_i)^2}<br />
-{\sum_i(y_i-\bar y_{\text{evaluation}})^2}.<br />
+<p>$$
+R^2
+=1-
+\frac{\sum_i(y_i-\hat y_i)^2}
+{\sum_i(y_i-\bar y_{\text{evaluation}})^2}.
 $$</p>
 <p>Interpretation on that evaluation set:</p>
 <ul>
@@ -2925,8 +2905,8 @@ print(&quot;R²:&quot;, r2)
 <p>Verify the same values with library functions, but keep the definition code. It makes sign, units, and denominators auditable.</p>
 <h2 id="127-why-mape-is-dangerous-for-infrastructure-costs">12.7 Why MAPE is dangerous for infrastructure costs</h2>
 <p>Mean absolute percentage error is:</p>
-<p>$$<br />
-MAPE=\frac{100}{n}\sum_i\left|\frac{y_i-\hat y_i}{y_i}\right|.<br />
+<p>$$
+MAPE=\frac{100}{n}\sum_i\left|\frac{y_i-\hat y_i}{y_i}\right|.
 $$</p>
 <p>Problems:</p>
 <ol>
@@ -2942,8 +2922,8 @@ $$</p>
 <li>Report MAE separately by project scale.</li>
 <li>Divide aggregate absolute error by aggregate actual cost when that portfolio interpretation is intended:</li>
 </ul>
-<p>$$<br />
-WAPE=\frac{\sum_i|y_i-\hat y_i|}{\sum_i|y_i|}.<br />
+<p>$$
+WAPE=\frac{\sum_i|y_i-\hat y_i|}{\sum_i|y_i|}.
 $$</p>
 <ul>
 <li>Model log cost when multiplicative structure is substantively plausible, while handling retransformation carefully.</li>
@@ -2953,22 +2933,22 @@ $$</p>
 <h2 id="129-asymmetric-decision-loss">12.9 Asymmetric decision loss</h2>
 <p>Suppose underbudgeting is more damaging than overbudgeting. MAE and RMSE are symmetric: errors $+a$ and $-a$ receive the same penalty.</p>
 <p>One simple asymmetric absolute loss is:</p>
-<p>$$<br />
-L(e)=<br />
-\begin{cases}<br />
-c_{\text{under}}|e|, &amp; e&gt;0,\<br />
-c_{\text{over}}|e|, &amp; e\le0,<br />
-\end{cases}<br />
+<p>$$
+L(e)=
+\begin{cases}
+c_{\text{under}}|e|, &amp; e&gt;0,\\
+c_{\text{over}}|e|, &amp; e\le0,
+\end{cases}
 $$</p>
 <p>with $c_{\text{under}}&gt;c_{\text{over}}$.</p>
 <p>Quantile—or pinball—loss for quantile level $\tau$ is:</p>
-<p>$$<br />
-L_\tau(y,\hat q)<br />
-=<br />
-\begin{cases}<br />
-\tau(y-\hat q), &amp; y\ge\hat q,\<br />
-(1-\tau)(\hat q-y), &amp; y&lt;\hat q.<br />
-\end{cases}<br />
+<p>$$
+L_\tau(y,\hat q)
+=
+\begin{cases}
+\tau(y-\hat q), &amp; y\ge\hat q,\\
+(1-\tau)(\hat q-y), &amp; y&lt;\hat q.
+\end{cases}
 $$</p>
 <p>Predicting a high conditional quantile, such as $\tau=0.8$, can support contingency planning. It should be labelled as an 80th-quantile estimate, not confused with a mean forecast plus an arbitrary percentage.</p>
 <h2 id="1210-metric-choice-is-separate-from-training-loss">12.10 Metric choice is separate from training loss</h2>
@@ -3120,7 +3100,6 @@ def plot_prediction_diagnostics(results):
     )
 </code></pre>
 <h2 id="1215-bootstrap-uncertainty-for-held-out-mae">12.15 Bootstrap uncertainty for held-out MAE</h2>
-<p><button class="read-details-btn" data-section="2g-15">✦ Read Details</button></p>
 <p>One fixed test set gives one observed MAE. A nonparametric bootstrap approximates its sampling variability by resampling the held-out prediction rows with replacement.</p>
 <pre><code class="language-python">import numpy as np
 
@@ -3240,7 +3219,7 @@ def bootstrap_mae_interval(y_true, y_pred, confidence=0.95, repeats=5000, seed=4
 </ol>
 <hr />
 <h1 id="chapter-2-capstone-an-auditable-mhp-evaluation-pipeline">Chapter 2 Capstone — An Auditable MHP Evaluation Pipeline</h1>
-<p><button class="read-details-btn" data-section="capstone">✦ Read Details</button></p>
+<p><button type="button" class="companion-more-button" data-companion-section="capstone">✦ Read the beginner capstone companion</button></p>
 <h2 id="capstone-brief">Capstone brief</h2>
 <p>The planning unit wants an appraisal-stage estimate of final cost in constant 2025 million PKR for projects initiated from 2023 onward. The initial dataset includes projects from 2016 through 2025.</p>
 <p>Your job is not merely to return the smallest error. You must design and document the entire learning procedure.</p>
@@ -3615,6 +3594,7 @@ if __name__ == &quot;__main__&quot;:
 </table>
 <hr />
 <h1 id="formula-sheet">Formula Sheet</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="reference">✦ Open the companion reference material</button></p>
 <table>
 <thead>
 <tr>
@@ -4018,380 +3998,2167 @@ if __name__ == &quot;__main__&quot;:
 <li>scikit-learn. <a href="https://scikit-learn.org/stable/modules/model_evaluation.html#regression-metrics">Regression Metrics</a>.</li>
 </ol>
 <style>
-.read-details-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: rgba(34, 211, 238, 0.08);
-    border: 1px solid rgba(34, 211, 238, 0.3);
-    color: #22d3ee;
-    padding: 0.4rem 0.8rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    border-radius: 0.375rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    margin: 0.5rem 0 1rem 0;
-    font-family: inherit;
+.companion-more-button {
+    display: inline-flex; align-items: center; gap: .45rem;
+    margin: .5rem 0 1.25rem; padding: .55rem .85rem;
+    border: 1px solid rgba(34, 211, 238, .42); border-radius: .45rem;
+    background: rgba(34, 211, 238, .09); color: #67e8f9;
+    font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer;
 }
-.read-details-btn:hover {
-    background: rgba(34, 211, 238, 0.2);
-    border-color: #22d3ee;
-    box-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
+.companion-more-button:hover, .companion-more-button:focus-visible {
+    background: rgba(34, 211, 238, .18); border-color: #22d3ee;
 }
-.comp-modal {
-    display: none;
-    position: fixed;
-    z-index: 10000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: rgba(11, 15, 25, 0.85);
-    backdrop-filter: blur(8px);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    align-items: center;
-    justify-content: center;
+.companion-more-modal[hidden] { display: none; }
+.companion-more-modal {
+    position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center;
+    padding: 1rem; background: rgba(5, 9, 17, .88); backdrop-filter: blur(7px);
 }
-.comp-modal.open {
-    display: flex;
-    opacity: 1;
+.companion-more-dialog {
+    width: min(64rem, 96vw); max-height: 92vh; display: flex; flex-direction: column;
+    overflow: hidden; border: 1px solid #334155; border-radius: .8rem;
+    background: #111827; box-shadow: 0 24px 70px rgba(0, 0, 0, .55);
 }
-.comp-modal-content {
-    background-color: #151d30;
-    border: 1px solid #223150;
-    border-radius: 0.75rem;
-    width: 90%;
-    max-width: 48rem;
-    max-height: 85vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.6);
-    position: relative;
-    padding: 2.5rem 2rem 2rem 2rem;
-    transform: scale(0.95);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+.companion-more-header {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: .8rem 1rem; border-bottom: 1px solid #334155; background: #172033;
 }
-.comp-modal.open .comp-modal-content {
-    transform: scale(1);
+.companion-more-header strong { color: #fff; }
+.companion-more-actions { display: flex; align-items: center; gap: .75rem; }
+.companion-more-actions a { color: #67e8f9; font-size: .82rem; }
+.companion-more-close {
+    width: 2.1rem; height: 2.1rem; border: 1px solid #475569; border-radius: .4rem;
+    background: #0b1220; color: #e2e8f0; font-size: 1.35rem; cursor: pointer;
 }
-.comp-modal-close {
-    position: absolute;
-    top: 0.75rem;
-    right: 1.25rem;
-    color: #cbd5e1;
-    font-size: 2rem;
-    font-weight: 300;
-    cursor: pointer;
-    transition: color 0.2s ease;
-    line-height: 1;
-}
-.comp-modal-close:hover {
-    color: #fff;
-}
-#comp-modal-body {
-    color: #cbd5e1;
-    font-size: 0.95rem;
-}
-#comp-modal-body h1, #comp-modal-body h2 {
-    color: #fff;
-    border-bottom: 1px solid #223150;
-    padding-bottom: 0.5rem;
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-}
-#comp-modal-body h3, #comp-modal-body h4 {
-    color: #fff;
-    margin-top: 1.75rem;
-    margin-bottom: 0.75rem;
-}
-#comp-modal-body p {
-    margin-bottom: 1rem;
-}
-#comp-modal-body code {
-    color: #67e8f9;
-    background: #0b0f19;
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-}
-#comp-modal-body pre {
-    background: #0b0f19;
-    border: 1px solid #223150;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    margin: 1rem 0;
-    overflow-x: auto;
-}
-#comp-modal-body pre code {
-    background: transparent;
-    padding: 0;
-    color: #e2e8f0;
-}
-#comp-modal-body table {
-    width: 100%;
-    font-size: 0.875rem;
-    border-collapse: collapse;
-    margin: 1.5rem 0;
-}
-#comp-modal-body th, #comp-modal-body td {
-    border: 1px solid #223150;
-    padding: 0.5rem 0.75rem;
-    text-align: left;
-}
-#comp-modal-body th {
-    background: #151d30;
-    color: #fff;
-    font-weight: 600;
-}
-.companion-details-area, .companion-details-area ~ * {
-    display: none;
+.companion-more-body { overflow: auto; padding: 1.25rem 1.5rem 2rem; }
+.companion-more-body > :first-child { margin-top: 0; }
+.companion-more-body table { display: block; overflow-x: auto; }
+.companion-more-body pre { max-width: 100%; overflow-x: auto; }
+@media (max-width: 640px) {
+    .companion-more-modal { padding: 0; }
+    .companion-more-dialog { width: 100vw; max-height: 100vh; height: 100vh; border-radius: 0; }
+    .companion-more-body { padding: 1rem; }
+    .companion-more-actions a { display: none; }
 }
 </style>
-
-<div id="companion-modal" class="comp-modal">
-    <div class="comp-modal-content">
-        <span class="comp-modal-close">&times;</span>
-        <div id="comp-modal-body"></div>
-    </div>
+<div class="companion-more-modal" id="companion-more-modal" hidden>
+  <section class="companion-more-dialog" role="dialog" aria-modal="true" aria-labelledby="companion-more-title">
+    <header class="companion-more-header">
+      <strong id="companion-more-title">Beginner companion</strong>
+      <div class="companion-more-actions">
+        <a href="chapter2_companion.html">Open the complete guide</a>
+        <button type="button" class="companion-more-close" aria-label="Close companion">&times;</button>
+      </div>
+    </header>
+    <div class="companion-more-body" id="companion-more-body"></div>
+  </section>
 </div>
+<template id="companion-template-overview"><h1 id="chapter-2-companion-guide-from-a-fitted-line-to-a-trustworthy-model">Chapter 2 Companion Guide: From a Fitted Line to a Trustworthy Model</h1>
+<h2 id="a-beginner-first-guide-to-numerical-stability-probability-optimisation-evaluation-and-responsible-model-revision">A beginner-first guide to numerical stability, probability, optimisation, evaluation, and responsible model revision</h2>
+<p>This guide accompanies <code>chapter2.md</code>. It assumes only the material developed in Chapter 1, and it explains the new Python, mathematics, probability, statistics, and machine-learning tools from first principles.</p>
+<p>Chapter 1 answered: “How do we construct and fit an ordinary least-squares line?” Chapter 2 asks the harder question:</p>
+<blockquote>
+<p>When should anyone trust that fitted line for a real decision?</p>
+</blockquote>
+<p>Trust is not created by a low training error or a library call. It requires a chain of evidence:</p>
+<ol>
+<li>the numerical calculation is stable;</li>
+<li>probability claims are tied to explicit assumptions;</li>
+<li>optimisation has genuinely converged;</li>
+<li>evaluation data represent the intended deployment;</li>
+<li>preprocessing and model selection do not leak information;</li>
+<li>the model beats useful baselines on unseen cases;</li>
+<li>average metrics do not conceal systematic failure; and</li>
+<li>revisions are evaluated on new evidence.</li>
+</ol>
+<p>The running case remains the fictional microhydro power (MHP) cost estimator for Khyber Pakhtunkhwa (KP). The target is final project cost in <strong>constant 2025 million PKR</strong>, predicted at technical appraisal before procurement and construction.</p>
+<hr />
+<h2 id="how-to-use-this-guide">How to use this guide</h2>
+<p>For each of Days 6–12:</p>
+<ol>
+<li>Read the corresponding section here before the main chapter.</li>
+<li>Type the smallest code example yourself.</li>
+<li>Predict the output before running it.</li>
+<li>Run the main chapter's longer proof and build code.</li>
+<li>deliberately create the listed failure.</li>
+<li>Explain the result in plain language and in the MHP context.</li>
+<li>Complete the exit check without looking back.</li>
+</ol>
+<p>Use four questions whenever you meet a new method:</p>
+<ul>
+<li><strong>What is learned?</strong> Coefficients, means, scales, categories, or hyperparameters?</li>
+<li><strong>From which rows?</strong> Training, validation, a cross-validation fold, or test?</li>
+<li><strong>What claim follows?</strong> Computation, prediction, uncertainty, or causation?</li>
+<li><strong>What can break it?</strong> Poor conditioning, wrong assumptions, leakage, shift, or small samples?</li>
+</ul>
+<hr />
+<h1 id="0-foundations-for-an-absolute-beginner">0. Foundations for an absolute beginner</h1>
+<h2 id="01-what-chapter-1-already-gave-us">0.1 What Chapter 1 already gave us</h2>
+<p>Ordinary least squares (OLS) chooses coefficients that minimise squared residuals:</p>
+<p>$$
+\hat\beta
+=\arg\min_\beta\lVert y-X\beta\rVert_2^2.
+$$</p>
+<p>You should recall:</p>
+<ul>
+<li>$X$ is the design matrix;</li>
+<li>$y$ is the target vector;</li>
+<li>$\beta$ is a coefficient vector;</li>
+<li>$\hat y=X\hat\beta$ contains fitted predictions;</li>
+<li>$e=y-\hat y$ contains residuals; and</li>
+<li>full column rank gives a unique coefficient vector.</li>
+</ul>
+<p>Chapter 2 does not discard this mathematics. It surrounds it with the computational and evidential practices required for responsible use.</p>
+<h2 id="02-the-prediction-time-rule">0.2 The prediction-time rule</h2>
+<p>Imagine an appraisal officer on the day a cost estimate must be issued. A feature is eligible only if it is legitimately available then.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th style="text-align: right;">Available at appraisal?</th>
+<th style="text-align: right;">Eligible?</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Planned capacity</td>
+<td style="text-align: right;">Yes</td>
+<td style="text-align: right;">Yes</td>
+<td>Comes from the proposed design</td>
+</tr>
+<tr>
+<td>Estimated cable length</td>
+<td style="text-align: right;">Yes</td>
+<td style="text-align: right;">Yes</td>
+<td>Comes from the survey</td>
+</tr>
+<tr>
+<td>Road distance</td>
+<td style="text-align: right;">Yes</td>
+<td style="text-align: right;">Yes</td>
+<td>Comes from the access assessment</td>
+</tr>
+<tr>
+<td>Terrain index</td>
+<td style="text-align: right;">Yes</td>
+<td style="text-align: right;">Cautiously</td>
+<td>Assessor consistency must be checked</td>
+</tr>
+<tr>
+<td>District</td>
+<td style="text-align: right;">Yes</td>
+<td style="text-align: right;">Depends</td>
+<td>Use depends on whether deployment includes unseen districts</td>
+</tr>
+<tr>
+<td>Start year</td>
+<td style="text-align: right;">Yes</td>
+<td style="text-align: right;">Depends</td>
+<td>May represent time change if used correctly</td>
+</tr>
+<tr>
+<td>Final material bill</td>
+<td style="text-align: right;">No</td>
+<td style="text-align: right;">No</td>
+<td>Created during construction; leaks the outcome</td>
+</tr>
+<tr>
+<td>Actual completion time</td>
+<td style="text-align: right;">No</td>
+<td style="text-align: right;">No</td>
+<td>It is a later outcome</td>
+</tr>
+</tbody>
+</table>
+<p>Constant-price cost removes general inflation from the target. It does not remove changes in procurement, technology, project mix, or data collection.</p>
+<h2 id="03-installing-the-software">0.3 Installing the software</h2>
+<p>Chapter 2 adds pandas, SciPy, and scikit-learn:</p>
+<pre><code class="language-bash">python -m pip install numpy pandas matplotlib scipy scikit-learn
+</code></pre>
+<p>Record versions when an analysis must be reproducible:</p>
+<pre><code class="language-python">import numpy as np
+import pandas as pd
+import scipy
+import sklearn
 
+print(np.__version__)
+print(pd.__version__)
+print(scipy.__version__)
+print(sklearn.__version__)
+</code></pre>
+<p>A reproducible result identifies its data recipe, code, random seeds, package versions, and evaluation procedure.</p>
+<h2 id="04-numpy-ideas-used-repeatedly">0.4 NumPy ideas used repeatedly</h2>
+<h3 id="rows-columns-and-axis">Rows, columns, and <code>axis</code></h3>
+<p>For an array with shape <code>(n, p)</code>:</p>
+<pre><code class="language-python">X.mean(axis=0)  # one mean for each column
+X.mean(axis=1)  # one mean for each row
+</code></pre>
+<p><code>axis=0</code> collapses the row direction and leaves one result per feature. Feature scaling therefore uses <code>axis=0</code>.</p>
+<h3 id="boolean-masks">Boolean masks</h3>
+<pre><code class="language-python">later = start_year &gt;= 2023
+X_test = X[later]
+</code></pre>
+<p>The comparison creates <code>True</code> or <code>False</code> for every row. Indexing with it retains the <code>True</code> rows.</p>
+<h3 id="random-number-generators-and-seeds">Random-number generators and seeds</h3>
+<pre><code class="language-python">rng = np.random.default_rng(2026)
+noise = rng.normal(0.0, 2.0, size=100)
+</code></pre>
+<p>A seed makes a pseudo-random sequence reproducible. It does not make one random split scientifically correct or remove sampling uncertainty.</p>
+<h3 id="useful-linear-algebra-functions">Useful linear-algebra functions</h3>
+<pre><code class="language-python">np.linalg.cond(X)                    # condition number
+np.linalg.matrix_rank(X)             # numerical rank
+np.linalg.qr(X, mode=&quot;reduced&quot;)      # QR decomposition
+np.linalg.svd(X, full_matrices=False) # singular value decomposition
+np.linalg.lstsq(X, y, rcond=None)    # least-squares solution
+</code></pre>
+<h2 id="05-a-pandas-survival-kit">0.5 A pandas survival kit</h2>
+<p>A pandas <code>DataFrame</code> is a labeled table. A <code>Series</code> is one labeled column.</p>
+<pre><code class="language-python">df = make_mhp_projects()
+
+print(df.head())
+print(df.shape)
+
+features = [&quot;planned_capacity_kw&quot;, &quot;road_distance_km&quot;]
+X = df[features]                         # DataFrame, two columns
+y = df[&quot;actual_cost_2025_million_pkr&quot;]  # Series, one column
+
+train = df[df[&quot;start_year&quot;] &lt;= 2021].copy()
+</code></pre>
+<p>Important operations:</p>
+<ul>
+<li><code>df[columns]</code> selects named columns;</li>
+<li><code>df.loc[row_labels, columns]</code> selects by labels;</li>
+<li><code>df.iloc[row_positions]</code> selects by integer positions;</li>
+<li><code>sort_values</code> orders rows;</li>
+<li><code>groupby</code> calculates summaries within groups;</li>
+<li><code>pd.concat</code> combines tables; and</li>
+<li><code>.copy()</code> makes an explicit independent table for modification.</li>
+</ul>
+<p>Pandas labels help preserve meaning. Converting too early to raw arrays can hide a swapped-column or row-alignment error.</p>
+<h2 id="06-understanding-the-chapters-data-generator">0.6 Understanding the chapter's data generator</h2>
+<p><code>make_mhp_projects(n=360, seed=2026)</code> creates a reproducible teaching dataset rather than loading confidential project records. Its structure deliberately gives every later diagnostic something meaningful to discover.</p>
+<p>The generator:</p>
+<ol>
+<li>samples districts and start years;</li>
+<li>creates appraisal-stage capacity, road distance, terrain, and cable features;</li>
+<li>adds district-specific cost differences;</li>
+<li>adds a threshold surcharge when road distance exceeds 18 km;</li>
+<li>adds a curved capacity contribution using capacity squared;</li>
+<li>adds a time trend;</li>
+<li>makes noise larger for more remote projects;</li>
+<li>constructs actual constant-price cost; and</li>
+<li>creates a tempting final material bill from actual cost after construction.</li>
+</ol>
+<p>These choices introduce:</p>
+<ul>
+<li><strong>nonlinearity:</strong> one straight line cannot exactly represent the squared-capacity term or road threshold;</li>
+<li><strong>group structure:</strong> districts have shared differences;</li>
+<li><strong>temporal change:</strong> later years have systematically changed cost;</li>
+<li><strong>heteroskedasticity:</strong> outcome noise grows with road distance; and</li>
+<li><strong>target leakage:</strong> final material bill contains later information strongly related to cost.</li>
+</ul>
+<p>Important generator expressions:</p>
+<pre><code class="language-python">rng = np.random.default_rng(seed)
+road_distance_km = np.clip(values, 0.2, 42.0)
+remote_surcharge = 7.0 * (road_distance_km &gt; 18.0)
+capacity_curve = 0.000025 * planned_capacity_kw ** 2
+noise = rng.normal(0.0, noise_sd)
+</code></pre>
+<p><code>np.clip</code> limits values to a stated range. Multiplying a Boolean array by <code>7.0</code> turns <code>False</code> into 0 and <code>True</code> into 7. A vector <code>noise_sd</code> gives each project its own Gaussian standard deviation.</p>
+<p>The final <code>sort_values(["start_year", "project_id"])</code> makes chronological analysis convenient. <code>reset_index(drop=True)</code> replaces the old row labels after sorting. Saving CSV with <code>index=False</code> avoids writing a meaningless extra index column.</p>
+<p>Knowing the data-generating recipe helps interpret this exercise. In real analysis, that recipe is unknown; diagnostics and domain evidence are used to learn where a proposed model is inadequate.</p>
+<h2 id="07-the-scikit-learn-pattern">0.7 The scikit-learn pattern</h2>
+<p>Most scikit-learn objects follow one interface:</p>
+<pre><code class="language-python">model.fit(X_train, y_train)
+predictions = model.predict(X_new)
+</code></pre>
+<p>Transformers use:</p>
+<pre><code class="language-python">transformer.fit(X_train)
+X_train_changed = transformer.transform(X_train)
+X_new_changed = transformer.transform(X_new)
+</code></pre>
+<p><code>fit</code> learns from data. <code>transform</code> applies what was learned. <code>fit_transform</code> combines them for training data. Calling <code>fit</code> on test data would let the test set teach the procedure.</p>
+<p>Other tools introduced in the chapter:</p>
+<ul>
+<li><code>Pipeline</code>: chains transformations and a model within one data boundary;</li>
+<li><code>ColumnTransformer</code>: applies different transformations to different columns;</li>
+<li><code>SimpleImputer</code>: learns replacement values for missing data;</li>
+<li><code>OneHotEncoder</code>: turns categories into indicator columns;</li>
+<li><code>StandardScaler</code>: learns means and scales;</li>
+<li><code>clone</code>: makes a fresh unfitted copy of a procedure;</li>
+<li><code>GridSearchCV</code>: searches hyperparameters using cross-validation; and</li>
+<li><code>DummyRegressor</code>: supplies a simple baseline.</li>
+</ul>
+<h2 id="08-mathematical-and-probability-language">0.8 Mathematical and probability language</h2>
+<h3 id="logarithms-and-exponentials">Logarithms and exponentials</h3>
+<p>$\exp(a)=e^a$ is an exponential. $\log$ is its inverse. Useful rules are:</p>
+<p>$$
+\log(ab)=\log a+\log b,
+\qquad
+\log(a^b)=b\log a.
+$$</p>
+<p>These rules turn a product of many probability densities into a sum of log densities.</p>
+<h3 id="random-variables-expectation-and-variance">Random variables, expectation, and variance</h3>
+<p>A random variable represents a numerical outcome before it is observed. Uppercase $Y$ often denotes the random variable and lowercase $y$ its realised value.</p>
+<p>Expectation $\mathbb E[Y]$ is a probability-weighted long-run mean. Variance measures spread around that mean:</p>
+<p>$$
+\operatorname{Var}(Y)=\mathbb E[(Y-\mathbb E[Y])^2].
+$$</p>
+<p>Standard deviation is the square root of variance and returns to the original units.</p>
+<h3 id="distributions-and-density">Distributions and density</h3>
+<p>A continuous probability density describes relative concentration. Probability over an interval is area under the density:</p>
+<p>$$
+P(a\le Y\le b)=\int_a^b f(y)\,dy.
+$$</p>
+<p>The integral symbol $\int$ is continuous addition. You do not need to calculate these integrals manually in this chapter.</p>
+<h3 id="samples-and-sampling-variability">Samples and sampling variability</h3>
+<p>A dataset is one sample from a wider process. If we could repeatedly collect new datasets and refit the model, estimates would change. This repeated-sample variation is the basis of standard errors and frequentist confidence intervals.</p>
+<h3 id="quantiles">Quantiles</h3>
+<p>The $q$ quantile is a value at or below which proportion $q$ of observations lies. The median is the 0.5 quantile. A 90th percentile absolute error is a threshold at or below which 90% of observed absolute errors fall.</p>
+<hr /></template><template id="companion-template-day-6"><h1 id="day-6-scaling-and-numerical-conditioning">Day 6 — Scaling and numerical conditioning</h1>
+<h2 id="61-floating-point-numbers-are-approximations">6.1 Floating-point numbers are approximations</h2>
+<p>Computers store a finite number of binary digits. Many decimal fractions have no finite binary representation:</p>
+<pre><code class="language-python">print(0.1 + 0.2)
+print((0.1 + 0.2) == 0.3)
+</code></pre>
+<p>The first result is extremely close to 0.3; the exact comparison is false. Use <code>np.isclose</code> or <code>np.allclose</code> for computed floats.</p>
+<p>Finite precision is manageable when algorithms avoid magnifying tiny errors unnecessarily.</p>
+<h2 id="62-conditioning-and-numerical-stability-are-different">6.2 Conditioning and numerical stability are different</h2>
+<p>An <strong>ill-conditioned problem</strong> turns a tiny input change into a large solution change. <strong>Numerical stability</strong> describes whether an algorithm adds avoidable error while solving the problem.</p>
+<ul>
+<li>Conditioning belongs to the problem and its representation.</li>
+<li>Stability belongs to the computational method.</li>
+<li>A stable solver cannot invent information missing from nearly duplicate features.</li>
+</ul>
+<p>For a full-column-rank matrix:</p>
+<p>$$
+\kappa_2(X)=\frac{\sigma_{\max}(X)}{\sigma_{\min}(X)}.
+$$</p>
+<p>$\sigma_{\max}$ and $\sigma_{\min}$ are the largest and smallest singular values. A ratio near 1 is favourable. A large ratio means some coefficient directions affect predictions far less than others, so noise or rounding can create large coefficient changes.</p>
+<p>There is no universal pass/fail threshold. Precision, scale, noise, intended claim, and consequences matter.</p>
+<h3 id="full-rank-is-not-good-conditioning">Full rank is not good conditioning</h3>
+<p>A matrix can have no exactly redundant columns yet contain two almost identical columns. It is full rank in exact or tolerance-based arithmetic but can be badly conditioned. Rank answers “how many directions?” Conditioning asks “how unevenly are those directions represented?”</p>
+<h2 id="63-why-differing-units-cause-imbalance">6.3 Why differing units cause imbalance</h2>
+<p>Capacity may be hundreds of kW, road distance tens of km, and terrain only 1–5. Their columns live on different numerical scales.</p>
+<p>Standardisation transforms entry $i,j$:</p>
+<p>$$
+z_{ij}=\frac{x_{ij}-\mu_j}{s_j},
+$$</p>
+<p>where $\mu_j$ and $s_j$ come from the training column.</p>
+<ul>
+<li>$z=0$: at the training mean;</li>
+<li>$z=1$: one training standard deviation above it;</li>
+<li>$z=-2$: two training standard deviations below it.</li>
+</ul>
+<p>Scaling changes representation, not information. It does not guarantee generalisation and cannot repair redundancy.</p>
+<h2 id="64-build-a-scaler-from-scratch">6.4 Build a scaler from scratch</h2>
+<p>The chapter's <code>StandardScalerFromScratch</code> teaches four distinct operations:</p>
+<ol>
+<li><code>fit</code> validates a 2D matrix and learns one mean and scale per column;</li>
+<li><code>transform</code> subtracts stored means and divides by stored scales;</li>
+<li><code>inverse_transform</code> reconstructs original units; and</li>
+<li><code>fit_transform</code> fits and then transforms the training rows.</li>
+</ol>
+<pre><code class="language-python">self.mean_ = X.mean(axis=0)
+self.scale_ = X.std(axis=0, ddof=0)
+Z = (X - self.mean_) / self.scale_
+</code></pre>
+<p>NumPy broadcasts the <code>(p,)</code> means and scales across all <code>n</code> rows. A constant feature has zero standard deviation, making division impossible. The scaler rejects it rather than producing infinities or <code>NaN</code>.</p>
+<h3 id="population-versus-sample-standard-deviation">Population versus sample standard deviation</h3>
+<p>$$
+s_{population}=\sqrt{\frac1n\sum_i(x_i-\bar x)^2},
+$$</p>
+<p>$$
+s_{sample}=\sqrt{\frac1{n-1}\sum_i(x_i-\bar x)^2}.
+$$</p>
+<p><code>ddof=0</code> uses $n$ and matches scikit-learn's <code>StandardScaler</code>. <code>ddof=1</code> uses $n-1$, common when estimating a population variance. The correct denominator depends on purpose; it is not one rule for all statistics.</p>
+<h2 id="65-scaling-must-respect-the-information-boundary">6.5 Scaling must respect the information boundary</h2>
+<p>Correct procedure:</p>
+<pre><code class="language-python">scaler.fit(X_train)
+Z_train = scaler.transform(X_train)
+Z_validation = scaler.transform(X_validation)
+Z_test = scaler.transform(X_test)
+</code></pre>
+<p>Incorrect procedure:</p>
+<pre><code class="language-python">scaler.fit(np.vstack([X_train, X_test]))
+</code></pre>
+<p>The incorrect version learns the future test distribution. Test values may look less extreme only because the test set has already influenced preprocessing. Means, scales, imputations, categories, and feature-selection decisions are learned parameters and must be fitted only on permitted training rows.</p>
+<h2 id="66-scaling-changes-coefficient-units-not-fitted-ols-predictions">6.6 Scaling changes coefficient units, not fitted OLS predictions</h2>
+<p>For scaled coefficients $\gamma$:</p>
+<p>$$
+\hat y=\gamma_0+\sum_j\gamma_j\frac{x_j-\mu_j}{s_j}.
+$$</p>
+<p>Rearrangement gives raw-unit coefficients:</p>
+<p>$$
+\beta_j=\frac{\gamma_j}{s_j},
+$$</p>
+<p>$$
+\beta_0=\gamma_0-\sum_j\frac{\gamma_j\mu_j}{s_j}.
+$$</p>
+<p>With an intercept and the same unpenalised OLS feature space, raw and standardised fits can produce the same predictions. Coefficient numbers and units change because one scaled unit means one training standard deviation.</p>
+<p>This equivalence may not hold unchanged for penalised models, constrained optimisation, finite gradient-descent iterations, or preprocessing that changes information.</p>
+<h2 id="67-condition-number-before-and-after-scaling">6.7 Condition number before and after scaling</h2>
+<p>Compare the whole design including the intercept:</p>
+<pre><code class="language-python">raw_design = np.column_stack([np.ones(X.shape[0]), X])
+scaled_design = np.column_stack([np.ones(Z.shape[0]), Z])
+
+print(np.linalg.cond(raw_design))
+print(np.linalg.cond(scaled_design))
+</code></pre>
+<p>Scaling often improves unit-driven imbalance. If a feature is an almost exact copy of another, the smallest singular value may remain tiny.</p>
+<h2 id="68-failure-laboratory">6.8 Failure laboratory</h2>
+<ul>
+<li>Add capacity in watts and kW: exact redundancy and rank loss.</li>
+<li>Add an almost identical road-time proxy: poor conditioning despite possible full rank.</li>
+<li>Add a constant feature: zero scaling denominator and redundancy with the intercept.</li>
+<li>Fit the scaler on all years: preprocessing leakage.</li>
+</ul>
+<p>For each failure, distinguish computational symptoms, information content, and invalid evaluation claims.</p>
+<h2 id="69-which-methods-benefit-from-scaling">6.9 Which methods benefit from scaling?</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th style="text-align: right;">Usually scale?</th>
+<th>Reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OLS with stable decomposition</td>
+<td style="text-align: right;">Often</td>
+<td>Conditioning and coefficient comparison</td>
+</tr>
+<tr>
+<td>Gradient descent</td>
+<td style="text-align: right;">Yes</td>
+<td>Balances curvature and learning-rate behaviour</td>
+</tr>
+<tr>
+<td>Ridge/lasso</td>
+<td style="text-align: right;">Yes</td>
+<td>Penalties act on coefficient magnitude</td>
+</tr>
+<tr>
+<td>k-nearest neighbours</td>
+<td style="text-align: right;">Yes</td>
+<td>Distance depends on units</td>
+</tr>
+<tr>
+<td>Support vector machines</td>
+<td style="text-align: right;">Usually</td>
+<td>Margins and kernels depend on scale</td>
+</tr>
+<tr>
+<td>Decision trees</td>
+<td style="text-align: right;">Usually unnecessary</td>
+<td>Splits depend on order and thresholds</td>
+</tr>
+</tbody>
+</table>
+<p>Any learned transformation must still be fitted inside the training partition or cross-validation fold.</p>
+<h2 id="day-6-exit-check">Day 6 exit check</h2>
+<p>You are ready when you can explain:</p>
+<ol>
+<li>why full rank does not guarantee stable coefficients;</li>
+<li>why scaling improves representation without adding information;</li>
+<li>which quantities a scaler learns; and</li>
+<li>why test data cannot influence them.</li>
+</ol>
+<hr /></template><template id="companion-template-day-7"><h1 id="day-7-qr-svd-rank-and-the-pseudoinverse">Day 7 — QR, SVD, rank, and the pseudoinverse</h1>
+<h2 id="71-why-not-form-the-normal-equations">7.1 Why not form the normal equations?</h2>
+<p>The normal equations are correct:</p>
+<p>$$
+X^TX\hat\beta=X^Ty.
+$$</p>
+<p>But, for full-column-rank $X$:</p>
+<p>$$
+\kappa_2(X^TX)=\kappa_2(X)^2.
+$$</p>
+<p>A condition number of $10^6$ becomes roughly $10^{12}$. QR and SVD work with $X$ directly and avoid this unnecessary magnification.</p>
+<h2 id="72-qr-decomposition">7.2 QR decomposition</h2>
+<p>For $n\geq p$ and full column rank, reduced QR writes:</p>
+<p>$$
+X=QR,
+$$</p>
+<p>where:</p>
+<ul>
+<li>$Q$ has shape $n\times p$;</li>
+<li>$Q^TQ=I_p$;</li>
+<li>$R$ has shape $p\times p$; and</li>
+<li>$R$ is upper triangular, meaning entries below its diagonal are zero.</li>
+</ul>
+<p>Substitute into least squares. The fitted projection is built from $Q$, and coefficients satisfy:</p>
+<p>$$
+R\hat\beta=Q^Ty.
+$$</p>
+<p>Solve this triangular system by back substitution:</p>
+<pre><code class="language-python">Q, R = np.linalg.qr(X, mode=&quot;reduced&quot;)
+beta_qr = np.linalg.solve(R, Q.T @ y)
+</code></pre>
+<p>Do not invert $R$ explicitly.</p>
+<h2 id="73-orthonormal-means-perpendicular-and-unit-length">7.3 Orthonormal means perpendicular and unit length</h2>
+<p>For distinct columns $q_j,q_k$:</p>
+<p>$$
+q_j^Tq_k=0.
+$$</p>
+<p>For each column:</p>
+<p>$$
+q_j^Tq_j=1.
+$$</p>
+<p>Thus the columns of $Q$ are clean perpendicular unit directions spanning the same column space as $X$. $Q^Ty$ measures how much of $y$ lies along each direction.</p>
+<p>Check numerically:</p>
+<pre><code class="language-python">assert np.allclose(Q.T @ Q, np.eye(Q.shape[1]))
+</code></pre>
+<p>Basic QR without pivoting is most straightforward for full-rank problems. Rank-revealing QR uses additional column pivoting.</p>
+<h2 id="74-singular-value-decomposition">7.4 Singular value decomposition</h2>
+<p>The reduced SVD is:</p>
+<p>$$
+X=U\Sigma V^T.
+$$</p>
+<ul>
+<li>$V^T$ rotates parameter coordinates;</li>
+<li>diagonal $\Sigma$ stretches each direction by a singular value; and</li>
+<li>$U$ rotates the result into observation space.</li>
+</ul>
+<p>$U$ and $V$ contain orthonormal directions. Singular values are nonnegative and usually ordered largest to smallest.</p>
+<p>A tiny singular value means movement along one parameter direction barely changes predictions. The data provide little information for distinguishing coefficients in that direction.</p>
+<h2 id="75-the-moorepenrose-pseudoinverse">7.5 The Moore–Penrose pseudoinverse</h2>
+<p>For positive singular values:</p>
+<p>$$
+X^+=V\Sigma^+U^T,
+$$</p>
+<p>where $\Sigma^+$ replaces retained singular values $\sigma_j$ with $1/\sigma_j$ and leaves discarded directions at zero.</p>
+<p>Then:</p>
+<p>$$
+\hat\beta=X^+y=V\Sigma^+U^Ty.
+$$</p>
+<p>If multiple coefficient vectors minimise residual length, the pseudoinverse returns the one with minimum Euclidean coefficient norm. This precise convention does not make redundant coefficients separately identifiable.</p>
+<h2 id="76-read-the-from-scratch-svd-solver">7.6 Read the from-scratch SVD solver</h2>
+<p>The chapter's solver:</p>
+<ol>
+<li>computes <code>U, singular_values, Vt</code>;</li>
+<li>chooses a tolerance;</li>
+<li>marks singular values above tolerance as retained;</li>
+<li>safely inverts only retained values;</li>
+<li>calculates $V\Sigma^+U^Ty$; and</li>
+<li>reports numerical rank and the full singular-value spectrum.</li>
+</ol>
+<p>Default tolerance:</p>
+<pre><code class="language-python">rcond = np.finfo(float).eps * max(X.shape)
+tolerance = rcond * singular_values[0]
+keep = singular_values &gt; tolerance
+</code></pre>
+<p><code>np.finfo(float).eps</code> is machine epsilon, a scale for floating-point resolution near 1. Multiplying by matrix size and the largest singular value creates a scale-aware numerical rule.</p>
+<h2 id="77-numerical-rank-depends-on-tolerance">7.7 Numerical rank depends on tolerance</h2>
+<p>Exact mathematics distinguishes zero from nonzero. Floating-point computation must decide whether a tiny value represents information or numerical residue.</p>
+<p>Changing tolerance can change reported rank and the pseudoinverse solution. When rank matters, record:</p>
+<ul>
+<li>feature scaling;</li>
+<li>singular values;</li>
+<li>tolerance or <code>rcond</code> rule;</li>
+<li>software version; and</li>
+<li>sensitivity of predictions and coefficients.</li>
+</ul>
+<h2 id="78-compare-computational-routes">7.8 Compare computational routes</h2>
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>Calculation</th>
+<th>Strength</th>
+<th>Caution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Normal equations</td>
+<td>Solve $X^TX\beta=X^Ty$</td>
+<td>Direct link to derivation</td>
+<td>Squares condition number</td>
+</tr>
+<tr>
+<td>QR</td>
+<td>Solve $R\beta=Q^Ty$</td>
+<td>Stable and efficient for full rank</td>
+<td>Rank deficiency needs care</td>
+</tr>
+<tr>
+<td>SVD</td>
+<td>Use $V\Sigma^+U^Ty$</td>
+<td>Reveals rank and weak directions</td>
+<td>More computational work</td>
+</tr>
+<tr>
+<td><code>lstsq</code></td>
+<td>Library least-squares routine</td>
+<td>Appropriate default</td>
+<td>Diagnostics still require interpretation</td>
+</tr>
+</tbody>
+</table>
+<p>Agreement of predictions across routes is a useful code check. Coefficients can disagree in a rank-deficient problem because multiple solutions produce the same projection.</p>
+<h2 id="79-singular-value-spectrum">7.9 Singular-value spectrum</h2>
+<p>Plot singular values on a logarithmic vertical axis. A large drop to a tiny final value reveals a weak direction that might be invisible on a linear scale.</p>
+<p>The spectrum is diagnostic, not an automatic deletion rule. Investigate whether weakness arises from duplicated units, feature construction, narrow sampling, or a meaningful but poorly represented comparison.</p>
+<h2 id="710-stableols">7.10 <code>StableOLS</code></h2>
+<p>The chapter's deterministic estimator stores:</p>
+<ul>
+<li>fitted parameters;</li>
+<li>the residual-sum array returned by <code>lstsq</code>;</li>
+<li>numerical rank;</li>
+<li>singular values;</li>
+<li>number of parameters;</li>
+<li>condition number; and</li>
+<li>whether full column rank holds.</li>
+</ul>
+<p>This separates two outputs:</p>
+<blockquote>
+<p>A solver returned a prediction-minimising vector.</p>
+</blockquote>
+<p>from:</p>
+<blockquote>
+<p>Every individual coefficient is uniquely identified and stable enough to interpret.</p>
+</blockquote>
+<p>The first can be true while the second is false.</p>
+<h2 id="day-7-exit-check">Day 7 exit check</h2>
+<p>Complete:</p>
+<p>$$
+X=QR\Rightarrow R\hat\beta=Q^Ty,
+$$</p>
+<p>$$
+X=U\Sigma V^T\Rightarrow\hat\beta=V\Sigma^+U^Ty.
+$$</p>
+<p>Manager-friendly explanation of a tiny singular value: “The data barely distinguish one combination of effects, so small data changes can produce large changes in the reported coefficients.”</p>
+<hr /></template><template id="companion-template-day-8"><h1 id="day-8-probability-likelihood-and-uncertainty">Day 8 — Probability, likelihood, and uncertainty</h1>
+<h2 id="81-deterministic-ols-versus-a-stochastic-model">8.1 Deterministic OLS versus a stochastic model</h2>
+<p>OLS projection needs no probability distribution:</p>
+<p>$$
+\hat\beta=\arg\min_\beta\lVert y-X\beta\rVert_2^2.
+$$</p>
+<p>A statistical model adds claims about outcome variation:</p>
+<p>$$
+y=X\beta+\varepsilon.
+$$</p>
+<ul>
+<li>$\beta$ is an unknown population parameter;</li>
+<li>$X\beta$ is the model's systematic conditional mean; and</li>
+<li>$\varepsilon$ represents unmodeled random influences.</li>
+</ul>
+<p>“Error” here does not mean data-entry error.</p>
+<h2 id="82-errors-are-not-residuals">8.2 Errors are not residuals</h2>
+<p>True error:</p>
+<p>$$
+\varepsilon_i=y_i-x_i^T\beta.
+$$</p>
+<p>Observed residual:</p>
+<p>$$
+e_i=y_i-x_i^T\hat\beta.
+$$</p>
+<p>We do not know true $\beta$, so we do not observe true errors. Residuals depend on the fitted sample and obey constraints such as summing to zero with an intercept. They are diagnostic proxies, not independent observations of the error distribution.</p>
+<h2 id="83-the-gaussian-distribution">8.3 The Gaussian distribution</h2>
+<p>For mean $\mu$ and variance $\sigma^2$:</p>
+<p>$$
+f(y\mid\mu,\sigma^2)
+=\frac1{\sqrt{2\pi\sigma^2}}
+\exp\left[-\frac{(y-\mu)^2}{2\sigma^2}\right].
+$$</p>
+<ul>
+<li>$\mu$ locates the centre;</li>
+<li>$\sigma$ controls spread;</li>
+<li>equal positive and negative deviations have equal density; and</li>
+<li>large deviations receive rapidly declining density.</li>
+</ul>
+<p>A density value is not itself the probability of one exact continuous outcome. Probability is area over an interval.</p>
+<h2 id="84-the-classical-gaussian-linear-model">8.4 The classical Gaussian linear model</h2>
+<p>$$
+Y_i\mid X_i=x_i\sim\mathcal N(x_i^T\beta,\sigma^2),
+$$</p>
+<p>equivalently:</p>
+<p>$$
+\varepsilon\sim\mathcal N(0,\sigma^2I).
+$$</p>
+<p>This compact statement assumes:</p>
+<ol>
+<li>the conditional mean is linear in chosen design columns;</li>
+<li>conditional errors have mean zero;</li>
+<li>conditional variance is constant;</li>
+<li>errors are independent under the sampling design; and</li>
+<li>Gaussian errors support the exact finite-sample results used here.</li>
+</ol>
+<p>Running <code>LinearRegression</code> does not verify these assumptions.</p>
+<h2 id="85-probability-and-likelihood-reverse-what-is-held-fixed">8.5 Probability and likelihood reverse what is held fixed</h2>
+<p>Probability asks how data would vary for fixed parameter values. Likelihood holds the observed data fixed and compares parameter values:</p>
+<p>$$
+L(\beta,\sigma^2\mid X,y)
+=\prod_{i=1}^n
+\frac1{\sqrt{2\pi\sigma^2}}
+\exp\left[-\frac{(y_i-x_i^T\beta)^2}{2\sigma^2}\right].
+$$</p>
+<p>Likelihood is not the probability that a fixed parameter value is true.</p>
+<h2 id="86-log-likelihood-connects-gaussian-mle-to-ols">8.6 Log-likelihood connects Gaussian MLE to OLS</h2>
+<p>Products of many small densities can underflow. Logs turn products into sums without changing which positive likelihood is largest:</p>
+<p>$$
+\ell(\beta,\sigma^2)
+=-\frac n2\log(2\pi)
+-\frac n2\log(\sigma^2)
+-\frac1{2\sigma^2}\sum_i(y_i-x_i^T\beta)^2.
+$$</p>
+<p>For fixed $\sigma^2$, only the final term depends on $\beta$. Maximising log-likelihood therefore minimises SSR.</p>
+<p>$$
+\boxed{\text{Gaussian maximum likelihood for }\beta=\text{OLS}.}
+$$</p>
+<p>This equivalence does not establish that the real errors are Gaussian.</p>
+<h2 id="87-residual-variance-and-degrees-of-freedom">8.7 Residual variance and degrees of freedom</h2>
+<p>After fitting $k$ parameters including the intercept:</p>
+<p>$$
+s^2=\frac{SSR}{n-k}.
+$$</p>
+<p>Fitting $k$ independent parameters imposes constraints and leaves $n-k$ residual degrees of freedom. Under the classical model, this is an unbiased estimator of $\sigma^2$. Gaussian maximum likelihood uses $SSR/n$; the criteria differ.</p>
+<p>Residual standard deviation is $s=\sqrt{s^2}$ and has target units. It is not the same as a coefficient's standard error.</p>
+<h2 id="88-coefficient-sampling-variability">8.8 Coefficient sampling variability</h2>
+<p>Under classical assumptions and fixed $X$:</p>
+<p>$$
+\hat\beta\sim\mathcal N\left(\beta,\sigma^2(X^TX)^{-1}\right).
+$$</p>
+<p>Estimate covariance with:</p>
+<p>$$
+\widehat{\operatorname{Var}}(\hat\beta)=s^2(X^TX)^{-1}.
+$$</p>
+<p>Coefficient $j$'s standard error is the square root of covariance diagonal entry $j$.</p>
+<p>Large standard errors can result from high outcome noise, small samples, narrow feature ranges, or multicollinearity. They measure sampling uncertainty under assumptions, not whether code syntax succeeded.</p>
+<h2 id="89-coefficient-confidence-intervals">8.9 Coefficient confidence intervals</h2>
+<p>$$
+\hat\beta_j\pm t_{1-\alpha/2,n-k}SE(\hat\beta_j).
+$$</p>
+<p>Frequentist interpretation: if the full sampling and interval procedure were repeated under its assumptions, proportion $1-\alpha$ of intervals would cover the fixed true parameter. It is not strictly a 95% posterior probability that this one fixed parameter lies in this one interval.</p>
+<p>An interval's units match its coefficient. It does not make an association causal.</p>
+<h2 id="810-mean-response-confidence-interval-versus-prediction-interval">8.10 Mean-response confidence interval versus prediction interval</h2>
+<p>For design row $x_0$:</p>
+<p>$$
+\hat y_0=x_0^T\hat\beta.
+$$</p>
+<p>Mean-response standard error:</p>
+<p>$$
+SE_{mean}(x_0)=s\sqrt{x_0^T(X^TX)^{-1}x_0}.
+$$</p>
+<p>Individual prediction standard error:</p>
+<p>$$
+SE_{prediction}(x_0)
+=s\sqrt{1+x_0^T(X^TX)^{-1}x_0}.
+$$</p>
+<p>The extra 1 represents individual project noise, so the prediction interval is wider. Both usually widen far from the centre of observed feature values because extrapolated means are less precisely estimated.</p>
+<h2 id="811-read-gaussianols">8.11 Read <code>GaussianOLS</code></h2>
+<p>The chapter extends <code>StableOLS</code> to:</p>
+<ol>
+<li>require full rank;</li>
+<li>calculate residuals and SSR;</li>
+<li>require positive residual degrees of freedom;</li>
+<li>estimate residual variance;</li>
+<li>calculate the classical covariance matrix and standard errors;</li>
+<li>use Student's $t$ critical values; and</li>
+<li>return coefficient, mean-response, and individual-prediction intervals.</li>
+</ol>
+<p><code>np.einsum("ij,jk,ik-&gt;i", ...)</code> efficiently calculates one quadratic form $x_i^TAx_i$ per new row. It supplies each row's leverage-like uncertainty factor.</p>
+<p>The class uses an inverse after full-rank checking to show the textbook covariance formula. Production inference should use mature decomposition-based methods and covariance estimators appropriate to heteroskedastic or clustered data.</p>
+<h2 id="812-assumptions-map">8.12 Assumptions map</h2>
+<table>
+<thead>
+<tr>
+<th>Claim</th>
+<th>Required support</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A least-squares solution was computed</td>
+<td>Valid finite arrays and correct numerical method</td>
+</tr>
+<tr>
+<td>Coefficients are unique</td>
+<td>Full column rank</td>
+</tr>
+<tr>
+<td>Predictions generalise</td>
+<td>Evaluation representing deployment</td>
+</tr>
+<tr>
+<td>Classical intervals have stated coverage</td>
+<td>Mean, variance, dependence, distribution, and sampling assumptions</td>
+</tr>
+<tr>
+<td>A coefficient is causal</td>
+<td>A causal identification design</td>
+</tr>
+</tbody>
+</table>
+<p>Normal-looking residuals do not fix confounding. Heteroskedastic residuals do not mean the least-squares projection was computed incorrectly.</p>
+<h2 id="813-heteroskedasticity">8.13 Heteroskedasticity</h2>
+<p><strong>Heteroskedasticity</strong> means conditional variance changes across observations. In the synthetic data, remote projects have larger noise. A residual-versus-fitted plot may show a fan shape.</p>
+<p>OLS may still estimate a useful conditional mean under suitable conditions, but equal-variance standard errors and constant-width uncertainty become questionable. Later work introduces heteroskedasticity-robust and cluster-aware inference.</p>
+<h2 id="day-8-exit-check">Day 8 exit check</h2>
+<p>Distinguish:</p>
+<ul>
+<li>parameter versus estimate;</li>
+<li>unobserved error versus fitted residual;</li>
+<li>probability versus likelihood;</li>
+<li>residual standard deviation versus coefficient standard error; and</li>
+<li>confidence interval for a mean versus prediction interval for one project.</li>
+</ul>
+<hr /></template><template id="companion-template-day-9"><h1 id="day-9-gradient-descent-from-the-ols-gradient">Day 9 — Gradient descent from the OLS gradient</h1>
+<h2 id="91-why-learn-an-iterative-method">9.1 Why learn an iterative method?</h2>
+<p>QR or SVD is generally preferable for moderate OLS. Gradient descent matters because the same optimisation pattern works for models without convenient direct solutions and for very large datasets.</p>
+<p>“Iterative” does not mean “more accurate.” For convex OLS, a correct converged implementation should approach the same minimum as <code>lstsq</code>.</p>
+<h2 id="92-mse-objective-and-gradient">9.2 MSE objective and gradient</h2>
+<p>$$
+J(\beta)=\frac1n\lVert y-X\beta\rVert_2^2,
+$$</p>
+<p>$$
+\nabla_\beta J(\beta)=\frac2nX^T(X\beta-y).
+$$</p>
+<p>Shape check:</p>
+<table>
+<thead>
+<tr>
+<th>Quantity</th>
+<th style="text-align: right;">Shape</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$X$</td>
+<td style="text-align: right;">$n\times k$</td>
+</tr>
+<tr>
+<td>$\beta$</td>
+<td style="text-align: right;">$k$</td>
+</tr>
+<tr>
+<td>$X\beta-y$</td>
+<td style="text-align: right;">$n$</td>
+</tr>
+<tr>
+<td>gradient</td>
+<td style="text-align: right;">$k$</td>
+</tr>
+</tbody>
+</table>
+<p>The gradient has one component per parameter and points in the direction of steepest local increase.</p>
+<h2 id="93-update-rule">9.3 Update rule</h2>
+<p>$$
+\beta^{(t+1)}
+=\beta^{(t)}-\eta\nabla J(\beta^{(t)}).
+$$</p>
+<ul>
+<li>Minus means move downhill.</li>
+<li>$\eta$ is the learning rate.</li>
+<li>Too small means slow progress.</li>
+<li>Too large causes overshooting, oscillation, or divergence.</li>
+<li>A stopping rule decides when further changes are negligible.</li>
+</ul>
+<p>In a one-parameter walk, print both coefficient and loss each step. Try learning rates <code>0.0001</code>, <code>0.05</code>, <code>0.2</code>, and <code>1.0</code>; recognising patterns matters more than seeing one successful run.</p>
+<h2 id="94-why-scaling-helps-gradient-descent">9.4 Why scaling helps gradient descent</h2>
+<p>Very different feature scales create a long narrow MSE valley. One learning rate zigzags across steep directions while moving slowly along shallow ones. Standardisation makes curvature more balanced and a useful learning rate easier to find.</p>
+<p>Scaling does not fix a wrong gradient sign, leakage, nonlinearity, or an unrepresentative validation design.</p>
+<h2 id="95-read-gradientdescentols">9.5 Read <code>GradientDescentOLS</code></h2>
+<p>The chapter's batch optimiser:</p>
+<ol>
+<li>creates a design matrix;</li>
+<li>starts all coefficients at zero;</li>
+<li>calculates predictions, MSE, and the full-data gradient;</li>
+<li>rejects non-finite loss or gradient;</li>
+<li>stores loss history;</li>
+<li>updates coefficients;</li>
+<li>stops when coefficient movement is below tolerance; and</li>
+<li>otherwise stops at <code>max_iter</code>.</li>
+</ol>
+<p>The <code>for ... else</code> construct runs <code>else</code> only if the loop did not reach <code>break</code>. It records that maximum iterations were exhausted.</p>
+<p>Stopping because parameter movement is small is not automatically proof of the correct optimum. Also inspect gradient size, loss history, and agreement with a trusted direct solver.</p>
+<h2 id="96-verify-against-svd-and-finite-differences">9.6 Verify against SVD and finite differences</h2>
+<p>Two independent checks are essential:</p>
+<ul>
+<li>fitted coefficients and predictions approach <code>StableOLS</code>/<code>lstsq</code> on scaled data;</li>
+<li>analytic gradient agrees with a centred finite-difference approximation.</li>
+</ul>
+<p>For component $j$:</p>
+<p>$$
+\frac{\partial J}{\partial\beta_j}
+\approx\frac{J(\beta+hu_j)-J(\beta-hu_j)}{2h}.
+$$</p>
+<p>A smooth falling loss is not sufficient—a wrong gradient can still look orderly.</p>
+<h2 id="97-convergence-patterns">9.7 Convergence patterns</h2>
+<table>
+<thead>
+<tr>
+<th>Loss history</th>
+<th>Likely issue</th>
+<th>Response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Smooth decline to plateau</td>
+<td>Convergence</td>
+<td>Compare with direct solver and gradient norm</td>
+</tr>
+<tr>
+<td>Very slow decline</td>
+<td>Small rate or poor scaling</td>
+<td>Scale and tune rate</td>
+</tr>
+<tr>
+<td>Oscillation</td>
+<td>Rate too large</td>
+<td>Reduce rate</td>
+</tr>
+<tr>
+<td>Explosion or non-finite values</td>
+<td>Divergence or sign/scale bug</td>
+<td>Stop and audit</td>
+</tr>
+<tr>
+<td>Training improves, validation worsens</td>
+<td>Overfit or shift</td>
+<td>Evaluation problem, not optimiser success</td>
+</tr>
+</tbody>
+</table>
+<p>A logarithmic y-axis helps show changes across many orders of magnitude.</p>
+<h2 id="98-batch-stochastic-and-mini-batch-descent">9.8 Batch, stochastic, and mini-batch descent</h2>
+<ul>
+<li><strong>Batch:</strong> uses every training row for every update.</li>
+<li><strong>Stochastic:</strong> uses one randomly chosen row.</li>
+<li><strong>Mini-batch:</strong> uses a small subset.</li>
+</ul>
+<p>Stochastic methods are cheaper per update but noisy. They require decisions about shuffling, batch size, learning-rate schedules, seeds, and stopping. Chapter 2 uses batch descent so code stays directly aligned with the equation.</p>
+<h2 id="99-parameters-and-hyperparameters">9.9 Parameters and hyperparameters</h2>
+<table>
+<thead>
+<tr>
+<th>Quantity</th>
+<th>Type</th>
+<th>How obtained</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Intercept and slopes</td>
+<td>Parameters</td>
+<td>Learned by minimising training loss</td>
+</tr>
+<tr>
+<td>Scaler means and scales</td>
+<td>Preprocessing parameters</td>
+<td>Learned from training features</td>
+</tr>
+<tr>
+<td>Learning rate</td>
+<td>Hyperparameter</td>
+<td>Chosen outside coefficient updates</td>
+</tr>
+<tr>
+<td>Maximum iterations</td>
+<td>Hyperparameter</td>
+<td>Chosen before fitting</td>
+</tr>
+<tr>
+<td>Tree depth</td>
+<td>Hyperparameter</td>
+<td>Selected using development evidence</td>
+</tr>
+</tbody>
+</table>
+<p>When validation results guide a learning rate, validation has participated in model selection. The final test must remain untouched.</p>
+<h2 id="day-9-exit-check">Day 9 exit check</h2>
+<p>Write the gradient and update rule from memory. Then explain why equal minimum training MSE does not demonstrate equal future-project performance.</p>
+<hr /></template><template id="companion-template-day-10"><h1 id="day-10-generalisation-baselines-and-model-complexity">Day 10 — Generalisation, baselines, and model complexity</h1>
+<h2 id="101-the-full-learning-procedure">10.1 The full learning procedure</h2>
+<p>$$
+\hat f=\mathcal A(D_{train}).
+$$</p>
+<p>$\mathcal A$ includes feature definitions, cleaning, imputation, scaling, encoding, model family, hyperparameter search, random seeds, and selection rules. Honest evaluation must reproduce the entire procedure using only permitted information.</p>
+<p>The named algorithm alone is not the unit of comparison.</p>
+<h2 id="102-training-risk-versus-deployment-risk">10.2 Training risk versus deployment risk</h2>
+<p>Empirical training risk:</p>
+<p>$$
+\widehat R_{train}(f)
+=\frac1{n_{train}}\sum_{i\in train}L(y_i,f(x_i)).
+$$</p>
+<p>Generalisation risk:</p>
+<p>$$
+R(f)=\mathbb E_{(X,Y)\sim P_{deployment}}[L(Y,f(X))].
+$$</p>
+<p>The deployment distribution is only partially observed. A held-out set estimates relevant performance only when its construction represents the cases, groups, and time periods of intended use.</p>
+<h2 id="103-constant-baselines-are-genuine-models">10.3 Constant baselines are genuine models</h2>
+<p>For squared error:</p>
+<p>$$
+S(c)=\sum_i(y_i-c)^2.
+$$</p>
+<p>Setting the derivative to zero proves:</p>
+<p>$$
+\hat c=\bar y_{train}.
+$$</p>
+<p>The training mean is the best constant under squared loss. Under absolute loss, any training median minimises total absolute error because it balances observations on either side.</p>
+<p>Fit the baseline on training targets only, then score it and candidate models on exactly the same held-out rows with exactly the same metric.</p>
+<p>The mean is pulled more strongly by extreme values; the median is more resistant. Baseline and metric should match the decision loss.</p>
+<h2 id="104-what-failure-to-beat-baseline-teaches">10.4 What failure to beat baseline teaches</h2>
+<p>Possible causes include:</p>
+<ul>
+<li>weak features;</li>
+<li>incorrect row or column alignment;</li>
+<li>distribution shift;</li>
+<li>excessive flexibility;</li>
+<li>insufficient data; or</li>
+<li>an earlier leaky experiment that set unrealistic expectations.</li>
+</ul>
+<p>The response is investigation, not hiding the baseline.</p>
+<h2 id="105-underfitting-and-overfitting">10.5 Underfitting and overfitting</h2>
+<ul>
+<li><strong>Underfitting:</strong> procedure is too restricted; training and validation errors are both high.</li>
+<li><strong>Overfitting:</strong> procedure adapts to training-specific noise; training error is low but validation error is high.</li>
+</ul>
+<p>Training error normally decreases as flexibility increases. Validation error may decrease and then rise. Choose complexity using validation evidence, not training victory.</p>
+<h2 id="106-biasvariance-decomposition">10.6 Bias–variance decomposition</h2>
+<p>At fixed input $x_0$, assume:</p>
+<p>$$
+Y=f(x_0)+\varepsilon,
+\quad\mathbb E[\varepsilon]=0,
+\quad\operatorname{Var}(\varepsilon)=\sigma^2.
+$$</p>
+<p>Across repeated training datasets:</p>
+<p>$$
+\mathbb E[(Y-\hat f(x_0))^2]
+=\left(\mathbb E[\hat f(x_0)]-f(x_0)\right)^2
++\operatorname{Var}(\hat f(x_0))
++\sigma^2.
+$$</p>
+<p>The terms are squared bias, procedure variance, and irreducible noise. This is a repeated-sampling identity under squared loss, not three quantities fully visible in one split. Do not label one model “high variance” solely from one graph.</p>
+<h2 id="107-a-shallow-decision-tree">10.7 A shallow decision tree</h2>
+<p>A regression tree repeatedly splits feature space. For feature $j$ and threshold $s$:</p>
+<p>$$
+R_L=\{x:x_j\leq s\},\qquad R_R=\{x:x_j&gt;s\}.
+$$</p>
+<p>Under squared loss, each leaf predicts its training-target mean. A split minimises combined within-child SSR.</p>
+<p>Trees can represent thresholds and interactions without manually specifying them. They are piecewise constant and do not linearly extrapolate beyond observed ranges.</p>
+<ul>
+<li>Depth 0: one constant leaf.</li>
+<li>Small depth: broad nonlinear structure.</li>
+<li>Large depth: small leaves and possible memorisation.</li>
+</ul>
+<p>A shallow tree is a useful nonlinear comparator, not automatically the correct deployment model.</p>
+<h2 id="108-read-the-first-library-comparison">10.8 Read the first library comparison</h2>
+<p>The main chapter compares:</p>
+<ul>
+<li><code>DummyRegressor(strategy="mean")</code>;</li>
+<li><code>LinearRegression</code>;</li>
+<li>depth-3 <code>DecisionTreeRegressor</code>; and</li>
+<li>an unrestricted tree.</li>
+</ul>
+<p><code>random_state</code> makes the split or tree behaviour reproducible. The unrestricted tree may nearly eliminate training error. Only held-out error addresses generalisation.</p>
+<p>The first random split demonstrates the API; Day 11 determines whether that split matches deployment.</p>
+<h2 id="109-learning-curves">10.9 Learning curves</h2>
+<p>A learning curve plots training and held-out performance as training size grows.</p>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Possible lesson</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Both errors stay high</td>
+<td>Model or features may underfit</td>
+</tr>
+<tr>
+<td>Large gap narrows</td>
+<td>More data may reduce variance</td>
+</tr>
+<tr>
+<td>Gap remains wide</td>
+<td>Excess flexibility or structural leakage</td>
+</tr>
+<tr>
+<td>Curves unstable</td>
+<td>Too little data or unsuitable split</td>
+</tr>
+</tbody>
+</table>
+<p>One sampled subset per size makes a noisy curve. Repeat sampling or use deployment-appropriate cross-validation for stronger evidence.</p>
+<h2 id="1010-research-discussion-breimans-two-cultures">10.10 Research discussion: Breiman's “Two Cultures”</h2>
+<p>Breiman contrasted:</p>
+<ul>
+<li><strong>data modeling:</strong> specify a stochastic model and study its parameters;</li>
+<li><strong>algorithmic modeling:</strong> treat the mechanism as partly unknown and prioritise predictive performance.</li>
+</ul>
+<p>Beginner lessons:</p>
+<ol>
+<li>An interpretable equation is not automatically an adequate description of reality.</li>
+<li>Predictive accuracy does not automatically explain a mechanism or identify causation.</li>
+<li>Prediction claims need out-of-sample evaluation.</li>
+<li>Complete procedures, not mathematical elegance alone, should be compared.</li>
+</ol>
+<p>For MHP work, a probabilistic linear model can communicate conditional relationships and uncertainty, while a shallow tree checks whether broad nonlinearity matters. Modern practice can combine these traditions; the paper's framing is a provocative argument, not a command to choose one camp forever.</p>
+<p>Replication exercise: over many synthetic datasets, compare OLS and increasing tree depths under a fixed validation design. Plot training and validation MAE and identify where flexibility stops helping new cases.</p>
+<h2 id="day-10-exit-check">Day 10 exit check</h2>
+<p>Derive the mean baseline, explain why the median minimises absolute error, and give an example where the lowest-training-error model is the least responsible choice.</p>
+<hr /></template><template id="companion-template-day-11"><h1 id="day-11-honest-splitting-leakage-and-cross-validation">Day 11 — Honest splitting, leakage, and cross-validation</h1>
+<h2 id="111-training-validation-and-test-roles">11.1 Training, validation, and test roles</h2>
+<table>
+<thead>
+<tr>
+<th>Partition</th>
+<th>Allowed</th>
+<th>Not allowed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Training</td>
+<td>Fit preprocessing and model parameters</td>
+<td>Final performance claim</td>
+</tr>
+<tr>
+<td>Validation</td>
+<td>Select features, model family, and hyperparameters</td>
+<td>Later call it untouched test data</td>
+</tr>
+<tr>
+<td>Test</td>
+<td>One final evaluation after procedure is fixed</td>
+<td>Tuning or revising the procedure</td>
+</tr>
+</tbody>
+</table>
+<p>Typical workflow:</p>
+<pre><code class="language-text">train parameters
+    -&gt; validate/select procedure
+    -&gt; refit selected procedure on train + validation
+    -&gt; test once
+</code></pre>
+<p>Percentages such as 60/20/20 are examples, not laws. Time, groups, sample size, and deployment decide the split.</p>
+<h2 id="112-a-split-simulates-deployment">11.2 A split simulates deployment</h2>
+<h3 id="random-split">Random split</h3>
+<p>Appropriate for new, approximately independent and exchangeable observations under the same mixture of conditions. It is unsafe when related entities, time order, or deployment shifts matter.</p>
+<h3 id="group-split">Group split</h3>
+<p>Keep related observations together. For unseen-district deployment:</p>
+<p>$$
+G_{train}\cap G_{test}=\varnothing.
+$$</p>
+<p>The group need not be a model feature; it identifies dependence and intended transfer.</p>
+<h3 id="temporal-split">Temporal split</h3>
+<p>For future prediction:</p>
+<p>$$
+\max(t_{train})&lt;\min(t_{test}).
+$$</p>
+<p>Forward-chaining trains on earlier history and validates on the next period. It exposes changing procurement, technology, measurement, or project mix.</p>
+<h3 id="combined-new-timenew-group-deployment">Combined new-time/new-group deployment</h3>
+<p>Future projects in unseen districts require both boundaries. If the dataset contains no analogue, a splitter cannot create evidence; external validation is needed.</p>
+<h2 id="113-leakage-catalogue">11.3 Leakage catalogue</h2>
+<p><strong>Target leakage:</strong> use target or post-outcome proxy, such as final material bill.</p>
+<p><strong>Preprocessing leakage:</strong> learn imputation, scaling, categories, transformations, or feature selection from validation/test rows.</p>
+<p><strong>Temporal leakage:</strong> allow future information to predict the past or use values recorded after prediction time.</p>
+<p><strong>Group leakage:</strong> related projects appear on both sides of an evaluation intended for new groups.</p>
+<p><strong>Duplicate leakage:</strong> exact or near-duplicate records cross partitions.</p>
+<p><strong>Test-set leakage:</strong> repeatedly inspect test scores and modify the procedure.</p>
+<p><strong>Label leakage through cleaning:</strong> use difficult target outcomes to decide which rows or feature values to remove.</p>
+<p>Leakage is about illegitimate information flow, not merely whether a target column is visibly present.</p>
+<h2 id="114-why-the-leaky-feature-looks-spectacular">11.4 Why the leaky feature looks spectacular</h2>
+<p>The synthetic final material bill is strongly based on actual cost and is known only later. Adding it dramatically lowers random-holdout MAE but answers a useless appraisal question: reconstruct final cost after much of it is already known.</p>
+<p>High accuracy is not evidence of valid timing. Always perform the desk-at-prediction-time test.</p>
+<h2 id="115-pipelines-protect-statistical-validity">11.5 Pipelines protect statistical validity</h2>
+<p>The numeric branch:</p>
+<pre><code class="language-text">numeric columns -&gt; median imputation -&gt; standardisation
+</code></pre>
+<p>The categorical branch:</p>
+<pre><code class="language-text">district -&gt; most-frequent imputation -&gt; one-hot encoding
+</code></pre>
+<p><code>ColumnTransformer</code> combines them, then <code>Pipeline</code> fits the model. In every cross-validation split, the pipeline:</p>
+<ol>
+<li>fits preprocessing only on the current training fold;</li>
+<li>transforms that training fold;</li>
+<li>fits the model;</li>
+<li>transforms the validation fold using learned training values; and</li>
+<li>predicts the validation fold.</li>
+</ol>
+<p><code>OneHotEncoder(handle_unknown="ignore")</code> prevents an unseen category from crashing transformation. It does not guarantee good predictions for that group. <code>drop="first"</code> removes one redundant category indicator when an intercept is present.</p>
+<p>A pipeline is not just code tidiness. It defines the correctly bounded learning procedure.</p>
+<h2 id="116-k-fold-cross-validation">11.6 K-fold cross-validation</h2>
+<p>Divide development data into $K$ folds. Each fold is held out once while the others train the procedure. Average held-out losses:</p>
+<p>$$
+\widehat L_{CV}=\frac1K\sum_{k=1}^K L_k.
+$$</p>
+<p>Every cross-validated prediction comes from a fitted procedure that did not train on that row. However, cross-validation estimates only the deployment question represented by its splitter.</p>
+<p>Scikit-learn scoring names such as <code>neg_mean_absolute_error</code> return negative losses because its selection API treats larger scores as better. Negate them to report positive MAE.</p>
+<h2 id="117-cross-validation-is-a-family">11.7 Cross-validation is a family</h2>
+<table>
+<thead>
+<tr>
+<th>Splitter</th>
+<th>Preserves</th>
+<th>Question</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>KFold</code></td>
+<td>Row separation</td>
+<td>New independent-like observations</td>
+</tr>
+<tr>
+<td><code>GroupKFold</code></td>
+<td>Group separation</td>
+<td>New groups</td>
+</tr>
+<tr>
+<td><code>TimeSeriesSplit</code> or forward loop</td>
+<td>Time order</td>
+<td>Future observations</td>
+</tr>
+<tr>
+<td>Nested CV</td>
+<td>Tuning/evaluation separation</td>
+<td>Performance of a selection procedure</td>
+</tr>
+</tbody>
+</table>
+<p>Regression target binning for stratification does not replace time or group structure and must be documented carefully.</p>
+<h2 id="118-grouped-and-temporal-validation">11.8 Grouped and temporal validation</h2>
+<p>With five district folds, report every district's MAE, RMSE, and $R^2$, not only their mean. One fold may reveal operational failure.</p>
+<p>Temporal fold losses have different training sizes and represent different periods. They are not identical repeated measurements. The trend over years may be more informative than one average.</p>
+<p>Use <code>clone(pipeline)</code> inside manual loops to ensure a fresh unfitted procedure for every fold.</p>
+<h2 id="119-hyperparameter-selection-creates-optimism">11.9 Hyperparameter selection creates optimism</h2>
+<p>For depths in set $\mathcal D$:</p>
+<p>$$
+\hat d=\arg\min_{d\in\mathcal D}\widehat L_{validation}(d).
+$$</p>
+<p>The selected depth looks best partly because of genuine performance and partly because of validation noise. Reporting the same validation score as final is optimistically biased.</p>
+<p>The more irrelevant choices tried, the more opportunities noise has to create an apparent winner.</p>
+<h2 id="1110-nested-cross-validation">11.10 Nested cross-validation</h2>
+<ul>
+<li><strong>Inner loop:</strong> selects hyperparameters using only the outer-training data.</li>
+<li><strong>Outer loop:</strong> evaluates the entire inner-selection-and-refit procedure on untouched outer data.</li>
+</ul>
+<p>For every outer split:</p>
+<ol>
+<li>create outer train and outer test;</li>
+<li>run an inner search entirely inside outer train;</li>
+<li>refit the inner winner on all outer train;</li>
+<li>predict outer test once; and</li>
+<li>store outer performance.</li>
+</ol>
+<p>The evaluated object is not a fixed depth chosen in advance. It is the complete procedure that searches a specified grid with a specified splitter, score, preprocessing pipeline, seed policy, and refitting rule.</p>
+<p>Nested CV is expensive because selection is repeated. That repetition is the protection.</p>
+<h2 id="1111-research-discussion-cawley-and-talbot">11.11 Research discussion: Cawley and Talbot</h2>
+<p>The paper asks whether a model-selection criterion itself can be overfit. Its key lesson is that selection noise can be comparable with reported differences between algorithms.</p>
+<p>The unit of comparison should be:</p>
+<p>$$
+\text{learning algorithm}+\text{model-selection procedure}.
+$$</p>
+<p>“Decision tree” is incomplete. Specify candidate depths and leaf sizes, splitter, metric, preprocessing, search procedure, refit rule, and randomness.</p>
+<p>Nested CV or a final untouched test addresses selection optimism under the chosen sampling design. It cannot fix a wrong deployment simulation, feature leakage, unmeasured distribution shift, or missing hard projects.</p>
+<p>Replication exercise: as the number of irrelevant hyperparameter choices grows, compare the best inner score with outer performance across many synthetic datasets.</p>
+<h2 id="1112-locked-test-protocol">11.12 Locked-test protocol</h2>
+<p>Before opening test results, write and timestamp:</p>
+<ol>
+<li>target and units;</li>
+<li>prediction time;</li>
+<li>eligible and prohibited features;</li>
+<li>exclusion rules;</li>
+<li>split design;</li>
+<li>candidate procedures;</li>
+<li>selection metric;</li>
+<li>subgroup reports;</li>
+<li>uncertainty method; and</li>
+<li>deployment-blocking conditions.</li>
+</ol>
+<p>If test results motivate revision, revision is legitimate but the test set has become development data. A fresh final claim needs new independent evidence.</p>
+<h2 id="day-11-exit-check">Day 11 exit check</h2>
+<p>Draw inner and outer nested-CV loops, state what each may influence, and explain why a pipeline is part of statistical validity.</p>
+<hr /></template><template id="companion-template-day-12"><h1 id="day-12-metrics-diagnostics-uncertainty-and-revision">Day 12 — Metrics, diagnostics, uncertainty, and revision</h1>
+<h2 id="121-begin-with-signed-error">12.1 Begin with signed error</h2>
+<p>$$
+e_i=y_i-\hat y_i.
+$$</p>
+<ul>
+<li>positive: actual cost is larger, so model underpredicted;</li>
+<li>negative: prediction is larger, so model overpredicted.</li>
+</ul>
+<p>Mean error:</p>
+<p>$$
+ME=\frac1n\sum_i e_i.
+$$</p>
+<p>Opposite signs cancel. ME detects directional bias but cannot measure total accuracy.</p>
+<h2 id="122-mae-mse-rmse-and-median-absolute-error">12.2 MAE, MSE, RMSE, and median absolute error</h2>
+<p>$$
+MAE=\frac1n\sum_i|e_i|,
+$$</p>
+<p>$$
+MSE=\frac1n\sum_i e_i^2,
+\qquad RMSE=\sqrt{MSE},
+$$</p>
+<p>$$
+MedAE=\operatorname{median}(|e_i|).
+$$</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Units</th>
+<th>Sensitivity</th>
+<th>Plain reading</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ME</td>
+<td>target</td>
+<td>signs cancel</td>
+<td>average direction of miss</td>
+</tr>
+<tr>
+<td>MAE</td>
+<td>target</td>
+<td>linear penalty</td>
+<td>average absolute miss</td>
+</tr>
+<tr>
+<td>RMSE</td>
+<td>target</td>
+<td>emphasises large errors</td>
+<td>square-root average squared miss</td>
+</tr>
+<tr>
+<td>MedAE</td>
+<td>target</td>
+<td>highly resistant to a minority of extremes</td>
+<td>central typical miss</td>
+</tr>
+</tbody>
+</table>
+<p>MAE is not immune to outliers; it is less dominated than RMSE. MedAE can look reassuring while a minority of projects fail catastrophically. Also report a high absolute-error quantile such as $Q_{0.90}(|e|)$.</p>
+<h2 id="123-held-out-r2">12.3 Held-out $R^2$</h2>
+<p>$$
+R^2
+=1-\frac{\sum_i(y_i-\hat y_i)^2}
+{\sum_i(y_i-\bar y_{evaluation})^2}.
+$$</p>
+<ul>
+<li>1: perfect predictions;</li>
+<li>0: same SSR as predicting the evaluation-set mean;</li>
+<li>negative: worse than that evaluation-set-mean reference.</li>
+</ul>
+<p>Standard held-out $R^2$ uses the evaluation targets' mean in its denominator. A deployable dummy predicts a value learned from training targets. Under shift these are not equal. Always score an explicit training-fitted baseline.</p>
+<p>$R^2$ is dimensionless and depends on target variation. Identical absolute errors can yield different $R^2$ across districts with different cost ranges.</p>
+<h2 id="124-why-mape-can-be-dangerous">12.4 Why MAPE can be dangerous</h2>
+<p>$$
+MAPE=\frac{100}{n}\sum_i\left|\frac{y_i-\hat y_i}{y_i}\right|.
+$$</p>
+<p>It is undefined at zero, explodes near zero, gives the same absolute miss more weight for small projects, and introduces asymmetries. Use it only when proportional error genuinely matches the decision.</p>
+<p>Possible scale-aware alternatives:</p>
+<ul>
+<li>report metrics by project scale;</li>
+<li>use weighted absolute percentage error for a justified portfolio meaning:</li>
+</ul>
+<p>$$
+WAPE=\frac{\sum_i|y_i-\hat y_i|}{\sum_i|y_i|};
+$$</p>
+<ul>
+<li>model log cost when multiplicative structure is plausible; or</li>
+<li>compare scaled error with a defined baseline.</li>
+</ul>
+<p>No substitute is universal.</p>
+<h2 id="125-asymmetric-decision-loss">12.5 Asymmetric decision loss</h2>
+<p>If underbudgeting is more costly:</p>
+<p>$$
+L(e)=
+\begin{cases}
+c_{under}|e|,&amp;e&gt;0,\\
+c_{over}|e|,&amp;e\leq0,
+\end{cases}
+\qquad c_{under}&gt;c_{over}.
+$$</p>
+<p>Quantile or pinball loss for level $\tau$ is:</p>
+<p>$$
+L_\tau(y,\hat q)=
+\begin{cases}
+\tau(y-\hat q),&amp;y\geq\hat q,\\
+(1-\tau)(\hat q-y),&amp;y&lt;\hat q.
+\end{cases}
+$$</p>
+<p>An estimated 80th conditional quantile can support contingency planning. Label it as a quantile, not as a mean plus an arbitrary buffer.</p>
+<h2 id="126-training-loss-selection-metric-and-reporting-metrics">12.6 Training loss, selection metric, and reporting metrics</h2>
+<ul>
+<li>Training loss determines fitted parameters.</li>
+<li>Selection metric chooses among procedures.</li>
+<li>Reporting metrics communicate operational consequences.</li>
+</ul>
+<p>A model can minimise training MSE, be selected by validation MAE, and be reported with test MAE, RMSE, ME, MedAE, $R^2$, and subgroup errors. Pre-specify primary and secondary metrics rather than choosing after seeing which favours a preferred model.</p>
+<h2 id="127-keep-a-row-level-prediction-table">12.7 Keep a row-level prediction table</h2>
+<p>Retain:</p>
+<ul>
+<li>project ID;</li>
+<li>actual target and unit;</li>
+<li>prediction;</li>
+<li>signed, absolute, and squared errors;</li>
+<li>district and year;</li>
+<li>project scale and remoteness; and</li>
+<li>any evaluation-fold identifier.</li>
+</ul>
+<p>Metrics can be regenerated from rows. Aggregate scores cannot reconstruct lost individual failures.</p>
+<h2 id="128-held-out-diagnostic-views">12.8 Held-out diagnostic views</h2>
+<p><strong>Error versus prediction:</strong> curvature, fan shape, and offset.</p>
+<p><strong>Error over time:</strong> policy, procurement, technology, measurement, or drift.</p>
+<p><strong>Error by district:</strong> representation, group relationships, or measurement differences.</p>
+<p><strong>Error by project scale/remoteness:</strong> whether overall averages hide high-risk projects.</p>
+<p><strong>Signed-error distribution:</strong> asymmetry and extreme tails.</p>
+<p>The four-panel function in the chapter validates required columns, plots these views, and returns the Matplotlib figure. Plots generate hypotheses; they do not identify causes by themselves.</p>
+<h2 id="129-subgroup-evaluation-without-false-certainty">12.9 Subgroup evaluation without false certainty</h2>
+<p>For each meaningful group report:</p>
+<ul>
+<li>count;</li>
+<li>mean signed error;</li>
+<li>MAE;</li>
+<li>MedAE; and</li>
+<li>90th percentile absolute error.</li>
+</ul>
+<p>Small subgroup estimates are noisy. Do not rank five-project districts as a stable league table. Consider intervals, domain knowledge, replication, and whether groups are weighted by project count, community importance, or budget exposure.</p>
+<h2 id="1210-bootstrap-interval-for-held-out-mae">12.10 Bootstrap interval for held-out MAE</h2>
+<p>A row bootstrap:</p>
+<ol>
+<li>retains fixed held-out actual/prediction pairs;</li>
+<li>samples $n$ row indices with replacement;</li>
+<li>calculates MAE on each resample;</li>
+<li>repeats thousands of times; and</li>
+<li>takes lower and upper empirical quantiles.</li>
+</ol>
+<p>“With replacement” means a project can appear multiple times or not at all in one resample. The percentile interval approximates sampling variability under the assumption that held-out rows are suitable resampling units.</p>
+<p>If projects share districts or contractors, row resampling may understate dependence. A cluster bootstrap resamples independent groups. The resampling unit must match the data-generating structure.</p>
+<p>The seed makes the simulation reproducible; the number of repeats controls Monte Carlo smoothness, not the underlying amount of evidence.</p>
+<h2 id="1211-fold-standard-deviation-is-not-a-confidence-interval">12.11 Fold standard deviation is not a confidence interval</h2>
+<p>Cross-validation training sets overlap, so fold scores are dependent. Folds may also represent substantively different districts or years. Fold standard deviation describes variation across those folds; it is not automatically a standard error or 95% interval. Dividing by $\sqrt K$ does not make dependence disappear.</p>
+<h2 id="1212-research-discussion-bengio-and-grandvalet">12.12 Research discussion: Bengio and Grandvalet</h2>
+<p>The paper proves that, under its broad setting, no universal unbiased estimator of $K$-fold cross-validation variance can be recovered from ordinary fold results. Overlapping training sets create covariance terms that are not generally identifiable.</p>
+<p>It does not say cross-validation is useless or uncertainty impossible. It warns against a convenient universal variance formula.</p>
+<p>Practical lessons:</p>
+<ul>
+<li>never relabel fold SD as a confidence interval;</li>
+<li>preserve individual fold results and their identities;</li>
+<li>use repeated/nested designs, independent tests, bootstrap, or model-based methods only with assumptions stated; and</li>
+<li>treat small performance differences cautiously.</li>
+</ul>
+<p>For district folds, variation may represent real geographic heterogeneity rather than interchangeable noise.</p>
+<p>Replication exercise: across many independently generated datasets, compare variation among folds within one dataset with variation of mean CV performance across datasets.</p>
+<h2 id="1213-diagnostics-do-not-authorise-test-tuning">12.13 Diagnostics do not authorise test tuning</h2>
+<p>Correct workflow after finding a test failure:</p>
+<ol>
+<li>report the original pre-specified result;</li>
+<li>use diagnostics to propose a substantive mechanism;</li>
+<li>label changes as post-test development;</li>
+<li>revise using development data; and</li>
+<li>obtain new independent or prospective evidence.</li>
+</ol>
+<p>Do not overwrite history and reuse the same test set as untouched.</p>
+<h2 id="1214-responsible-revision-protocol">12.14 Responsible revision protocol</h2>
+<pre><code class="language-text">structured error
+    -&gt; proposed mechanism
+    -&gt; measurement/timing audit
+    -&gt; development-data revision
+    -&gt; rerun full selection procedure
+    -&gt; new independent evaluation
+</code></pre>
+<p>Curvature may motivate a capacity-squared feature; changing spread may motivate quantile or variance modeling; drift may motivate a known-at-deployment time feature; district failure may reveal measurement inconsistency rather than a need to add district identity.</p>
+<h2 id="day-12-exit-check">Day 12 exit check</h2>
+<p>You should be able to state:</p>
+<ol>
+<li>positive signed error means underprediction;</li>
+<li>held-out $R^2$ uses the evaluation-set mean reference;</li>
+<li>low overall MAE can hide remote-project failure;</li>
+<li>fold SD is not automatically an interval; and</li>
+<li>test-driven revision requires new evaluation evidence.</li>
+</ol>
+<hr /></template><template id="companion-template-capstone"><h1 id="chapter-2-capstone-an-auditable-mhp-evaluation-pipeline">Chapter 2 capstone — An auditable MHP evaluation pipeline</h1>
+<h2 id="capstone-objective">Capstone objective</h2>
+<p>Estimate final constant-2025 cost at appraisal for projects beginning in 2023 onward. The deliverable is the documented learning and evaluation procedure, not only the winning score.</p>
+<h2 id="pass-1-evaluation-contract">Pass 1: evaluation contract</h2>
+<p>State before modeling:</p>
+<ul>
+<li>unit of observation;</li>
+<li>target, unit, and price basis;</li>
+<li>prediction time;</li>
+<li>eligible and prohibited features;</li>
+<li>deployment population;</li>
+<li>primary metric and decision rationale;</li>
+<li>validation design;</li>
+<li>locked test period;</li>
+<li>subgroup reports; and</li>
+<li>conditions that block deployment.</li>
+</ul>
+<h2 id="pass-2-boundary-audit">Pass 2: boundary audit</h2>
+<p>Confirm:</p>
+<ul>
+<li>project ID is an identifier, not a feature;</li>
+<li>final material bill is prohibited;</li>
+<li>transformations fit only inside training partitions;</li>
+<li>time ordering is correct;</li>
+<li>duplicates do not cross partitions; and</li>
+<li>test outcomes do not guide category handling or cleaning.</li>
+</ul>
+<h2 id="pass-3-compare-complete-procedures">Pass 3: compare complete procedures</h2>
+<p>Compare:</p>
+<ol>
+<li>training-mean baseline;</li>
+<li>linear regression with imputation, scaling, and one-hot encoding; and</li>
+<li>trees whose depth is selected on validation data.</li>
+</ol>
+<p>Use validation MAE as the primary selection criterion. Retain RMSE, MedAE, $R^2$, and ME as secondary reports.</p>
+<h2 id="pass-4-select-refit-and-test-once">Pass 4: select, refit, and test once</h2>
+<ul>
+<li>Train: 2016–2021.</li>
+<li>Validate: 2022.</li>
+<li>Test: 2023–2025.</li>
+<li>Select procedure using validation MAE only.</li>
+<li>Refit the chosen procedure on train plus validation.</li>
+<li>Open final test once.</li>
+</ul>
+<p>The capstone uses <code>clone</code> so every candidate begins unfitted. All candidates share one preprocessing recipe, which makes comparison procedural and prevents leakage.</p>
+<h2 id="pass-5-diagnose-without-rewriting-history">Pass 5: diagnose without rewriting history</h2>
+<p>Report:</p>
+<ul>
+<li>overall metrics and a bootstrap MAE interval;</li>
+<li>district and remoteness results with counts;</li>
+<li>the ten largest absolute errors;</li>
+<li>temporal drift evidence; and</li>
+<li>whether errors meet actual planning tolerance.</li>
+</ul>
+<p>If diagnostics motivate a revision, mark the start of a new development cycle.</p>
+<h2 id="read-the-runnable-capstone-by-function">Read the runnable capstone by function</h2>
+<table>
+<thead>
+<tr>
+<th>Function/component</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>make_preprocessor</code></td>
+<td>Defines numeric and categorical training transformations</td>
+</tr>
+<tr>
+<td><code>make_pipeline</code></td>
+<td>Joins preprocessing to one model</td>
+</tr>
+<tr>
+<td><code>regression_metrics</code></td>
+<td>Computes pre-specified test summaries</td>
+</tr>
+<tr>
+<td><code>bootstrap_mae_interval</code></td>
+<td>Quantifies row-resampling uncertainty</td>
+</tr>
+<tr>
+<td><code>prediction_table</code></td>
+<td>Preserves project-level evidence</td>
+</tr>
+<tr>
+<td><code>subgroup_report</code></td>
+<td>Summarises operational groups</td>
+</tr>
+<tr>
+<td>feature audit assertions</td>
+<td>Enforce timing and identifier rules</td>
+</tr>
+<tr>
+<td>chronological masks</td>
+<td>Create train, validation, and test periods</td>
+</tr>
+<tr>
+<td>candidate loop</td>
+<td>Fits each procedure on train and scores validation</td>
+</tr>
+<tr>
+<td>selected refit</td>
+<td>Learns from all development data after selection</td>
+</tr>
+<tr>
+<td>final test block</td>
+<td>Produces the one locked evaluation</td>
+</tr>
+</tbody>
+</table>
+<p>Run it, then inspect the exported prediction CSV rather than reading only console averages.</p>
+<h2 id="capstone-interpretation-checklist">Capstone interpretation checklist</h2>
+<ol>
+<li>Did the selected procedure beat the training-fitted baseline on validation and test?</li>
+<li>Did procedure ranking change between validation and test?</li>
+<li>Is error small relative to planning tolerance, not merely relative to a competitor?</li>
+<li>Which groups fail, and how many observations support each estimate?</li>
+<li>Does ME show systematic underbudgeting?</li>
+<li>Do later years show drift?</li>
+<li>Why is final material bill prohibited despite its predictive score?</li>
+<li>Are tree thresholds predictive patterns rather than causal effects?</li>
+<li>Does an OLS win prove the true mechanism is linear? No.</li>
+<li>What fresh evidence is needed after revision?</li>
+</ol>
+<h2 id="self-assessment-rubric">Self-assessment rubric</h2>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Research-ready beginner habit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Contract</td>
+<td>Timing, units, permitted information, deployment, and blockers are explicit</td>
+</tr>
+<tr>
+<td>Numerics</td>
+<td>Scaling, rank, conditioning, solver, and tolerance are examined</td>
+</tr>
+<tr>
+<td>Probability</td>
+<td>Interval type and assumptions are stated</td>
+</tr>
+<tr>
+<td>Optimisation</td>
+<td>Gradient is checked and convergence compared with a direct solver</td>
+</tr>
+<tr>
+<td>Validation</td>
+<td>Split matches deployment and selection remains inside its boundary</td>
+</tr>
+<tr>
+<td>Metrics</td>
+<td>Baseline, decision loss, uncertainty, and subgroup risk are integrated</td>
+</tr>
+<tr>
+<td>Diagnostics</td>
+<td>Patterns generate hypotheses without reusing test as confirmation</td>
+</tr>
+<tr>
+<td>Reproducibility</td>
+<td>Data recipe, seed, code, versions, and outputs are traceable</td>
+</tr>
+<tr>
+<td>Communication</td>
+<td>Recommendation includes magnitude, limitations, and blocking conditions</td>
+</tr>
+</tbody>
+</table>
+<hr /></template><template id="companion-template-reference"><h1 id="formula-sheet-with-plain-language-readings">Formula sheet with plain-language readings</h1>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Formula</th>
+<th>Read it as...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Standardisation</td>
+<td>$z_{ij}=(x_{ij}-\mu_j)/s_j$</td>
+<td>Centre and scale using training statistics</td>
+</tr>
+<tr>
+<td>Condition number</td>
+<td>$\kappa_2(X)=\sigma_{max}/\sigma_{min}$</td>
+<td>Imbalance between strongest and weakest directions</td>
+</tr>
+<tr>
+<td>QR</td>
+<td>$X=QR$</td>
+<td>Orthonormal directions times triangular coordinates</td>
+</tr>
+<tr>
+<td>QR least squares</td>
+<td>$R\hat\beta=Q^Ty$</td>
+<td>Project, then solve a triangular system</td>
+</tr>
+<tr>
+<td>SVD</td>
+<td>$X=U\Sigma V^T$</td>
+<td>Rotate, stretch, rotate</td>
+</tr>
+<tr>
+<td>Pseudoinverse</td>
+<td>$X^+=V\Sigma^+U^T$</td>
+<td>Invert retained singular directions</td>
+</tr>
+<tr>
+<td>SVD solution</td>
+<td>$\hat\beta=V\Sigma^+U^Ty$</td>
+<td>Minimum-norm least-squares solution</td>
+</tr>
+<tr>
+<td>Statistical model</td>
+<td>$y=X\beta+\varepsilon$</td>
+<td>Conditional mean plus unobserved error</td>
+</tr>
+<tr>
+<td>Gaussian errors</td>
+<td>$\varepsilon\sim\mathcal N(0,\sigma^2I)$</td>
+<td>Independent equal-variance normal errors</td>
+</tr>
+<tr>
+<td>Log-likelihood</td>
+<td>$C-\frac n2\log\sigma^2-\frac{SSR}{2\sigma^2}$</td>
+<td>Gaussian fit rewards smaller SSR</td>
+</tr>
+<tr>
+<td>Residual variance</td>
+<td>$s^2=SSR/(n-k)$</td>
+<td>Noise estimate using residual degrees of freedom</td>
+</tr>
+<tr>
+<td>Coefficient covariance</td>
+<td>$s^2(X^TX)^{-1}$</td>
+<td>Classical sampling uncertainty matrix</td>
+</tr>
+<tr>
+<td>Coefficient CI</td>
+<td>$\hat\beta_j\pm t^*SE(\hat\beta_j)$</td>
+<td>Repeated-sampling interval procedure</td>
+</tr>
+<tr>
+<td>Mean SE</td>
+<td>$s\sqrt{x_0^T(X^TX)^{-1}x_0}$</td>
+<td>Uncertainty in estimated conditional mean</td>
+</tr>
+<tr>
+<td>Prediction SE</td>
+<td>$s\sqrt{1+x_0^T(X^TX)^{-1}x_0}$</td>
+<td>Mean uncertainty plus individual noise</td>
+</tr>
+<tr>
+<td>MSE objective</td>
+<td>$J=\lVert y-X\beta\rVert^2/n$</td>
+<td>Average squared training loss</td>
+</tr>
+<tr>
+<td>MSE gradient</td>
+<td>$\nabla J=2X^T(X\beta-y)/n$</td>
+<td>Local uphill direction</td>
+</tr>
+<tr>
+<td>GD update</td>
+<td>$\beta^{t+1}=\beta^t-\eta\nabla J$</td>
+<td>Take a learning-rate-sized downhill step</td>
+</tr>
+<tr>
+<td>Mean baseline</td>
+<td>$\hat c=\bar y_{train}$</td>
+<td>Best constant under squared loss</td>
+</tr>
+<tr>
+<td>Median baseline</td>
+<td>$\hat c=\operatorname{median}(y_{train})$</td>
+<td>Best constant under absolute loss</td>
+</tr>
+<tr>
+<td>Training risk</td>
+<td>$n^{-1}\sum_iL(y_i,f(x_i))$</td>
+<td>Average observed training loss</td>
+</tr>
+<tr>
+<td>Generalisation risk</td>
+<td>$\mathbb E_{deployment}[L(Y,f(X))]$</td>
+<td>Expected loss where model will be used</td>
+</tr>
+<tr>
+<td>CV loss</td>
+<td>$K^{-1}\sum_kL_k$</td>
+<td>Average held-out fold loss</td>
+</tr>
+<tr>
+<td>ME</td>
+<td>$n^{-1}\sum_i e_i$</td>
+<td>Directional error</td>
+</tr>
+<tr>
+<td>MAE</td>
+<td>$n^{-1}\sum_i</td>
+<td>e_i</td>
+</tr>
+<tr>
+<td>RMSE</td>
+<td>$\sqrt{n^{-1}\sum_i e_i^2}$</td>
+<td>Large-error-sensitive summary in target units</td>
+</tr>
+<tr>
+<td>MedAE</td>
+<td>$\operatorname{median}(</td>
+<td>e_i</td>
+</tr>
+<tr>
+<td>$R^2$</td>
+<td>$1-SSR/TSS$</td>
+<td>Squared-error comparison with evaluation mean</td>
+</tr>
+<tr>
+<td>WAPE</td>
+<td>$\sum</td>
+<td>e_i</td>
+</tr>
+<tr>
+<td>Pinball loss</td>
+<td>Piecewise $\tau$-weighted loss</td>
+<td>Asymmetric loss targeting a conditional quantile</td>
+</tr>
+</tbody>
+</table>
+<h2 id="shape-sheet">Shape sheet</h2>
+<p>For $n$ observations and $k$ design columns:</p>
+<table>
+<thead>
+<tr>
+<th>Object</th>
+<th>Shape</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$X$</td>
+<td>$(n,k)$</td>
+</tr>
+<tr>
+<td>$y$, predictions, residuals</td>
+<td>$(n,)$</td>
+</tr>
+<tr>
+<td>$\beta$, gradient</td>
+<td>$(k,)$</td>
+</tr>
+<tr>
+<td>Reduced $Q$</td>
+<td>$(n,k)$</td>
+</tr>
+<tr>
+<td>$R$</td>
+<td>$(k,k)$</td>
+</tr>
+<tr>
+<td>Reduced $U$</td>
+<td>$(n,r)$ or <code>(n, min(n,k))</code> computationally</td>
+</tr>
+<tr>
+<td>singular values</td>
+<td><code>(min(n,k),)</code></td>
+</tr>
+<tr>
+<td>$V^T$</td>
+<td><code>(min(n,k), k)</code></td>
+</tr>
+<tr>
+<td>coefficient covariance</td>
+<td>$(k,k)$</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="expanded-glossary">Expanded glossary</h1>
+<p><strong>Algorithm:</strong> Computational procedure. A learning procedure also includes preprocessing, tuning, and selection.</p>
+<p><strong>Baseline:</strong> Simple reference model a candidate should beat under the same evaluation.</p>
+<p><strong>Batch gradient descent:</strong> Uses all training observations for each update.</p>
+<p><strong>Bias–variance decomposition:</strong> Repeated-sampling squared-error decomposition into squared bias, estimator variance, and irreducible noise.</p>
+<p><strong>Bootstrap:</strong> Repeatedly resamples observed units with replacement to approximate sampling variability.</p>
+<p><strong>Condition number:</strong> Measure of how strongly perturbations can be amplified.</p>
+<p><strong>Confidence interval:</strong> Repeated-sampling procedure designed for stated long-run coverage under assumptions.</p>
+<p><strong>Constant prices:</strong> Monetary values converted to a common price-year basis.</p>
+<p><strong>Cross-validation:</strong> Development design where rows or groups take turns as held-out data.</p>
+<p><strong>Data leakage:</strong> Illegitimate information flow across timing, training, selection, or evaluation boundaries.</p>
+<p><strong>Degrees of freedom:</strong> Independent information remaining after fitted constraints in a specified model.</p>
+<p><strong>Density:</strong> Relative concentration of a continuous probability distribution.</p>
+<p><strong>Distribution shift:</strong> Difference between training and deployment distributions.</p>
+<p><strong>Empirical risk:</strong> Average loss on an observed dataset.</p>
+<p><strong>Error term:</strong> Unobserved deviation from a population conditional mean.</p>
+<p><strong>Exchangeable:</strong> Observations whose ordering does not change their joint probabilistic role under a model; informally, similarly generated units for a random split.</p>
+<p><strong>Extrapolation:</strong> Prediction outside feature regions well represented in training.</p>
+<p><strong>Generalisation:</strong> Performance on genuinely new intended-deployment cases.</p>
+<p><strong>Gradient descent:</strong> Iterative optimisation that moves parameters opposite the gradient.</p>
+<p><strong>Heteroskedasticity:</strong> Conditional error variance changes with observations or features.</p>
+<p><strong>Hyperparameter:</strong> Setting chosen outside parameter fitting, often using validation evidence.</p>
+<p><strong>Ill-conditioning:</strong> Small input changes can cause large solution changes.</p>
+<p><strong>Imputation:</strong> Replacement of missing values using a stated learned rule.</p>
+<p><strong>Irreducible noise:</strong> Outcome variability not eliminated by knowing the modeled relationship.</p>
+<p><strong>Learning curve:</strong> Training and evaluation performance plotted against training-set size.</p>
+<p><strong>Likelihood:</strong> Function comparing parameter values with observed data fixed.</p>
+<p><strong>Log-likelihood:</strong> Logarithm of likelihood, converting products to sums.</p>
+<p><strong>Maximum likelihood:</strong> Chooses parameters maximising likelihood under a specified model.</p>
+<p><strong>Mini-batch gradient descent:</strong> Uses a subset of training rows for each update.</p>
+<p><strong>Nested cross-validation:</strong> Outer evaluation loop surrounding inner model selection.</p>
+<p><strong>Numerical rank:</strong> Singular directions retained as nonzero at a stated tolerance and scale.</p>
+<p><strong>Numerical stability:</strong> Extent to which an algorithm avoids magnifying rounding error unnecessarily.</p>
+<p><strong>One-hot encoding:</strong> Represents a category with indicator columns.</p>
+<p><strong>Orthonormal:</strong> Mutually perpendicular vectors, each of length one.</p>
+<p><strong>Overfitting:</strong> Learning sample-specific patterns that do not generalise.</p>
+<p><strong>Parameter:</strong> Value learned inside a fitted model or transformer.</p>
+<p><strong>Pipeline:</strong> One bounded procedure joining learned transformations and a model.</p>
+<p><strong>Prediction interval:</strong> Interval for an individual future outcome, including outcome noise.</p>
+<p><strong>Pseudoinverse:</strong> Generalised inverse expressing least-squares solutions in full- or deficient-rank cases.</p>
+<p><strong>QR decomposition:</strong> Factorisation into orthonormal-column $Q$ and upper-triangular $R$.</p>
+<p><strong>Quantile:</strong> Value below which a specified proportion lies.</p>
+<p><strong>Residual:</strong> Observed target minus fitted prediction.</p>
+<p><strong>Selection bias in evaluation:</strong> Optimism when data used for selection also influence reported performance.</p>
+<p><strong>Singular value:</strong> Nonnegative SVD scale describing strength of a matrix direction.</p>
+<p><strong>Stochastic gradient descent:</strong> Uses one observation per parameter update.</p>
+<p><strong>Test set:</strong> Data reserved for final evaluation after procedure is fixed.</p>
+<p><strong>Training set:</strong> Data permitted to fit transformations and model parameters.</p>
+<p><strong>Underfitting:</strong> Failure to capture useful structure because procedure is too restricted.</p>
+<p><strong>Validation set:</strong> Development data used to compare procedures and choose hyperparameters.</p>
+<hr />
+<h1 id="research-reading-guide">Research reading guide</h1>
+<p>For each paper, answer:</p>
+<ol>
+<li>What exact question is asked?</li>
+<li>Is the object a parameter, predictor, algorithm, selection procedure, or evaluation estimate?</li>
+<li>Is the evidence a theorem, simulation, benchmark, observational analysis, or case study?</li>
+<li>What did the authors actually establish?</li>
+<li>Which assumptions or settings limit transfer?</li>
+<li>What should change in the MHP workflow?</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Paper</th>
+<th>Main object</th>
+<th>Warning</th>
+<th>Workflow consequence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Breiman (2001)</td>
+<td>Modeling cultures</td>
+<td>Elegant stochastic models may be weakly checked</td>
+<td>Compare transparent and algorithmic models on purpose-relevant evidence</td>
+</tr>
+<tr>
+<td>Cawley &amp; Talbot (2010)</td>
+<td>Selection procedure</td>
+<td>Model selection itself can overfit</td>
+<td>Evaluate complete selection procedures with nested CV or locked test</td>
+</tr>
+<tr>
+<td>Bengio &amp; Grandvalet (2004)</td>
+<td>CV variance</td>
+<td>No universal unbiased variance estimator from usual folds</td>
+<td>Do not turn fold SD into an automatic interval</td>
+</tr>
+</tbody>
+</table>
+<p>Small replication portfolio:</p>
+<ol>
+<li>Generate many datasets and compare tree-depth training/validation optimism.</li>
+<li>Increase the number of hyperparameters tried and measure inner-to-outer gaps.</li>
+<li>Compare within-dataset fold variation with across-dataset variation of mean CV performance.</li>
+</ol>
+<p>For every notebook, pre-write the question and expected result, save seeds and versions, label axes and units, separate observation from interpretation, and state one limitation.</p>
+<hr />
+<h1 id="suggested-seven-day-study-schedule">Suggested seven-day study schedule</h1>
+<table>
+<thead>
+<tr>
+<th>Activity</th>
+<th style="text-align: right;">Minutes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Retrieve Chapter 1 knowledge</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr>
+<td>Work through central derivation</td>
+<td style="text-align: right;">40</td>
+</tr>
+<tr>
+<td>Run and alter proof code</td>
+<td style="text-align: right;">35</td>
+</tr>
+<tr>
+<td>Inspect or create figure</td>
+<td style="text-align: right;">25</td>
+</tr>
+<tr>
+<td>Extend estimator/evaluation</td>
+<td style="text-align: right;">40</td>
+</tr>
+<tr>
+<td>Break and diagnose</td>
+<td style="text-align: right;">30</td>
+</tr>
+<tr>
+<td>Exit check and reflection</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td style="text-align: right;"><strong>200</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Day 11 may require two sessions. Nested validation is conceptually dense; drawing every inner and outer boundary is more valuable than memorising an API call.</p>
+<p>Morning retrieval prompts:</p>
+<ul>
+<li>After Day 6: What does condition number measure, and where does a scaler fit?</li>
+<li>After Day 7: How do QR and SVD solve least squares?</li>
+<li>After Day 8: Why does Gaussian MLE produce OLS, and which interval is wider?</li>
+<li>After Day 9: Write the gradient and explain learning rate.</li>
+<li>After Day 10: Derive the mean baseline and define deployment risk.</li>
+<li>After Day 11: Which nested-CV loop selects and which evaluates?</li>
+<li>After Day 12: Why is one average score insufficient?</li>
+</ul>
+<hr />
+<h1 id="common-beginner-confusions">Common beginner confusions</h1>
+<table>
+<thead>
+<tr>
+<th>Confusion</th>
+<th>Correction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scaling adds information</td>
+<td>It changes representation only</td>
+</tr>
+<tr>
+<td>Full rank means stable coefficients</td>
+<td>Full-rank matrices can be ill-conditioned</td>
+</tr>
+<tr>
+<td>SVD fixes multicollinearity</td>
+<td>It diagnoses directions and selects a solution; it cannot identify redundant effects</td>
+</tr>
+<tr>
+<td>OLS requires normal raw data</td>
+<td>OLS fitting does not; particular inference formulas add assumptions</td>
+</tr>
+<tr>
+<td>Residual equals true error</td>
+<td>Residual uses estimated parameters and fitting constraints</td>
+</tr>
+<tr>
+<td>Gradient descent is automatically more accurate</td>
+<td>It is another optimiser and should reach the same OLS minimum</td>
+</tr>
+<tr>
+<td>Lowest training error wins</td>
+<td>Training error rewards flexibility and cannot establish generalisation</td>
+</tr>
+<tr>
+<td>Random split is always objective</td>
+<td>It can violate group and time structure</td>
+</tr>
+<tr>
+<td>Pipeline is code convenience</td>
+<td>It protects the learning boundary</td>
+</tr>
+<tr>
+<td>CV removes need for final evaluation</td>
+<td>Repeated selection can overfit development evidence</td>
+</tr>
+<tr>
+<td>Test $R^2=0$ equals training dummy</td>
+<td>Standard denominator uses evaluation-set mean</td>
+</tr>
+<tr>
+<td>Fold SD is a 95% interval</td>
+<td>Fold scores are dependent and possibly heterogeneous</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="responsible-interpretation-in-the-kp-context">Responsible interpretation in the KP context</h1>
+<p>Keep asking:</p>
+<ul>
+<li>Was each field genuinely known at appraisal?</li>
+<li>Are costs in the same base year and do they treat community contributions consistently?</li>
+<li>Does road distance always mean distance to an all-weather road?</li>
+<li>Is terrain scored consistently across survey teams?</li>
+<li>Do projects share contracts, contractors, valleys, or administrative processes?</li>
+<li>Did procurement policy change during the data period?</li>
+<li>Are delayed or abandoned remote projects absent from completed-project data?</li>
+<li>Does a random split place near-identical local conditions on both sides?</li>
+<li>Would systematic underprediction deny remote communities adequate budgets?</li>
+<li>Are subgroup differences supported by enough projects?</li>
+</ul>
+<p>Numerical correctness, statistical validity, and institutional responsibility meet at these questions.</p>
+<hr />
+<h1 id="where-chapter-3-begins">Where Chapter 3 begins</h1>
+<p>Chapter 2 builds an honest framework around OLS and a nonlinear comparator. Chapter 3 can now add:</p>
+<ol>
+<li>polynomial and interaction features;</li>
+<li>ridge and lasso regularisation;</li>
+<li>geometric and Bayesian views of penalties;</li>
+<li>robust and quantile regression;</li>
+<li>heteroskedasticity-robust and cluster-aware inference;</li>
+<li>influence, leverage, and Cook's distance;</li>
+<li>repeated and nested model comparison; and</li>
+<li>a pre-registered benchmark study.</li>
+</ol>
+<p>Every future model must travel through the same chain:</p>
+<pre><code class="language-text">deployment question
+    -&gt; permitted information
+    -&gt; complete learning procedure
+    -&gt; matching validation design
+    -&gt; uncertainty and subgroup diagnostics
+    -&gt; bounded decision
+</code></pre>
+<p>A trustworthy model is not certified by elegant mathematics or an impressive score alone. Trust grows from an auditable chain of stable computation, explicit assumptions, legitimate information, deployment-matched evaluation, quantified uncertainty, investigated failures, and restraint in the final claim.</p></template>
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    var store = {};
-    var area = document.querySelector('.companion-details-area');
-    if (!area) return;
+(function () {
+    var modal = document.getElementById('companion-more-modal');
+    var body = document.getElementById('companion-more-body');
+    var close = modal && modal.querySelector('.companion-more-close');
+    var previousFocus = null;
+    if (!modal || !body || !close) return;
 
-    var currentSection = null;
-    var currentElements = [];
-    var sibling = area.nextElementSibling;
-
-    while (sibling) {
-        if (sibling.classList.contains('companion-detail-heading')) {
-            if (currentSection) {
-                store[currentSection] = currentElements;
-            }
-            currentSection = sibling.getAttribute('data-section');
-            currentElements = [];
-        } else {
-            if (currentSection) {
-                currentElements.push(sibling.cloneNode(true));
-            }
-        }
-        sibling = sibling.nextElementSibling;
-    }
-    if (currentSection) {
-        store[currentSection] = currentElements;
+    function closeModal() {
+        modal.hidden = true;
+        body.replaceChildren();
+        document.body.style.overflow = '';
+        if (previousFocus) previousFocus.focus();
     }
 
-    // Wire up buttons
-    document.querySelectorAll('.read-details-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            var section = this.getAttribute('data-section');
-            var elements = store[section];
-            var modalBody = document.getElementById('comp-modal-body');
-            modalBody.innerHTML = '';
-
-            if (elements && elements.length > 0) {
-                elements.forEach(function(el) {
-                    el.style.display = '';
-                    modalBody.appendChild(el);
-                });
-
-                // Trigger MathJax typesetting if loaded
-                if (window.MathJax && window.MathJax.typesetPromise) {
-                    window.MathJax.typesetPromise([modalBody]);
-                }
-            } else {
-                modalBody.innerHTML = '<p>No details found for this section.</p>';
-            }
-
-            var modal = document.getElementById('companion-modal');
-            modal.style.display = 'flex';
-            // Reflow
-            modal.offsetHeight;
-            modal.classList.add('open');
+    document.querySelectorAll('.companion-more-button').forEach(function (button) {
+        button.addEventListener('click', function () {
+            var key = button.getAttribute('data-companion-section');
+            var template = document.getElementById('companion-template-' + key);
+            if (!template) return;
+            previousFocus = button;
+            body.replaceChildren(template.content.cloneNode(true));
+            modal.hidden = false;
             document.body.style.overflow = 'hidden';
+            close.focus();
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise([body]);
+            }
         });
     });
-
-    // Close modal function
-    function closeModal() {
-        var modal = document.getElementById('companion-modal');
-        modal.classList.remove('open');
-        setTimeout(function() {
-            modal.style.display = 'none';
-            document.body.style.overflow = '';
-        }, 300);
+    close.addEventListener('click', closeModal);
+    modal.addEventListener('click', function (event) {
+        if (event.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && !modal.hidden) closeModal();
+    });
+    var requestedSection = new URLSearchParams(window.location.search).get('companion');
+    if (requestedSection) {
+        var requestedButton = Array.from(
+            document.querySelectorAll('.companion-more-button')
+        ).find(function (button) {
+            return button.getAttribute('data-companion-section') === requestedSection;
+        });
+        if (requestedButton) requestedButton.click();
     }
-
-    document.querySelector('.comp-modal-close').addEventListener('click', closeModal);
-    window.addEventListener('click', function(event) {
-        var modal = document.getElementById('companion-modal');
-        if (event.target === modal) {
-            closeModal();
-        }
-    });
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            closeModal();
-        }
-    });
-});
+})();
 </script>
 
-<hr />
-<h1 class="companion-details-area" id="companion-details-area">Companion Details Area</h1>
-<h2 class="companion-detail-heading" data-section="2a-1" id="detail-2a-1">Detail 2A 1</h2>
-<h3 id="condition-number-and-numerical-stability">Condition Number and Numerical Stability</h3>
-<ul>
-<li>An <strong>ill-conditioned</strong> problem is one where a tiny change in data causes a massive change in the fitted coefficients [cite: 15].</li>
-<li>The 2-norm condition number of a matrix $X$ is the ratio of its largest to smallest singular value [cite: 15]:<br />
-  $$\kappa_2(X) = \frac{\sigma_{\max}(X)}{\sigma_{\min}(X)}$$</li>
-<li>Features with wildly different units (e.g., kW vs. km) create numerical imbalance, increasing the condition number and making optimization algorithms (like gradient descent) unstable [cite: 15].</li>
-</ul>
-<h2 class="companion-detail-heading" data-section="2a-2" id="detail-2a-2">Detail 2A 2</h2>
-<h3 id="condition-number-and-numerical-stability_1">Condition Number and Numerical Stability</h3>
-<ul>
-<li>An <strong>ill-conditioned</strong> problem is one where a tiny change in data causes a massive change in the fitted coefficients [cite: 15].</li>
-<li>The 2-norm condition number of a matrix $X$ is the ratio of its largest to smallest singular value [cite: 15]:<br />
-  $$\kappa_2(X) = \frac{\sigma_{\max}(X)}{\sigma_{\min}(X)}$$</li>
-<li>Features with wildly different units (e.g., kW vs. km) create numerical imbalance, increasing the condition number and making optimization algorithms (like gradient descent) unstable [cite: 15].</li>
-</ul>
-<h2 class="companion-detail-heading" data-section="2a-3" id="detail-2a-3">Detail 2A 3</h2>
-<h3 id="standardizing-features">Standardizing Features</h3>
-<p>To fix numerical imbalance, we standardize features using <strong>training data statistics</strong> [cite: 15]:<br />
-$$z_{ij} = \frac{x_{ij} - \mu_j}{s_j}$$<br />
-* $\mu_j$: Mean of feature $j$ in the training set [cite: 15].<br />
-* $s_j$: Standard deviation of feature $j$ in the training set [cite: 15].</p>
-<p><strong>CRITICAL RULE (Preprocessing Leakage):</strong> You must <em>never</em> use the test set to calculate $\mu_j$ or $s_j$ [cite: 15]. The test set must be transformed using the parameters learned exclusively from the training set [cite: 15].</p>
-<h2 class="companion-detail-heading" data-section="2a-6" id="detail-2a-6">Detail 2A 6</h2>
-<h3 id="how-scaling-affects-coefficients">How Scaling Affects Coefficients</h3>
-<p>Scaling changes the numerical value of coefficients but does not change the final predictions [cite: 15]. If $\gamma_j$ are the coefficients of the scaled model, the original-unit coefficients are recovered via [cite: 15]:<br />
-$$\beta_j = \frac{\gamma_j}{s_j}$$<br />
-$$\beta_0 = \gamma_0 - \sum_j \frac{\gamma_j \mu_j}{s_j}$$</p>
-<hr />
-<h2 class="companion-detail-heading" data-section="2b-2" id="detail-2b-2">Detail 2B 2</h2>
-<h3 id="qr-decomposition">QR Decomposition</h3>
-<p>Factor the design matrix into $X = QR$ [cite: 15]:<br />
-* $Q$: Orthonormal columns ($Q^TQ = I$) [cite: 15].<br />
-* $R$: Upper-triangular matrix [cite: 15].<br />
-* Substitute into the OLS objective to get: $R\hat{\beta} = Q^Ty$ [cite: 15]. Because $R$ is triangular, we solve for $\hat{\beta}$ using fast back-substitution instead of matrix inversion [cite: 15].</p>
-<h2 class="companion-detail-heading" data-section="2b-5" id="detail-2b-5">Detail 2B 5</h2>
-<h3 id="singular-value-decomposition-svd">Singular Value Decomposition (SVD)</h3>
-<p>Factor the matrix into $X = U\Sigma V^T$ [cite: 15]:<br />
-* $U, V$: Orthonormal rotation matrices [cite: 15].<br />
-* $\Sigma$: Diagonal matrix of singular values $\sigma$ (stretching factors) [cite: 15].<br />
-* A tiny singular value warns us that the data contains very little independent information in that specific parameter direction [cite: 15].</p>
-<h2 class="companion-detail-heading" data-section="2b-6" id="detail-2b-6">Detail 2B 6</h2>
-<h2 id="2-day-7-qr-svd-rank-and-the-pseudoinverse">2. Day 7: QR, SVD, Rank, and the Pseudoinverse</h2>
-<p>Explicitly calculating the normal equations $(X^TX)^{-1}X^Ty$ squares the condition number ($\kappa_2(X^TX) = \kappa_2(X)^2$), which magnifies floating-point errors [cite: 15]. We bypass this using direct matrix decompositions [cite: 15].</p>
-<h2 class="companion-detail-heading" data-section="2c-4" id="detail-2c-4">Detail 2C 4</h2>
-<h3 id="the-classical-gaussian-model">The Classical Gaussian Model</h3>
-<p>Assume the target is generated by a systematic component plus random Gaussian noise [cite: 15]:<br />
-$$Y_i \mid X_i = x_i \sim \mathcal{N}(x_i^T\beta, \sigma^2)$$<br />
-<strong>Assumptions included here [cite: 15]:</strong> Linearity, mean-zero independent errors, constant variance (homoskedasticity), and normal distribution [cite: 15].</p>
-<h2 class="companion-detail-heading" data-section="2c-5" id="detail-2c-5">Detail 2C 5</h2>
-<h3 id="maximum-likelihood-estimation-mle">Maximum Likelihood Estimation (MLE)</h3>
-<p>The Log-Likelihood of the Gaussian model is [cite: 15]:<br />
-$$\ell(\beta, \sigma^2) = -\frac{n}{2}\log(2\pi) - \frac{n}{2}\log(\sigma^2) - \frac{1}{2\sigma^2}\sum_{i=1}^{n}(y_i - x_i^T\beta)^2$$<br />
-Because we want to <em>maximize</em> this function with respect to $\beta$, and the last term is negative, we must <em>minimize</em> the sum of squared residuals [cite: 15]. <br />
-<strong>Conclusion:</strong> Under Gaussian noise, Maximum Likelihood exactly equals Ordinary Least Squares [cite: 15].</p>
-<h2 class="companion-detail-heading" data-section="2c-10" id="detail-2c-10">Detail 2C 10</h2>
-<h3 id="uncertainty-and-intervals">Uncertainty and Intervals</h3>
-<ul>
-<li><strong>Residual Variance ($s^2$):</strong> $s^2 = \frac{SSR}{n-k}$ (where $k$ is the number of parameters). We divide by $n-k$ because fitting $k$ parameters consumes $k$ degrees of freedom [cite: 15].</li>
-<li><strong>Confidence Interval:</strong> Bounds the uncertainty of the <em>estimated mean cost</em> of projects [cite: 15].</li>
-<li><strong>Prediction Interval:</strong> Bounds the uncertainty for <em>one specific new project</em> [cite: 15]. It is always wider than the confidence interval because it must account for irreducible individual project noise ($\sigma^2$) [cite: 15].</li>
-</ul>
-<hr />
-<h2 class="companion-detail-heading" data-section="2c-11" id="detail-2c-11">Detail 2C 11</h2>
-<h3 id="uncertainty-and-intervals_1">Uncertainty and Intervals</h3>
-<ul>
-<li><strong>Residual Variance ($s^2$):</strong> $s^2 = \frac{SSR}{n-k}$ (where $k$ is the number of parameters). We divide by $n-k$ because fitting $k$ parameters consumes $k$ degrees of freedom [cite: 15].</li>
-<li><strong>Confidence Interval:</strong> Bounds the uncertainty of the <em>estimated mean cost</em> of projects [cite: 15].</li>
-<li><strong>Prediction Interval:</strong> Bounds the uncertainty for <em>one specific new project</em> [cite: 15]. It is always wider than the confidence interval because it must account for irreducible individual project noise ($\sigma^2$) [cite: 15].</li>
-</ul>
-<hr />
-<h2 class="companion-detail-heading" data-section="2d-2" id="detail-2d-2">Detail 2D 2</h2>
-<h3 id="the-mse-gradient">The MSE Gradient</h3>
-<p>The Mean Squared Error objective is $J(\beta) = \frac{1}{n} \lVert y - X\beta <br />
-Vert_2^2$ [cite: 15]. Its gradient is [cite: 15]:<br />
-$$<br />
-abla_\beta J(\beta) = \frac{2}{n} X^T(X\beta - y)$$</p>
-<h2 class="companion-detail-heading" data-section="2d-3" id="detail-2d-3">Detail 2D 3</h2>
-<h3 id="the-update-rule">The Update Rule</h3>
-<p>We iteratively step in the direction opposite to the gradient [cite: 15]:<br />
-$$\beta^{(t+1)} = \beta^{(t)} - \eta <br />
-abla J(\beta^{(t)})$$<br />
-* $\eta$ (eta) is the <strong>learning rate</strong> (a hyperparameter) [cite: 15].<br />
-* If $\eta$ is too small, learning is agonizingly slow [cite: 15]. If $\eta$ is too large, the algorithm will oscillate wildly and the loss will explode toward infinity [cite: 15].</p>
-<p><strong>Why Standardize Features Here?</strong> Unscaled features create a long, narrow "valley" in the error surface [cite: 15]. Gradient descent will zigzag inefficiently across this valley [cite: 15]. Standardization makes the error bowl more circular, allowing the algorithm to march directly toward the minimum [cite: 15].</p>
-<hr />
-<h2 class="companion-detail-heading" data-section="2e-3" id="detail-2e-3">Detail 2E 3</h2>
-<h3 id="constant-baselines">Constant Baselines</h3>
-<p>Before evaluating a complex model, you must prove it beats a naive baseline [cite: 15]:<br />
-* <strong>Squared-Error Baseline:</strong> Predicting the training <strong>Mean</strong> ($\bar{y}_{train}$) minimizes MSE [cite: 15].<br />
-* <strong>Absolute-Error Baseline:</strong> Predicting the training <strong>Median</strong> minimizes MAE [cite: 15].</p>
-<h2 class="companion-detail-heading" data-section="2e-6" id="detail-2e-6">Detail 2E 6</h2>
-<h3 id="overfitting-vs-underfitting">Overfitting vs. Underfitting</h3>
-<ul>
-<li><strong>Underfitting:</strong> The model is too simple to capture the underlying pattern (high training error, high validation error) [cite: 15].</li>
-<li><strong>Overfitting:</strong> The model memorizes training noise instead of the signal (low training error, high validation error) [cite: 15].</li>
-</ul>
-<h2 class="companion-detail-heading" data-section="2e-7" id="detail-2e-7">Detail 2E 7</h2>
-<h3 id="bias-variance-decomposition-conceptual">Bias-Variance Decomposition (Conceptual)</h3>
-<p>Expected test error consists of [cite: 15]:<br />
-$$  ext{Error} =    ext{Squared Bias} +     ext{Variance} +     ext{Irreducible Noise}$$<br />
-* <em>Bias:</em> Systematic miss caused by the model being too rigid [cite: 15].<br />
-* <em>Variance:</em> Sensitivity of the model to random fluctuations in the training sample [cite: 15].</p>
-<hr />
-<h2 class="companion-detail-heading" data-section="2f-1" id="detail-2f-1">Detail 2F 1</h2>
-<h3 id="the-three-roles-of-data">The Three Roles of Data</h3>
-<ol>
-<li><strong>Training:</strong> Learn model parameters and preprocessing scales [cite: 15].</li>
-<li><strong>Validation:</strong> Tune hyperparameters (e.g., tree depth) and compare algorithms [cite: 15].</li>
-<li><strong>Test:</strong> Touched only once to estimate final, unbiased deployment performance [cite: 15].</li>
-</ol>
-<h2 class="companion-detail-heading" data-section="2f-2" id="detail-2f-2">Detail 2F 2</h2>
-<h3 id="types-of-data-splits">Types of Data Splits</h3>
-<ul>
-<li><strong>Random Split:</strong> Assumes observations are completely independent exchangeable units [cite: 15].</li>
-<li><strong>Group Split (<code>GroupKFold</code>):</strong> Keeps related records (e.g., projects from the same district) together to test if the model generalizes to completely <em>new</em> districts [cite: 15].</li>
-<li><strong>Temporal Split:</strong> Trains on the past (2016-2021) and predicts the future (2022) to simulate real-world time deployment [cite: 15].</li>
-</ul>
-<h2 class="companion-detail-heading" data-section="2f-6" id="detail-2f-6">Detail 2F 6</h2>
-<h3 id="data-leakage">Data Leakage</h3>
-<p>Leakage destroys the validity of your evaluation. Forms include [cite: 15]:<br />
-* <strong>Target Leakage:</strong> Using features created <em>after</em> the target occurs (e.g., final material bills) [cite: 15].<br />
-* <strong>Preprocessing Leakage:</strong> Scaling data using statistics ($\mu, \sigma$) calculated from the test set [cite: 15].<br />
-* <strong>Test-Set Leakage:</strong> Tuning the model repeatedly based on test-set scores until it looks good [cite: 15].</p>
-<p><strong>The Solution:</strong> Use <strong>Pipelines</strong> (<code>sklearn.pipeline.Pipeline</code>). Pipelines ensure that imputation and scaling are fit <em>strictly</em> on the training folds inside the cross-validation loop [cite: 15].</p>
-<h2 class="companion-detail-heading" data-section="2f-14" id="detail-2f-14">Detail 2F 14</h2>
-<h3 id="nested-cross-validation">Nested Cross-Validation</h3>
-<p>To prevent model-selection bias (overfitting the validation set) [cite: 15]:<br />
-* <strong>Inner Loop:</strong> Searches for the best hyperparameters (e.g., tree depth) [cite: 15].<br />
-* <strong>Outer Loop:</strong> Evaluates the generalized performance of the <em>entire selection procedure</em> on untouched folds [cite: 15].</p>
-<hr />
-<h2 class="companion-detail-heading" data-section="2g-4" id="detail-2g-4">Detail 2G 4</h2>
-<h3 id="robust-metrics">Robust Metrics</h3>
-<ul>
-<li><strong>MAE (Mean Absolute Error):</strong> $\frac{1}{n}\sum |y_i - \hat{y}_i|$. A linear penalty, robust to extreme outliers [cite: 15].</li>
-<li><strong>RMSE (Root Mean Squared Error):</strong> $\sqrt{\frac{1}{n}\sum (y_i - \hat{y}_i)^2}$. Highly sensitive to large outliers [cite: 15].</li>
-<li><strong>MedAE (Median Absolute Error):</strong> The typical central miss. Highly robust [cite: 15].</li>
-<li><strong>Test-Set $R^2$:</strong> Standard $R^2$ compares model performance to the <em>evaluation-set mean</em>. Under distribution shift, always score against an explicitly trained dummy baseline instead [cite: 15].</li>
-<li><strong>Why MAPE is dangerous:</strong> Mean Absolute Percentage Error explodes toward infinity when the target value is close to zero, and it arbitrarily penalizes over-predictions more than under-predictions [cite: 15].</li>
-</ul>
-<h2 class="companion-detail-heading" data-section="2g-15" id="detail-2g-15">Detail 2G 15</h2>
-<h3 id="uncertainty-and-the-bootstrap">Uncertainty and the Bootstrap</h3>
-<ul>
-<li>A standard $K$-fold cross-validation standard deviation is <strong>not</strong> a valid confidence interval because the training folds overlap and are highly dependent [cite: 15].</li>
-<li>Instead, generate uncertainty intervals around MAE using the <strong>Nonparametric Bootstrap</strong>: resampling the held-out test predictions with replacement thousands of times to estimate the 95% interval [cite: 15].</li>
-</ul>
-<hr />
-<h2 class="companion-detail-heading" data-section="capstone" id="detail-capstone">Detail CAPSTONE</h2>
-<h2 id="8-master-rosetta-stone-formula-sheet">8. Master Rosetta Stone &amp; Formula Sheet</h2>
         </article>
     </div>
 
@@ -5113,11 +6880,11 @@ $$  ext{Error} =    ext{Squared Bias} +     ext{Variance} +     ext{Irreducible 
         };
         (function loadMathJax() {
             var local = document.createElement('script');
-            local.src = '../vendor/mathjax/tex-mml-chtml.js';
+            local.src = '../vendor/mathjax/tex-mml-svg.js';
             local.async = true;
             local.onerror = function () {
                 var cdn = document.createElement('script');
-                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-svg.js';
                 cdn.async = true;
                 document.head.appendChild(cdn);
             };

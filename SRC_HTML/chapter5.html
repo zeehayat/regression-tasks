@@ -511,11 +511,14 @@
             <a href="chapter1_companion.html" class="">Ch. 1 Companion</a>
             <a href="chapter2_companion.html" class="">Ch. 2 Companion</a>
             <a href="chapter3_companion.html" class="">Ch. 3 Companion</a>
+            <a href="chapter4_companion.html" class="">Ch. 4 Companion</a>
+            <a href="chapter5_companion.html" class="">Ch. 5 Companion</a>
             <a href="chapter6_companion.html" class="">Ch. 6 Companion</a>
     </nav>
     
         <article class="markdown-body">
 <h1 id="chapter-5-from-event-labels-to-event-histories">Chapter 5 — From Event Labels to Event Histories</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="overview">✦ Read the beginner companion overview</button></p>
 <h2 id="level-5-research-apprentice-nine-days-of-survival-analysis-dynamic-prediction-and-registered-evidence">Level 5 Research Apprentice: nine days of survival analysis, dynamic prediction, and registered evidence</h2>
 <blockquote>
 <p><strong>Central promise.</strong> Chapter 4 estimated whether an event would occur inside a fixed window. By the end of Chapter 5, you will be able to preserve the time information that a binary label discards: define a time origin and risk set, distinguish censoring from truncation and competing events, derive Kaplan–Meier and Cox estimators, diagnose proportional hazards, update predictions with newly available information, estimate cumulative incidence, evaluate censored predictions at clinically or operationally meaningful horizons, compare nonlinear survival models honestly, and execute a registered temporal study whose uncertainty and causal limits are explicit.</p>
@@ -806,17 +809,18 @@ if __name__ == &quot;__main__&quot;:
 <p>The executable capstone does not require the optional line. That is deliberate: implementing a small Cox model and censoring-aware metrics makes the estimators inspectable. For applied research, use a tested survival package, record its version, and verify its tie handling, variance convention, and prediction target.</p>
 <hr />
 <h1 id="day-30-the-event-history-contract">Day 30 — The Event-History Contract</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-30">✦ Read the beginner companion for Day 30</button></p>
 <blockquote>
 <p><strong>Today's central idea:</strong> A survival dataset records a partially observed process. Before fitting a model, specify what could happen, when observation begins, and why observation ends.</p>
 </blockquote>
 <h2 id="301-the-hidden-pair-of-times">30.1 The hidden pair of times</h2>
 <p>Let $T_i$ be project $i$'s event time and $C_i$ its censoring time. We usually observe neither pair completely. We observe</p>
-<p>$$<br />
-Y_i=\min(T_i,C_i)<br />
+<p>$$
+Y_i=\min(T_i,C_i)
 $$</p>
 <p>and</p>
-<p>$$<br />
-\Delta_i=\mathbb{1}(T_i\le C_i).<br />
+<p>$$
+\Delta_i=\mathbb{1}(T_i\le C_i).
 $$</p>
 <p>If $\Delta_i=1$, the event occurred at $Y_i=T_i$. If $\Delta_i=0$, we know only that $T_i&gt;Y_i=C_i$. A censored observation is therefore an inequality, not a guessed event time.</p>
 <p>Suppose project A triggered a warning at 18 months, while project B had no warning when the database closed at 18 months:</p>
@@ -902,8 +906,8 @@ $$</p>
 <p>Left censoring and left truncation are not synonyms. Censoring hides a time for an observed unit; truncation can remove a unit from the sample entirely.</p>
 <h2 id="304-risk-sets">30.4 Risk sets</h2>
 <p>At an event time $t$, the risk set is</p>
-<p>$$<br />
-R(t)={i:L_i\le t\le Y_i},<br />
+<p>$$
+R(t)=\{i:L_i\le t\le Y_i\},
 $$</p>
 <p>where $L_i$ is entry time. Under an inception cohort, $L_i=0$ for everyone. Under delayed entry, a subject contributes only after entering.</p>
 <p>Consider four projects:</p>
@@ -964,8 +968,8 @@ assert risk_set(toy, 6) == [&quot;C&quot;, &quot;D&quot;]
 </code></pre>
 <h2 id="305-independent-censoring-is-an-assumption">30.5 Independent censoring is an assumption</h2>
 <p>A common working condition is</p>
-<p>$$<br />
-T \text{ is independent of } C \text{ given } X,<br />
+<p>$$
+T \text{ is independent of } C \text{ given } X,
 $$</p>
 <p>meaning that, conditional on recorded covariates $X$, the censoring time carries no additional information about the event time. This does <strong>not</strong> require every project to have the same censoring distribution. Administrative follow-up can differ by approval year if calendar year is represented appropriately.</p>
 <p>The assumption fails when struggling projects disappear from the reporting system for unrecorded reasons related to imminent overruns. No plot can prove the absence of that hidden mechanism. Researchers should:</p>
@@ -1031,47 +1035,48 @@ print(projects.groupby(&quot;censor_reason&quot;)[&quot;follow_up_months&quot;].
 </ol>
 <hr />
 <h1 id="day-31-survival-hazard-and-kaplanmeier">Day 31 — Survival, Hazard, and Kaplan–Meier</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-31">✦ Read the beginner companion for Day 31</button></p>
 <blockquote>
 <p><strong>Today's central idea:</strong> Survival and hazard describe the same event-time distribution from different angles; Kaplan–Meier estimates survival by multiplying conditional survival across observed risk sets.</p>
 </blockquote>
 <h2 id="311-distribution-density-survival-and-hazard">31.1 Distribution, density, survival, and hazard</h2>
 <p>For a non-negative continuous event time $T$, the cumulative distribution function is</p>
-<p>$$<br />
-F(t)=P(T\le t).<br />
+<p>$$
+F(t)=P(T\le t).
 $$</p>
 <p>The survival function is</p>
-<p>$$<br />
-S(t)=P(T&gt;t)=1-F(t).<br />
+<p>$$
+S(t)=P(T&gt;t)=1-F(t).
 $$</p>
 <p>If a density exists,</p>
-<p>$$<br />
-f(t)=\frac{dF(t)}{dt}=-\frac{dS(t)}{dt}.<br />
+<p>$$
+f(t)=\frac{dF(t)}{dt}=-\frac{dS(t)}{dt}.
 $$</p>
 <p>The hazard is the instantaneous event rate among those still event-free:</p>
-<p>$$<br />
-h(t)=\lim_{\Delta t\downarrow0}<br />
-\frac{P(t\le T&lt;t+\Delta t\mid T\ge t)}{\Delta t}<br />
-=\frac{f(t)}{S(t)}.<br />
+<p>$$
+h(t)=\lim_{\Delta t\downarrow0}
+\frac{P(t\le T&lt;t+\Delta t\mid T\ge t)}{\Delta t}
+=\frac{f(t)}{S(t)}.
 $$</p>
 <p>A hazard is not a probability. It is a rate per unit time and can exceed 1. The approximate probability of an event in a short interval of width $\Delta t$, conditional on survival to its start, is $h(t)\Delta t$.</p>
 <h2 id="312-cumulative-hazard-links-rate-and-probability">31.2 Cumulative hazard links rate and probability</h2>
 <p>Define</p>
-<p>$$<br />
-H(t)=\int_0^t h(u)\,du.<br />
+<p>$$
+H(t)=\int_0^t h(u)\,du.
 $$</p>
 <p>Because $h(t)=-S'(t)/S(t)$,</p>
-<p>$$<br />
-H(t)=-\log S(t),<br />
+<p>$$
+H(t)=-\log S(t),
 $$</p>
 <p>and therefore</p>
-<p>$$<br />
-S(t)=\exp[-H(t)].<br />
+<p>$$
+S(t)=\exp[-H(t)].
 $$</p>
 <p>This identity is central. Regression models can describe how covariates multiply a hazard, then integrate the hazard to recover an absolute survival probability.</p>
 <h3 id="constant-hazard-example">Constant-hazard example</h3>
 <p>If $h(t)=\lambda$, then $H(t)=\lambda t$ and</p>
-<p>$$<br />
-S(t)=e^{-\lambda t}.<br />
+<p>$$
+S(t)=e^{-\lambda t}.
 $$</p>
 <p>For $\lambda=0.03$ per month, survival to month 12 is $e^{-0.36}\approx0.698$. The event probability by month 12 is about 0.302. The median solves $S(t)=0.5$, giving $t_{0.5}=\log(2)/\lambda\approx23.1$ months.</p>
 <p>Constant hazard is convenient, not universal. Construction risk may rise as procurement begins and later fall after difficult tasks are completed.</p>
@@ -1082,12 +1087,12 @@ $$</p>
 <li>$d_j$ events occur.</li>
 </ul>
 <p>Conditional on reaching $t_j$, the observed fraction surviving that event time is</p>
-<p>$$<br />
-1-\frac{d_j}{n_j}=\frac{n_j-d_j}{n_j}.<br />
+<p>$$
+1-\frac{d_j}{n_j}=\frac{n_j-d_j}{n_j}.
 $$</p>
 <p>Survival through $t$ is the product of those conditional survivals:</p>
-<p>$$<br />
-\widehat S(t)=\prod_{t_j\le t}\left(1-\frac{d_j}{n_j}\right).<br />
+<p>$$
+\widehat S(t)=\prod_{t_j\le t}\left(1-\frac{d_j}{n_j}\right).
 $$</p>
 <p>This is the Kaplan–Meier product-limit estimator. Censoring changes later risk-set sizes but does not cause a downward step. An event causes the step.</p>
 <h2 id="314-hand-calculation">31.4 Hand calculation</h2>
@@ -1123,8 +1128,8 @@ $$</p>
 </tbody>
 </table>
 <p>At month 2, $n_1=5,d_1=1$, so survival becomes $4/5=0.8$. One project is censored at month 3, leaving three at risk just before month 5. At month 5, $n_2=3,d_2=2$, so</p>
-<p>$$<br />
-\widehat S(5)=\frac45\times\frac13=\frac4{15}\approx0.267.<br />
+<p>$$
+\widehat S(5)=\frac45\times\frac13=\frac4{15}\approx0.267.
 $$</p>
 <p>The order of an event and censoring recorded at exactly the same nominal time requires a convention justified by timestamp precision. Do not let row order decide it accidentally.</p>
 <h2 id="315-kaplanmeier-from-scratch">31.5 Kaplan–Meier from scratch</h2>
@@ -1177,32 +1182,32 @@ assert np.isclose(km.iloc[-1][&quot;survival&quot;], 4 / 15)
 <p>The ordinary standard-error approximation can produce confidence limits outside $[0,1]$. Applied packages often transform survival—for example with a complementary log-log transform—construct an interval on that scale, and transform back.</p>
 <h2 id="316-greenwood-variance">31.6 Greenwood variance</h2>
 <p>Greenwood's approximation is</p>
-<p>$$<br />
-\widehat{\operatorname{Var}}{\widehat S(t)}<br />
-\approx<br />
-\widehat S(t)^2<br />
-\sum_{t_j\le t}\frac{d_j}{n_j(n_j-d_j)}.<br />
+<p>$$
+\widehat{\operatorname{Var}}\{\widehat S(t)\}
+\approx
+\widehat S(t)^2
+\sum_{t_j\le t}\frac{d_j}{n_j(n_j-d_j)}.
 $$</p>
 <p>It quantifies sampling uncertainty under the estimator's assumptions. It does not account for event-definition error, informative censoring, unmeasured clustering, or model selection.</p>
 <p>Wide late intervals are not a plotting defect. They reveal that few subjects remain at risk. Always display numbers at risk below a survival plot.</p>
 <h2 id="317-nelsonaalen-cumulative-hazard">31.7 Nelson–Aalen cumulative hazard</h2>
 <p>The Nelson–Aalen estimator is</p>
-<p>$$<br />
-\widehat H(t)=\sum_{t_j\le t}\frac{d_j}{n_j}.<br />
+<p>$$
+\widehat H(t)=\sum_{t_j\le t}\frac{d_j}{n_j}.
 $$</p>
 <p>Then $\exp[-\widehat H(t)]$ approximates survival. It is not algebraically identical to Kaplan–Meier because</p>
-<p>$$<br />
--\log(1-d_j/n_j)\ne d_j/n_j<br />
+<p>$$
+-\log(1-d_j/n_j)\ne d_j/n_j
 $$</p>
 <p>except approximately for small event fractions. The cumulative-hazard scale is useful for diagnostics and forms the basis of baseline-hazard estimation after Cox regression.</p>
 <h2 id="318-comparing-groups-with-the-log-rank-test">31.8 Comparing groups with the log-rank test</h2>
 <p>At each pooled event time $t_j$, suppose group 1 has $n_{1j}$ of the $n_j$ at-risk subjects. Under equal hazards, its expected event count is</p>
-<p>$$<br />
-e_{1j}=d_j\frac{n_{1j}}{n_j}.<br />
+<p>$$
+e_{1j}=d_j\frac{n_{1j}}{n_j}.
 $$</p>
 <p>Summing observed minus expected counts yields</p>
-<p>$$<br />
-U=\sum_j(d_{1j}-e_{1j}).<br />
+<p>$$
+U=\sum_j(d_{1j}-e_{1j}).
 $$</p>
 <p>With the appropriate hypergeometric variance $V$, $U^2/V$ is compared with a $\chi^2_1$ reference distribution.</p>
 <p>The log-rank test is most sensitive to a roughly proportional separation across time. Crossing survival curves can produce a small statistic even when groups differ meaningfully at particular horizons. A test of equality also does not measure effect size or establish causality.</p>
@@ -1244,13 +1249,14 @@ $$</p>
 </ol>
 <hr />
 <h1 id="day-32-cox-regression-from-partial-likelihood">Day 32 — Cox Regression from Partial Likelihood</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-32">✦ Read the beginner companion for Day 32</button></p>
 <blockquote>
 <p><strong>Today's central idea:</strong> Cox regression compares covariate values inside each event-time risk set. It estimates relative hazards without requiring a parametric formula for the baseline hazard.</p>
 </blockquote>
 <h2 id="321-the-proportional-hazards-model">32.1 The proportional-hazards model</h2>
 <p>For covariate vector $x_i$, the Cox model specifies</p>
-<p>$$<br />
-h(t\mid x_i)=h_0(t)\exp(x_i^\top\beta).<br />
+<p>$$
+h(t\mid x_i)=h_0(t)\exp(x_i^\top\beta).
 $$</p>
 <p>The model has two components:</p>
 <ul>
@@ -1258,20 +1264,20 @@ $$</p>
 <li>$\exp(x_i^\top\beta)$ multiplies that hazard according to covariates.</li>
 </ul>
 <p>Take logs:</p>
-<p>$$<br />
-\log h(t\mid x_i)=\log h_0(t)+x_i^\top\beta.<br />
+<p>$$
+\log h(t\mid x_i)=\log h_0(t)+x_i^\top\beta.
 $$</p>
 <p>The baseline can change freely over time. The covariate score is linear and time-constant unless the model is extended.</p>
 <p>For subjects $a$ and $b$,</p>
-<p>$$<br />
-\frac{h(t\mid x_a)}{h(t\mid x_b)}<br />
-=\exp{(x_a-x_b)^\top\beta}.<br />
+<p>$$
+\frac{h(t\mid x_a)}{h(t\mid x_b)}
+=\exp\{(x_a-x_b)^\top\beta\}.
 $$</p>
 <p>The baseline cancels, so the hazard ratio does not depend on $t$. This is the proportional-hazards assumption.</p>
 <h2 id="322-what-a-hazard-ratio-does-not-say">32.2 What a hazard ratio does not say</h2>
 <p>If a one-unit increase in terrain index has coefficient $\hat\beta=0.30$, its fitted hazard ratio is</p>
-<p>$$<br />
-e^{0.30}\approx1.35.<br />
+<p>$$
+e^{0.30}\approx1.35.
 $$</p>
 <p>Conditional on the model covariates, the instantaneous warning rate among projects still at risk is estimated to be 35% higher. It does <strong>not</strong> mean:</p>
 <ul>
@@ -1284,42 +1290,42 @@ $$</p>
 <p>Hazard conditions on survival to $t$. The members of that surviving group can change over time. Hazard ratios are therefore less intuitive than probability contrasts and should usually be accompanied by absolute survival or cumulative-incidence predictions.</p>
 <h2 id="323-deriving-one-partial-likelihood-term">32.3 Deriving one partial-likelihood term</h2>
 <p>Suppose exactly one event occurs at time $t_j$, and subject $i(j)$ experiences it. Conditional on one member of risk set $R(t_j)$ failing at that time, the Cox model assigns subject $i(j)$ probability</p>
-<p>$$<br />
-\frac{h_0(t_j)\exp(x_{i(j)}^\top\beta)}<br />
-{\sum_{k\in R(t_j)}h_0(t_j)\exp(x_k^\top\beta)}<br />
-=<br />
-\frac{\exp(x_{i(j)}^\top\beta)}<br />
-{\sum_{k\in R(t_j)}\exp(x_k^\top\beta)}.<br />
+<p>$$
+\frac{h_0(t_j)\exp(x_{i(j)}^\top\beta)}
+{\sum_{k\in R(t_j)}h_0(t_j)\exp(x_k^\top\beta)}
+=
+\frac{\exp(x_{i(j)}^\top\beta)}
+{\sum_{k\in R(t_j)}\exp(x_k^\top\beta)}.
 $$</p>
 <p>The unknown baseline hazard cancels. Multiplying over event times gives the partial likelihood</p>
-<p>$$<br />
-L_p(\beta)=<br />
-\prod_{j=1}^{m}<br />
-\frac{\exp(x_{i(j)}^\top\beta)}<br />
-{\sum_{k\in R(t_j)}\exp(x_k^\top\beta)}.<br />
+<p>$$
+L_p(\beta)=
+\prod_{j=1}^{m}
+\frac{\exp(x_{i(j)}^\top\beta)}
+{\sum_{k\in R(t_j)}\exp(x_k^\top\beta)}.
 $$</p>
 <p>It is called <em>partial</em> because it uses the conditional identity of the failing subject to estimate $\beta$ without simultaneously parameterising $h_0(t)$.</p>
 <h2 id="324-log-partial-likelihood-and-score">32.4 Log partial likelihood and score</h2>
 <p>Let $\eta_i=x_i^\top\beta$. With one event at each distinct time,</p>
-<p>$$<br />
-\ell_p(\beta)<br />
-=\sum_{j=1}^{m}<br />
-\left[<br />
-x_{i(j)}^\top\beta<br />
--\log\sum_{k\in R(t_j)}e^{x_k^\top\beta}<br />
-\right].<br />
+<p>$$
+\ell_p(\beta)
+=\sum_{j=1}^{m}
+\left[
+x_{i(j)}^\top\beta
+-\log\sum_{k\in R(t_j)}e^{x_k^\top\beta}
+\right].
 $$</p>
 <p>Define the risk-set weighted mean</p>
-<p>$$<br />
-\bar x(\beta,t)=<br />
-\frac{\sum_{k\in R(t)}x_k e^{x_k^\top\beta}}<br />
-{\sum_{k\in R(t)}e^{x_k^\top\beta}}.<br />
+<p>$$
+\bar x(\beta,t)=
+\frac{\sum_{k\in R(t)}x_k e^{x_k^\top\beta}}
+{\sum_{k\in R(t)}e^{x_k^\top\beta}}.
 $$</p>
 <p>Differentiate:</p>
-<p>$$<br />
-U(\beta)=\frac{\partial\ell_p}{\partial\beta}<br />
-=\sum_{j=1}^{m}<br />
-\left[x_{i(j)}-\bar x(\beta,t_j)\right].<br />
+<p>$$
+U(\beta)=\frac{\partial\ell_p}{\partial\beta}
+=\sum_{j=1}^{m}
+\left[x_{i(j)}-\bar x(\beta,t_j)\right].
 $$</p>
 <p>At the optimum, observed covariates of event subjects balance their model-weighted risk-set expectations. This “observed minus expected” structure will reappear in Schoenfeld residuals.</p>
 <p>The negative Hessian is a sum of weighted risk-set covariance matrices. It supplies curvature for optimisation and, under regularity assumptions, an approximate covariance matrix for $\hat\beta$.</p>
@@ -1440,22 +1446,22 @@ assert np.max(np.abs(model.coef_ - beta_true)) &lt; 0.18
 <p>Repeated samples will not recover the exact generating coefficients. Recovery should be assessed across simulations, censoring levels, sample sizes, tie patterns, and misspecification—not by celebrating one seed.</p>
 <h2 id="328-from-relative-hazard-to-absolute-survival">32.8 From relative hazard to absolute survival</h2>
 <p>After estimating $\hat\beta$, the Breslow baseline cumulative hazard is</p>
-<p>$$<br />
-\widehat H_0(t)=<br />
-\sum_{t_j\le t}<br />
-\frac{d_j}{\sum_{k\in R(t_j)}\exp(x_k^\top\hat\beta)}.<br />
+<p>$$
+\widehat H_0(t)=
+\sum_{t_j\le t}
+\frac{d_j}{\sum_{k\in R(t_j)}\exp(x_k^\top\hat\beta)}.
 $$</p>
 <p>Under the Cox model,</p>
-<p>$$<br />
-\widehat S(t\mid x)<br />
-=\exp\left[-\widehat H_0(t)\exp(x^\top\hat\beta)\right]<br />
-=\widehat S_0(t)^{\exp(x^\top\hat\beta)}.<br />
+<p>$$
+\widehat S(t\mid x)
+=\exp\left[-\widehat H_0(t)\exp(x^\top\hat\beta)\right]
+=\widehat S_0(t)^{\exp(x^\top\hat\beta)}.
 $$</p>
 <p>This step is essential for decision support. A linear predictor ranks relative hazard; it is not itself a probability. Absolute prediction also depends on the estimated baseline and the target population's event process.</p>
 <h2 id="329-penalisation-and-effective-event-information">32.9 Penalisation and effective event information</h2>
 <p>Ridge-penalised Cox regression maximises</p>
-<p>$$<br />
-\ell_p(\beta)-\frac{\lambda}{2}\sum_{j=1}^{p}\beta_j^2.<br />
+<p>$$
+\ell_p(\beta)-\frac{\lambda}{2}\sum_{j=1}^{p}\beta_j^2.
 $$</p>
 <p>Lasso uses $\lambda\sum_j|\beta_j|$, and elastic net combines both. As in earlier chapters, scaling and tuning belong inside resampling. The amount of information is driven more by event counts and risk-set comparisons than by row count alone. Hundreds of covariates with 35 events invite instability even if there are thousands of censored rows.</p>
 <p>Penalisation controls variance; it does not repair an ill-defined time origin, dependent censoring, a missing competing event, or leakage.</p>
@@ -1505,32 +1511,33 @@ $$</p>
 </ol>
 <hr />
 <h1 id="day-33-assumptions-diagnostics-and-alternative-time-scales">Day 33 — Assumptions, Diagnostics, and Alternative Time Scales</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-33">✦ Read the beginner companion for Day 33</button></p>
 <blockquote>
 <p><strong>Today's central idea:</strong> Model checking asks where the fitted representation fails—not whether one omnibus test grants permission to stop thinking.</p>
 </blockquote>
 <h2 id="331-what-proportional-hazards-means">33.1 What proportional hazards means</h2>
 <p>For two profiles, proportional hazards requires</p>
-<p>$$<br />
-\log h(t\mid x_a)-\log h(t\mid x_b)<br />
-=(x_a-x_b)^\top\beta,<br />
+<p>$$
+\log h(t\mid x_a)-\log h(t\mid x_b)
+=(x_a-x_b)^\top\beta,
 $$</p>
 <p>a constant difference over analysis time. It does not require the hazard itself to be constant. Both hazards may rise and fall as long as their ratio is fixed.</p>
 <p>Violations are plausible. Difficult terrain may matter most during early access works; contractor experience may matter later during commissioning. Compressing those processes into constant coefficients can hide sign changes or declining effects.</p>
 <h2 id="332-complementary-log-log-plots">33.2 Complementary log-log plots</h2>
 <p>Under proportional hazards,</p>
-<p>$$<br />
-S(t\mid x)=S_0(t)^{\exp(x^\top\beta)}.<br />
+<p>$$
+S(t\mid x)=S_0(t)^{\exp(x^\top\beta)}.
 $$</p>
 <p>Taking logs twice gives</p>
-<p>$$<br />
-\log[-\log S(t\mid x)]<br />
-=\log[-\log S_0(t)]+x^\top\beta.<br />
+<p>$$
+\log[-\log S(t\mid x)]
+=\log[-\log S_0(t)]+x^\top\beta.
 $$</p>
 <p>Therefore group curves of $\log[-\log\widehat S(t)]$ against $\log t$ should be roughly parallel if a categorical group follows proportional hazards. This is a rough diagnostic: sparse tails, arbitrary grouping of continuous predictors, and competing events can distort it.</p>
 <h2 id="333-schoenfeld-residuals">33.3 Schoenfeld residuals</h2>
 <p>For an event subject at $t_j$, the Schoenfeld residual is</p>
-<p>$$<br />
-r_j=x_{i(j)}-\bar x(\hat\beta,t_j).<br />
+<p>$$
+r_j=x_{i(j)}-\bar x(\hat\beta,t_j).
 $$</p>
 <p>It is the observed event-subject covariate minus its fitted risk-set expectation. Under a correctly specified proportional effect, residuals should not show systematic association with event time. Scaled Schoenfeld residual plots can reveal when and how a coefficient changes.</p>
 <pre><code class="language-python">def schoenfeld_residuals(X, time, event, beta):
@@ -1552,12 +1559,12 @@ $$</p>
 <p>A small global test does not prove proportionality. A large study can flag negligible departures; a small study can miss important ones. Inspect effect plots, uncertainty, and decision consequences.</p>
 <h2 id="334-model-a-time-varying-coefficient">33.4 Model a time-varying coefficient</h2>
 <p>One extension is</p>
-<p>$$<br />
-h(t\mid x)=h_0(t)\exp{x\beta+xg(t)\gamma}.<br />
+<p>$$
+h(t\mid x)=h_0(t)\exp\{x\beta+xg(t)\gamma\}.
 $$</p>
 <p>If $g(t)=\log t$, the log hazard ratio changes linearly with log time:</p>
-<p>$$<br />
-\log HR(t)=\beta+\gamma\log t.<br />
+<p>$$
+\log HR(t)=\beta+\gamma\log t.
 $$</p>
 <p>This can be fitted by constructing the appropriate time interaction in specialised software. A step function before and after a prespecified operational milestone is often easier to communicate. Choosing a cut point after inspecting the most dramatic curve exaggerates evidence.</p>
 <p>If the effect is of no scientific interest but its non-proportionality is a nuisance, stratification can give groups separate baseline hazards. A stratified variable receives no single coefficient.</p>
@@ -1572,19 +1579,19 @@ $$</p>
 <p>Categorising a continuous predictor at a sample-chosen threshold loses information, creates artificial discontinuity, and adds multiplicity.</p>
 <h2 id="336-martingale-deviance-and-influence-residuals">33.6 Martingale, deviance, and influence residuals</h2>
 <p>For subject $i$, a martingale residual has the form</p>
-<p>$$<br />
-M_i=\Delta_i-\widehat H_i(Y_i).<br />
+<p>$$
+M_i=\Delta_i-\widehat H_i(Y_i).
 $$</p>
 <p>It compares the observed event count, zero or one, with fitted cumulative hazard. Martingale residuals are asymmetric and can help diagnose functional form. Deviance residuals transform them to be more symmetric. Score residuals and DFBETA-like quantities assess how subjects influence coefficients.</p>
 <p>Residuals are diagnostic views, not deletion commands. An influential remote project may be the only observation representing the deployment population. Investigate measurement, support, and model sensitivity before excluding it.</p>
 <h2 id="337-accelerated-failure-time-models">33.7 Accelerated failure time models</h2>
 <p>An accelerated failure time (AFT) model describes log time directly:</p>
-<p>$$<br />
-\log T=x^\top\beta+\sigma\varepsilon.<br />
+<p>$$
+\log T=x^\top\beta+\sigma\varepsilon.
 $$</p>
 <p>For two profiles differing by one unit in $x_j$, the event-time ratio is</p>
-<p>$$<br />
-\frac{T(x_j+1)}{T(x_j)}=e^{\beta_j}<br />
+<p>$$
+\frac{T(x_j+1)}{T(x_j)}=e^{\beta_j}
 $$</p>
 <p>under the model's distributional interpretation. If $e^{\beta_j}=1.20$, the event-time distribution is stretched by 20%, conditional on other covariates. This is often easier to explain than a hazard ratio.</p>
 <p>The error distribution determines the survival family:</p>
@@ -1617,9 +1624,9 @@ $$</p>
 <p>An AFT model gains direct time interpretation but imposes more baseline structure than Cox regression. Inspect probability plots, residuals, tail support, and extrapolation. A lower AIC is not permission to predict far beyond observed follow-up.</p>
 <h2 id="338-restricted-mean-survival-time">33.8 Restricted mean survival time</h2>
 <p>The restricted mean event-free time through horizon $\tau$ is</p>
-<p>$$<br />
-\operatorname{RMST}(\tau)=E[\min(T,\tau)]<br />
-=\int_0^\tau S(t)\,dt.<br />
+<p>$$
+\operatorname{RMST}(\tau)=E[\min(T,\tau)]
+=\int_0^\tau S(t)\,dt.
 $$</p>
 <p>It is the area under the survival curve through a prespecified horizon. The difference in RMST between groups is expressed in months of event-free time and does not require proportional hazards.</p>
 <p>Choose $\tau$ where follow-up supports estimation in all compared groups. Moving $\tau$ until significance appears is outcome-driven analysis.</p>
@@ -1647,10 +1654,10 @@ $$</p>
 <p>Robust standard errors address certain covariance misspecifications. They do not make the conditional log-hazard relation correct, remove selection bias, or establish causality.</p>
 <h2 id="3310-bayesian-survival-extension">33.10 Bayesian survival extension</h2>
 <p>A Bayesian parametric or semiparametric survival model combines a likelihood for event and censoring observations with priors on coefficients and baseline components:</p>
-<p>$$<br />
-p(\beta,h_0\mid\text{data})<br />
-\propto<br />
-p(\text{data}\mid\beta,h_0)p(\beta,h_0).<br />
+<p>$$
+p(\beta,h_0\mid\text{data})
+\propto
+p(\text{data}\mid\beta,h_0)p(\beta,h_0).
 $$</p>
 <p>Posterior draws can propagate uncertainty into survival curves, RMST, and decisions. Hierarchical priors can partially pool district effects. But a posterior is conditional on the event definition, likelihood, prior, censoring assumption, and computation. Prior predictive checks, posterior predictive checks, convergence diagnostics, and sensitivity to plausible priors are part of the analysis.</p>
 <p>“Bayesian” does not automatically mean causal, robust, or calibrated.</p>
@@ -1684,14 +1691,15 @@ $$</p>
 </ol>
 <hr />
 <h1 id="day-34-time-varying-information-and-dynamic-prediction">Day 34 — Time-Varying Information and Dynamic Prediction</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-34">✦ Read the beginner companion for Day 34</button></p>
 <blockquote>
 <p><strong>Today's central idea:</strong> Information collected during follow-up can update a prediction only at a time when it is available and only among subjects who have survived and remained observable to that time.</p>
 </blockquote>
 <h2 id="341-baseline-versus-time-varying-covariates">34.1 Baseline versus time-varying covariates</h2>
 <p>A baseline covariate is fixed or measured at time zero: appraisal capacity, district, or planned cable length. A time-varying covariate $X_i(t)$ can change during follow-up: cumulative expenditure, latest schedule gap, or inspection status.</p>
 <p>An extended Cox model writes</p>
-<p>$$<br />
-h_i(t)=h_0(t)\exp{\beta^\top X_i(t)}.<br />
+<p>$$
+h_i(t)=h_0(t)\exp\{\beta^\top X_i(t)\}.
 $$</p>
 <p>At each event time, the model uses the covariate value known immediately before that time. Substituting a subject's eventual maximum delay into all earlier risk sets leaks the future.</p>
 <h2 id="342-startstop-representation">34.2 Start–stop representation</h2>
@@ -1750,8 +1758,8 @@ assert updates.groupby(&quot;project_id&quot;)[&quot;event&quot;].sum().le(1).al
 <li>predict an event in $(s,s+\tau]$.</li>
 </ul>
 <p>The target is</p>
-<p>$$<br />
-P(T\le s+\tau, J=1\mid T&gt;s,\mathcal H(s)),<br />
+<p>$$
+P(T\le s+\tau, J=1\mid T&gt;s,\mathcal H(s)),
 $$</p>
 <p>where $\mathcal H(s)$ is the information history available at the landmark and $J=1$ identifies the overrun event.</p>
 <p>This is a different estimand from baseline 36-month risk. Its population contains survivors to month 12, and its prediction time is month 12.</p>
@@ -1826,6 +1834,7 @@ assert month12[&quot;landmark_follow_up&quot;].gt(0).all()
 </ol>
 <hr />
 <h1 id="day-35-competing-risks-and-multi-state-processes">Day 35 — Competing Risks and Multi-State Processes</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-35">✦ Read the beginner companion for Day 35</button></p>
 <blockquote>
 <p><strong>Today's central idea:</strong> When another event prevents the event of interest, its occurrence is known outcome information. Treating it as ordinary censoring answers a different question and can overstate absolute risk.</p>
 </blockquote>
@@ -1837,33 +1846,33 @@ assert month12[&quot;landmark_follow_up&quot;].gt(0).all()
 <li>$J=0$: no event type observed because follow-up was censored.</li>
 </ul>
 <p>The cause-specific cumulative incidence function (CIF) is</p>
-<p>$$<br />
-F_k(t)=P(T\le t,J=k).<br />
+<p>$$
+F_k(t)=P(T\le t,J=k).
 $$</p>
 <p>For overrun warning, $F_1(36)$ is the probability that a project experiences an overrun warning by month 36 <strong>before cancellation</strong>, under the observed event process.</p>
 <p>The all-cause survival function is</p>
-<p>$$<br />
-S(t)=P(T&gt;t),<br />
+<p>$$
+S(t)=P(T&gt;t),
 $$</p>
 <p>meaning no event of any type has occurred by $t$.</p>
 <h2 id="352-cause-specific-hazards">35.2 Cause-specific hazards</h2>
 <p>The cause-specific hazard for type $k$ is</p>
-<p>$$<br />
-\lambda_k(t)=<br />
-\lim_{\Delta t\downarrow0}<br />
-\frac{P(t\le T&lt;t+\Delta t,J=k\mid T\ge t)}{\Delta t}.<br />
+<p>$$
+\lambda_k(t)=
+\lim_{\Delta t\downarrow0}
+\frac{P(t\le T&lt;t+\Delta t,J=k\mid T\ge t)}{\Delta t}.
 $$</p>
 <p>It is the instantaneous rate of cause $k$ among subjects still free of <strong>all</strong> event types. The overall hazard is</p>
-<p>$$<br />
-\lambda(t)=\sum_{k=1}^{K}\lambda_k(t).<br />
+<p>$$
+\lambda(t)=\sum_{k=1}^{K}\lambda_k(t).
 $$</p>
 <p>Consequently,</p>
-<p>$$<br />
-S(t)=\exp\left[-\sum_{k=1}^{K}\int_0^t\lambda_k(u)\,du\right].<br />
+<p>$$
+S(t)=\exp\left[-\sum_{k=1}^{K}\int_0^t\lambda_k(u)\,du\right].
 $$</p>
 <p>The cumulative incidence is</p>
-<p>$$<br />
-F_k(t)=\int_0^t S(u-)\lambda_k(u)\,du.<br />
+<p>$$
+F_k(t)=\int_0^t S(u-)\lambda_k(u)\,du.
 $$</p>
 <p>The formula expresses a necessary sequence: remain free of every event until just before $u$, then experience cause $k$ at $u$.</p>
 <h2 id="353-why-1-kaplanmeier-is-wrong-for-real-world-cause-probability">35.3 Why $1-$Kaplan–Meier is wrong for real-world cause probability</h2>
@@ -1877,14 +1886,14 @@ $$</p>
 <li>$d_j=\sum_k d_{kj}$.</li>
 </ul>
 <p>Just before the time, estimated all-cause survival is $\widehat S(t_j-)$. The CIF increment is</p>
-<p>$$<br />
-\Delta\widehat F_k(t_j)<br />
-=\widehat S(t_j-)\frac{d_{kj}}{n_j}.<br />
+<p>$$
+\Delta\widehat F_k(t_j)
+=\widehat S(t_j-)\frac{d_{kj}}{n_j}.
 $$</p>
 <p>Then survival updates by</p>
-<p>$$<br />
-\widehat S(t_j)<br />
-=\widehat S(t_j-)\left(1-\frac{d_j}{n_j}\right).<br />
+<p>$$
+\widehat S(t_j)
+=\widehat S(t_j-)\left(1-\frac{d_j}{n_j}\right).
 $$</p>
 <p>Suppose five projects begin, one overrun occurs at month 2, one cancellation at month 3, and one overrun at month 5 after one censoring at month 4.</p>
 <ul>
@@ -1943,8 +1952,8 @@ assert np.isclose(last[&quot;cif_1&quot;] + last[&quot;cif_2&quot;] + last[&quot
 <p>This is the single-starting-state form of the Aalen–Johansen estimator. In a general multi-state model, a matrix product integral estimates transition probabilities among several states.</p>
 <h2 id="356-cause-specific-cox-regression">35.6 Cause-specific Cox regression</h2>
 <p>To model cause $k$, fit a Cox model in which cause-$k$ events have event indicator 1 and other causes leave the cause-$k$ risk set at their event times. The model is</p>
-<p>$$<br />
-\lambda_k(t\mid x)=\lambda_{0k}(t)\exp(x^\top\beta_k).<br />
+<p>$$
+\lambda_k(t\mid x)=\lambda_{0k}(t)\exp(x^\top\beta_k).
 $$</p>
 <p>The coefficient $\beta_k$ describes a covariate's association with the instantaneous cause-$k$ rate among subjects still free of every cause. Fit one cause-specific model per event type, then combine their estimated hazards to obtain absolute CIFs.</p>
 <p>A variable can increase the cause-1 hazard yet decrease cause-1 cumulative incidence if it increases a competing cause even more. Hazards and probabilities answer different questions.</p>
@@ -1980,14 +1989,15 @@ $$</p>
 </table>
 <h2 id="358-multi-state-models">35.8 Multi-state models</h2>
 <p>Some “competing” events are better represented as intermediate states. A project could move through:</p>
-<p><div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">stateDiagram-v2<br />
-    [*] --&gt; Active<br />
-    Active --&gt; Warning<br />
-    Active --&gt; Cancelled<br />
-    Active --&gt; Completed<br />
-    Warning --&gt; Cancelled<br />
-    Warning --&gt; Completed<br />
-</pre></div></p>
+<div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">stateDiagram-v2
+    [*] --> Active
+    Active --> Warning
+    Active --> Cancelled
+    Active --> Completed
+    Warning --> Cancelled
+    Warning --> Completed
+</pre></div>
+
 <p>A multi-state model estimates transition-specific hazards and state-occupation probabilities. It can answer questions that a first-event analysis cannot: probability of being active and warning-free at month 24, probability of completing after a warning, or expected time spent in delayed status.</p>
 <p>The Markov assumption says future transitions depend on current state and covariates, not the full past. A semi-Markov model can incorporate time since entering the current state. State definitions and transition timestamps are measurement choices, not merely model inputs.</p>
 <h2 id="359-research-papers-aalenjohansen-and-finegray">35.9 Research papers: Aalen–Johansen and Fine–Gray</h2>
@@ -2021,6 +2031,7 @@ $$</p>
 </ol>
 <hr />
 <h1 id="day-36-nonlinear-and-hierarchical-survival-models">Day 36 — Nonlinear and Hierarchical Survival Models</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-36">✦ Read the beginner companion for Day 36</button></p>
 <blockquote>
 <p><strong>Today's central idea:</strong> Flexible survival learners change how covariates map to hazards or survival curves; they do not remove censoring assumptions, time horizons, or validation boundaries.</p>
 </blockquote>
@@ -2062,21 +2073,21 @@ $$</p>
 <p>No tree method handles causal confounding, informative censoring, left truncation, or measurement error “automatically.” Support depends on the implementation.</p>
 <h2 id="365-survival-boosting">36.5 Survival boosting</h2>
 <p>Gradient boosting can optimise the negative Cox partial log likelihood. If $f(x)$ is the current log-risk score, the loss couples subjects through event-time risk sets:</p>
-<p>$$<br />
-\mathcal L(f)<br />
-=-\sum_{i:\Delta_i=1}<br />
-\left[f(x_i)-\log\sum_{k\in R(T_i)}e^{f(x_k)}\right].<br />
+<p>$$
+\mathcal L(f)
+=-\sum_{i:\Delta_i=1}
+\left[f(x_i)-\log\sum_{k\in R(T_i)}e^{f(x_k)}\right].
 $$</p>
 <p>Small trees or splines are added in directions that reduce this loss. Other boosting methods optimise parametric AFT, discrete-time likelihood, or ranking objectives.</p>
 <p>As in Chapter 4, learning rate, tree complexity, stages, and early stopping interact. Early stopping uses validation evidence and therefore belongs inside the development procedure.</p>
 <h2 id="366-discrete-time-survival-as-repeated-classification">36.6 Discrete-time survival as repeated classification</h2>
 <p>Partition follow-up into intervals. For each subject-interval still at risk, model the conditional event probability</p>
-<p>$$<br />
-q_{it}=P(T\text{ occurs in interval }t\mid T\text{ has not occurred earlier},X_i).<br />
+<p>$$
+q_{it}=P(T\text{ occurs in interval }t\mid T\text{ has not occurred earlier},X_i).
 $$</p>
 <p>Then</p>
-<p>$$<br />
-S_i(t)=\prod_{u\le t}(1-q_{iu}).<br />
+<p>$$
+S_i(t)=\prod_{u\le t}(1-q_{iu}).
 $$</p>
 <p>Logistic or complementary log-log models, boosted trees, and neural networks can estimate $q_{it}$. But interval rows from one subject are dependent, time basis matters, and random row splitting leaks subjects and later history. Competing causes require a coherent multinomial transition probability at each interval.</p>
 <h2 id="367-neural-survival-models">36.7 Neural survival models</h2>
@@ -2092,8 +2103,8 @@ $$</p>
 <p>Deep learning is most plausible with large event counts, rich inputs such as images or sequences, and a validation design matching deployment. Typical tabular cohorts often reward simpler regularised models.</p>
 <h2 id="368-shared-frailty-and-partial-pooling">36.8 Shared frailty and partial pooling</h2>
 <p>For project $i$ in district $j$, a shared-frailty Cox model can write</p>
-<p>$$<br />
-h_{ij}(t)=h_0(t)\exp(x_{ij}^\top\beta+u_j),<br />
+<p>$$
+h_{ij}(t)=h_0(t)\exp(x_{ij}^\top\beta+u_j),
 $$</p>
 <p>where $u_j$ is a latent district effect. Districts with few events are partially pooled toward the population distribution. Frailty induces dependence and changes survival among the selected risk set over time.</p>
 <p>Frailty variance does not identify a specific unmeasured cause. A large estimated variance says districts differ beyond recorded predictors under the model; it does not say why.</p>
@@ -2140,6 +2151,7 @@ $$</p>
 </ol>
 <hr />
 <h1 id="day-37-censoring-aware-evaluation-and-decisions">Day 37 — Censoring-Aware Evaluation and Decisions</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-37">✦ Read the beginner companion for Day 37</button></p>
 <blockquote>
 <p><strong>Today's central idea:</strong> A survival model must be evaluated at supported horizons using methods that recognise unknown outcome status; ranking alone is not probability accuracy or decision value.</p>
 </blockquote>
@@ -2158,10 +2170,10 @@ $$</p>
 <p>“C-index 0.74” is incomplete. A useful statement is: “In projects approved during 2023–2025, the baseline model's cause-specific Harrell concordance for overrun warnings was 0.74, with cancellation treated as a competing event in absolute-risk evaluation and as censoring for this cause-specific ranking summary.”</p>
 <h2 id="372-harrells-concordance">37.2 Harrell's concordance</h2>
 <p>For a pair $i,j$, suppose $i$ has the earlier observed time and experiences the event of interest then. The pair is comparable. A risk score is concordant if it assigns higher risk to $i$.</p>
-<p>$$<br />
-\widehat C<br />
-=\frac{\text{concordant}+0.5\times\text{risk-score ties}}<br />
-{\text{comparable pairs}}.<br />
+<p>$$
+\widehat C
+=\frac{\text{concordant}+0.5\times\text{risk-score ties}}
+{\text{comparable pairs}}.
 $$</p>
 <pre><code class="language-python">def harrell_c_index(time, event, risk_score):
     time = np.asarray(time, dtype=float)
@@ -2186,9 +2198,9 @@ $$</p>
 <p>Different definitions answer different questions. Report the definition and competing-risk handling. A model may rank early events well but late events poorly, so plot AUC across a supported time range rather than selecting its highest point.</p>
 <h2 id="374-brier-score-with-incomplete-status">37.4 Brier score with incomplete status</h2>
 <p>Without censoring, the horizon-specific event Brier score is</p>
-<p>$$<br />
-BS(\tau)=\frac1n\sum_{i=1}^{n}<br />
-\left{I(T_i\le\tau,J_i=1)-\widehat F_{1i}(\tau)\right}^2.<br />
+<p>$$
+BS(\tau)=\frac1n\sum_{i=1}^{n}
+\left\{I(T_i\le\tau,J_i=1)-\widehat F_{1i}(\tau)\right\}^2.
 $$</p>
 <p>If a subject is censored before $\tau$, its event status at $\tau$ is unknown. Inverse probability of censoring weighting (IPCW) upweights comparable observed subjects by the inverse probability of remaining uncensored.</p>
 <p>Let $G(t)=P(C&gt;t)$ and $\widehat G$ be estimated from training/reference data, treating censoring as the event in a reverse Kaplan–Meier calculation. For competing risks, event type 2 before $\tau$ is known not to be type 1 by $\tau$ and remains an observed outcome, not a censoring.</p>
@@ -2311,8 +2323,8 @@ def ipcw_brier_competing(time, event_type, predicted_cif, horizon,
 <h2 id="3710-horizon-specific-decisions">37.10 Horizon-specific decisions</h2>
 <p>Suppose review by month 12 can avert or mitigate losses expected before month 36. Let $p_i=\widehat F_{1i}(36)$, $C_{FP}$ be the burden of reviewing a project that would not experience the event, and $C_{FN}$ the preventable loss from not reviewing a project that would.</p>
 <p>Under simplified symmetric action effectiveness, review when</p>
-<p>$$<br />
-p_i&gt;\frac{C_{FP}}{C_{FP}+C_{FN}}.<br />
+<p>$$
+p_i&gt;\frac{C_{FP}}{C_{FP}+C_{FN}}.
 $$</p>
 <p>This derivation assumes calibrated probabilities, common costs, an action that is available now, and that review changes consequences as encoded. Real decisions may include limited capacity, time-dependent review effectiveness, competing cancellation, equity constraints, and harms from delay.</p>
 <p>If only 10% of projects can be reviewed, ranking determines allocation, but probability calibration still informs expected yield and planning. Freeze the threshold or capacity rule using development data.</p>
@@ -2362,6 +2374,7 @@ $$</p>
 </ol>
 <hr />
 <h1 id="day-38-the-registered-locked-study-and-causal-boundary">Day 38 — The Registered Locked Study and Causal Boundary</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-38">✦ Read the beginner companion for Day 38</button></p>
 <blockquote>
 <p><strong>Today's central idea:</strong> A research result is a frozen chain from protocol to claim. Prediction of an event history does not identify what would happen under an intervention.</p>
 </blockquote>
@@ -2930,8 +2943,8 @@ if __name__ == &quot;__main__&quot;:
 <p>The code is not a universal template. Real data may require conditional censoring weights, delayed entry, Efron ties, cluster resampling, interval-censoring methods, missingness models, external validation, or a different event process.</p>
 <h2 id="385-combining-cause-specific-hazards">38.5 Combining cause-specific hazards</h2>
 <p>The benchmark treats each Breslow increment as integrated hazard in a short piecewise-exponential interval. For subject $i$, if increments are $dH_{1i}$ and $dH_{2i}$, the probability of any event across that interval is</p>
-<p>$$<br />
-1-\exp{-(dH_{1i}+dH_{2i})}.<br />
+<p>$$
+1-\exp\{-(dH_{1i}+dH_{2i})\}.
 $$</p>
 <p>It allocates that probability between causes in proportion to their increments, then updates event-free survival. This produces coherent profile-specific CIFs. Specialised libraries may use product-integral conventions or finer grids; verify definitions and numerical agreement on controlled examples.</p>
 <h2 id="386-interpreting-the-paired-bootstrap">38.6 Interpreting the paired bootstrap</h2>
@@ -3075,6 +3088,7 @@ $$</p>
 </ol>
 <hr />
 <h1 id="chapter-5-synthesis">Chapter 5 Synthesis</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="reference">✦ Open the companion reference material</button></p>
 <h2 id="one-event-history-several-valid-questions">One event history, several valid questions</h2>
 <table>
 <thead>
@@ -3226,6 +3240,7 @@ $$</p>
 <p>Before fitting, register a study on machine failure, customer churn, loan default, or patient follow-up. Include all fields from Section 38.1. Lock a temporal or grouped test set, run once, preserve deviations, and write a results section that does not exceed the evidence.</p>
 <hr />
 <h1 id="capstone-rubric">Capstone Rubric</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="capstone">✦ Read the beginner capstone companion</button></p>
 <table>
 <thead>
 <tr>
@@ -3402,6 +3417,1227 @@ $$</p>
 <li>R <code>riskRegression</code>: <a href="https://cran.r-project.org/package=riskRegression">Package documentation</a>.</li>
 </ul>
 <p>Use primary papers for estimands and derivations, specialised texts for connected theory, and current software documentation for interfaces and defaults.</p>
+<style>
+.companion-more-button {
+    display: inline-flex; align-items: center; gap: .45rem;
+    margin: .5rem 0 1.25rem; padding: .55rem .85rem;
+    border: 1px solid rgba(34, 211, 238, .42); border-radius: .45rem;
+    background: rgba(34, 211, 238, .09); color: #67e8f9;
+    font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer;
+}
+.companion-more-button:hover, .companion-more-button:focus-visible {
+    background: rgba(34, 211, 238, .18); border-color: #22d3ee;
+}
+.companion-more-modal[hidden] { display: none; }
+.companion-more-modal {
+    position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center;
+    padding: 1rem; background: rgba(5, 9, 17, .88); backdrop-filter: blur(7px);
+}
+.companion-more-dialog {
+    width: min(64rem, 96vw); max-height: 92vh; display: flex; flex-direction: column;
+    overflow: hidden; border: 1px solid #334155; border-radius: .8rem;
+    background: #111827; box-shadow: 0 24px 70px rgba(0, 0, 0, .55);
+}
+.companion-more-header {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: .8rem 1rem; border-bottom: 1px solid #334155; background: #172033;
+}
+.companion-more-header strong { color: #fff; }
+.companion-more-actions { display: flex; align-items: center; gap: .75rem; }
+.companion-more-actions a { color: #67e8f9; font-size: .82rem; }
+.companion-more-close {
+    width: 2.1rem; height: 2.1rem; border: 1px solid #475569; border-radius: .4rem;
+    background: #0b1220; color: #e2e8f0; font-size: 1.35rem; cursor: pointer;
+}
+.companion-more-body { overflow: auto; padding: 1.25rem 1.5rem 2rem; }
+.companion-more-body > :first-child { margin-top: 0; }
+.companion-more-body table { display: block; overflow-x: auto; }
+.companion-more-body pre { max-width: 100%; overflow-x: auto; }
+@media (max-width: 640px) {
+    .companion-more-modal { padding: 0; }
+    .companion-more-dialog { width: 100vw; max-height: 100vh; height: 100vh; border-radius: 0; }
+    .companion-more-body { padding: 1rem; }
+    .companion-more-actions a { display: none; }
+}
+</style>
+<div class="companion-more-modal" id="companion-more-modal" hidden>
+  <section class="companion-more-dialog" role="dialog" aria-modal="true" aria-labelledby="companion-more-title">
+    <header class="companion-more-header">
+      <strong id="companion-more-title">Beginner companion</strong>
+      <div class="companion-more-actions">
+        <a href="chapter5_companion.html">Open the complete guide</a>
+        <button type="button" class="companion-more-close" aria-label="Close companion">&times;</button>
+      </div>
+    </header>
+    <div class="companion-more-body" id="companion-more-body"></div>
+  </section>
+</div>
+<template id="companion-template-overview"><h1 id="chapter-5-companion-guide-from-event-labels-to-event-histories">Chapter 5 Companion Guide: From Event Labels to Event Histories</h1>
+<h2 id="a-beginner-first-guide-to-survival-analysis-censoring-competing-risks-dynamic-prediction-and-registered-evidence">A beginner-first guide to survival analysis, censoring, competing risks, dynamic prediction, and registered evidence</h2>
+<p>This guide accompanies <code>chapter5.md</code>. It assumes you are still learning Python, mathematics, and statistics. It explains the vocabulary and symbols before using them, develops the main estimators from small risk sets, and repeatedly separates prediction from causal claims.</p>
+<p>Chapter 4 asked whether an event occurs inside a fixed window. Chapter 5 preserves more information:</p>
+<pre><code class="language-text">when observation begins
+    -&gt; how long a subject remains event-free
+    -&gt; which event happens first
+    -&gt; why observation ends
+    -&gt; what can be predicted at a stated horizon
+</code></pre>
+<p>The central fact is:</p>
+<blockquote>
+<p>If a project has no observed warning when follow-up ends, we often know “not yet,” not “never.”</p>
+</blockquote>
+<p>Survival analysis is also called time-to-event or event-history analysis. It applies to project warnings, machine failures, customer churn, loan defaults, hospital outcomes, and many other processes—not only death.</p>
+<hr />
+<h2 id="how-to-use-this-guide">How to use this guide</h2>
+<p>For each of Days 30–38:</p>
+<ol>
+<li>Draw the timeline before reading the formula.</li>
+<li>List who is genuinely at risk immediately before each event.</li>
+<li>Work the smallest numerical example by hand.</li>
+<li>Type the short code and alter one record.</li>
+<li>Run the main chapter's full laboratory.</li>
+<li>Deliberately create one listed failure.</li>
+<li>State the estimand, assumptions, and allowed conclusion in ordinary language.</li>
+</ol>
+<p>Keep these objects separate:</p>
+<ul>
+<li><strong>event process:</strong> what can happen and in what order;</li>
+<li><strong>observation process:</strong> when and why records become unavailable;</li>
+<li><strong>estimand:</strong> the exact survival, hazard, incidence, or causal quantity wanted;</li>
+<li><strong>estimator:</strong> the calculation used under assumptions;</li>
+<li><strong>prediction:</strong> a future probability or score at a stated time and horizon;</li>
+<li><strong>decision:</strong> an action based on consequences and capacity; and</li>
+<li><strong>claim:</strong> what the design actually supports.</li>
+</ul>
+<hr />
+<h2 id="0-foundations-for-a-complete-beginner">0. Foundations for a complete beginner</h2>
+<h3 id="01-the-running-project-question">0.1 The running project question</h3>
+<p>One row begins as one fictional microhydro project approved at technical appraisal. The event of interest is the first formal warning that projected final cost exceeds 115% of the approved budget.</p>
+<ul>
+<li>Time zero is appraisal approval.</li>
+<li>A warning is event type 1.</li>
+<li>Cancellation before warning is event type 2.</li>
+<li>Database closure or loss to follow-up is censoring.</li>
+<li>Predictions concern 12, 24, or 36 months.</li>
+<li>Month-12 progress can only enter a prediction made at month 12 or later.</li>
+</ul>
+<p>A high predicted incidence may trigger review, not automatic cancellation. The data are simulated and say nothing factual about real projects or districts.</p>
+<h3 id="02-python-language-used-in-this-chapter">0.2 Python language used in this chapter</h3>
+<pre><code class="language-python">import numpy as np
+import pandas as pd
+
+time = np.array([2.0, 3.0, 5.0])
+event = np.array([1, 0, 1])
+</code></pre>
+<ul>
+<li>an array stores several values;</li>
+<li><code>time[i]</code> and <code>event[i]</code> refer to the same subject;</li>
+<li><code>event == 1</code> produces a Boolean mask;</li>
+<li><code>time[event == 1]</code> keeps event times;</li>
+<li><code>np.sum(mask)</code> counts <code>True</code> values;</li>
+<li><code>np.unique(...)</code> finds distinct values;</li>
+<li><code>np.sort(...)</code> orders them;</li>
+<li><code>&amp;</code> means elementwise “and”; and</li>
+<li><code>|</code> means elementwise “or.”</li>
+</ul>
+<p>Pandas provides labelled tables:</p>
+<pre><code class="language-python">history = pd.DataFrame({
+    &quot;project&quot;: [&quot;A&quot;, &quot;B&quot;, &quot;C&quot;],
+    &quot;time&quot;: [2.0, 3.0, 5.0],
+    &quot;event&quot;: [1, 0, 1],
+})
+</code></pre>
+<p>Parentheses matter in masks:</p>
+<pre><code class="language-python">at_risk = (history[&quot;entry&quot;] &lt;= t) &amp; (history[&quot;exit&quot;] &gt;= t)
+</code></pre>
+<h3 id="03-mathematical-vocabulary">0.3 Mathematical vocabulary</h3>
+<ul>
+<li>$T$ is a latent event time: the time that would be observed with sufficient follow-up.</li>
+<li>$C$ is censoring time: when observation stops without the event.</li>
+<li>$Y=\min(T,C)$ is observed follow-up time.</li>
+<li>$\Delta$ is 1 if the event was observed and 0 if censored.</li>
+<li>$t$ is a particular time; $\tau$ is often a chosen prediction horizon.</li>
+<li>$P(A)$ is the probability of $A$.</li>
+<li>$P(A\mid B)$ is probability of $A$ among cases satisfying $B$.</li>
+<li>$f(t)$ is a probability density.</li>
+<li>$\mathbb E$ is an average over a distribution.</li>
+<li>$\sum$ means add; $\prod$ means multiply.</li>
+<li>$\int$ accumulates infinitely small contributions over a continuous range.</li>
+<li>$\exp(z)=e^z$ and $\log$ is its inverse.</li>
+<li>$x^\top\beta$ means multiply matching features and coefficients, then add.</li>
+<li>$u-$ means the instant just before time $u$.</li>
+</ul>
+<h3 id="04-a-timeline-contains-more-information-than-a-binary-label">0.4 A timeline contains more information than a binary label</h3>
+<p>Suppose A has a warning at month 18 and B is event-free when the database closes at month 18:</p>
+<pre><code class="language-text">A: approval ---------------- warning
+B: approval ---------------- database closes
+                               month 18
+</code></pre>
+<p>For A, $T_A=18$. For B, $T_B&gt;18$. Calling B a permanent non-event changes an inequality into a claim about infinity. Calling month 18 its event invents an event. Dropping B discards 18 known event-free months.</p>
+<h3 id="05-installing-software">0.5 Installing software</h3>
+<p>Core code uses:</p>
+<pre><code class="language-bash">python -m pip install numpy pandas scipy matplotlib scikit-learn
+</code></pre>
+<p>Optional applied laboratories can use:</p>
+<pre><code class="language-bash">python -m pip install lifelines scikit-survival
+</code></pre>
+<p>Record Python and package versions. Survival packages can differ in tie handling, variance estimates, censoring conventions, and prediction outputs. The same function name does not guarantee the same estimand.</p>
+<h3 id="06-understanding-chapter5_datapy">0.6 Understanding <code>chapter5_data.py</code></h3>
+<p>The generator creates three hidden times per project:</p>
+<ul>
+<li>time to overrun warning;</li>
+<li>time to cancellation; and</li>
+<li>time to censoring.</li>
+</ul>
+<p>The first one determines the observable record:</p>
+<pre><code class="language-python">all_times = np.column_stack([overrun_time, cancel_time, censor_time])
+first_type = np.argmin(all_times, axis=1)
+observed_time = all_times[np.arange(n), first_type]
+</code></pre>
+<p><code>column_stack</code> creates a three-column matrix. <code>argmin(..., axis=1)</code> returns the column holding the smallest time for each row.</p>
+<p>Event type is coded:</p>
+<pre><code class="language-text">0 = censored
+1 = overrun warning
+2 = cancellation
+</code></pre>
+<p>Later cohorts receive less possible administrative follow-up because the database closes at one calendar date. A separate exponential time simulates loss to follow-up.</p>
+<p><code>legacy_registry_entry_months</code> supports delayed-entry exercises. The primary inception cohort starts everyone at approval, so entry is zero. <code>month12_progress_gap_sd</code> is future information for the appraisal model but legitimate among observable, event-free month-12 survivors. <code>senior_review_by_month6</code> is deliberately confounded and exists to demonstrate why an observational treatment coefficient is not a causal effect.</p>
+<p>The hidden potential times are not returned as usable columns. Real construction would need dated warnings, adjudication of back-dated records, stable event definitions, cancellation reasons, and a verified close date.</p>
+<h3 id="07-baseline-dynamic-and-causal-questions">0.7 Baseline, dynamic, and causal questions</h3>
+<ul>
+<li><strong>Baseline prediction:</strong> using appraisal information, what is cause-1 incidence by month 36?</li>
+<li><strong>Dynamic prediction:</strong> among projects still observable and event-free at month 12, what is incidence during the next 24 months using history through month 12?</li>
+<li><strong>Causal question:</strong> what would incidence have been under review versus no review?</li>
+</ul>
+<p>They have different populations, time zeros, features, assumptions, and designs. A better month-12 model cannot be used at appraisal. A prognostic model cannot identify the effect of review merely by adding a review column.</p>
+<hr /></template><template id="companion-template-day-30"><h1 id="day-30-the-event-history-contract">Day 30 — The event-history contract</h1>
+<h2 id="301-observed-time-and-status">30.1 Observed time and status</h2>
+<p>We observe:</p>
+<p>$$
+Y_i=\min(T_i,C_i),
+\qquad
+\Delta_i=\mathbb 1(T_i\le C_i).
+$$</p>
+<p>If $\Delta=1$, then $T=Y$. If $\Delta=0$, then $T&gt;Y$. A censored row contributes genuine partial information.</p>
+<p>With competing events, store event type beside time rather than one binary indicator. Cancellation is known outcome information, while database closure leaves the next event unknown.</p>
+<h2 id="302-the-seven-part-protocol">30.2 The seven-part protocol</h2>
+<p>Freeze before association analysis:</p>
+<ol>
+<li><strong>Unit:</strong> one eligible project.</li>
+<li><strong>Origin:</strong> approval at appraisal.</li>
+<li><strong>Entry:</strong> when it begins contributing to risk sets.</li>
+<li><strong>Event:</strong> first formal warning under a stable rule.</li>
+<li><strong>Competing events:</strong> cancellation or other events that prevent warning.</li>
+<li><strong>Censoring:</strong> why observation ends without a recorded event.</li>
+<li><strong>Horizons:</strong> 12, 24, and 36 months.</li>
+</ol>
+<p>Analysis time and calendar time differ. Two projects can both be at follow-up month 12 in different years; calendar change can still affect transport.</p>
+<h2 id="303-four-incomplete-observation-mechanisms">30.3 Four incomplete-observation mechanisms</h2>
+<p><strong>Right censoring:</strong> event, if it happens, is after last observation. We know $T&gt;C$.</p>
+<p><strong>Left censoring:</strong> event happened before a bound, but exact time is unknown. We know $T\le L$.</p>
+<p><strong>Interval censoring:</strong> event happened between inspections: $L&lt;T\le R$.</p>
+<p><strong>Left truncation/delayed entry:</strong> a subject appears only after surviving event-free to entry time. Earlier failures are absent from the sample.</p>
+<p>Left censoring concerns an unknown time for an observed subject. Left truncation changes which subjects are observed. Replacing interval-censored times by endpoints or midpoints is an approximation that needs sensitivity analysis.</p>
+<h2 id="304-risk-sets">30.4 Risk sets</h2>
+<p>Immediately before time $t$:</p>
+<p>$$
+R(t)=\{i:L_i\le t\le Y_i\}.
+$$</p>
+<p>A subject must have entered, remain observed, and remain event-free. Under a start–stop convention this may be written start $&lt;t\le$ stop; state the convention.</p>
+<p>For A <code>(0,3,event)</code>, B <code>(0,5,censor)</code>, C <code>(2,6,event)</code>, and D <code>(4,7,censor)</code>:</p>
+<ul>
+<li>at month 3: A, B, C are at risk;</li>
+<li>at month 6: C and D are at risk.</li>
+</ul>
+<p>D has not entered at month 3. A failed and B was censored before month 6.</p>
+<h2 id="305-independent-censoring">30.5 Independent censoring</h2>
+<p>A common assumption is:</p>
+<p>$$
+T\perp C\mid X.
+$$</p>
+<p>Conditional on recorded $X$, censoring provides no extra information about event time. This can fail when deteriorating projects disappear for unrecorded reasons.</p>
+<p>Observed data cannot prove the absence of hidden informative censoring. Document reasons, compare censoring across periods and groups, include justified predictors in censoring models, and run sensitivity analyses.</p>
+<p>Administrative censoring can differ by approval year without automatically being informative, provided calendar time and the mechanism are handled appropriately.</p>
+<h2 id="306-censoring-versus-competing-risk">30.6 Censoring versus competing risk</h2>
+<p>Censoring means the future event is unknown after observation ends. A competing event means a known event has changed or prevented the future event of interest. Treating cancellation as censoring can be useful for estimating a cause-specific hazard, but it does not make cancellation missing information for absolute incidence.</p>
+<h2 id="307-audit-before-estimation">30.7 Audit before estimation</h2>
+<p>Check:</p>
+<ul>
+<li>unique project IDs;</li>
+<li>origin, entry, exit, and event ordering;</li>
+<li>positive follow-up and entry no later than exit;</li>
+<li>impossible or duplicate event types;</li>
+<li>date precision and ties;</li>
+<li>censoring reasons by year and group;</li>
+<li>event counts and numbers at risk at every intended horizon;</li>
+<li>missing features and measurements recorded after prediction time; and</li>
+<li>whether event definitions changed over calendar time.</li>
+</ul>
+<p>Do not begin with a survival curve. Begin with whether the timeline is coherent.</p>
+<hr /></template><template id="companion-template-day-31"><h1 id="day-31-survival-hazard-and-kaplanmeier">Day 31 — Survival, hazard, and Kaplan–Meier</h1>
+<h2 id="311-distribution-density-survival-and-hazard">31.1 Distribution, density, survival, and hazard</h2>
+<p>For event time $T$:</p>
+<p>$$
+F(t)=P(T\le t)
+$$</p>
+<p>is cumulative event probability, and:</p>
+<p>$$
+S(t)=P(T&gt;t)=1-F(t)
+$$</p>
+<p>is survival or event-free probability.</p>
+<p>For continuous time, density $f(t)$ describes probability concentration near $t$. Hazard is:</p>
+<p>$$
+f(t)=\frac{dF(t)}{dt}=-\frac{dS(t)}{dt},
+\qquad
+h(t)=\frac{f(t)}{S(t)}.
+$$</p>
+<p>The first identity says density is the rate at which cumulative event probability rises, equivalently the rate at which survival falls. Dividing by $S(t)$ conditions the density on having survived to $t$.</p>
+<p>$$
+h(t)=\lim_{\Delta t\downarrow0}
+\frac{P(t\le T&lt;t+\Delta t\mid T\ge t)}{\Delta t}.
+$$</p>
+<p>Hazard is an instantaneous rate among current survivors. It can exceed 1 because it is per time unit, not a probability.</p>
+<p>For a short interval, event probability is approximately $h(t)\Delta t$. Under constant hazard $h$, exact interval probability is $1-e^{-h\Delta t}$.</p>
+<h2 id="312-cumulative-hazard">31.2 Cumulative hazard</h2>
+<p>$$
+H(t)=\int_0^t h(u)\,du.
+$$</p>
+<p>For a single event process:</p>
+<p>$$
+S(t)=e^{-H(t)},
+\qquad
+H(t)=-\log S(t).
+$$</p>
+<p>Derivation intuition: multiply survival across tiny intervals, take logs to turn the product into a sum, then let interval width shrink.</p>
+<p>If hazard is constant $\lambda$, then $H(t)=\lambda t$ and $S(t)=e^{-\lambda t}$. The median solves $S(t)=0.5$, giving $\log 2/\lambda$.</p>
+<h2 id="313-kaplanmeier-product-limit">31.3 Kaplan–Meier product limit</h2>
+<p>At event time $t_j$, let $n_j$ be at risk just before and $d_j$ the number of events. Conditional survival through that time is:</p>
+<p>$$
+1-\frac{d_j}{n_j}.
+$$</p>
+<p>Multiply these conditional survivals:</p>
+<p>$$
+\widehat S(t)=\prod_{t_j\le t}\left(1-\frac{d_j}{n_j}\right).
+$$</p>
+<p>Events create downward steps. Censoring changes later risk-set denominators but does not create a survival step.</p>
+<p>For records <code>(2,event)</code>, <code>(3,censor)</code>, <code>(5,event)</code>, <code>(5,event)</code>, <code>(7,censor)</code>:</p>
+<ul>
+<li>at 2: $n=5,d=1$, so survival is $4/5$;</li>
+<li>censoring at 3 leaves three at risk before 5;</li>
+<li>at 5: $n=3,d=2$, so survival becomes $(4/5)(1/3)=4/15$.</li>
+</ul>
+<p>Tied event/censor timestamps need an explicit precision convention. File row order must not decide risk sets.</p>
+<h2 id="314-greenwood-uncertainty">31.4 Greenwood uncertainty</h2>
+<p>$$
+\widehat{Var}\{\widehat S(t)\}
+\approx
+\widehat S(t)^2
+\sum_{t_j\le t}\frac{d_j}{n_j(n_j-d_j)}.
+$$</p>
+<p>Applied software often transforms the curve before forming intervals so limits remain between 0 and 1. Greenwood uncertainty does not include event-definition error, informative censoring, clustering, or selection.</p>
+<p>Late intervals widen when few subjects remain. Always show numbers at risk; a smooth-looking long tail with three projects is weak evidence.</p>
+<h2 id="315-nelsonaalen-cumulative-hazard">31.5 Nelson–Aalen cumulative hazard</h2>
+<p>$$
+\widehat H(t)=\sum_{t_j\le t}\frac{d_j}{n_j}.
+$$</p>
+<p>$e^{-\widehat H(t)}$ approximates survival but is not exactly Kaplan–Meier because $-\log(1-d/n)$ is only approximately $d/n$ for small event fractions.</p>
+<p>Nelson–Aalen is useful for hazard-scale diagnostics and resembles the baseline cumulative-hazard estimator used after Cox fitting.</p>
+<h2 id="316-log-rank-comparison">31.6 Log-rank comparison</h2>
+<p>At pooled event time $j$, if group 1 has $n_{1j}$ of $n_j$ at-risk subjects and $d_j$ events, its expected count under equal hazards is:</p>
+<p>$$
+e_{1j}=d_j\frac{n_{1j}}{n_j}.
+$$</p>
+<p>The test accumulates observed minus expected events and scales by a hypergeometric variance. It is most sensitive to roughly proportional separation.</p>
+<p>Crossing curves can differ at important horizons yet have a small log-rank statistic. A $p$-value is not an effect size, probability forecast, or causal result.</p>
+<h2 id="317-cause-specific-warning-curve">31.7 Cause-specific warning curve</h2>
+<p>If cancellation is treated as censoring, the resulting Kaplan–Meier curve describes a cause-specific/net-risk construction. Label it clearly. One minus that curve is not real-world warning incidence in the presence of cancellation; Day 35 supplies Aalen–Johansen.</p>
+<hr /></template><template id="companion-template-day-32"><h1 id="day-32-cox-regression-from-partial-likelihood">Day 32 — Cox regression from partial likelihood</h1>
+<h2 id="321-the-proportional-hazards-model">32.1 The proportional-hazards model</h2>
+<p>$$
+h(t\mid x)=h_0(t)e^{x^\top\beta}.
+$$</p>
+<p>$h_0(t)$ is an unspecified baseline hazard. The exponential covariate score multiplies it. For profiles $a,b$:</p>
+<p>$$
+\frac{h(t\mid x_a)}{h(t\mid x_b)}
+=e^{(x_a-x_b)^\top\beta}.
+$$</p>
+<p>The baseline cancels, so the ratio is constant over time under proportional hazards. The hazards themselves may rise or fall.</p>
+<h2 id="322-hazard-ratio-interpretation">32.2 Hazard-ratio interpretation</h2>
+<p>If $\beta=0.30$, then $e^{0.30}\approx1.35$. Among projects still event-free and observed, the fitted instantaneous rate is 35% higher for a one-unit difference, conditional on modeled covariates.</p>
+<p>It is not a 35-point probability increase, risk ratio, time ratio, eventual-event ratio, individual guarantee, or causal effect. Accompany hazard ratios with absolute survival or cumulative incidence at relevant horizons.</p>
+<h2 id="323-partial-likelihood">32.3 Partial likelihood</h2>
+<p>If subject $i(j)$ is the sole event at $t_j$, conditional probability that this risk-set member is the one who fails is:</p>
+<p>$$
+\frac{e^{x_{i(j)}^\top\beta}}
+{\sum_{k\in R(t_j)}e^{x_k^\top\beta}}.
+$$</p>
+<p>$h_0(t_j)$ cancels from numerator and denominator. Multiply across event times to obtain partial likelihood. It is “partial” because it estimates relative-hazard coefficients without simultaneously choosing a baseline-hazard formula.</p>
+<h2 id="324-log-partial-likelihood-score-and-information">32.4 Log partial likelihood, score, and information</h2>
+<p>Taking logs converts products to sums:</p>
+<p>$$
+\ell_p(\beta)=\sum_j\left[x_{i(j)}^\top\beta-
+\log\sum_{k\in R(t_j)}e^{x_k^\top\beta}\right].
+$$</p>
+<p>The score is:</p>
+<p>$$
+U(\beta)=\sum_j[x_{i(j)}-\bar x(\beta,t_j)],
+$$</p>
+<p>where $\bar x$ is the risk-score-weighted feature mean in the risk set. The optimum balances observed event-subject covariates against expected risk-set covariates.</p>
+<p>The negative Hessian is a sum of weighted risk-set covariance matrices. It drives optimization and model-based covariance estimates.</p>
+<h2 id="325-tied-event-times">32.5 Tied event times</h2>
+<ul>
+<li><strong>Exact:</strong> averages possible event orders; expensive.</li>
+<li><strong>Efron:</strong> progressively removes fractions of tied-event score; often accurate.</li>
+<li><strong>Breslow:</strong> uses the same full denominator for a tied group; simple but less accurate with many ties.</li>
+</ul>
+<p>Record the package default. The chapter's educational Cox implementation uses Breslow ties.</p>
+<h2 id="326-reading-the-scratch-cox-class">32.6 Reading the scratch Cox class</h2>
+<p>For each event time, <code>_objective</code>:</p>
+<ol>
+<li>identifies deaths and the risk set;</li>
+<li>adds event linear scores;</li>
+<li>subtracts tied-event count times <code>logsumexp</code> of risk scores;</li>
+<li>calculates weighted risk-set feature means; and</li>
+<li>adds an optional $L_2$ penalty.</li>
+</ol>
+<p><code>logsumexp</code> avoids overflow when exponentiated scores are large. <code>L-BFGS-B</code> numerically minimizes negative partial log likelihood. The class then estimates Breslow baseline increments.</p>
+<p>It is educational, not production-ready: no Efron ties, delayed entry, strata, robust covariance, sampling weights, or sparse matrices.</p>
+<h2 id="327-absolute-survival-after-fitting">32.7 Absolute survival after fitting</h2>
+<p>The Breslow baseline cumulative hazard is:</p>
+<p>$$
+\widehat H_0(t)=\sum_{t_j\le t}
+\frac{d_j}{\sum_{k\in R(t_j)}e^{x_k^\top\hat\beta}}.
+$$</p>
+<p>Then:</p>
+<p>$$
+\widehat S(t\mid x)=
+\exp[-\widehat H_0(t)e^{x^\top\hat\beta}].
+$$</p>
+<p>A Cox linear predictor is a relative-risk score, not a probability. Absolute prediction needs the baseline event process and target population.</p>
+<h2 id="328-penalization-and-event-information">32.8 Penalization and event information</h2>
+<p>Ridge subtracts $\lambda\sum\beta_j^2/2$ from partial log likelihood. Lasso and elastic net use $L_1$ or mixed penalties. Scaling and penalty selection must occur inside resampling.</p>
+<p>Information depends strongly on event counts and risk-set comparisons, not simply total rows. Thirty-five events cannot reliably support hundreds of flexible coefficients merely because thousands of censored rows exist.</p>
+<p>Penalization cannot repair wrong time zero, dependent censoring, missing competing events, or leakage.</p>
+<h2 id="329-clustering-frailty-fixed-effects-and-strata">32.9 Clustering, frailty, fixed effects, and strata</h2>
+<ul>
+<li>Cluster-robust covariance changes standard errors, not coefficients.</li>
+<li>Shared frailty adds latent group heterogeneity and changes the model.</li>
+<li>District fixed effects estimate represented-district conditional contrasts.</li>
+<li>Stratified Cox gives strata separate baseline hazards while constraining other hazard ratios to be common.</li>
+</ul>
+<p>Choose based on sampling unit, dependence, estimand, and prediction destination—not the smallest $p$-value.</p>
+<hr /></template><template id="companion-template-day-33"><h1 id="day-33-assumptions-diagnostics-and-alternative-time-scales">Day 33 — Assumptions, diagnostics, and alternative time scales</h1>
+<h2 id="331-what-proportional-hazards-requires">33.1 What proportional hazards requires</h2>
+<p>For two profiles, the log-hazard difference must remain constant over analysis time. It does not require a constant baseline hazard.</p>
+<p>Terrain might matter during early access works but less during commissioning. A single coefficient can average a fading or sign-changing effect and obscure the operational story.</p>
+<h2 id="332-complementary-log-log-plots">33.2 Complementary log-log plots</h2>
+<p>Under PH:</p>
+<p>$$
+\log[-\log S(t\mid x)]
+=\log[-\log S_0(t)]+x^\top\beta.
+$$</p>
+<p>Grouped curves of $\log[-\log\widehat S(t)]$ against $\log t$ should be roughly parallel. This is a rough visual diagnostic; sparse tails, arbitrary grouping, and competing events can mislead.</p>
+<h2 id="333-schoenfeld-residuals">33.3 Schoenfeld residuals</h2>
+<p>At an event time:</p>
+<p>$$
+r_j=x_{i(j)}-\bar x(\hat\beta,t_j).
+$$</p>
+<p>This is observed event-subject feature minus fitted risk-set expectation. Under a stable effect, residuals should not systematically trend with event time. Scaled residuals and smooth curves help reveal changing coefficients.</p>
+<p>A non-significant global test does not prove PH. Large samples flag trivial deviations; small samples miss important ones. Examine size, shape, uncertainty, and decision consequences.</p>
+<h2 id="334-time-varying-coefficients-and-stratification">33.4 Time-varying coefficients and stratification</h2>
+<p>One extension is:</p>
+<p>$$
+h(t\mid x)=h_0(t)\exp\{x\beta+xg(t)\gamma\}.
+$$</p>
+<p>With $g(t)=\log t$, $\log HR(t)=\beta+\gamma\log t$. A prespecified before/after milestone may communicate better. Searching many cut points and keeping the strongest exaggerates evidence.</p>
+<p>If a variable is a nuisance with nonproportional effect, stratification can give it separate baseline hazards; then it receives no single coefficient.</p>
+<h2 id="335-functional-form-is-separate">33.5 Functional form is separate</h2>
+<p>PH concerns stability over time. Linearity concerns how a continuous predictor enters the log hazard. Diagnose curvature with justified transformations, restricted cubic splines, supported effect plots, and out-of-sample comparison.</p>
+<p>Cutting a continuous feature at a data-chosen value loses information, creates a false jump, and adds selection multiplicity.</p>
+<h2 id="336-other-residuals-and-influence">33.6 Other residuals and influence</h2>
+<p>Martingale residual:</p>
+<p>$$
+M_i=\Delta_i-\widehat H_i(Y_i).
+$$</p>
+<p>It compares observed event count with fitted cumulative hazard and helps diagnose functional form. Deviance residuals symmetrize it. Score residuals and DFBETA-like measures examine coefficient influence.</p>
+<p>Residuals are investigation tools, not automatic deletion rules. A rare influential project can be precisely the population the model must serve.</p>
+<h2 id="337-accelerated-failure-time-models">33.7 Accelerated failure time models</h2>
+<p>$$
+\log T=x^\top\beta+\sigma\varepsilon.
+$$</p>
+<p>$e^{\beta_j}$ is a modeled time ratio. A value 1.20 stretches the event-time distribution by 20%, conditional on covariates.</p>
+<p>The error distribution determines baseline shape: extreme-value gives Weibull, normal gives log-normal, logistic gives log-logistic. AFT interpretation is often intuitive but imposes more distributional structure than Cox. Check tails and never extrapolate far beyond supported follow-up because AIC is lower.</p>
+<h2 id="338-restricted-mean-survival-time">33.8 Restricted mean survival time</h2>
+<p>$$
+RMST(\tau)=\mathbb E[\min(T,\tau)]=\int_0^\tau S(t)\,dt.
+$$</p>
+<p>It is area under the survival curve through a chosen horizon and is expressed in event-free time, such as months. RMST differences do not require PH.</p>
+<p>Choose $\tau$ before outcome inspection and within follow-up support for every compared group. The unrestricted mean is not identifiable when the tail remains censored; RMST is deliberately bounded.</p>
+<h2 id="339-selection-uncertainty-and-bayesian-extension">33.9 Selection uncertainty and Bayesian extension</h2>
+<p>Standard intervals condition on the selected variables, splines, interactions, and time scale. Extensive diagnostic-driven selection makes them too narrow for the full procedure. Prespecify a primary model, label exploration, use shrinkage, and bootstrap the entire selection process for prediction performance when appropriate.</p>
+<p>A Bayesian survival model combines event/censoring likelihood with priors on coefficients and baseline components. Posterior draws can propagate uncertainty into curves, RMST, and decisions; hierarchical priors can partially pool districts.</p>
+<p>Results remain conditional on event definition, likelihood, censoring, priors, and computation. Perform prior and posterior predictive checks, convergence diagnostics, and prior sensitivity. “Bayesian” does not automatically mean causal, robust, or calibrated.</p>
+<hr /></template><template id="companion-template-day-34"><h1 id="day-34-time-varying-information-and-dynamic-prediction">Day 34 — Time-varying information and dynamic prediction</h1>
+<h2 id="341-baseline-versus-changing-covariates">34.1 Baseline versus changing covariates</h2>
+<p>Baseline values are known at time zero. A time-varying value $X_i(t)$ changes during follow-up:</p>
+<p>$$
+h_i(t)=h_0(t)e^{\beta^\top X_i(t)}.
+$$</p>
+<p>At event time $t$, use only the value known immediately before $t$. Backfilling a future maximum delay into early risk sets leaks the future.</p>
+<h2 id="342-startstop-data">34.2 Start–stop data</h2>
+<p>If schedule status changes at month 10 and warning occurs at 17:</p>
+<table>
+<thead>
+<tr>
+<th>Project</th>
+<th style="text-align: right;">Start</th>
+<th style="text-align: right;">Stop</th>
+<th style="text-align: right;">Status</th>
+<th style="text-align: right;">Event at stop</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr>
+<td>P1</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+</tr>
+</tbody>
+</table>
+<p>Each row is an interval of constant information. Multiple rows are not independent subjects. Audit overlaps, gaps, duplicated events, update timestamps, and observation frequency. Split and resample by subject, never interval row.</p>
+<h2 id="343-internal-and-external-covariates">34.3 Internal and external covariates</h2>
+<p>An external covariate evolves independently of subject state, such as a regional price index. An internal covariate, such as accumulated cost, is generated by the evolving project.</p>
+<p>Internal values may predict strongly but can be shaped by earlier condition and intervention, creating time-dependent confounding and selection. Their Cox coefficients are associational without a causal design.</p>
+<h2 id="344-landmark-prediction">34.4 Landmark prediction</h2>
+<p>At landmark $s$:</p>
+<ul>
+<li>retain subjects observable and event-free at $s$;</li>
+<li>use history available by $s$;</li>
+<li>condition explicitly on survival to $s$; and</li>
+<li>predict in $(s,s+\tau]$.</li>
+</ul>
+<p>The target is:</p>
+<p>$$
+P(T\le s+\tau,J=1\mid T&gt;s,\mathcal H(s)).
+$$</p>
+<p>This population consists of survivors to $s$, not the baseline cohort. A project censored exactly at the landmark is not known observable afterward unless a timestamp convention justifies inclusion.</p>
+<h2 id="345-immortal-time-bias">34.5 Immortal-time bias</h2>
+<p>Calling projects “ever reviewed by month 6” from appraisal guarantees that reviewed projects survived event-free and observable long enough to receive review. Their pre-review time is immortal with respect to that classification.</p>
+<p>Defensible choices depend on the question:</p>
+<ul>
+<li>model review as a correctly aligned time-varying exposure;</li>
+<li>align both strategies at month 6 in a target-trial emulation;</li>
+<li>use a month-6 landmark among survivors; or</li>
+<li>use review only in predictions made at or after it is known.</li>
+</ul>
+<p>Adding eventual review to a baseline Cox model does not fix the bias.</p>
+<h2 id="346-recurrent-events">34.6 Recurrent events</h2>
+<p>First-event analysis discards later warnings or outages. Andersen–Gill represents repeated start–stop intervals and models event intensity, often with subject-clustered covariance.</p>
+<p>Other models target event order, gap time, or latent frailty. Decide whether the scientific quantity is first event, total burden, time between events, or individual propensity.</p>
+<h2 id="347-joint-models">34.7 Joint models</h2>
+<p>Landmarking summarizes history at selected times. Joint models connect a longitudinal measurement process with event time through shared latent structure, potentially handling noisy repeated values and informative observation/dropout.</p>
+<p>They require assumptions for trajectory, association, event process, missingness, and random effects or priors. Use them when longitudinal and event processes are scientifically inseparable, not simply because they are sophisticated.</p>
+<hr /></template><template id="companion-template-day-35"><h1 id="day-35-competing-risks-and-multi-state-processes">Day 35 — Competing risks and multi-state processes</h1>
+<h2 id="351-event-type-and-cumulative-incidence">35.1 Event type and cumulative incidence</h2>
+<p>Let $T$ be time to the first event of any type and $J$ identify its cause. Cause-$k$ cumulative incidence is:</p>
+<p>$$
+F_k(t)=P(T\le t,J=k).
+$$</p>
+<p>$F_1(36)$ is real-world probability of a warning by month 36 before cancellation. All-cause survival $S(t)$ means no event type has occurred.</p>
+<h2 id="352-cause-specific-hazards">35.2 Cause-specific hazards</h2>
+<p>$$
+\lambda_k(t)=\lim_{\Delta t\downarrow0}
+\frac{P(t\le T&lt;t+\Delta t,J=k\mid T\ge t)}{\Delta t}.
+$$</p>
+<p>Overall hazard is $\sum_k\lambda_k(t)$, and:</p>
+<p>$$
+S(t)=\exp\left[-\sum_k\int_0^t\lambda_k(u)du\right].
+$$</p>
+<p>Cause-$k$ incidence is:</p>
+<p>$$
+F_k(t)=\int_0^tS(u-)\lambda_k(u)du.
+$$</p>
+<p>First remain free of every event until just before $u$, then experience cause $k$.</p>
+<h2 id="353-why-one-minus-kaplanmeier-overstates-incidence">35.3 Why one minus Kaplan–Meier overstates incidence</h2>
+<p>If cancellation is censored, $1-\widehat S_{KM}$ imagines cancelled projects remain capable of later warnings. This is a hypothetical net-risk quantity, not observed-world warning probability. The discrepancy grows as competing incidence grows.</p>
+<h2 id="354-aalenjohansen-by-hand">35.4 Aalen–Johansen by hand</h2>
+<p>At event time $t_j$:</p>
+<p>$$
+\Delta\widehat F_k(t_j)=\widehat S(t_j-)\frac{d_{kj}}{n_j},
+$$</p>
+<p>$$
+\widehat S(t_j)=\widehat S(t_j-)
+\left(1-\frac{\sum_kd_{kj}}{n_j}\right).
+$$</p>
+<p>In the chapter's five-project example, warning increments are 0.20 at month 2 and 0.30 at month 5; cancellation incidence is 0.20 and remaining survival is 0.30. The three quantities sum to 1.</p>
+<p>The scratch function loops over all event times, uses one shared all-event-free risk set, adds each cause's incidence increment using survival-before, and then updates survival. Censoring only changes later risk sets.</p>
+<h2 id="355-cause-specific-cox-and-coherent-predictions">35.5 Cause-specific Cox and coherent predictions</h2>
+<p>Fit one Cox model per cause:</p>
+<p>$$
+\lambda_k(t\mid x)=\lambda_{0k}(t)e^{x^\top\beta_k}.
+$$</p>
+<p>Other causes leave the cause-$k$ risk set at their event time. Combine all fitted cause-specific hazards to produce coherent CIFs.</p>
+<p>A covariate can raise cause-1 hazard yet lower cause-1 incidence by increasing a competing cause even more. Rate and probability are different targets.</p>
+<h2 id="356-finegray-subdistribution-hazard">35.6 Fine–Gray subdistribution hazard</h2>
+<p>Fine–Gray uses a special risk set that retains competing-event subjects under weighting conventions and models a subdistribution hazard linked to one CIF.</p>
+<p>A subdistribution hazard ratio is not an instantaneous rate ratio among currently event-free subjects, not a probability ratio, and not the same as a cause-specific hazard ratio. Separate Fine–Gray models for every cause do not automatically create probabilities that sum coherently.</p>
+<p>Choose the model from the estimand, not a familiar output table.</p>
+<h2 id="357-multi-state-models">35.7 Multi-state models</h2>
+<p>A first-event model stops after warning or cancellation. A multi-state system can represent Active, Warning, Cancelled, and Completed, with transition-specific hazards and state-occupation probabilities.</p>
+<p>A Markov model assumes future transitions depend on current state and covariates, not full history. A semi-Markov model can use time since state entry. State definitions, allowed transitions, and timestamps are measurement choices.</p>
+<p>Use multi-state analysis when questions include completion after warning, time spent delayed, or probability of occupying a state—not just the first event.</p>
+<hr /></template><template id="companion-template-day-36"><h1 id="day-36-nonlinear-and-hierarchical-survival-models">Day 36 — Nonlinear and hierarchical survival models</h1>
+<h2 id="361-when-flexibility-is-justified">36.1 When flexibility is justified</h2>
+<p>Cox can already contain splines and interactions. Consider other learners for complex thresholds, local effects, many regulated predictors, or difficult time-varying effects when event information is sufficient.</p>
+<p>Keep a strong regularized Cox reference. A tiny predictive gain may not justify worse calibration, auditability, computation, or maintenance.</p>
+<h2 id="362-survival-trees">36.2 Survival trees</h2>
+<p>A survival tree splits subjects using event-process criteria such as log-rank separation. Each terminal node estimates a survival curve or cumulative hazard.</p>
+<p>It cannot regress observed follow-up time with ordinary squared error because censored time is not the event time. Control terminal <strong>event counts</strong>, not only rows. Specify tie handling, competing-risk target, depth, pruning, and leaf output.</p>
+<p>Log-rank splitting favors proportional separation and may miss crossing hazards or differences at one operational horizon. Split criteria must match the prediction target.</p>
+<h2 id="363-random-survival-forests">36.3 Random survival forests</h2>
+<p>Typically:</p>
+<ol>
+<li>bootstrap subjects;</li>
+<li>grow deep survival trees;</li>
+<li>offer random feature subsets at splits;</li>
+<li>estimate terminal cumulative hazards or survival curves; and</li>
+<li>average across trees.</li>
+</ol>
+<p>Feature and bootstrap randomness reduce tree correlation. OOB prediction is internal evidence, not temporal, geographic, or external transport. Clustered data require cluster-aware sampling.</p>
+<p>Tune tree count, feature subset, minimum terminal events, sampling, and split rule using censoring-aware metrics at prespecified horizons.</p>
+<h2 id="364-survival-boosting">36.4 Survival boosting</h2>
+<p>For Cox boosting:</p>
+<p>$$
+\mathcal L(f)=-\sum_{i:\Delta_i=1}
+\left[f(x_i)-\log\sum_{k\in R(T_i)}e^{f(x_k)}\right].
+$$</p>
+<p>Weak learners reduce a loss coupled through risk sets. Other methods optimize AFT likelihood, discrete hazards, or ranking. Name the objective.</p>
+<p>Learning rate, tree complexity, stages, and early stopping interact. Early stopping consumes validation evidence and belongs inside development folds.</p>
+<h2 id="365-discrete-time-survival">36.5 Discrete-time survival</h2>
+<p>Create one row per subject-interval while still at risk and estimate conditional interval probability:</p>
+<p>$$
+q_{it}=P(T\text{ in interval }t\mid T\text{ not earlier},X_i).
+$$</p>
+<p>Then:</p>
+<p>$$
+S_i(t)=\prod_{u\le t}(1-q_{iu}).
+$$</p>
+<p>Logistic, complementary log-log, boosted, or neural models can estimate these probabilities. Interval rows from one subject are dependent. Random row splitting leaks identities and later history. Multiple causes need coherent multinomial transitions.</p>
+<h2 id="366-neural-survival-models">36.6 Neural survival models</h2>
+<p>A neural model may output a Cox score, discrete hazard, distribution, survival curve, or cause-specific incidence. The brand name does not reveal the estimand.</p>
+<p>Check censoring loss, monotonic curves, probability coherence, time representation, event count, tuning, and temporal/external validation. Deep learning is most plausible with large event counts and rich inputs; ordinary tabular cohorts often favor simpler regularized models.</p>
+<h2 id="367-shared-frailty-and-partial-pooling">36.7 Shared frailty and partial pooling</h2>
+<p>$$
+h_{ij}(t)=h_0(t)e^{x_{ij}^\top\beta+u_j}.
+$$</p>
+<p>$u_j$ is a latent group effect. Sparse districts partially pool toward the population distribution. Frailty induces within-group dependence and risk-set selection over time.</p>
+<p>Frailty variance does not identify why districts differ. For a new district, an existing-district random effect is unavailable; prediction may integrate over the frailty distribution or require local data.</p>
+<h2 id="368-resampling-destinations-and-explanation">36.8 Resampling destinations and explanation</h2>
+<p>Hold out according to the generalization target: future project, new district, future period, or both. “Generalizes” is incomplete without a destination.</p>
+<p>Survival permutation importance needs a survival metric. PDP or SHAP must name whether output is $S(t)$, hazard score, or $F_k(t)$ and at which horizon. Importance may change with time. These are fitted-model explanations, not causal decompositions.</p>
+<hr /></template><template id="companion-template-day-37"><h1 id="day-37-censoring-aware-evaluation-and-decisions">Day 37 — Censoring-aware evaluation and decisions</h1>
+<h2 id="371-complete-prediction-contract">37.1 Complete prediction contract</h2>
+<p>Every metric must name prediction time, eligible population, event type, horizon, competing-event handling, censoring adjustment, validation destination, and whether it assesses ranking, probability, or action.</p>
+<p>“C-index 0.74” omits most of the scientific question.</p>
+<h2 id="372-harrell-concordance">37.2 Harrell concordance</h2>
+<p>If subject $i$ has the earlier observed time and experiences cause 1 then, its pair with a later subject is comparable. A score is concordant if it ranks $i$ higher.</p>
+<p>$$
+\widehat C=\frac{\text{concordant}+0.5\times\text{score ties}}
+{\text{comparable pairs}}.
+$$</p>
+<p>Harrell C excludes ambiguous pairs and can depend on censoring. It is a global ranking measure, not horizon-specific probability accuracy. Uno C uses inverse censoring weights under additional assumptions.</p>
+<h2 id="373-time-dependent-auc">37.3 Time-dependent AUC</h2>
+<p>At $\tau$, define cases and controls using a stated incident/dynamic or cumulative/dynamic convention, then adjust for censoring. Different conventions answer different questions.</p>
+<p>Plot supported horizons. Selecting the time where AUC peaks is outcome-driven. A model can rank early events well and later events poorly.</p>
+<h2 id="374-ipcw-brier-score">37.4 IPCW Brier score</h2>
+<p>Without censoring, cause-1 Brier at $\tau$ is:</p>
+<p>$$
+\frac1n\sum_i[\mathbb 1(T_i\le\tau,J_i=1)-\widehat F_{1i}(\tau)]^2.
+$$</p>
+<p>Status is unknown for subjects censored before $\tau$. IPCW upweights subjects whose status is observed by the inverse probability of remaining uncensored.</p>
+<p>Estimate $G(t)=P(C&gt;t)$ with a reverse Kaplan–Meier or justified conditional censoring model, using training/reference data. A competing event before $\tau$ is known not to be cause 1 and remains observed; it is not censored.</p>
+<p>Small $\widehat G$ produces unstable weights. Restrict horizons or prespecify weight truncation and sensitivity analyses. Integrated Brier averages over a stated time range whose weights and maximum time must be reported.</p>
+<h2 id="375-reading-the-scratch-ipcw-function">37.5 Reading the scratch IPCW function</h2>
+<ul>
+<li>Subjects with any observed event by the horizon receive inverse $G$ just before their event.</li>
+<li>Cause-1 events have outcome 1; competing events have outcome 0.</li>
+<li>Subjects still at risk after the horizon receive inverse $G(\tau)$ and outcome 0.</li>
+<li>Subjects censored on or before the horizon receive zero weight because status is unknown.</li>
+</ul>
+<p>This recovers information only under the censoring assumption. If censoring depends on features, model $G(t\mid X)$ appropriately and validate it.</p>
+<h2 id="376-calibration-at-a-horizon">37.6 Calibration at a horizon</h2>
+<p>For each prediction group:</p>
+<ol>
+<li>calculate predictions without validation outcomes;</li>
+<li>report mean predicted CIF;</li>
+<li>estimate observed CIF with Aalen–Johansen;</li>
+<li>show events, competing events, censoring, numbers at risk, and uncertainty.</li>
+</ol>
+<p>Raw observed cause-1 proportion mishandles censored status. Tiny bins cannot establish calibration. Any flexible recalibration needs separate development evidence.</p>
+<h2 id="377-inference-prediction-and-conformal-methods">37.7 Inference, prediction, and conformal methods</h2>
+<p>A narrow coefficient interval does not imply accurate individual probabilities. Coefficient inference, ranking, calibration, forecast uncertainty, and decisions require different evidence.</p>
+<p>Ordinary split conformal cannot use $|T-\hat T|$ for censored rows because $T$ is unknown. Dropping censored rows breaks exchangeability. Conformal survival methods add censoring assumptions, weighting, bounds, or alternative targets. State whether the output is a lower bound, interval, or probability band and the population receiving coverage.</p>
+<h2 id="378-validation-destinations">37.8 Validation destinations</h2>
+<ul>
+<li>Apparent performance uses training data and is optimistic.</li>
+<li>Internal validation estimates optimism within one source.</li>
+<li>Temporal validation uses later approvals.</li>
+<li>Geographic validation holds out places.</li>
+<li>External validation uses an independently collected source.</li>
+<li>Prospective validation freezes the system before live future cases.</li>
+</ul>
+<p>Describe shifts in predictors, censoring, competing events, follow-up, measurement, and interventions. A random 20% holdout is not external validation.</p>
+<h2 id="379-horizon-specific-decisions">37.9 Horizon-specific decisions</h2>
+<p>For calibrated incidence $p$ and simplified costs:</p>
+<p>$$
+p&gt;\frac{C_{FP}}{C_{FP}+C_{FN}}.
+$$</p>
+<p>This assumes a currently available action, common costs, encoded intervention effectiveness, and an appropriate horizon. Capacity limits can instead select the top 10%, but calibration still informs expected yield.</p>
+<p>A dynamic policy must specify at each landmark its population, remaining horizon, model, inputs, action, threshold/capacity, override, appeal, and next evaluation. Monitor repeated alerts, lead time, false alarms, burden, and feedback from actions.</p>
+<h2 id="3710-subgroup-evaluation">37.10 Subgroup evaluation</h2>
+<p>Report group counts, event types, censoring, follow-up, CIF, calibration, discrimination when estimable, actions, and uncertainty. A software AUC based on four events is not stable evidence.</p>
+<p>Differences may reflect sampling, measurement, baseline incidence, competing risks, access to intervention, or model failure. Tie fairness analysis to the concrete action and institution.</p>
+<hr /></template><template id="companion-template-day-38"><h1 id="day-38-the-registered-locked-study-and-causal-boundary">Day 38 — The registered locked study and causal boundary</h1>
+<h2 id="381-registration">38.1 Registration</h2>
+<p>Before touching the lockbox, freeze the question, cohort, time zero, entry, causes, censoring, horizons, prediction timestamps, estimands, splits, preprocessing, candidates, tuning, metrics, censoring weights, competing-risk method, groups, missing data, uncertainty, decision policy, sensitivity analyses, stopping, updates, and allowed claim language.</p>
+<p>Registration permits exploration; it labels it honestly and makes deviations visible.</p>
+<h2 id="382-the-chapter-5-protocol">38.2 The Chapter 5 protocol</h2>
+<p>The chapter uses projects through 2022 for development, forward validation years 2020–2022, and 2023–2025 as one locked temporal test. It selects by cause-1 IPCW Brier averaged equally over 12, 24, and 36 months and validation years.</p>
+<p>Candidates include historical Aalen–Johansen CIF and raw/engineered cause-specific Cox systems with fixed ridge choices. Separate cause models are combined into coherent incidence. The study also reports concordance, calibration, access-mode and district audits, and paired locked-test uncertainty.</p>
+<p>The feature-free historical CIF is essential: complexity must beat a credible event-history baseline.</p>
+<h2 id="383-reading-the-benchmark">38.3 Reading the benchmark</h2>
+<p><code>DesignBuilder</code> learns medians, means, scales, and category levels only from its training fold. It optionally constructs prespecified nonlinear features.</p>
+<p><code>CauseSpecificCoxSystem</code> fits one Cox model for warning and one for cancellation. <code>cif_from_cause_specific_models</code> combines their hazard increments:</p>
+<ol>
+<li>union all cause-specific event times;</li>
+<li>calculate each subject's cause increments;</li>
+<li>convert total integrated hazard to event probability $1-e^{-dH}$;</li>
+<li>allocate it among causes in proportion to increments;</li>
+<li>add incidence using prior event-free survival; and</li>
+<li>update survival.</li>
+</ol>
+<p>The result is nonnegative and obeys $F_1+F_2+S=1$ within numerical precision.</p>
+<p><code>HistoricalCIF</code> predicts the training cohort's Aalen–Johansen values for everyone. Forward folds train only on earlier years. The lockbox is opened after candidate selection. The development reverse-KM curve supplies censoring weights.</p>
+<p>The script saves every fold score, candidate summary, individual locked prediction, calibration table, subgroup audits, and metadata. Assertions prohibit final cost, future progress, future review, outcome time, and event type as baseline features.</p>
+<h2 id="384-what-it-does-not-solve">38.4 What it does not solve</h2>
+<p>Real applications may need conditional censoring weights, delayed entry, Efron ties, clustered resampling, interval-censoring models, better missingness handling, external validation, and different state definitions. Executable does not mean universally valid.</p>
+<h2 id="385-paired-bootstrap-scope">38.5 Paired bootstrap scope</h2>
+<p>The benchmark resamples locked projects and recomputes the Brier difference while fits and censoring curve remain fixed. It measures validation-sample variation conditional on those frozen objects.</p>
+<p>It omits development variability, selection uncertainty, censoring-model uncertainty, clustering, adjudication error, and transport. End-to-end procedure uncertainty would repeat preprocessing, validation, selection, fitting, and evaluation at the correct sampling unit.</p>
+<h2 id="386-sensitivity-analysis">38.6 Sensitivity analysis</h2>
+<p>Prespecified analyses change one assumption at a time: horizons, Efron ties, conditional censoring, composite events, ambiguous-date exclusion, district bootstrap, spline terms, or a month-12 landmark.</p>
+<p>Sensitivity shows dependence on choices. It must not become a menu from which the best-looking answer is selected.</p>
+<h2 id="387-prediction-is-not-treatment-effect">38.7 Prediction is not treatment effect</h2>
+<p>Projects with latent difficulty are more likely to receive review and warnings. The back-door path:</p>
+<pre><code class="language-text">review &lt;- latent difficulty -&gt; warning
+</code></pre>
+<p>creates confounding by indication. Event-free survival needed to receive review can add immortal-time bias. Time-varying condition may influence review and be influenced by earlier review.</p>
+<p>Adding every available variable to Cox does not guarantee control: mediators, colliders, unmeasured confounders, positivity, and timing matter.</p>
+<h2 id="388-target-trial-emulation">38.8 Target-trial emulation</h2>
+<p>A hypothetical experiment specifies:</p>
+<ul>
+<li>eligibility: active warning-free projects at month 6;</li>
+<li>strategies: immediate review versus no review in a grace period;</li>
+<li>common time zero: month 6;</li>
+<li>follow-up: through month 36, cancellation, or censoring;</li>
+<li>outcome and competing-risk estimand;</li>
+<li>causal contrast: incidence difference under strategies; and</li>
+<li>analysis aligned with baseline/time-varying confounding.</li>
+</ul>
+<p>Observational methods include standardization, inverse-probability weighting, g-formula, marginal structural models, and doubly robust estimation. They require consistency, positivity, conditional exchangeability, and correct nuisance estimation. Design and identification—not a regression name—support causal claims.</p>
+<h2 id="389-research-integrity-and-paper-reading">38.9 Research integrity and paper reading</h2>
+<p>Maintain a deviation log with date, reason, lockbox visibility, affected components, analysis status, and approval. Freeze tested code and environment; keep raw data read-only; script derived data; preserve a dictionary and timestamp audit.</p>
+<p>A selected model losing to historical CIF is a valid result. Reopening search turns the old test into development evidence and requires a new future test.</p>
+<p>For every paper map its problem, estimand, observed data, assumptions, estimator, uncertainty, evidence, failures, software additions, and smallest replication. Read core derivation and limitations, not only summaries.</p>
+<hr /></template><template id="companion-template-capstone"><h1 id="capstone-companion-exercises-reporting-and-assessment">Capstone companion: exercises, reporting, and assessment</h1>
+<h2 id="c1-how-to-approach-the-exercises">C.1 How to approach the exercises</h2>
+<p>For every exercise, write four lines before code:</p>
+<ol>
+<li><strong>Observed record:</strong> what time, status, entry, cause, and features are available?</li>
+<li><strong>Target:</strong> survival, hazard, CIF, dynamic risk, performance, or causal contrast?</li>
+<li><strong>Assumptions:</strong> censoring, truncation, PH, distribution, exchangeability, or transport?</li>
+<li><strong>Check:</strong> which hand calculation, invariant, simulation, or independent implementation could reveal an error?</li>
+</ol>
+<p>Foundation exercises build inequalities, delayed-entry risk sets, hazard-to-probability conversion, KM, Nelson–Aalen, Greenwood, and RMST. Modeling exercises cover partial likelihood, ties, non-PH, and AFT alternatives. Dynamic/competing exercises cover KM overstatement, coherent cause predictions, landmark populations, and immortal time. Research exercises stress censoring sensitivity, external validation, paper replication, and registration.</p>
+<h2 id="c2-essential-invariants">C.2 Essential invariants</h2>
+<p>Automated checks should verify:</p>
+<ul>
+<li>entry never follows exit;</li>
+<li>interval start is less than stop;</li>
+<li>event type belongs to the allowed set;</li>
+<li>at most one first event occurs per project;</li>
+<li>risk-set counts match a hand example;</li>
+<li>survival is nonincreasing and between 0 and 1;</li>
+<li>each CIF is nondecreasing and between 0 and 1;</li>
+<li>$S+\sum_kF_k=1$ in the simple competing-risk system;</li>
+<li>predictions use no post-prediction features;</li>
+<li>train years precede validation/test years;</li>
+<li>preprocessing learns only from training rows; and</li>
+<li>locked predictions are saved before aggregate reporting.</li>
+</ul>
+<h2 id="c3-research-ready-report">C.3 Research-ready report</h2>
+<ol>
+<li>Abstract: cohort, time zero, causes, horizons, design, locked result, limitation.</li>
+<li>Event-history construction: sources, timestamps, adjudication, entry, censoring.</li>
+<li>Estimands and prediction contract.</li>
+<li>Candidate procedures, folds, tuning, censoring, ties, competing-risk method.</li>
+<li>Every validation fold and event count.</li>
+<li>Locked discrimination, Brier, calibration, and incidence.</li>
+<li>Groups with counts, causes, censoring, follow-up, and uncertainty.</li>
+<li>Diagnostics and prespecified sensitivity analyses.</li>
+<li>Transport and supported follow-up limits.</li>
+<li>Decision rule, workflow, overrides, monitoring, and contestability.</li>
+<li>Reproducibility artifacts and deviations.</li>
+<li>Bounded predictive conclusion and separate causal question.</li>
+</ol>
+<p>A research-ready study can conclude that no candidate transports or that follow-up cannot support the horizon. Refusing an unsupported claim is success.</p>
+<hr /></template><template id="companion-template-reference"><h1 id="chapter-5-synthesis-and-practical-laboratories">Chapter 5 synthesis and practical laboratories</h1>
+<h2 id="s1-one-history-several-targets">S.1 One history, several targets</h2>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Target</th>
+<th>Typical method</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Time until any first event</td>
+<td>$S(t)$ or $H(t)$</td>
+<td>Kaplan–Meier, Nelson–Aalen</td>
+</tr>
+<tr>
+<td>Feature association with current cause-1 rate</td>
+<td>$\lambda_1(t\mid x)$</td>
+<td>cause-specific Cox</td>
+</tr>
+<tr>
+<td>Real-world cause-1 probability</td>
+<td>$F_1(t\mid x)$</td>
+<td>Aalen–Johansen or combined cause hazards</td>
+</tr>
+<tr>
+<td>Updated risk at month 12</td>
+<td>conditional landmark CIF</td>
+<td>landmark model</td>
+</tr>
+<tr>
+<td>Flexible prediction</td>
+<td>horizon survival/CIF</td>
+<td>spline Cox, forest, boosting</td>
+</tr>
+<tr>
+<td>Effect of review</td>
+<td>causal contrast under strategies</td>
+<td>experiment or target-trial emulation</td>
+</tr>
+</tbody>
+</table>
+<h2 id="s2-derivations-to-complete-by-hand">S.2 Derivations to complete by hand</h2>
+<ol>
+<li>Derive what is known under $Y=\min(T,C)$ and $\Delta$.</li>
+<li>Construct risk sets with delayed entry.</li>
+<li>Derive $S(t)=e^{-H(t)}$.</li>
+<li>Derive KM as a product of conditional survivals.</li>
+<li>Calculate Greenwood variance and Nelson–Aalen hazard.</li>
+<li>Derive log-rank observed-minus-expected counts.</li>
+<li>Derive one Cox partial-likelihood factor and score.</li>
+<li>Recover Breslow baseline survival.</li>
+<li>Derive complementary-log-log parallelism under PH.</li>
+<li>Calculate RMST as a staircase area.</li>
+<li>Construct start–stop intervals and a landmark estimand.</li>
+<li>Derive Aalen–Johansen CIF increments.</li>
+<li>Combine cause-specific hazard increments coherently.</li>
+<li>Enumerate concordance-comparable pairs.</li>
+<li>Derive IPCW Brier contributions for event, competitor, survivor, and censoring.</li>
+<li>Derive a horizon-specific cost threshold.</li>
+<li>Draw the confounding and immortal-time paths for review.</li>
+</ol>
+<h2 id="s3-practical-laboratories">S.3 Practical laboratories</h2>
+<h3 id="laboratory-a-incomplete-records">Laboratory A: incomplete records</h3>
+<p>Generate latent event and censoring times, reveal only observed time/status, move the database-close date, and state every censored inequality.</p>
+<h3 id="laboratory-b-product-limit-estimation">Laboratory B: product-limit estimation</h3>
+<p>Calculate delayed-entry KM, Greenwood, Nelson–Aalen, median survival if reached, and RMST with ties.</p>
+<h3 id="laboratory-c-cox-recovery">Laboratory C: Cox recovery</h3>
+<p>Simulate exponential and Weibull PH data, vary censoring and ties, compare Breslow/Efron, then generate a sign-changing coefficient.</p>
+<h3 id="laboratory-d-diagnostics-and-alternative-scale">Laboratory D: diagnostics and alternative scale</h3>
+<p>Compare constant Cox, prespecified time interaction, spline form, AFT, and RMST under crossing hazards.</p>
+<h3 id="laboratory-e-dynamic-information">Laboratory E: dynamic information</h3>
+<p>Create month-6, 12, and 18 landmark cohorts. Compare baseline and current-history prediction without pooling unlike survivor populations.</p>
+<h3 id="laboratory-f-competing-risks">Laboratory F: competing risks</h3>
+<p>Hold warning hazard fixed while increasing cancellation. Compare $1-$KM, Aalen–Johansen, cause-specific hazards, and Fine–Gray interpretation.</p>
+<h3 id="laboratory-g-flexible-survival">Laboratory G: flexible survival</h3>
+<p>Give regularized Cox, spline Cox, survival forest, and boosting equal temporal folds and tuning budgets. Select using supported-horizon IPCW Brier.</p>
+<h3 id="laboratory-h-censoring-shift">Laboratory H: censoring shift</h3>
+<p>Hold event process fixed while changing censoring. Compare Harrell C, Uno C, IPCW Brier, calibration, and weight stability.</p>
+<h3 id="laboratory-i-external-destination">Laboratory I: external destination</h3>
+<p>Hold out a district. Report feature, missingness, cause, censoring, and follow-up shifts before model metrics.</p>
+<h3 id="laboratory-j-causal-boundary">Laboratory J: causal boundary</h3>
+<p>Demonstrate confounding by indication and immortal time, then write a target-trial protocol whose time zero and strategies align.</p>
+<hr />
+<h1 id="formula-sheet-with-plain-language-readings">Formula sheet with plain-language readings</h1>
+<table>
+<thead>
+<tr>
+<th>Formula</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>$Y=\min(T,C)$</td>
+<td>observed follow-up ends at event or censoring</td>
+</tr>
+<tr>
+<td>$\Delta=\mathbb 1(T\le C)$</td>
+<td>whether the event was observed</td>
+</tr>
+<tr>
+<td>$S(t)=P(T&gt;t)$</td>
+<td>event-free probability beyond time $t$</td>
+</tr>
+<tr>
+<td>$F(t)=1-S(t)$</td>
+<td>cumulative event probability without competing causes</td>
+</tr>
+<tr>
+<td>$h(t)$</td>
+<td>instantaneous rate among those still at risk</td>
+</tr>
+<tr>
+<td>$H(t)=\int_0^th(u)du$</td>
+<td>cumulative hazard</td>
+</tr>
+<tr>
+<td>$S(t)=e^{-H(t)}$</td>
+<td>link from cumulative rate to survival</td>
+</tr>
+<tr>
+<td>$\prod(1-d_j/n_j)$</td>
+<td>Kaplan–Meier survival</td>
+</tr>
+<tr>
+<td>$S^2\sum d/[n(n-d)]$</td>
+<td>Greenwood variance</td>
+</tr>
+<tr>
+<td>$\sum d_j/n_j$</td>
+<td>Nelson–Aalen cumulative hazard</td>
+</tr>
+<tr>
+<td>$d_jn_{1j}/n_j$</td>
+<td>expected group-1 events in log-rank calculation</td>
+</tr>
+<tr>
+<td>$h_0(t)e^{x^\top\beta}$</td>
+<td>Cox proportional hazard</td>
+</tr>
+<tr>
+<td>$e^{\beta_j}$</td>
+<td>conditional hazard ratio for one unit</td>
+</tr>
+<tr>
+<td>$\sum[x_{event}-\bar x_R]$</td>
+<td>Cox score</td>
+</tr>
+<tr>
+<td>$e^{-\widehat H_0(t)e^{x^\top\beta}}$</td>
+<td>Cox absolute survival</td>
+</tr>
+<tr>
+<td>$\log T=x^\top\beta+\sigma\varepsilon$</td>
+<td>AFT model</td>
+</tr>
+<tr>
+<td>$\int_0^\tau S(t)dt$</td>
+<td>RMST through $\tau$</td>
+</tr>
+<tr>
+<td>$F_k(t)=P(T\le t,J=k)$</td>
+<td>cause-$k$ cumulative incidence</td>
+</tr>
+<tr>
+<td>$S(t-)d_{kj}/n_j$</td>
+<td>Aalen–Johansen CIF increment</td>
+</tr>
+<tr>
+<td>$S_i(t)=\prod_{u\le t}(1-q_{iu})$</td>
+<td>discrete-time survival</td>
+</tr>
+<tr>
+<td>$(concordant+0.5ties)/comparable$</td>
+<td>Harrell concordance</td>
+</tr>
+<tr>
+<td>$1/G(t)$</td>
+<td>inverse censoring weight</td>
+</tr>
+<tr>
+<td>$C_{FP}/(C_{FP}+C_{FN})$</td>
+<td>simplified decision threshold</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="expanded-glossary">Expanded glossary</h1>
+<p><strong>Aalen–Johansen estimator</strong> — Product-integral estimator of transition probabilities and competing-risk CIFs.</p>
+<p><strong>Accelerated failure time model</strong> — Model in which covariates multiply the event-time scale through log time.</p>
+<p><strong>Administrative censoring</strong> — Planned follow-up end at database or study closure.</p>
+<p><strong>At risk</strong> — Entered, observable, and free of the defined absorbing event immediately before a time.</p>
+<p><strong>Baseline hazard</strong> — Time-varying reference hazard in a PH model.</p>
+<p><strong>Calibration at a horizon</strong> — Agreement between predicted and observed event probability by that time.</p>
+<p><strong>Cause-specific hazard</strong> — Instantaneous rate of one cause among subjects free of all causes.</p>
+<p><strong>Censoring</strong> — Incomplete event-time observation; right censoring tells us event time exceeds censor time.</p>
+<p><strong>Concordance</strong> — Ranking agreement across usable event-time pairs.</p>
+<p><strong>Competing event</strong> — An event that prevents or fundamentally changes the event of interest.</p>
+<p><strong>Cumulative hazard</strong> — Hazard accumulated over time.</p>
+<p><strong>Cumulative incidence function</strong> — Probability of one particular cause by time in the presence of competitors.</p>
+<p><strong>Delayed entry</strong> — Risk-set entry after time zero because of left truncation.</p>
+<p><strong>Dynamic prediction</strong> — Updated prediction using history available at a later prediction time.</p>
+<p><strong>Fine–Gray model</strong> — Regression model for a cause's subdistribution hazard linked to its CIF.</p>
+<p><strong>Frailty</strong> — Latent random effect representing unobserved heterogeneity or shared dependence.</p>
+<p><strong>Greenwood formula</strong> — Approximate KM variance estimator.</p>
+<p><strong>Hazard</strong> — Instantaneous event rate conditional on remaining at risk; not a probability.</p>
+<p><strong>Hazard ratio</strong> — Ratio of hazards; time-constant under PH.</p>
+<p><strong>Independent censoring</strong> — Conditional assumption that censoring adds no further event-time information.</p>
+<p><strong>Interval censoring</strong> — Event known only to lie within an interval.</p>
+<p><strong>IPCW</strong> — Inverse probability of censoring weighting.</p>
+<p><strong>Kaplan–Meier estimator</strong> — Product-limit survival estimator based on event-time risk sets.</p>
+<p><strong>Landmark analysis</strong> — Prediction among survivors at a chosen update time using information then available.</p>
+<p><strong>Left censoring</strong> — Event occurred before a known bound.</p>
+<p><strong>Left truncation</strong> — Subjects are sampled only after surviving to an entry time.</p>
+<p><strong>Log-rank test</strong> — Risk-set observed-versus-expected group comparison.</p>
+<p><strong>Multi-state model</strong> — Model for transitions among several states rather than only first event.</p>
+<p><strong>Nelson–Aalen estimator</strong> — Sum of events divided by risk-set size, estimating cumulative hazard.</p>
+<p><strong>Partial likelihood</strong> — Cox likelihood component estimating relative hazard without specifying baseline shape.</p>
+<p><strong>Proportional hazards</strong> — Covariate hazard ratios remain constant over analysis time.</p>
+<p><strong>Recurrent event</strong> — Event type that may occur multiple times for one subject.</p>
+<p><strong>Restricted mean survival time</strong> — Expected event-free time capped at a finite horizon.</p>
+<p><strong>Risk set</strong> — Subjects eligible, entered, observed, and event-free immediately before a time.</p>
+<p><strong>Schoenfeld residual</strong> — Event-subject covariate minus its risk-set-weighted expectation.</p>
+<p><strong>Subdistribution hazard</strong> — Hazard-like quantity constructed to model a competing-risk CIF.</p>
+<p><strong>Time-varying covariate</strong> — Feature changing during follow-up and aligned to when known.</p>
+<p><strong>Target trial</strong> — Explicit hypothetical randomized experiment an observational causal analysis seeks to emulate.</p>
+<hr />
+<h1 id="research-paper-reading-ladder">Research-paper reading ladder</h1>
+<table>
+<thead>
+<tr>
+<th>Paper</th>
+<th>Central idea</th>
+<th>Beginner replication</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kaplan &amp; Meier (1958)</td>
+<td>nonparametric estimation from incomplete lifetimes</td>
+<td>hand-calculate every product term</td>
+</tr>
+<tr>
+<td>Cox (1972)</td>
+<td>relative-hazard regression through risk-set conditioning</td>
+<td>compare two baseline hazard shapes</td>
+</tr>
+<tr>
+<td>Schoenfeld (1982)</td>
+<td>partial-likelihood residuals for model checking</td>
+<td>simulate stable and fading effects</td>
+</tr>
+<tr>
+<td>Andersen &amp; Gill (1982)</td>
+<td>counting-process framework for histories and recurrent events</td>
+<td>build valid start–stop risk sets</td>
+</tr>
+<tr>
+<td>van Houwelingen (2007)</td>
+<td>dynamic prediction by landmarking</td>
+<td>compare several landmark populations</td>
+</tr>
+<tr>
+<td>Aalen &amp; Johansen (1978)</td>
+<td>product-integral transition probabilities</td>
+<td>verify CIFs plus survival sum to one</td>
+</tr>
+<tr>
+<td>Fine &amp; Gray (1999)</td>
+<td>regression tied to a competing-risk CIF</td>
+<td>separate cause-specific and subdistribution interpretations</td>
+</tr>
+<tr>
+<td>Ishwaran et al. (2008)</td>
+<td>survival-specific forest construction</td>
+<td>compare equal-budget temporal validation</td>
+</tr>
+<tr>
+<td>Graf et al. (1999)</td>
+<td>prediction error with censoring</td>
+<td>implement horizon IPCW Brier</td>
+</tr>
+<tr>
+<td>Uno et al. (2011)</td>
+<td>censoring limitation of common concordance</td>
+<td>vary only censoring across simulations</td>
+</tr>
+<tr>
+<td>Candès et al. (2023)</td>
+<td>conformal prediction under survival censoring</td>
+<td>state target and coverage assumptions</td>
+</tr>
+</tbody>
+</table>
+<p>For every methods paper, map problem, estimand, observed record, assumptions, estimator, uncertainty, evidence, failures, software gap, and a minimal falsifying replication.</p>
+<hr />
+<h1 id="suggested-nine-day-study-rhythm">Suggested nine-day study rhythm</h1>
+<p>Use roughly three hours daily:</p>
+<ol>
+<li>15 minutes: retrieve the prior exit check.</li>
+<li>20 minutes: draw event and observation timelines.</li>
+<li>35 minutes: construct a tiny risk set.</li>
+<li>45 minutes: derive the central estimator.</li>
+<li>55 minutes: type and alter code.</li>
+<li>25 minutes: create a failure case.</li>
+<li>20 minutes: reconstruct a paper claim.</li>
+<li>10 minutes: write an estimand, assumption, and bounded conclusion.</li>
+</ol>
+<p>Survival skill grows by repeatedly rebuilding risk sets. Do not reduce the chapter to memorizing package calls.</p>
+<hr />
+<h1 id="common-beginner-misconceptions">Common beginner misconceptions</h1>
+<ul>
+<li>Censored does not mean event-free forever.</li>
+<li>Left censoring is not left truncation.</li>
+<li>A competing event is not missing follow-up.</li>
+<li>Hazard is a rate, not a probability.</li>
+<li>Hazard ratio is not a risk ratio, probability difference, time ratio, or causal effect.</li>
+<li>Censoring changes later risk sets, not KM directly.</li>
+<li>One minus KM is not a cause-specific real-world incidence with competitors.</li>
+<li>A log-rank $p$-value is not effect size or causality.</li>
+<li>PH does not require constant hazard.</li>
+<li>PH and linear functional form are separate assumptions.</li>
+<li>A non-significant diagnostic does not prove an assumption.</li>
+<li>A Cox risk score is not an absolute probability.</li>
+<li>Rows do not equal information; event counts matter.</li>
+<li>Future progress cannot enter a baseline model.</li>
+<li>Start–stop rows from one subject are dependent.</li>
+<li>Ever-treated grouping can create immortal-time bias.</li>
+<li>Different landmarks contain different survivor populations.</li>
+<li>Fine–Gray and cause-specific hazard ratios differ.</li>
+<li>Ordinary regression on observed follow-up time mishandles censoring.</li>
+<li>OOB performance is not temporal transport.</li>
+<li>A C-index is not calibration or decision value.</li>
+<li>Subjects censored before a horizon do not have known negative status.</li>
+<li>A random holdout is not external validation.</li>
+<li>Split conformal is not automatically valid with unknown event times.</li>
+<li>A predictive treatment coefficient is not an intervention effect.</li>
+<li>Reopening a lockbox makes it development data.</li>
+</ul>
+<hr />
+<h1 id="ethical-operational-and-governance-questions">Ethical, operational, and governance questions</h1>
+<ul>
+<li>Who defines and adjudicates a formal warning?</li>
+<li>Could warning practices differ by district or period?</li>
+<li>Why does follow-up end, and who becomes invisible?</li>
+<li>Does cancellation represent failure, protection, choice, or several processes?</li>
+<li>Is review supportive, burdensome, or both?</li>
+<li>What horizon allows meaningful preventive action?</li>
+<li>Who sets false-alert and missed-warning consequences?</li>
+<li>Can teams correct dates, features, states, and decisions?</li>
+<li>How are repeated alerts and override burden monitored?</li>
+<li>Which groups lack enough follow-up for a promised horizon?</li>
+<li>Who can pause the system when calibration or censoring changes?</li>
+<li>How do actions alter later warnings, cancellations, and recorded data?</li>
+<li>What new causal design is needed before claiming review benefit?</li>
+</ul>
+<hr />
+<h1 id="final-readiness-checklist">Final readiness checklist</h1>
+<p>You are ready to leave Chapter 5 when you can:</p>
+<ul>
+<li>define unit, origin, entry, event types, censoring, and horizon;</li>
+<li>distinguish four incomplete-observation mechanisms;</li>
+<li>construct delayed-entry risk sets;</li>
+<li>state independent censoring as an unprovable conditional assumption;</li>
+<li>move among density, survival, hazard, and cumulative hazard;</li>
+<li>derive KM, Greenwood, Nelson–Aalen, and log-rank calculations;</li>
+<li>derive Cox partial likelihood, score, and baseline survival;</li>
+<li>interpret hazard ratios without probability or causal overreach;</li>
+<li>document tie handling and event-information limits;</li>
+<li>diagnose PH separately from functional form;</li>
+<li>interpret AFT time ratios and RMST;</li>
+<li>align time-varying information using start–stop or landmarks;</li>
+<li>explain recurrent events, joint models, and immortal time;</li>
+<li>derive Aalen–Johansen incidence and distinguish Fine–Gray;</li>
+<li>explain survival trees, forests, boosting, discrete time, and frailty;</li>
+<li>design resampling for the destination;</li>
+<li>calculate concordance and IPCW Brier contributions;</li>
+<li>build censoring-aware calibration at supported horizons;</li>
+<li>separate ranking, probability, decision, coefficient, and forecast uncertainty;</li>
+<li>execute the registered temporal benchmark once;</li>
+<li>preserve predictions, metadata, deviations, and unfavorable results; and</li>
+<li>distinguish prognostic association from a target-trial causal effect.</li>
+</ul>
+<p>The entire chapter can be remembered as:</p>
+<blockquote>
+<p>clock → risk set → event process → probability → decision → bounded claim.</p>
+</blockquote></template>
+<script>
+(function () {
+    var modal = document.getElementById('companion-more-modal');
+    var body = document.getElementById('companion-more-body');
+    var close = modal && modal.querySelector('.companion-more-close');
+    var previousFocus = null;
+    if (!modal || !body || !close) return;
+
+    function closeModal() {
+        modal.hidden = true;
+        body.replaceChildren();
+        document.body.style.overflow = '';
+        if (previousFocus) previousFocus.focus();
+    }
+
+    document.querySelectorAll('.companion-more-button').forEach(function (button) {
+        button.addEventListener('click', function () {
+            var key = button.getAttribute('data-companion-section');
+            var template = document.getElementById('companion-template-' + key);
+            if (!template) return;
+            previousFocus = button;
+            body.replaceChildren(template.content.cloneNode(true));
+            modal.hidden = false;
+            document.body.style.overflow = 'hidden';
+            close.focus();
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise([body]);
+            }
+        });
+    });
+    close.addEventListener('click', closeModal);
+    modal.addEventListener('click', function (event) {
+        if (event.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && !modal.hidden) closeModal();
+    });
+    var requestedSection = new URLSearchParams(window.location.search).get('companion');
+    if (requestedSection) {
+        var requestedButton = Array.from(
+            document.querySelectorAll('.companion-more-button')
+        ).find(function (button) {
+            return button.getAttribute('data-companion-section') === requestedSection;
+        });
+        if (requestedButton) requestedButton.click();
+    }
+})();
+</script>
+
         </article>
     </div>
 
@@ -4123,11 +5359,11 @@ $$</p>
         };
         (function loadMathJax() {
             var local = document.createElement('script');
-            local.src = '../vendor/mathjax/tex-mml-chtml.js';
+            local.src = '../vendor/mathjax/tex-mml-svg.js';
             local.async = true;
             local.onerror = function () {
                 var cdn = document.createElement('script');
-                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-svg.js';
                 cdn.async = true;
                 document.head.appendChild(cdn);
             };

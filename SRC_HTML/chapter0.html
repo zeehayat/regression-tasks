@@ -511,6 +511,8 @@
             <a href="chapter1_companion.html" class="">Ch. 1 Companion</a>
             <a href="chapter2_companion.html" class="">Ch. 2 Companion</a>
             <a href="chapter3_companion.html" class="">Ch. 3 Companion</a>
+            <a href="chapter4_companion.html" class="">Ch. 4 Companion</a>
+            <a href="chapter5_companion.html" class="">Ch. 5 Companion</a>
             <a href="chapter6_companion.html" class="">Ch. 6 Companion</a>
     </nav>
     
@@ -1777,8 +1779,8 @@ print(predictions)
 # Output: [0.95  2.0   1.25 ]
 </code></pre>
 <h4 id="matrix-dimension-rule">Matrix Dimension Rule:</h4>
-<p>$$(N    imes P)     imes (P     imes 1) \longrightarrow (N  imes 1)$$<br />
-The inner dimensions ($P$) must match exactly, and the resulting prediction vector has length $N$ (one predicted output per observation row).</p>
+<p>$$(N 	imes P) 	imes (P 	imes 1) \longrightarrow (N 	imes 1)$$</p>
+<p>The inner dimensions ($P$) must match exactly, and the resulting prediction vector has length $N$ (one predicted output per observation row).</p>
 <hr />
 <hr />
 <h2 class="companion-detail-heading" data-section="0c-1" id="detail-0c-1">Detail 0C 1</h2>
@@ -1831,7 +1833,7 @@ total_numpy = f @ w  # Same as np.dot(f, w)
 </ul>
 <h4 id="translating-summation-to-python-code">Translating Summation to Python Code</h4>
 <p>Consider the <strong>Sum of Squared Residuals (SSR)</strong> formula:</p>
-<p>$$  ext{SSR} = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$</p>
+<p>$$	ext{SSR} = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$</p>
 <p>Where $y_i$ is the actual target value, and $\hat{y}_i$ is the predicted target value.</p>
 <pre><code class="language-python">import numpy as np
 
@@ -1867,14 +1869,14 @@ print(ssr_loop, ssr_numpy)  # Output: 2.89 2.89
 <p><strong>Generalization to Multiple Features</strong>: y = β₀ + β₁x₁ + … + βₚxₚ</p>
 <h2 class="companion-detail-heading" data-section="0c-6" id="detail-0c-6">Detail 0C 6</h2>
 <h3 id="44-critical-distinction-sum-of-squares-vs-square-of-sum">4.4 Critical Distinction: Sum of Squares vs. Square of Sum</h3>
-<p>$$\sum_{i=1}^{n} x_i^2 <br />
-eq \left( \sum_{i=1}^{n} x_i <br />
+<p>$$\sum_{i=1}^{n} x_i^2
+eq \left( \sum_{i=1}^{n} x_i
 ight)^2$$</p>
 <p>Let $x = [2.0, -3.0, 5.0]$:</p>
 <h4 id="1-sum-of-squares-sum-x_i2">1. Sum of Squares ($\sum x_i^2$):</h4>
 <p>$$\sum x_i^2 = (2.0)^2 + (-3.0)^2 + (5.0)^2 = 4.0 + 9.0 + 25.0 = 38.0$$</p>
 <h4 id="2-square-of-sum-sum-x_i2">2. Square of Sum ($(\sum x_i)^2$):</h4>
-<p>$$\left( \sum x_i <br />
+<p>$$\left( \sum x_i
 ight)^2 = (2.0 + (-3.0) + 5.0)^2 = (4.0)^2 = 16.0$$</p>
 <pre><code class="language-python">x = np.array([2.0, -3.0, 5.0])
 
@@ -1894,7 +1896,7 @@ mean_manual = np.sum(costs) / len(costs)  # Output: 22.0
 <h2 class="companion-detail-heading" data-section="0d-4" id="detail-0d-4">Detail 0D 4</h2>
 <h3 id="53-covariance-extcovx-y">5.3 Covariance ($   ext{cov}(x, y)$)</h3>
 <p>Covariance measures whether two continuous variables tend to deviate from their respective means in the same direction at the same time.</p>
-<p>$$  ext{cov}(x, y) = \frac{1}{n} \sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})$$</p>
+<p>$$	ext{cov}(x, y) = \frac{1}{n} \sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})$$</p>
 <pre><code class="language-python">cable_km = np.array([12.0, 30.0, 5.0, 40.0, 15.0])
 
 x_dev = costs - costs.mean()
@@ -1912,7 +1914,7 @@ cov_manual = np.sum(x_dev * y_dev) / len(costs)
 <h2 class="companion-detail-heading" data-section="0d-5" id="detail-0d-5">Detail 0D 5</h2>
 <h3 id="54-pearson-correlation-coefficient-r">5.4 Pearson Correlation Coefficient ($r$)</h3>
 <p>Because covariance depends on the units of measurement, it cannot be used to compare strength across different features. <strong>Pearson Correlation</strong> ($r$) normalizes covariance by dividing it by the product of the standard deviations of both variables:</p>
-<p>$$r = \frac{    ext{cov}(x, y)}{\sigma_x \sigma_y}$$</p>
+<p>$$r = \frac{	ext{cov}(x, y)}{\sigma_x \sigma_y}$$</p>
 <pre><code class="language-python">r_manual = cov_manual / (costs.std() * cable_km.std())
 print(r_manual)  # Output: 0.9413
 </code></pre>
@@ -1944,7 +1946,7 @@ print(r_result)  # Output: nan
 <h2 class="companion-detail-heading" data-section="0e-1" id="detail-0e-1">Detail 0E 1</h2>
 <h3 id="61-the-definition-of-a-derivative">6.1 The Definition of a Derivative</h3>
 <p>A <strong>derivative</strong> measures the instantaneous rate of change (the slope of the tangent line) of a function $f(x)$ at a specific point $x$.</p>
-<p>$$\frac{dy}{dx} = f'(x) = \lim_{h   o 0} \frac{f(x+h) - f(x)}{h}$$</p>
+<p>$$\frac{dy}{dx} = f'(x) = \lim_{h 	o 0} \frac{f(x+h) - f(x)}{h}$$</p>
 <h4 id="code-proof-finite-difference-approximation">Code Proof: Finite Difference Approximation</h4>
 <p>We can approximate derivatives numerically by choosing an extremely small step size $h$ (e.g., $h = 10^{-6}$).</p>
 <pre><code class="language-python">def f(x):
@@ -1986,7 +1988,7 @@ def dy_dx_by_rule(x):
 </code></pre>
 <h3 id="61-the-definition-of-a-derivative_1">6.1 The Definition of a Derivative</h3>
 <p>A <strong>derivative</strong> measures the instantaneous rate of change (the slope of the tangent line) of a function $f(x)$ at a specific point $x$.</p>
-<p>$$\frac{dy}{dx} = f'(x) = \lim_{h   o 0} \frac{f(x+h) - f(x)}{h}$$</p>
+<p>$$\frac{dy}{dx} = f'(x) = \lim_{h 	o 0} \frac{f(x+h) - f(x)}{h}$$</p>
 <h4 id="code-proof-finite-difference-approximation_1">Code Proof: Finite Difference Approximation</h4>
 <p>We can approximate derivatives numerically by choosing an extremely small step size $h$ (e.g., $h = 10^{-6}$).</p>
 <pre><code class="language-python">def f(x):
@@ -2003,14 +2005,18 @@ print(numerical_slope(f, x_val))
 <h2 class="companion-detail-heading" data-section="0e-3" id="detail-0e-3">Detail 0E 3</h2>
 <h3 id="62-essential-analytical-derivative-rules">6.2 Essential Analytical Derivative Rules</h3>
 <ol>
-<li><strong>Power Rule:</strong><br />
-   $$\frac{d}{dx} [x^n] = n x^{n-1}$$<br />
-   * Example: $\frac{d}{dx} [x^2] = 2x$</li>
-<li><strong>Constant Multiple Rule:</strong><br />
-   $$\frac{d}{dx} [c \cdot f(x)] = c \cdot \frac{d}{dx}[f(x)]$$</li>
-<li><strong>Sum Rule:</strong><br />
-   $$\frac{d}{dx} [f(x) + g(x)] = \frac{d}{dx}[f(x)] + \frac{d}{dx}[g(x)]$$</li>
+<li><strong>Power Rule:</strong></li>
 </ol>
+<p>$$\frac{d}{dx} [x^n] = n x^{n-1}$$</p>
+<ul>
+<li>Example: $\frac{d}{dx} [x^2] = 2x$<br />
+2. <strong>Constant Multiple Rule:</strong></li>
+</ul>
+<p>$$\frac{d}{dx} [c \cdot f(x)] = c \cdot \frac{d}{dx}[f(x)]$$</p>
+<ol start="3">
+<li><strong>Sum Rule:</strong></li>
+</ol>
+<p>$$\frac{d}{dx} [f(x) + g(x)] = \frac{d}{dx}[f(x)] + \frac{d}{dx}[g(x)]$$</p>
 <h4 id="combined-example">Combined Example:</h4>
 <p>For $y = 3x^2 + 5x$:</p>
 <p>$$\frac{dy}{dx} = \frac{d}{dx}[3x^2] + \frac{d}{dx}[5x] = 3(2x) + 5(1) = 6x + 5$$</p>
@@ -2048,8 +2054,8 @@ print(f&quot;Optimized m={m:.3f}, c={c:.3f}, error={error(m, c):.6f}&quot;)
 </code></pre>
 <h3 id="64-gradient-descent-mechanics">6.4 Gradient Descent Mechanics</h3>
 <p><strong>Gradient Descent</strong> is an iterative optimization algorithm that minimizes a loss function by taking steps in the direction opposite to the gradient.</p>
-<p>$$  heta_{  ext{new}} =     heta_{  ext{old}} - \alpha <br />
-abla E( heta)$$</p>
+<p>$$	heta_{	ext{new}} = 	heta_{	ext{old}} - \alpha
+abla E(	heta)$$</p>
 <p>Where $\alpha$ is the <strong>learning rate</strong> (step size hyperparameter).</p>
 <pre><code class="language-python">m, c = 0.0, 0.0          # Initial bad guess
 learning_rate = 0.01     # Step size alpha
@@ -2919,11 +2925,11 @@ except ValueError as e:
         };
         (function loadMathJax() {
             var local = document.createElement('script');
-            local.src = '../vendor/mathjax/tex-mml-chtml.js';
+            local.src = '../vendor/mathjax/tex-mml-svg.js';
             local.async = true;
             local.onerror = function () {
                 var cdn = document.createElement('script');
-                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-svg.js';
                 cdn.async = true;
                 document.head.appendChild(cdn);
             };

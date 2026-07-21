@@ -511,11 +511,14 @@
             <a href="chapter1_companion.html" class="">Ch. 1 Companion</a>
             <a href="chapter2_companion.html" class="">Ch. 2 Companion</a>
             <a href="chapter3_companion.html" class="">Ch. 3 Companion</a>
+            <a href="chapter4_companion.html" class="">Ch. 4 Companion</a>
+            <a href="chapter5_companion.html" class="">Ch. 5 Companion</a>
             <a href="chapter6_companion.html" class="">Ch. 6 Companion</a>
     </nav>
     
         <article class="markdown-body">
 <h1 id="chapter-6-from-prediction-to-intervention">Chapter 6 — From Prediction to Intervention</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="overview">✦ Read the beginner companion overview</button></p>
 <h2 id="level-6-research-practitioner-ten-days-of-causal-inference-reproducible-evidence-and-responsible-deployment">Level 6 Research Practitioner: ten days of causal inference, reproducible evidence, and responsible deployment</h2>
 <blockquote>
 <p><strong>Central promise.</strong> Earlier chapters taught you to describe data, predict outcomes, quantify uncertainty, and model event histories. This final chapter asks the harder question: <strong>what would change if we intervened?</strong> By the end, you will be able to define causal effects with counterfactuals, defend an identification strategy, estimate effects with experiments or observational data, diagnose failure of overlap and balance, study longitudinal and quasi-experimental designs, investigate heterogeneity without data dredging, compare models honestly, package a reproducible study, and complete a registered capstone whose claim does not outrun its design.</p>
@@ -788,36 +791,35 @@ print(df[[&quot;senior_review_month6&quot;, &quot;warning_by_month36&quot;]].mea
 <p>In real data, the <code>y0</code>, <code>y1</code>, and true probabilities do not exist as observable columns. Revealing them later is a simulation check, not a workflow that empirical researchers can copy.</p>
 <hr />
 <h1 id="day-39-counterfactuals-estimands-and-identification">Day 39 — Counterfactuals, Estimands, and Identification</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-39">✦ Read the beginner companion for Day 39</button></p>
 <h2 id="391-prediction-and-causation-answer-different-questions">39.1 Prediction and causation answer different questions</h2>
 <p>Let $A$ be senior review, $Y$ the later warning, and $X$ information available before review.</p>
 <p>A predictive question is:</p>
-<p>$$<br />
-P(Y=1\mid A,X).<br />
+<p>$$
+P(Y=1\mid A,X).
 $$</p>
 <p>It asks what outcomes tend to occur among projects with particular observed attributes and actions. A causal question is:</p>
-<p>$$<br />
-P{Y(a)=1},<br />
+<p>$$
+P\{Y(a)=1\},
 $$</p>
 <p>where $Y(a)$ is the outcome the project would have under an intervention setting review to $a$. The conditioning bar and intervention are not interchangeable. If managers send risky projects to review, then $P(Y=1\mid A=1)$ can exceed $P(Y=1\mid A=0)$ even when review prevents warnings.</p>
 <p>Prediction can be excellent without identifying an intervention effect. Causal estimation can be unbiased while predicting individual outcomes poorly. Neither task is superior; they serve different decisions.</p>
 <h2 id="392-potential-outcomes">39.2 Potential outcomes</h2>
-<p><button class="read-details-btn" data-section="6a-2">✦ Read Details</button></p>
 <p>For each project $i$, define:</p>
 <ul>
 <li>$Y_i(1)$: the warning outcome if project $i$ were assigned senior review;</li>
 <li>$Y_i(0)$: the warning outcome if project $i$ were not assigned senior review.</li>
 </ul>
 <p>The individual causal effect on the risk-difference scale is</p>
-<p>$$<br />
-Y_i(1)-Y_i(0).<br />
+<p>$$
+Y_i(1)-Y_i(0).
 $$</p>
 <p>Only one potential outcome is observed:</p>
-<p>$$<br />
-Y_i=A_iY_i(1)+(1-A_i)Y_i(0).<br />
+<p>$$
+Y_i=A_iY_i(1)+(1-A_i)Y_i(0).
 $$</p>
 <p>The other is counterfactual. This is the fundamental problem: the same unit cannot be observed at the same time under both assignments. Causal inference therefore targets averages and uses design or assumptions to make groups comparable.</p>
 <h2 id="393-choose-an-estimand-before-an-estimator">39.3 Choose an estimand before an estimator</h2>
-<p><button class="read-details-btn" data-section="6a-3">✦ Read Details</button></p>
 <p>For binary outcomes, common estimands include:</p>
 <table>
 <thead>
@@ -857,23 +859,22 @@ $$</p>
 </table>
 <p>An ATE, ATT, and policy value can differ because they average over different people and assignments. “The treatment effect” is incomplete.</p>
 <p>The effect scale also matters. Let $p_1=E{Y(1)}$ and $p_0=E{Y(0)}$.</p>
-<p>$$<br />
-\text{Risk difference}=p_1-p_0,<br />
-\qquad<br />
-\text{risk ratio}=\frac{p_1}{p_0},<br />
+<p>$$
+\text{Risk difference}=p_1-p_0,
+\qquad
+\text{risk ratio}=\frac{p_1}{p_0},
 $$</p>
-<p>$$<br />
-\text{odds ratio}=\frac{p_1/(1-p_1)}{p_0/(1-p_0)}.<br />
+<p>$$
+\text{odds ratio}=\frac{p_1/(1-p_1)}{p_0/(1-p_0)}.
 $$</p>
 <p>Risk differences are often easiest for capacity planning: a difference of $-0.06$ means about six fewer warnings per 100 projects under the stated intervention and population. Ratios transport differently and may be scientifically useful. Odds ratios are non-collapsible: a conditional odds ratio can differ from a marginal odds ratio even without confounding. Report the scale you registered; do not switch because another looks more dramatic.</p>
 <p>For time-to-event outcomes, replace the binary risk by $P{T(a)\le t}$, survival $P{T(a)&gt;t}$, or restricted mean event-free time. Always name the horizon and competing-event strategy.</p>
 <h2 id="394-four-core-identification-assumptions">39.4 Four core identification assumptions</h2>
-<p><button class="read-details-btn" data-section="6a-4">✦ Read Details</button></p>
 <p>An estimand is a property of an imagined intervention. Identification connects it to the observed-data distribution.</p>
 <h3 id="consistency">Consistency</h3>
 <p>If a project actually receives treatment $A=a$, its observed outcome equals $Y(a)$:</p>
-<p>$$<br />
-A_i=a \implies Y_i=Y_i(a).<br />
+<p>$$
+A_i=a \implies Y_i=Y_i(a).
 $$</p>
 <p>This demands a well-defined treatment. “Senior review” cannot silently range from a five-minute signature to a six-week engineering intervention. Versions can be allowed, but the estimand must say how they are assigned or averaged.</p>
 <h3 id="conditional-exchangeability">Conditional exchangeability</h3>
@@ -881,14 +882,14 @@ $$</p>
 <blockquote>
 <p><strong>Notation:</strong> The symbol ⊥ means "is statistically independent of." You already used the underlying idea in Chapter 2, Day 8, when the Gaussian linear model assumed errors were independent of one another — this is the same concept, just written with its own symbol instead of a sentence. <code>U ⊥ V | X</code> reads as "<code>U</code> and <code>V</code> are independent of each other, once you already know <code>X</code>": knowing <code>V</code> (in addition to <code>X</code>) would tell you nothing more about <code>U</code> than <code>X</code> alone already does.</p>
 </blockquote>
-<p>$$<br />
-{Y(1),Y(0)}\perp A\mid X.<br />
+<p>$$
+\{Y(1),Y(0)\}\perp A\mid X.
 $$</p>
 <p>Informally, within covariate strata, treatment behaves as if assigned independently of the potential outcomes. In an ideal randomised trial it follows from assignment by design. In observational data it is an untestable no-unmeasured-confounding assumption supported—or undermined—by domain knowledge, measurement, timing, and design.</p>
 <h3 id="positivity">Positivity</h3>
 <p>For covariate profiles in the target population,</p>
-<p>$$<br />
-0&lt;P(A=1\mid X=x)&lt;1.<br />
+<p>$$
+0&lt;P(A=1\mid X=x)&lt;1.
 $$</p>
 <p>If every frontier project is reviewed, the data contain no untreated frontier comparison. A flexible algorithm cannot invent it. Near violations create extreme weights and make results depend on extrapolation. Remedies change the question: restrict the target population, alter the estimand, collect data, or compare realistic treatment rules.</p>
 <h3 id="no-interference">No interference</h3>
@@ -896,17 +897,17 @@ $$</p>
 <p>These assumptions are sometimes grouped with treatment-variation requirements as SUTVA, but naming them separately makes criticism easier.</p>
 <h2 id="395-identification-by-the-g-formula">39.5 Identification by the g-formula</h2>
 <p>Under consistency, conditional exchangeability, and positivity,</p>
-<p>$$<br />
-E{Y(a)}=E_X[E(Y\mid A=a,X)].<br />
+<p>$$
+E\{Y(a)\}=E_X[E(Y\mid A=a,X)].
 $$</p>
 <p>Derivation:</p>
-<p>$$<br />
-\begin{aligned}<br />
-E{Y(a)}<br />
-&amp;=E_X[E{Y(a)\mid X}]\<br />
-&amp;=E_X[E{Y(a)\mid A=a,X}] &amp;&amp; \text{exchangeability}\<br />
-&amp;=E_X[E(Y\mid A=a,X)] &amp;&amp; \text{consistency}.<br />
-\end{aligned}<br />
+<p>$$
+\begin{aligned}
+E\{Y(a)\}
+&amp;=E_X[E\{Y(a)\mid X\}]\\
+&amp;=E_X[E\{Y(a)\mid A=a,X\}] &amp;&amp; \text{exchangeability}\\
+&amp;=E_X[E(Y\mid A=a,X)] &amp;&amp; \text{consistency}.
+\end{aligned}
 $$</p>
 <p>Positivity ensures the final conditional mean can be learned where it is needed. This derivation—not a preference for a regression package—is the justification for standardisation.</p>
 <h2 id="396-identification-estimation-and-inference-are-different">39.6 Identification, estimation, and inference are different</h2>
@@ -949,19 +950,20 @@ print(f&quot;Naive reviewed-minus-unreviewed risk difference: {naive:.3f}&quot;)
 </ul>
 <hr />
 <h1 id="day-40-causal-diagrams-and-adjustment">Day 40 — Causal Diagrams and Adjustment</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-40">✦ Read the beginner companion for Day 40</button></p>
 <h2 id="401-a-dag-is-a-compact-causal-argument">40.1 A DAG is a compact causal argument</h2>
 <p>A directed acyclic graph, or DAG, contains nodes and one-way arrows with no directed cycles. An arrow $X\rightarrow Y$ asserts that $X$ may causally influence $Y$ under the system being represented. Missing arrows are also claims.</p>
 <p>For the running study, a first graph might be:</p>
-<p><div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart LR<br />
-    X["Baseline project difficulty"] --&gt; A["Senior review"]<br />
-    X --&gt; Y["Overrun warning"]<br />
-    A --&gt; M["Procurement correction"]<br />
-    M --&gt; Y<br />
-</pre></div></p>
+<div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart LR
+    X["Baseline project difficulty"] --> A["Senior review"]
+    X --> Y["Overrun warning"]
+    A --> M["Procurement correction"]
+    M --> Y
+</pre></div>
+
 <p>The path $A\leftarrow X\rightarrow Y$ is a backdoor path. It produces association between $A$ and $Y$ that is not caused by the review. Conditioning on a sufficient set of pre-treatment common causes blocks such paths.</p>
 <p>A DAG does not discover causality from the dataset. It records the team's scientific assumptions so that missing variables, questionable timing, and competing explanations can be challenged before modelling.</p>
 <h2 id="402-five-roles-a-variable-can-play">40.2 Five roles a variable can play</h2>
-<p><button class="read-details-btn" data-section="6b-2">✦ Read Details</button></p>
 <table>
 <thead>
 <tr>
@@ -1004,14 +1006,14 @@ print(f&quot;Naive reviewed-minus-unreviewed risk difference: {naive:.3f}&quot;)
 <p>It can be useful to include strong pre-treatment outcome predictors for precision even when they are not confounders. But that statistical choice follows identification and must respect sample size and model stability.</p>
 <h2 id="404-mediators-change-the-estimand">40.4 Mediators change the estimand</h2>
 <p>Suppose review changes procurement, which changes warning risk:</p>
-<p>$$<br />
-A\rightarrow M\rightarrow Y.<br />
+<p>$$
+A\rightarrow M\rightarrow Y.
 $$</p>
 <p>Adjusting for post-review procurement blocks part of the total effect. The coefficient for $A$ in a model containing $M$ is not automatically a direct effect: mediator-outcome confounding, treatment-induced confounding, and scale issues complicate mediation. Begin with a total effect unless the scientific question genuinely concerns pathways, then define natural, controlled, or interventional direct and indirect effects precisely.</p>
 <h2 id="405-colliders-create-association">40.5 Colliders create association</h2>
 <p>Suppose both senior review and latent political pressure increase the probability that a project appears in a special audit dataset:</p>
-<p>$$<br />
-A\rightarrow S\leftarrow U\rightarrow Y.<br />
+<p>$$
+A\rightarrow S\leftarrow U\rightarrow Y.
 $$</p>
 <p>In the full population, $A$ and $U$ need not be associated. Restricting to $S=1$ makes them associated because either can explain selection. This opens the path from review to outcome through $U$. Common collider traps include:</p>
 <ul>
@@ -1025,7 +1027,6 @@ $$</p>
 <h2 id="406-descendants-instruments-and-bias-amplification">40.6 Descendants, instruments, and bias amplification</h2>
 <p>Conditioning on a collider's descendant can also open a path. Conditioning on a strong instrument—something that shifts treatment but has no direct outcome path—can worsen finite-sample overlap and amplify bias from an unmeasured confounder in some settings. Neither result means instruments are bad. It means an adjustment model and an instrumental-variable design use variables for different purposes.</p>
 <h2 id="407-backdoor-adjustment">40.7 Backdoor adjustment</h2>
-<p><button class="read-details-btn" data-section="6b-7">✦ Read Details</button></p>
 <p>An adjustment set $X$ identifies the total effect through the backdoor criterion when it:</p>
 <ol>
 <li>contains no descendant of treatment; and</li>
@@ -1069,10 +1070,11 @@ $$</p>
 <li>state why a DAG cannot prove its own missing arrows.</li>
 </ul>
 <h1 id="day-41-randomised-experiments-and-noncompliance">Day 41 — Randomised Experiments and Noncompliance</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-41">✦ Read the beginner companion for Day 41</button></p>
 <h2 id="411-randomisation-is-an-assignment-mechanism">41.1 Randomisation is an assignment mechanism</h2>
 <p>In a randomised experiment, investigators control a known probability of assignment. For a simple two-arm trial,</p>
-<p>$$<br />
-A_i\sim \operatorname{Bernoulli}(p),<br />
+<p>$$
+A_i\sim \operatorname{Bernoulli}(p),
 $$</p>
 <p>independently of potential outcomes. This creates exchangeability <strong>in expectation</strong>. A realised finite sample can still have imbalances, so report important baseline summaries and improve precision with pre-specified adjustment. Do not use significance tests of baseline differences to decide whether randomisation “worked”; the randomisation mechanism is known by design.</p>
 <p>Randomisation does not automatically solve:</p>
@@ -1087,19 +1089,18 @@ $$</p>
 </ul>
 <p>It addresses confounding of <strong>assignment</strong>. The rest of the protocol still matters.</p>
 <h2 id="412-intention-to-treat-effect">41.2 Intention-to-treat effect</h2>
-<p><button class="read-details-btn" data-section="6c-2">✦ Read Details</button></p>
 <p>Let $Z$ be assignment to offer senior review, whether or not the review is completed. The intention-to-treat, or ITT, estimand is</p>
-<p>$$<br />
-E{Y(Z=1)-Y(Z=0)}.<br />
+<p>$$
+E\{Y(Z=1)-Y(Z=0)\}.
 $$</p>
 <p>The difference in observed group means is unbiased under simple randomisation:</p>
-<p>$$<br />
-\widehat{\tau}<em Z="1">{\text{ITT}}=\bar Y</em>.}-\bar Y_{Z=0<br />
+<p>$$
+\widehat{\tau}_{\text{ITT}}=\bar Y_{Z=1}-\bar Y_{Z=0}.
 $$</p>
 <p>A familiar large-sample standard error is</p>
-<p>$$<br />
-\widehat{SE}(\widehat\tau)=<br />
-\sqrt{\frac{s_1^2}{n_1}+\frac{s_0^2}{n_0}}.<br />
+<p>$$
+\widehat{SE}(\widehat\tau)=
+\sqrt{\frac{s_1^2}{n_1}+\frac{s_0^2}{n_0}}.
 $$</p>
 <p>Randomisation-based inference treats the potential outcomes as fixed and assignment as random. Model-based regression can improve precision, but the analysis should respect the design. With binary outcomes, report arm risks and an absolute contrast, not only an odds ratio.</p>
 <h2 id="413-blocking-stratification-and-covariate-adjustment">41.3 Blocking, stratification, and covariate adjustment</h2>
@@ -1108,8 +1109,8 @@ $$</p>
 <h2 id="414-cluster-randomisation">41.4 Cluster randomisation</h2>
 <p>If a review team changes how an entire district operates, randomise teams or districts rather than projects. Outcomes within clusters are correlated. The effective information is closer to the number of independent clusters than the number of projects.</p>
 <p>For roughly equal cluster size $m$ and intracluster correlation $\rho$, a planning approximation is the design effect</p>
-<p>$$<br />
-1+(m-1)\rho.<br />
+<p>$$
+1+(m-1)\rho.
 $$</p>
 <p>Analyse at the level supported by the assignment: cluster-level summaries, randomisation inference over clusters, or cluster-robust methods with enough clusters. Five districts do not become a large trial because each contains hundreds of rows.</p>
 <h2 id="415-interference-and-spillovers">41.5 Interference and spillovers</h2>
@@ -1122,7 +1123,6 @@ $$</p>
 </ul>
 <p>The ordinary two-potential-outcome notation is too small for this problem.</p>
 <h2 id="416-noncompliance-assignment-is-not-receipt">41.6 Noncompliance: assignment is not receipt</h2>
-<p><button class="read-details-btn" data-section="6c-6">✦ Read Details</button></p>
 <p>Let $Z$ be random assignment and $A$ actual receipt. Four latent compliance types are defined by $A(1)$ and $A(0)$:</p>
 <table>
 <thead>
@@ -1157,10 +1157,10 @@ $$</p>
 </table>
 <p>Comparing recipients with nonrecipients discards randomisation because receipt may depend on prognosis. ITT preserves the assignment comparison and answers the effect of offering or assigning the programme.</p>
 <p>Under four strong instrumental-variable assumptions—random assignment, relevance, exclusion, and monotonicity—the Wald ratio identifies a local average treatment effect among compliers:</p>
-<p>$$<br />
-\widehat\tau_{\text{LATE}}=<br />
-\frac{E(Y\mid Z=1)-E(Y\mid Z=0)}<br />
-{E(A\mid Z=1)-E(A\mid Z=0)}.<br />
+<p>$$
+\widehat\tau_{\text{LATE}}=
+\frac{E(Y\mid Z=1)-E(Y\mid Z=0)}
+{E(A\mid Z=1)-E(A\mid Z=0)}.
 $$</p>
 <p>Exclusion says assignment affects the outcome only through receipt; monotonicity rules out defiers. LATE is not automatically the ATE. If assignment itself changes behaviour before receipt, exclusion can fail.</p>
 <h2 id="417-per-protocol-effects-require-more-assumptions">41.7 Per-protocol effects require more assumptions</h2>
@@ -1206,18 +1206,19 @@ print(f&quot;Approximate 95% CI: [{trial_rd - 1.96*trial_se:.3f}, {trial_rd + 1.
 </ul>
 <hr />
 <h1 id="day-42-standardisation-matching-and-weighting">Day 42 — Standardisation, Matching, and Weighting</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-42">✦ Read the beginner companion for Day 42</button></p>
 <p>When randomisation is unavailable, measured baseline covariates can support an adjusted comparison. The methods in this day are not alternative ways to make assumptions disappear. They are different computational expressions of identification under consistency, exchangeability, and positivity.</p>
 <h2 id="421-three-views-of-the-same-target">42.1 Three views of the same target</h2>
 <p>For the ATE, identification can be written as:</p>
 <h3 id="outcome-standardisation">Outcome standardisation</h3>
-<p>$$<br />
-\psi=E_X{m_1(X)-m_0(X)},<br />
-\qquad m_a(X)=E(Y\mid A=a,X).<br />
+<p>$$
+\psi=E_X\{m_1(X)-m_0(X)\},
+\qquad m_a(X)=E(Y\mid A=a,X).
 $$</p>
 <h3 id="inverse-probability-weighting">Inverse-probability weighting</h3>
 <p>With $e(X)=P(A=1\mid X)$,</p>
-<p>$$<br />
-\psi=E\left{\frac{AY}{e(X)}-\frac{(1-A)Y}{1-e(X)}\right}.<br />
+<p>$$
+\psi=E\left\{\frac{AY}{e(X)}-\frac{(1-A)Y}{1-e(X)}\right\}.
 $$</p>
 <h3 id="covariate-balancing-or-matching">Covariate balancing or matching</h3>
 <p>Construct treated and untreated comparisons with similar distributions of the confounders, then average an outcome contrast over the intended target population.</p>
@@ -1232,10 +1233,9 @@ $$</p>
 </ol>
 <p>This produces a marginal risk difference even when the working model is logistic. The treatment coefficient alone is a conditional log odds ratio, not the ATE.</p>
 <h2 id="423-propensity-scores">42.3 Propensity scores</h2>
-<p><button class="read-details-btn" data-section="6d-3">✦ Read Details</button></p>
 <p>Rosenbaum and Rubin defined the propensity score as</p>
-<p>$$<br />
-e(X)=P(A=1\mid X).<br />
+<p>$$
+e(X)=P(A=1\mid X).
 $$</p>
 <p>Under conditional exchangeability, treatment is exchangeable within levels of the true propensity score. Its purpose is <strong>design and balance</strong>, not maximum treatment-prediction accuracy. A propensity model that separates treatment perfectly creates unusable comparisons.</p>
 <p>Common uses include:</p>
@@ -1261,25 +1261,24 @@ $$</p>
 </ul>
 <p>Do not inspect outcomes while repeatedly tuning a match to obtain the desired effect.</p>
 <h2 id="425-weighting-creates-a-pseudo-population">42.5 Weighting creates a pseudo-population</h2>
-<p><button class="read-details-btn" data-section="6d-5">✦ Read Details</button></p>
 <p>ATE weights are</p>
-<p>$$<br />
-w_i=\frac{A_i}{e(X_i)}+\frac{1-A_i}{1-e(X_i)}.<br />
+<p>$$
+w_i=\frac{A_i}{e(X_i)}+\frac{1-A_i}{1-e(X_i)}.
 $$</p>
 <p>ATT weights keep treated units at weight 1 and weight controls by $e(X)/(1-e(X))$. Stabilised weights multiply numerators by marginal treatment probabilities to reduce variance without changing the large-sample target under correct specification.</p>
 <p>Extreme weights signal weak overlap, model misspecification, or both. Truncation may reduce variance but introduces bias and changes the procedure. Register thresholds or show a sensitivity curve rather than selecting a cutoff after seeing the effect.</p>
 <p>Overlap weights, proportional to $1-e(X)$ for treated and $e(X)$ for controls, emphasise profiles with assignment equipoise. They can be stable, but estimate an overlap-population effect rather than the full ATE.</p>
 <h2 id="426-balance-not-propensity-model-fit">42.6 Balance, not propensity-model fit</h2>
 <p>For a continuous covariate $X_j$, a standardised mean difference is</p>
-<p>$$<br />
-\operatorname{SMD}<em 1j="1j">j=<br />
-\frac{\bar X</em>}-\bar X_{0j}<br />
-{\sqrt{(s_{1j}^2+s_{0j}^2)/2}}.<br />
+<p>$$
+\operatorname{SMD}_j=
+\frac{\bar X_{1j}-\bar X_{0j}}
+{\sqrt{(s_{1j}^2+s_{0j}^2)/2}}.
 $$</p>
 <p>Compute weighted analogues after weighting. Inspect categorical levels, nonlinear terms, and important interactions too. A conventional absolute threshold such as 0.1 is a diagnostic convention, not proof of no confounding.</p>
 <p>The effective sample size of nonnegative weights is</p>
-<p>$$<br />
-ESS=\frac{(\sum_i w_i)^2}{\sum_i w_i^2}.<br />
+<p>$$
+ESS=\frac{(\sum_i w_i)^2}{\sum_i w_i^2}.
 $$</p>
 <p>Two thousand rows with a few dominating weights may contain far less information than two thousand balanced observations.</p>
 <h2 id="427-executable-adjustment-analysis">42.7 Executable adjustment analysis</h2>
@@ -1396,15 +1395,15 @@ print(f&quot;Effective sample size: {ess:.0f} of {len(df)}&quot;)
 </ul>
 <hr />
 <h1 id="day-43-doubly-robust-estimation-and-sensitivity">Day 43 — Doubly Robust Estimation and Sensitivity</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-43">✦ Read the beginner companion for Day 43</button></p>
 <h2 id="431-augmented-inverse-probability-weighting">43.1 Augmented inverse-probability weighting</h2>
-<p><button class="read-details-btn" data-section="6e-1">✦ Read Details</button></p>
 <p>Outcome regression can fail if $m_a(X)$ is misspecified. Weighting can fail if $e(X)$ is misspecified and becomes unstable near 0 or 1. Augmented inverse-probability weighting, or AIPW, combines them:</p>
-<p>$$<br />
-\widehat\psi_{\text{AIPW}}=\frac{1}{n}\sum_{i=1}^n\left[<br />
-\hat m_1(X_i)-\hat m_0(X_i)<br />
-+\frac{A_i{Y_i-\hat m_1(X_i)}}{\hat e(X_i)}<br />
--\frac{(1-A_i){Y_i-\hat m_0(X_i)}}{1-\hat e(X_i)}<br />
-\right].<br />
+<p>$$
+\widehat\psi_{\text{AIPW}}=\frac{1}{n}\sum_{i=1}^n\left[
+\hat m_1(X_i)-\hat m_0(X_i)
++\frac{A_i\{Y_i-\hat m_1(X_i)\}}{\hat e(X_i)}
+-\frac{(1-A_i)\{Y_i-\hat m_0(X_i)\}}{1-\hat e(X_i)}
+\right].
 $$</p>
 <p>The first term standardises outcome predictions. The residual terms correct those predictions using observed outcomes, scaled by assignment probability.</p>
 <h2 id="432-what-doubly-robust-means">43.2 What “doubly robust” means</h2>
@@ -1425,19 +1424,18 @@ $$</p>
 <p>The robustness is about two statistical nuisance functions inside an already identified problem.</p>
 <h2 id="433-influence-function-view">43.3 Influence-function view</h2>
 <p>Define the estimated score</p>
-<p>$$<br />
-\hat\phi_i=hat m_1(X_i)-\hat m_0(X_i)<br />
-+\frac{A_i{Y_i-\hat m_1(X_i)}}{\hat e(X_i)}<br />
--\frac{(1-A_i){Y_i-\hat m_0(X_i)}}{1-\hat e(X_i)}.<br />
+<p>$$
+\hat\phi_i=hat m_1(X_i)-\hat m_0(X_i)
++\frac{A_i\{Y_i-\hat m_1(X_i)\}}{\hat e(X_i)}
+-\frac{(1-A_i)\{Y_i-\hat m_0(X_i)\}}{1-\hat e(X_i)}.
 $$</p>
 <p>Then $\widehat\psi=n^{-1}\sum_i\hat\phi_i$. With suitable nuisance estimation, an approximate standard error is</p>
-<p>$$<br />
-\widehat{SE}(\widehat\psi)=<br />
-\frac{\operatorname{SD}(\hat\phi_i)}{\sqrt n}.<br />
+<p>$$
+\widehat{SE}(\widehat\psi)=
+\frac{\operatorname{SD}(\hat\phi_i)}{\sqrt n}.
 $$</p>
 <p>This expression reveals influential observations: residuals receive large multipliers where estimated treatment probabilities are small.</p>
 <h2 id="434-why-cross-fitting-helps">43.4 Why cross-fitting helps</h2>
-<p><button class="read-details-btn" data-section="6e-4">✦ Read Details</button></p>
 <p>Flexible models can overfit the same outcomes later used inside the effect score. In $K$-fold cross-fitting:</p>
 <ol>
 <li>split observations into $K$ folds;</li>
@@ -1566,7 +1564,6 @@ print(
 </table>
 <p>Do not call a conclusion “robust” because every model using the same flawed identification strategy agrees.</p>
 <h2 id="4310-research-papers-bangrobins-and-double-machine-learning">43.10 Research papers: Bang–Robins and double machine learning</h2>
-<p><button class="read-details-btn" data-section="6e-1">✦ Read Details</button></p>
 <p>Bang and Robins (2005) explain doubly robust estimation across missing-data and causal settings. Chernozhukov and colleagues (2018) develop orthogonal scores and cross-fitting for high-dimensional nuisance estimation. For each paper, answer:</p>
 <ul>
 <li>What is the target parameter?</li>
@@ -1577,7 +1574,6 @@ print(
 </ul>
 <p>Then implement one deliberate failure: omit a nonlinear confounder from the outcome model but include it in the propensity model; reverse the misspecification; then misspecify both.</p>
 <h2 id="4311-build-break-and-reflect">43.11 Build, break, and reflect</h2>
-<p><button class="read-details-btn" data-section="6e-1">✦ Read Details</button></p>
 <p><strong>Build.</strong> Implement AIPW twice: once with logistic nuisance models and once with tree-based nuisance models. Preserve out-of-fold predictions and effect scores.</p>
 <p><strong>Break.</strong> Compute in-sample nuisance predictions, remove weight clipping, and omit terrain from both models. Which diagnostics react? Which causal failure remains invisible?</p>
 <p><strong>Reflect.</strong> Write a results paragraph containing the estimate, interval, estimand, identification assumptions, overlap population, and one quantitative sensitivity statement.</p>
@@ -1591,8 +1587,8 @@ print(
 <li>design a sensitivity analysis whose parameters have substantive meaning.</li>
 </ul>
 <h1 id="day-44-target-trials-and-time-varying-treatment">Day 44 — Target Trials and Time-Varying Treatment</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-44">✦ Read the beginner companion for Day 44</button></p>
 <h2 id="441-why-observational-studies-need-an-imaginary-protocol">44.1 Why observational studies need an imaginary protocol</h2>
-<p><button class="read-details-btn" data-section="6f-1">✦ Read Details</button></p>
 <p>A target trial is the randomised experiment we would conduct if it were ethical, feasible, and timely. Target-trial emulation makes an observational analysis imitate that protocol as closely as the data permit. It prevents a common error: comparing vaguely defined groups whose eligibility, treatment assignment, and follow-up begin at different times.</p>
 <p>The protocol should specify:</p>
 <table>
@@ -1635,7 +1631,6 @@ print(
 </table>
 <p>The month-6 review study aligns these pieces: eligibility is assessed at month 6, review is assigned at month 6, and warning follow-up begins immediately afterward. Calling review “baseline” while selecting projects using month-12 survival would not align them.</p>
 <h2 id="442-time-zero-bias">44.2 Time-zero bias</h2>
-<p><button class="read-details-btn" data-section="6f-2">✦ Read Details</button></p>
 <p>Suppose reviewed projects are classified as treated if they receive review anytime in the first year, but follow-up starts at approval. To enter the treated group, a project must remain active and warning-free until its eventual review. The pre-review time is immortal with respect to the classification: an early warning would prevent the project from being labelled treated. Assigning that guaranteed event-free time to treatment can make review look protective.</p>
 <p>Solutions depend on the question:</p>
 <ul>
@@ -1674,8 +1669,8 @@ print(
 <h2 id="445-sequential-identification-assumptions">44.5 Sequential identification assumptions</h2>
 <p>For every visit and treatment history, longitudinal identification requires versions of:</p>
 <h3 id="sequential-exchangeability">Sequential exchangeability</h3>
-<p>$$<br />
-Y^{\bar a}\perp A_k\mid \bar L_k,\bar A_{k-1}.<br />
+<p>$$
+Y^{\bar a}\perp A_k\mid \bar L_k,\bar A_{k-1}.
 $$</p>
 <p>Given measured history, the current decision is independent of future potential outcomes.</p>
 <h3 id="sequential-positivity">Sequential positivity</h3>
@@ -1698,10 +1693,10 @@ $$</p>
 <p>This is standardisation across entire longitudinal histories. It requires correct models for relevant covariate and outcome processes. Simulation Monte Carlo error should be made negligible relative to sampling uncertainty.</p>
 <h2 id="447-marginal-structural-models">44.7 Marginal structural models</h2>
 <p>Inverse-probability treatment weights create a pseudo-population in which observed treatment history is independent of measured time-varying confounder history. A stabilised weight through visit $K$ is conceptually</p>
-<p>$$<br />
-SW_i=\prod_{k=0}^{K}<br />
-\frac{P(A_{ik}\mid \bar A_{i,k-1},L_{i0})}<br />
-{P(A_{ik}\mid \bar A_{i,k-1},\bar L_{ik})}.<br />
+<p>$$
+SW_i=\prod_{k=0}^{K}
+\frac{P(A_{ik}\mid \bar A_{i,k-1},L_{i0})}
+{P(A_{ik}\mid \bar A_{i,k-1},\bar L_{ik})}.
 $$</p>
 <p>Additional inverse-probability-of-censoring factors address measured informative loss. Fit a marginal structural model in the weighted data, such as a pooled logistic model for discrete-time risk under treatment history.</p>
 <p>Diagnostics include:</p>
@@ -1728,7 +1723,6 @@ $$</p>
 </ol>
 <p>This increases information and makes eligibility transparent. It can also mix changing policy periods and treatment versions, so calendar-time adjustment and transport questions remain.</p>
 <h2 id="4410-censoring-and-competing-events">44.10 Censoring and competing events</h2>
-<p><button class="read-details-btn" data-section="6f-1">✦ Read Details</button></p>
 <p>For a causal risk by month 36, decide what cancellation means:</p>
 <ul>
 <li><strong>Total effect on real-world warning incidence:</strong> cancellation remains a competing event; the outcome is warning before cancellation by the horizon.</li>
@@ -1738,7 +1732,6 @@ $$</p>
 </ul>
 <p>Calling cancellation “censoring” quietly changes the causal question and may introduce informative censoring. Chapter 5's event-process discipline still applies.</p>
 <h2 id="4411-research-papers-target-trials-and-marginal-structural-models">44.11 Research papers: target trials and marginal structural models</h2>
-<p><button class="read-details-btn" data-section="6f-1">✦ Read Details</button></p>
 <p>Hernán and Robins (2016) show how explicitly emulating a target trial can prevent avoidable design errors in observational work. Robins, Hernán, and Brumback (2000) develop marginal structural models for time-dependent treatment and confounding. Read them together and ask:</p>
 <ul>
 <li>Where is time zero?</li>
@@ -1748,7 +1741,6 @@ $$</p>
 <li>Which data expansion and weighting choices are part of the procedure?</li>
 </ul>
 <h2 id="4412-build-break-and-reflect">44.12 Build, break, and reflect</h2>
-<p><button class="read-details-btn" data-section="6f-1">✦ Read Details</button></p>
 <p><strong>Build.</strong> Write a target-trial table comparing “review by month 7” with “no review through month 12” among projects eligible at month 6. Specify the grace-period analysis.</p>
 <p><strong>Break.</strong> Define treated projects using any review through month 18 while starting outcomes at approval. Explain every guaranteed-survival interval and selection event.</p>
 <p><strong>Reflect.</strong> Decide whether cancellation is competing, composite, censoring, or hypothetical for your policy question. Defend the choice.</p>
@@ -1763,14 +1755,14 @@ $$</p>
 </ul>
 <hr />
 <h1 id="day-45-quasi-experimental-designs">Day 45 — Quasi-Experimental Designs</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-45">✦ Read the beginner companion for Day 45</button></p>
 <p>Quasi-experimental designs exploit assignment mechanisms or discontinuities that can be more credible than adjustment for all measured confounders. Each identifies a particular effect for a particular population. The design, not the estimator's sophistication, carries the causal argument.</p>
 <h2 id="451-difference-in-differences">45.1 Difference-in-differences</h2>
-<p><button class="read-details-btn" data-section="6g-1">✦ Read Details</button></p>
 <p>Suppose some districts introduce mandatory senior review in 2023 and others do not. With one pre and one post period, the difference-in-differences contrast is</p>
-<p>$$<br />
-\widehat\tau_{\text{DiD}}=<br />
-(\bar Y_{T,post}-\bar Y_{T,pre})<br />
--(\bar Y_{C,post}-\bar Y_{C,pre}).<br />
+<p>$$
+\widehat\tau_{\text{DiD}}=
+(\bar Y_{T,post}-\bar Y_{T,pre})
+-(\bar Y_{C,post}-\bar Y_{C,pre}).
 $$</p>
 <p>It subtracts the control group's time change from the treated group's time change. Identification requires a parallel-trends assumption: absent the policy, the treated group's average untreated outcome trend would have matched the comparison group's trend on the chosen scale.</p>
 <p>Parallel trends concerns counterfactual post-policy outcomes and cannot be proven by pre-trends. Multiple stable pre-periods can reveal obvious violations and help model seasonality, but a nonsignificant pre-trend test is weak reassurance.</p>
@@ -1789,10 +1781,10 @@ $$</p>
 <p>Use estimators designed for group-time average treatment effects, define never-treated or not-yet-treated comparisons, aggregate transparently, and report support by cohort and event time. Callaway and Sant'Anna's framework is one principled approach.</p>
 <h2 id="453-regression-discontinuity">45.3 Regression discontinuity</h2>
 <p>Suppose projects with a pre-review risk score $R\ge c$ must receive senior review. A sharp regression-discontinuity design compares projects just above and below cutoff $c$:</p>
-<p>$$<br />
-\tau_{RD}=<br />
-\lim_{r\downarrow c}E(Y\mid R=r)-<br />
-\lim_{r\uparrow c}E(Y\mid R=r).<br />
+<p>$$
+\tau_{RD}=
+\lim_{r\downarrow c}E(Y\mid R=r)-
+\lim_{r\uparrow c}E(Y\mid R=r).
 $$</p>
 <p>The effect is local to the cutoff. Identification requires potential outcomes to vary continuously through the threshold in the absence of treatment and no precise manipulation of the running variable around the cutoff.</p>
 <p>Good practice includes:</p>
@@ -1809,9 +1801,9 @@ $$</p>
 <p>In a fuzzy RD, crossing the cutoff changes treatment probability rather than determining treatment. The discontinuity in outcome divided by the discontinuity in treatment identifies a local complier effect under IV-like assumptions.</p>
 <h2 id="454-instrumental-variables">45.4 Instrumental variables</h2>
 <p>An instrument $Z$ shifts treatment $A$ but is otherwise excluded from the outcome process. For a binary instrument, the Wald estimand is</p>
-<p>$$<br />
-\frac{E(Y\mid Z=1)-E(Y\mid Z=0)}<br />
-{E(A\mid Z=1)-E(A\mid Z=0)}.<br />
+<p>$$
+\frac{E(Y\mid Z=1)-E(Y\mid Z=0)}
+{E(A\mid Z=1)-E(A\mid Z=0)}.
 $$</p>
 <p>Core assumptions are:</p>
 <ol>
@@ -1910,11 +1902,12 @@ $$</p>
 </ul>
 <hr />
 <h1 id="day-46-heterogeneous-effects-and-policy-learning">Day 46 — Heterogeneous Effects and Policy Learning</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-46">✦ Read the beginner companion for Day 46</button></p>
 <p>Average effects can hide meaningful variation. Yet subgroup exploration is one of the easiest places to manufacture findings. Research-level heterogeneity analysis begins with an estimand and validation plan, not a colourful tree.</p>
 <h2 id="461-conditional-effects-are-still-averages">46.1 Conditional effects are still averages</h2>
 <p>The conditional average treatment effect is</p>
-<p>$$<br />
-\tau(x)=E{Y(1)-Y(0)\mid X=x}.<br />
+<p>$$
+\tau(x)=E\{Y(1)-Y(0)\mid X=x\}.
 $$</p>
 <p>It is an average among units with profile $x$, not an observed individual causal effect. Even in a randomised trial, both potential outcomes for a person remain unobserved. Avoid statements such as “the model knows this project will benefit.”</p>
 <h2 id="462-confirmatory-versus-exploratory-heterogeneity">46.2 Confirmatory versus exploratory heterogeneity</h2>
@@ -1932,7 +1925,6 @@ $$</p>
 <h2 id="463-interaction-on-one-scale-need-not-exist-on-another">46.3 Interaction on one scale need not exist on another</h2>
 <p>Suppose baseline risk is higher in remote projects. A constant risk ratio can yield a larger absolute risk reduction in that subgroup. A constant risk difference can yield different ratios. Policy capacity often depends on absolute benefit, while mechanisms may be studied on another scale. Register the scale and report baseline risks alongside effects.</p>
 <h2 id="464-pre-specified-subgroup-estimation-with-aipw-scores">46.4 Pre-specified subgroup estimation with AIPW scores</h2>
-<p><button class="read-details-btn" data-section="6h-4">✦ Read Details</button></p>
 <p>The AIPW score has conditional expectation related to the conditional effect when nuisance functions are valid. For the pre-specified terrain modifier in this simulation, compare mean scores by baseline group and test the interaction contrast.</p>
 <pre><code class="language-python">high_terrain = (df[&quot;terrain_index&quot;] &gt; 0.75).to_numpy()
 
@@ -1991,14 +1983,16 @@ print(
 <p>Using the same outcomes to discover a subgroup and claim its effect exaggerates evidence. Honest sample splitting, nested resampling, or external confirmation is part of the estimand-to-procedure contract.</p>
 <h2 id="468-from-cate-to-a-treatment-policy">46.8 From CATE to a treatment policy</h2>
 <p>If treatment has cost $c(X)$ and outcome benefit is valued at $b$, a simple rule might treat when</p>
-<p>$$<br />
--b\hat\tau(X)&gt;c(X),</p>
-<p>$$</p>
+<p>$$
+-b\hat\tau(X)&gt;c(X),
+
+$$</p>
 <p>for an adverse binary outcome where negative $\tau$ is beneficial. With limited capacity, assign the highest expected net-benefit projects subject to fairness, geography, and operational constraints.</p>
 <p>The value of policy $d$ is</p>
-<p>$$<br />
-V(d)=E\left[Y{d(X)}\right]</p>
-<p>$$</p>
+<p>$$
+V(d)=E\left[Y\{d(X)\}\right]
+
+$$</p>
 <p>or a utility-transformed version. Estimate value on data not used to optimise the rule, using randomisation probabilities or doubly robust off-policy estimators. Compare against realistic policies—usual practice, treat all, treat none, or a transparent score—not a straw man.</p>
 <h2 id="469-fairness-capacity-and-treatment-effects">46.9 Fairness, capacity, and treatment effects</h2>
 <p>Predictive parity metrics do not directly answer whether an intervention is distributed fairly. Ask:</p>
@@ -2030,6 +2024,7 @@ V(d)=E\left[Y{d(X)}\right]</p>
 <li>separate effect transport from prediction transport.</li>
 </ul>
 <h1 id="day-47-comparison-reproducibility-and-responsible-production">Day 47 — Comparison, Reproducibility, and Responsible Production</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-47">✦ Read the beginner companion for Day 47</button></p>
 <p>A causal estimate can be well identified yet irreproducible. A predictive model can be reproducible yet useless or harmful. Research operations preserve the full chain from question to action so that another person can audit both.</p>
 <h2 id="471-what-exactly-is-being-compared">47.1 What exactly is being compared?</h2>
 <p>Before a statistical test, define the comparison unit and loss:</p>
@@ -2044,17 +2039,17 @@ V(d)=E\left[Y{d(X)}\right]</p>
 <p>Comparing one tuned model's best run with another model's default run is not an algorithm comparison. It is a comparison of unequal procedures.</p>
 <h2 id="472-paired-evaluation">47.2 Paired evaluation</h2>
 <p>If two procedures are evaluated on the same held-out observations or resampling splits, compare paired losses. For split $r$,</p>
-<p>$$<br />
-d_r=L_{A,r}-L_{B,r}.<br />
+<p>$$
+d_r=L_{A,r}-L_{B,r}.
 $$</p>
 <p>The sign and uncertainty of $\bar d$ matter more than two separate metric intervals. Pairing removes variation shared by the same difficult test cases.</p>
 <p>Whenever possible, retain observation-level loss differences on a final untouched test set. Bootstrap the independent sampling unit—project, patient, district, or time block—and refit models if the target is procedure performance rather than conditional performance of already fitted artifacts.</p>
 <h2 id="473-why-ordinary-tests-on-cross-validation-folds-fail">47.3 Why ordinary tests on cross-validation folds fail</h2>
 <p>Training sets in cross-validation overlap. Fold differences are therefore dependent. A one-sample t-test treating $K$ fold differences as independent is too optimistic. A Wilcoxon signed-rank test changes the distributional target but does <strong>not</strong> remove this dependence merely because it is nonparametric.</p>
 <p>Nadeau and Bengio proposed corrected variance approximations for resampled comparisons. For $r$ repeated train/test evaluations with test-to-train size ratio $q$, a commonly used form is</p>
-<p>$$<br />
-\widehat{SE}_{corr}(\bar d)=<br />
-\sqrt{\left(\frac{1}{r}+q\right)s_d^2}.<br />
+<p>$$
+\widehat{SE}_{corr}(\bar d)=
+\sqrt{\left(\frac{1}{r}+q\right)s_d^2}.
 $$</p>
 <p>The approximation depends on the resampling design and does not create many independent datasets. With one benchmark dataset, conclusions about broad algorithm superiority should remain modest. Prefer multiple independent datasets for general algorithm claims and a locked destination set for a specific deployment claim.</p>
 <pre><code class="language-python">from scipy.stats import t as student_t
@@ -2135,7 +2130,6 @@ print(f&quot;Corrected SE: {se_d:.3f}; 95% CI: [{ci_d[0]:.3f}, {ci_d[1]:.3f}]&qu
 </ul>
 <p>A fixed random seed helps repeatability. It does not prove robustness or replication.</p>
 <h2 id="477-the-research-bundle">47.7 The research bundle</h2>
-<p><button class="read-details-btn" data-section="6i-7">✦ Read Details</button></p>
 <p>Every final study should preserve:</p>
 <ol>
 <li><strong>Protocol or registration</strong> with version and timestamp.</li>
@@ -2303,6 +2297,7 @@ print(json.dumps(manifest, indent=2, sort_keys=True))
 </ul>
 <hr />
 <h1 id="day-48-the-registered-final-study">Day 48 — The Registered Final Study</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-48">✦ Read the beginner companion for Day 48</button></p>
 <p>The final day combines causal design, estimation, diagnostics, sensitivity, reproducibility, and bounded communication. The goal is not a favourable p-value. It is a study another researcher can rerun and criticise.</p>
 <h2 id="481-registration-before-analysis">48.1 Registration before analysis</h2>
 <p>For the running simulation, freeze this protocol before revealing counterfactual truth:</p>
@@ -2433,6 +2428,7 @@ print(&quot;All registered integrity checks passed.&quot;)
 </blockquote>
 <p>Insert numbers only from generated results. Do not write “proved,” “no effect,” or “works for every project.” If an interval includes both useful benefit and harm, say the study remains decision-uncertain.</p>
 <h2 id="486-three-graduation-capstones">48.6 Three graduation capstones</h2>
+<p><button type="button" class="companion-more-button" data-companion-section="capstone">✦ Read the beginner capstone companion</button></p>
 <p>Choose one capstone and complete every required artifact. A null, harmful, unstable, or nonidentified result can pass if the reasoning is rigorous.</p>
 <h3 id="capstone-a-senior-review-target-trial-emulation">Capstone A — Senior Review Target-Trial Emulation</h3>
 <p><strong>Question.</strong> What is the effect of assigning senior review at a clearly aligned eligibility time on a pre-specified project outcome?</p>
@@ -2563,7 +2559,7 @@ print(&quot;All registered integrity checks passed.&quot;)
 </ul>
 <hr />
 <h1 id="chapter-6-synthesis">Chapter 6 Synthesis</h1>
-<p><button class="read-details-btn" data-section="capstone">✦ Read Details</button></p>
+<p><button type="button" class="companion-more-button" data-companion-section="reference">✦ Open the companion reference material</button></p>
 <h2 id="one-question-six-layers">One question, six layers</h2>
 <p>The question “does senior review prevent overruns?” becomes answerable only after six layers are separated:</p>
 <ol>
@@ -2785,397 +2781,993 @@ print(&quot;All registered integrity checks passed.&quot;)
 </ul>
 <p>Software can implement an estimator. It cannot choose the causal question, verify an unmeasured assumption, or take responsibility for the decision.</p>
 <style>
-.read-details-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: rgba(34, 211, 238, 0.08);
-    border: 1px solid rgba(34, 211, 238, 0.3);
-    color: #22d3ee;
-    padding: 0.4rem 0.8rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    border-radius: 0.375rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    margin: 0.5rem 0 1rem 0;
-    font-family: inherit;
+.companion-more-button {
+    display: inline-flex; align-items: center; gap: .45rem;
+    margin: .5rem 0 1.25rem; padding: .55rem .85rem;
+    border: 1px solid rgba(34, 211, 238, .42); border-radius: .45rem;
+    background: rgba(34, 211, 238, .09); color: #67e8f9;
+    font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer;
 }
-.read-details-btn:hover {
-    background: rgba(34, 211, 238, 0.2);
-    border-color: #22d3ee;
-    box-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
+.companion-more-button:hover, .companion-more-button:focus-visible {
+    background: rgba(34, 211, 238, .18); border-color: #22d3ee;
 }
-.comp-modal {
-    display: none;
-    position: fixed;
-    z-index: 10000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: rgba(11, 15, 25, 0.85);
-    backdrop-filter: blur(8px);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    align-items: center;
-    justify-content: center;
+.companion-more-modal[hidden] { display: none; }
+.companion-more-modal {
+    position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center;
+    padding: 1rem; background: rgba(5, 9, 17, .88); backdrop-filter: blur(7px);
 }
-.comp-modal.open {
-    display: flex;
-    opacity: 1;
+.companion-more-dialog {
+    width: min(64rem, 96vw); max-height: 92vh; display: flex; flex-direction: column;
+    overflow: hidden; border: 1px solid #334155; border-radius: .8rem;
+    background: #111827; box-shadow: 0 24px 70px rgba(0, 0, 0, .55);
 }
-.comp-modal-content {
-    background-color: #151d30;
-    border: 1px solid #223150;
-    border-radius: 0.75rem;
-    width: 90%;
-    max-width: 48rem;
-    max-height: 85vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.6);
-    position: relative;
-    padding: 2.5rem 2rem 2rem 2rem;
-    transform: scale(0.95);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+.companion-more-header {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: .8rem 1rem; border-bottom: 1px solid #334155; background: #172033;
 }
-.comp-modal.open .comp-modal-content {
-    transform: scale(1);
+.companion-more-header strong { color: #fff; }
+.companion-more-actions { display: flex; align-items: center; gap: .75rem; }
+.companion-more-actions a { color: #67e8f9; font-size: .82rem; }
+.companion-more-close {
+    width: 2.1rem; height: 2.1rem; border: 1px solid #475569; border-radius: .4rem;
+    background: #0b1220; color: #e2e8f0; font-size: 1.35rem; cursor: pointer;
 }
-.comp-modal-close {
-    position: absolute;
-    top: 0.75rem;
-    right: 1.25rem;
-    color: #cbd5e1;
-    font-size: 2rem;
-    font-weight: 300;
-    cursor: pointer;
-    transition: color 0.2s ease;
-    line-height: 1;
-}
-.comp-modal-close:hover {
-    color: #fff;
-}
-#comp-modal-body {
-    color: #cbd5e1;
-    font-size: 0.95rem;
-}
-#comp-modal-body h1, #comp-modal-body h2 {
-    color: #fff;
-    border-bottom: 1px solid #223150;
-    padding-bottom: 0.5rem;
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-}
-#comp-modal-body h3, #comp-modal-body h4 {
-    color: #fff;
-    margin-top: 1.75rem;
-    margin-bottom: 0.75rem;
-}
-#comp-modal-body p {
-    margin-bottom: 1rem;
-}
-#comp-modal-body code {
-    color: #67e8f9;
-    background: #0b0f19;
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-}
-#comp-modal-body pre {
-    background: #0b0f19;
-    border: 1px solid #223150;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    margin: 1rem 0;
-    overflow-x: auto;
-}
-#comp-modal-body pre code {
-    background: transparent;
-    padding: 0;
-    color: #e2e8f0;
-}
-#comp-modal-body table {
-    width: 100%;
-    font-size: 0.875rem;
-    border-collapse: collapse;
-    margin: 1.5rem 0;
-}
-#comp-modal-body th, #comp-modal-body td {
-    border: 1px solid #223150;
-    padding: 0.5rem 0.75rem;
-    text-align: left;
-}
-#comp-modal-body th {
-    background: #151d30;
-    color: #fff;
-    font-weight: 600;
-}
-.companion-details-area, .companion-details-area ~ * {
-    display: none;
+.companion-more-body { overflow: auto; padding: 1.25rem 1.5rem 2rem; }
+.companion-more-body > :first-child { margin-top: 0; }
+.companion-more-body table { display: block; overflow-x: auto; }
+.companion-more-body pre { max-width: 100%; overflow-x: auto; }
+@media (max-width: 640px) {
+    .companion-more-modal { padding: 0; }
+    .companion-more-dialog { width: 100vw; max-height: 100vh; height: 100vh; border-radius: 0; }
+    .companion-more-body { padding: 1rem; }
+    .companion-more-actions a { display: none; }
 }
 </style>
-
-<div id="companion-modal" class="comp-modal">
-    <div class="comp-modal-content">
-        <span class="comp-modal-close">&times;</span>
-        <div id="comp-modal-body"></div>
-    </div>
+<div class="companion-more-modal" id="companion-more-modal" hidden>
+  <section class="companion-more-dialog" role="dialog" aria-modal="true" aria-labelledby="companion-more-title">
+    <header class="companion-more-header">
+      <strong id="companion-more-title">Beginner companion</strong>
+      <div class="companion-more-actions">
+        <a href="chapter6_companion.html">Open the complete guide</a>
+        <button type="button" class="companion-more-close" aria-label="Close companion">&times;</button>
+      </div>
+    </header>
+    <div class="companion-more-body" id="companion-more-body"></div>
+  </section>
 </div>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    var store = {};
-    var area = document.querySelector('.companion-details-area');
-    if (!area) return;
-
-    var currentSection = null;
-    var currentElements = [];
-    var sibling = area.nextElementSibling;
-
-    while (sibling) {
-        if (sibling.classList.contains('companion-detail-heading')) {
-            if (currentSection) {
-                store[currentSection] = currentElements;
-            }
-            currentSection = sibling.getAttribute('data-section');
-            currentElements = [];
-        } else {
-            if (currentSection) {
-                currentElements.push(sibling.cloneNode(true));
-            }
-        }
-        sibling = sibling.nextElementSibling;
-    }
-    if (currentSection) {
-        store[currentSection] = currentElements;
-    }
-
-    // Wire up buttons
-    document.querySelectorAll('.read-details-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            var section = this.getAttribute('data-section');
-            var elements = store[section];
-            var modalBody = document.getElementById('comp-modal-body');
-            modalBody.innerHTML = '';
-
-            if (elements && elements.length > 0) {
-                elements.forEach(function(el) {
-                    el.style.display = '';
-                    modalBody.appendChild(el);
-                });
-
-                // Trigger MathJax typesetting if loaded
-                if (window.MathJax && window.MathJax.typesetPromise) {
-                    window.MathJax.typesetPromise([modalBody]);
-                }
-            } else {
-                modalBody.innerHTML = '<p>No details found for this section.</p>';
-            }
-
-            var modal = document.getElementById('companion-modal');
-            modal.style.display = 'flex';
-            // Reflow
-            modal.offsetHeight;
-            modal.classList.add('open');
-            document.body.style.overflow = 'hidden';
-        });
-    });
-
-    // Close modal function
-    function closeModal() {
-        var modal = document.getElementById('companion-modal');
-        modal.classList.remove('open');
-        setTimeout(function() {
-            modal.style.display = 'none';
-            document.body.style.overflow = '';
-        }, 300);
-    }
-
-    document.querySelector('.comp-modal-close').addEventListener('click', closeModal);
-    window.addEventListener('click', function(event) {
-        var modal = document.getElementById('companion-modal');
-        if (event.target === modal) {
-            closeModal();
-        }
-    });
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            closeModal();
-        }
-    });
-});
-</script>
-
+<template id="companion-template-overview"><h1 id="chapter-6-companion-guide-from-prediction-to-intervention">Chapter 6 Companion Guide: From Prediction to Intervention</h1>
+<h2 id="a-beginner-first-guide-to-causal-inference-experiments-observational-designs-reproducibility-and-responsible-deployment">A beginner-first guide to causal inference, experiments, observational designs, reproducibility, and responsible deployment</h2>
+<p>This guide accompanies <code>chapter6.md</code>. It assumes you are still learning Python, mathematics, statistics, and causal language. The chapter is advanced because the questions are demanding, not because explanations should be obscure.</p>
+<p>Earlier chapters asked what happened, what is associated, what is likely, and when an event may occur. Chapter 6 asks:</p>
+<blockquote>
+<p>What would change if we deliberately chose one action rather than another?</p>
+</blockquote>
+<p>That question cannot be answered by adding a treatment column to a predictive model. A causal study needs a defined intervention, counterfactual contrast, assignment story, identification assumptions, estimator, uncertainty procedure, and population.</p>
+<pre><code class="language-text">policy question
+    -&gt; target trial and estimand
+    -&gt; causal structure and identification
+    -&gt; design and estimation
+    -&gt; diagnostics and sensitivity
+    -&gt; reproducible result
+    -&gt; monitored decision system
+</code></pre>
 <hr />
-<h1 class="companion-details-area" id="companion-details-area">Companion Details Area</h1>
-<h2 class="companion-detail-heading" data-section="6a-2" id="detail-6a-2">Detail 6A 2</h2>
-<h3 id="potential-outcomes">Potential Outcomes</h3>
-<p>For any project $i$, there are two potential outcomes [cite: 24]:<br />
-* $Y_i(1)$: The warning outcome if project $i$ <em>received</em> the senior review [cite: 24].<br />
-* $Y_i(0)$: The warning outcome if project $i$ <em>did not receive</em> the senior review [cite: 24].<br />
-The <strong>fundamental problem of causal inference</strong> is that we can only observe one of these states for a given project at a given time [cite: 24]:<br />
-$$Y_i = A_iY_i(1) + (1-A_i)Y_i(0)$$</p>
-<h2 class="companion-detail-heading" data-section="6a-3" id="detail-6a-3">Detail 6A 3</h2>
-<h3 id="causal-estimands">Causal Estimands</h3>
-<p>Before picking an algorithm, you must define your target quantity [cite: 24]:<br />
-* <strong>Average Treatment Effect (ATE):</strong> $E{Y(1) - Y(0)}$ [cite: 24]. What if <em>everyone</em> was reviewed vs. <em>no one</em>? [cite: 24]<br />
-* <strong>Average Treatment Effect on the Treated (ATT):</strong> $E{Y(1) - Y(0) \mid A=1}$ [cite: 24]. What was the effect for the projects that <em>actually were</em> reviewed? [cite: 24]</p>
-<h2 class="companion-detail-heading" data-section="6a-4" id="detail-6a-4">Detail 6A 4</h2>
-<h3 id="the-four-identification-assumptions">The Four Identification Assumptions</h3>
-<p>To identify a causal effect from observational data, four strict assumptions must hold [cite: 24]:<br />
-1. <strong>Consistency:</strong> If a unit receives treatment $A=a$, its observed outcome exactly equals its potential outcome $Y(a)$ [cite: 24]. This requires the treatment to be well-defined (no hidden variations of "review") [cite: 24].<br />
-2. <strong>Conditional Exchangeability:</strong> ${Y(1), Y(0)} \perp A \mid X$ [cite: 24]. After adjusting for $X$, treatment is assigned as-if randomly [cite: 24]. <em>There are no unmeasured confounders.</em> [cite: 24]<br />
-3. <strong>Positivity:</strong> $0 &lt; P(A=1 \mid X=x) &lt; 1$ [cite: 24]. Every sub-population must have some probability of receiving (or not receiving) the treatment [cite: 24].<br />
-4. <strong>No Interference:</strong> One project's treatment does not affect another project's outcome (e.g., reviewing one project doesn't consume all the engineers and doom the next project) [cite: 24].</p>
-<hr />
-<h2 class="companion-detail-heading" data-section="6b-2" id="detail-6b-2">Detail 6B 2</h2>
-<h3 id="variable-roles-in-a-dag">Variable Roles in a DAG</h3>
+<h2 id="how-to-use-this-guide">How to use this guide</h2>
+<p>For Days 39–48:</p>
+<ol>
+<li>Write the causal question without naming a model.</li>
+<li>Specify population, time zero, treatment, comparator, outcome, horizon, and scale.</li>
+<li>Draw the assignment mechanism or DAG.</li>
+<li>State every identification assumption in plain language.</li>
+<li>Derive the smallest estimator by hand.</li>
+<li>Type and deliberately break the code.</li>
+<li>Identify what no observed-data diagnostic can test.</li>
+<li>Write one supported and one unsupported conclusion.</li>
+</ol>
+<p>Keep these layers separate:</p>
 <ul>
-<li><strong>Confounder ($A \leftarrow C \rightarrow Y$):</strong> Causes both treatment and outcome [cite: 24]. <em>Must be adjusted for.</em> [cite: 24]</li>
-<li><strong>Mediator ($A \rightarrow M \rightarrow Y$):</strong> A step on the causal pathway [cite: 24]. <em>Do not adjust for this if you want the total effect.</em> [cite: 24]</li>
-<li><strong>Collider ($A \rightarrow K \leftarrow Y$):</strong> Caused by both treatment and outcome [cite: 24]. <em>Do NOT adjust for this. Doing so opens a biased path.</em> [cite: 24]</li>
-</ul>
-<h2 class="companion-detail-heading" data-section="6b-7" id="detail-6b-7">Detail 6B 7</h2>
-<h3 id="the-backdoor-criterion">The Backdoor Criterion</h3>
-<p>A set of variables $X$ is sufficient for adjustment if [cite: 24]:<br />
-1. It contains no descendants of the treatment [cite: 24].<br />
-2. It blocks every "backdoor path" from $A$ to $Y$ (paths that have an arrow pointing into $A$) [cite: 24].</p>
-<hr />
-<h2 class="companion-detail-heading" data-section="6c-2" id="detail-6c-2">Detail 6C 2</h2>
-<h3 id="intention-to-treat-itt">Intention-to-Treat (ITT)</h3>
-<p>If you randomly assign ($Z$) a review, but some managers refuse to execute the review ($A$), you must analyze based on the <em>assignment</em> ($Z$), not the <em>receipt</em> ($A$) [cite: 24].<br />
-$$\widehat{\tau}<em Z="1">{\text{ITT}} = \bar Y</em>$$} - \bar Y_{Z=0<br />
-Comparing only the people who <em>received</em> treatment breaks randomization, because compliance is driven by confounding factors (e.g., highly competent managers are more likely to comply) [cite: 24].</p>
-<h2 class="companion-detail-heading" data-section="6c-6" id="detail-6c-6">Detail 6C 6</h2>
-<h3 id="instrumental-variables-late">Instrumental Variables &amp; LATE</h3>
-<p>Under strict assumptions (Relevance, Independence, Exclusion, Monotonicity), we can use the assignment $Z$ as an instrument to find the effect on the <strong>Compliers</strong> [cite: 24]:<br />
-$$\widehat\tau_{\text{LATE}} = \frac{E(Y \mid Z=1) - E(Y \mid Z=0)}{E(A \mid Z=1) - E(A \mid Z=0)}$$</p>
-<hr />
-<h2 class="companion-detail-heading" data-section="6d-3" id="detail-6d-3">Detail 6D 3</h2>
-<h3 id="propensity-scores">Propensity Scores</h3>
-<p>The propensity score is the probability of receiving treatment given the covariates [cite: 24]: <br />
-$$e(X) = P(A=1 \mid X)$$<br />
-It is a balancing score, not a predictive model. If the propensity model separates the classes perfectly, you have a severe Positivity violation [cite: 24].</p>
-<h2 class="companion-detail-heading" data-section="6d-5" id="detail-6d-5">Detail 6D 5</h2>
-<h3 id="inverse-probability-weighting-ipw">Inverse-Probability Weighting (IPW)</h3>
-<p>IPW creates a pseudo-population where treatment assignment is independent of the covariates [cite: 24]. The ATE weights are [cite: 24]:<br />
-$$w_i = \frac{A_i}{e(X_i)} + \frac{1-A_i}{1-e(X_i)}$$<br />
-<em>Danger:</em> Extreme weights signal a lack of overlap [cite: 24]. A few heavily weighted observations can destroy the variance of your estimate [cite: 24].</p>
-<hr />
-<h2 class="companion-detail-heading" data-section="6e-1" id="detail-6e-1">Detail 6E 1</h2>
-<h3 id="augmented-inverse-probability-weighting-aipw">Augmented Inverse-Probability Weighting (AIPW)</h3>
-<p>AIPW combines outcome modeling ($\hat{m}$) and propensity weighting ($\hat{e}$) [cite: 24].<br />
-$$\widehat\psi_{\text{AIPW}} = \frac{1}{n}\sum_{i=1}^n\left[ \hat m_1(X_i) - \hat m_0(X_i) + \frac{A_i{Y_i-\hat m_1(X_i)}}{\hat e(X_i)} - \frac{(1-A_i){Y_i-\hat m_0(X_i)}}{1-\hat e(X_i)} \right]$$<br />
-* <strong>"Doubly Robust"</strong> means the estimator is consistent if <em>either</em> the outcome model <em>or</em> the propensity model is correctly specified [cite: 24]. It does <em>not</em> fix unmeasured confounding [cite: 24].</p>
-<h2 class="companion-detail-heading" data-section="6e-4" id="detail-6e-4">Detail 6E 4</h2>
-<h3 id="cross-fitting">Cross-Fitting</h3>
-<p>To prevent the machine learning models ($\hat{m}, \hat{e}$) from overfitting to their own training data, we use $K$-fold cross-fitting [cite: 24]. Nuisance models are trained on $K-1$ folds, and the causal score is evaluated on the held-out fold [cite: 24].</p>
-<hr />
-<h2 class="companion-detail-heading" data-section="6f-1" id="detail-6f-1">Detail 6F 1</h2>
-<h3 id="target-trial-emulation">Target Trial Emulation</h3>
-<p>To prevent biases in observational data, define the hypothetical randomized trial you <em>wish</em> you could have run [cite: 24]. Align Eligibility, Treatment Assignment, and Follow-up exactly at "Time Zero" [cite: 24].</p>
-<h2 class="companion-detail-heading" data-section="6f-2" id="detail-6f-2">Detail 6F 2</h2>
-<h3 id="time-zero-bias-immortal-time-bias">Time-Zero Bias (Immortal Time Bias)</h3>
-<p>If a project is classified as "Reviewed" because it was reviewed at month 10, but observation started at month 0, the project was "immortal" for 10 months [cite: 24] (if it failed at month 5, it could never have reached the review) [cite: 24]. This artificially makes the review look highly protective [cite: 24].</p>
-<hr />
-<h2 class="companion-detail-heading" data-section="6g-1" id="detail-6g-1">Detail 6G 1</h2>
-<h2 id="7-day-45-quasi-experimental-designs">7. Day 45: Quasi-Experimental Designs</h2>
-<p>When you cannot measure all confounders, Quasi-Experiments exploit natural assignment mechanisms [cite: 24].</p>
-<ul>
-<li><strong>Difference-in-Differences (DiD):</strong> Compares the pre/post change in a treated group to the pre/post change in a control group [cite: 24]. Requires the <strong>Parallel Trends Assumption</strong>: absent treatment, the groups would have evolved in parallel [cite: 24].</li>
-<li><strong>Regression Discontinuity (RD):</strong> Explores treatments assigned by a strict threshold (e.g., all projects with risk $&gt; 80$ get reviewed) [cite: 24]. It estimates a local effect right at the boundary $\lim_{r \downarrow c} E(Y \mid R=r) - \lim_{r \uparrow c} E(Y \mid R=r)$ [cite: 24].</li>
+<li><strong>estimand:</strong> the counterfactual quantity wanted;</li>
+<li><strong>identification:</strong> assumptions connecting it to observable data;</li>
+<li><strong>estimator:</strong> a finite-sample calculation;</li>
+<li><strong>inference:</strong> uncertainty under the design and procedure;</li>
+<li><strong>transport:</strong> the population or setting receiving the claim;</li>
+<li><strong>policy:</strong> the action rule and consequences; and</li>
+<li><strong>production:</strong> how the system is delivered, monitored, challenged, and stopped.</li>
 </ul>
 <hr />
-<h2 class="companion-detail-heading" data-section="6h-4" id="detail-6h-4">Detail 6H 4</h2>
-<h3 id="conditional-average-treatment-effect-cate">Conditional Average Treatment Effect (CATE)</h3>
-<p>The effect of a treatment for a specific covariate profile $x$ [cite: 24]:<br />
-$$\tau(x) = E{Y(1) - Y(0) \mid X=x}$$</p>
-<h3 id="honest-causal-forests">Honest Causal Forests</h3>
-<p>Searching for subgroups that react strongly to treatment is highly prone to overfitting [cite: 24]. <strong>Honest Causal Forests</strong> split the data into two parts: one part to define the tree splits, and a completely separate part to estimate the causal effect within those leaves [cite: 24].</p>
+<h2 id="0-foundations-for-a-complete-beginner">0. Foundations for a complete beginner</h2>
+<h3 id="01-the-running-causal-question">0.1 The running causal question</h3>
+<p>At month 6, eligible fictional microhydro projects may receive a structured senior-review package. The outcome is a formal major-overrun warning between just after month 6 and month 36.</p>
+<p>The primary question is:</p>
+<blockquote>
+<p>Among projects active, observable, and warning-free at month 6, what would be the 36-month warning-risk difference if all received review at month 6 versus if none received it?</p>
+</blockquote>
+<p>This fixes:</p>
+<ul>
+<li>unit: eligible project;</li>
+<li>time zero: month 6;</li>
+<li>treatment: defined review package at time zero;</li>
+<li>comparator: no package at time zero;</li>
+<li>outcome: warning through month 36;</li>
+<li>follow-up: 30 months;</li>
+<li>population: month-6 eligible projects; and</li>
+<li>scale: risk difference.</li>
+</ul>
+<p>The data are simulated. Nothing about their districts, projects, or review effects is real-world evidence.</p>
+<h3 id="02-essential-notation">0.2 Essential notation</h3>
+<ul>
+<li>$A=1$ means treatment; $A=0$ means comparator.</li>
+<li>$Y$ is the observed outcome.</li>
+<li>$Y(1)$ and $Y(0)$ are potential outcomes under the two interventions.</li>
+<li>$X$ contains pre-treatment covariates.</li>
+<li>$Z$ often denotes randomized assignment or an instrument.</li>
+<li>$M$ often denotes a mediator.</li>
+<li>$S$ can denote selection into the observed sample.</li>
+<li>$E(Y)$ is an average over a population distribution.</li>
+<li>$P(A=1\mid X)$ is treatment probability among profile $X$.</li>
+<li>$\perp$ means statistical independence.</li>
+<li>$\hat q$ is an estimate of unknown quantity $q$.</li>
+<li>$\bar A_k$ means treatment history through visit $k$.</li>
+</ul>
+<p>Subscripts index subjects or visits; superscripts such as $Y^d$ name a potential outcome under strategy $d$, not exponentiation.</p>
+<h3 id="03-python-patterns">0.3 Python patterns</h3>
+<pre><code class="language-python">treated = df[df[&quot;senior_review_month6&quot;] == 1]
+control = df[df[&quot;senior_review_month6&quot;] == 0]
+naive_difference = (
+    treated[&quot;warning_by_month36&quot;].mean()
+    - control[&quot;warning_by_month36&quot;].mean()
+)
+</code></pre>
+<p>This computes an observed group difference. Code correctness does not make it causal.</p>
+<p>Other recurring patterns:</p>
+<ul>
+<li><code>.copy()</code> prevents accidental mutation of a shared table;</li>
+<li><code>np.where(condition, a, b)</code> selects rowwise values;</li>
+<li><code>np.clip(p, .02, .98)</code> limits estimated probabilities but changes the procedure;</li>
+<li><code>.predict_proba(X)[:, 1]</code> selects class-1 probability;</li>
+<li><code>KFold</code> creates cross-fitting partitions;</li>
+<li><code>random_state</code> reproduces pseudo-random choices under the same environment.</li>
+</ul>
+<h3 id="04-understanding-the-simulation-generator">0.4 Understanding the simulation generator</h3>
+<p><code>make_mhp_causal_data</code> simulates baseline covariates, then assigns review preferentially to difficult projects:</p>
+<pre><code class="language-python">propensity = expit(linear_assignment_score)
+senior_review = rng.binomial(1, propensity, n)
+</code></pre>
+<p><code>expit(z)=1/(1+e^{-z})</code> converts a score into probability. Terrain, cable length, budget, experience, access, and district affect both assignment and warning risk, creating measured confounding.</p>
+<p>The generator creates probabilities under no review and review, then potential outcomes <code>y0</code> and <code>y1</code>. Observed outcome is:</p>
+<pre><code class="language-python">observed_y = np.where(senior_review == 1, y1, y0)
+</code></pre>
+<p>Counterfactual columns are hidden unless explicitly revealed for simulation validation. Real datasets never reveal both potential outcomes or the true propensity. Simulation truth tests whether code can work under a known world; it does not validate assumptions in empirical data.</p>
+<h3 id="05-installing-and-recording-software">0.5 Installing and recording software</h3>
+<pre><code class="language-bash">python -m pip install numpy pandas scipy matplotlib scikit-learn statsmodels
+</code></pre>
+<p>Optional causal libraries include DoWhy, EconML, DoubleML, CausalML, and relevant R packages. Interfaces change, so use current official documentation and record exact versions.</p>
+<p>A package implements an estimator. It cannot define treatment versions, justify exchangeability, choose a valid instrument, detect every collider, or accept responsibility for policy.</p>
+<h3 id="06-prediction-association-and-intervention">0.6 Prediction, association, and intervention</h3>
+<p>$$
+P(Y=1\mid A,X)
+$$</p>
+<p>describes observed outcomes conditional on recorded action and features.</p>
+<p>$$
+P\{Y(a)=1\}
+$$</p>
+<p>describes a hypothetical intervention setting action to $a$. The conditioning bar and intervention are not interchangeable. Riskier projects can receive more review, so reviewed projects may have worse observed outcomes even if review helps.</p>
+<hr /></template><template id="companion-template-day-39"><h1 id="day-39-counterfactuals-estimands-and-identification">Day 39 — Counterfactuals, estimands, and identification</h1>
+<h2 id="391-potential-outcomes">39.1 Potential outcomes</h2>
+<p>For project $i$:</p>
+<ul>
+<li>$Y_i(1)$ is outcome under review;</li>
+<li>$Y_i(0)$ is outcome under no review.</li>
+</ul>
+<p>Individual causal contrast is $Y_i(1)-Y_i(0)$, but only one is observed:</p>
+<p>$$
+Y_i=A_iY_i(1)+(1-A_i)Y_i(0).
+$$</p>
+<p>This fundamental problem cannot be solved by sample size: the same project in the same circumstance cannot simultaneously receive both actions. Designs identify average contrasts using comparisons and assumptions.</p>
+<h2 id="392-choose-the-estimand-first">39.2 Choose the estimand first</h2>
+<p>Common targets:</p>
+<p>$$
+ATE=E\{Y(1)-Y(0)\},
+$$</p>
+<p>$$
+ATT=E\{Y(1)-Y(0)\mid A=1\},
+$$</p>
+<p>$$
+CATE(x)=E\{Y(1)-Y(0)\mid X=x\},
+$$</p>
+<p>and policy value $E[Y{d(X)}]$ under rule $d$.</p>
+<p>ATE, ATT, untreated-population effects, overlap effects, and policy values average over different populations or assignments. “The treatment effect” is incomplete.</p>
+<p>For binary risks $p_1,p_0$:</p>
+<ul>
+<li>risk difference: $p_1-p_0$;</li>
+<li>risk ratio: $p_1/p_0$;</li>
+<li>odds ratio: $[p_1/(1-p_1)]/[p_0/(1-p_0)]$.</li>
+</ul>
+<p>Scales differ. Conditional and marginal odds ratios can differ without confounding because odds ratios are non-collapsible. Register the scale rather than switching to the most dramatic result.</p>
+<p>For event time, name horizon, competing-event strategy, survival, incidence, or restricted mean.</p>
+<h2 id="393-four-identification-assumptions">39.3 Four identification assumptions</h2>
+<h3 id="consistency">Consistency</h3>
+<p>If $A=a$, observed outcome equals $Y(a)$. Treatment must be well defined. A five-minute signature and six-week engineering review are not automatically one intervention.</p>
+<h3 id="conditional-exchangeability">Conditional exchangeability</h3>
+<p>$$
+\{Y(1),Y(0)\}\perp A\mid X.
+$$</p>
+<p>Given adequate pre-treatment covariates, action behaves as if independent of potential outcomes. In observational data this no-unmeasured-confounding claim is not testable from outcomes alone.</p>
+<h3 id="positivity">Positivity</h3>
+<p>$$
+0&lt;P(A=1\mid X=x)&lt;1
+$$</p>
+<p>for target profiles. If all remote projects are reviewed, untreated remote outcomes cannot be learned without extrapolation. Restriction, new data, or a different estimand changes the question honestly.</p>
+<h3 id="no-interference">No interference</h3>
+<p>One project's treatment must not change another's outcome under simple notation. Shared engineers can create spillovers. Cluster or network estimands may be needed.</p>
+<h2 id="394-the-g-formula-identification-step">39.4 The g-formula identification step</h2>
+<p>Under consistency, exchangeability, and positivity:</p>
+<p>$$
+E\{Y(a)\}=E_X[E(Y\mid A=a,X)].
+$$</p>
+<p>Exchangeability inserts observed treatment group $A=a$ into the conditional potential-outcome mean; consistency replaces potential with observed outcome; positivity ensures relevant comparisons exist.</p>
+<p>This derivation justifies standardization—not loyalty to one regression package.</p>
+<h2 id="395-identification-estimation-and-inference">39.5 Identification, estimation, and inference</h2>
+<ul>
+<li>Identification asks whether an exactly known observed distribution determines the estimand under assumptions.</li>
+<li>Estimation approximates required quantities from finite data.</li>
+<li>Inference quantifies sampling and procedural uncertainty.</li>
+</ul>
+<p>More data reduce some estimation error but cannot repair undefined interventions, colliders, positivity gaps, or hidden confounding. Confidence intervals are conditional on identification and model assumptions.</p>
+<hr /></template><template id="companion-template-day-40"><h1 id="day-40-causal-diagrams-and-adjustment">Day 40 — Causal diagrams and adjustment</h1>
+<h2 id="401-dag-basics">40.1 DAG basics</h2>
+<p>A directed acyclic graph has variables as nodes and assumed direct causal relations as arrows. “Acyclic” means following arrow directions cannot return to the starting node.</p>
+<p>A DAG is not learned truth. It is a compact, criticizable causal argument. Include unmeasured variables when scientifically relevant; omission from the dataset does not erase them from the world.</p>
+<h2 id="402-variable-roles-depend-on-the-question">40.2 Variable roles depend on the question</h2>
+<ul>
+<li>Confounder: common cause $A\leftarrow C\rightarrow Y$.</li>
+<li>Mediator: causal pathway $A\rightarrow M\rightarrow Y$.</li>
+<li>Collider: common effect $A\rightarrow K\leftarrow Y$.</li>
+<li>Instrument: causes treatment but affects outcome only through treatment under strong assumptions.</li>
+<li>Proxy: measured stand-in related to an unmeasured construct.</li>
+<li>Selection variable: controls entry or observation and can induce bias.</li>
+</ul>
+<p>A variable's role depends on time, intervention, outcome, and graph. “Always adjust for age” is not causal reasoning.</p>
+<h2 id="403-confounders-and-backdoor-paths">40.3 Confounders and backdoor paths</h2>
+<p>A backdoor path starts with an arrow into treatment. A valid adjustment set blocks all such paths without conditioning on forbidden descendants that open bias.</p>
+<p>Confounders are chosen from substantive causal knowledge, not treatment/outcome $p$-values, predictive importance, or automated stepwise selection. Weakly associated confounders can matter; strong predictors need not confound.</p>
+<h2 id="404-mediators-and-estimand-changes">40.4 Mediators and estimand changes</h2>
+<p>Adjusting for a mediator removes part of the pathway and no longer targets the total effect. Direct and indirect effects need precisely defined interventions and additional assumptions, especially with mediator–outcome confounding affected by treatment.</p>
+<p>“Control for everything” silently changes the causal question.</p>
+<h2 id="405-collider-and-selection-bias">40.5 Collider and selection bias</h2>
+<p>In $A\rightarrow K\leftarrow Y$, $A$ and $Y$ can be independent before conditioning. Restricting to or adjusting for $K$ opens association between its causes.</p>
+<p>Examples include analyzing only approved, tested, hospitalized, completed, or fully documented cases when selection is affected by exposure and prognosis. Missingness indicators can also be colliders.</p>
+<h2 id="406-descendants-instruments-and-bias-amplification">40.6 Descendants, instruments, and bias amplification</h2>
+<p>Treatment descendants are usually post-treatment and inappropriate for total-effect adjustment. Conditioning on an instrument-like strong treatment predictor can amplify residual bias from an unmeasured confounder without helping outcome prediction.</p>
+<p>Covariate choice must follow the graph and estimand, not a generic baseline-variable checklist.</p>
+<h2 id="407-selection-and-transport">40.7 Selection and transport</h2>
+<p>A selection diagram marks mechanisms differing between study and target settings. Transport may require standardizing study effects over target covariates under assumptions that conditional causal relations are shared.</p>
+<p>External predictive accuracy does not by itself prove causal transport. Treatment versions, adherence, effect modifiers, outcome measurement, and interference can change.</p>
+<h2 id="408-dag-workflow">40.8 DAG workflow</h2>
+<ol>
+<li>Fix treatment, comparator, outcome, horizon, and population.</li>
+<li>Order variables by time.</li>
+<li>Add causes even when unmeasured.</li>
+<li>Trace causal and backdoor paths.</li>
+<li>Identify candidate adjustment sets.</li>
+<li>Reject sets containing harmful post-treatment or collider variables.</li>
+<li>Compare assumptions with actual timestamps and measurements.</li>
+<li>Publish and challenge the graph before effect estimation.</li>
+</ol>
+<p>Different plausible DAGs imply sensitivity analyses or that identification is not credible.</p>
+<hr /></template><template id="companion-template-day-41"><h1 id="day-41-randomised-experiments-and-noncompliance">Day 41 — Randomised experiments and noncompliance</h1>
+<h2 id="411-what-randomization-does">41.1 What randomization does</h2>
+<p>Random assignment makes $Z$ independent of baseline potential outcomes in expectation through a known mechanism. It balances measured and unmeasured baseline causes on average, not necessarily exactly in one sample.</p>
+<p>Analyze according to the randomization design. Allocation concealment prevents foreknowledge; blinding reduces behavior and measurement changes. Randomization does not solve attrition, nonadherence, interference, outcome mismeasurement, or transport.</p>
+<h2 id="412-intention-to-treat">41.2 Intention-to-treat</h2>
+<p>$$
+\widehat\tau_{ITT}=\bar Y_{Z=1}-\bar Y_{Z=0}.
+$$</p>
+<p>ITT estimates effect of assignment/offer in the trial population. Preserve assignment groups regardless of receipt. Comparing recipients breaks randomization because adherence can reflect prognosis.</p>
+<p>With binary outcomes report absolute risks and differences, not only odds ratios. Use randomization-based, robust, or prespecified model-assisted uncertainty appropriate to design.</p>
+<h2 id="413-blocking-and-covariate-adjustment">41.3 Blocking and covariate adjustment</h2>
+<p>Blocking randomizes within prespecified strata and should be reflected in analysis. Baseline adjustment can improve precision when prespecified and correctly handled; post-randomization adjustment can bias the total assignment effect.</p>
+<p>Chance baseline imbalance is not evidence randomization failed. Do not choose adjustment variables based on observed imbalance significance tests.</p>
+<h2 id="414-cluster-randomization-and-interference">41.4 Cluster randomization and interference</h2>
+<p>If offices or districts are randomized, the independent assignment unit is the cluster. Individual-level standard errors falsely treat correlated subjects as independent.</p>
+<p>Few clusters require careful randomization inference or small-sample corrections. Analyze recruitment timing because knowledge of cluster assignment can affect who enters.</p>
+<p>Spillovers violate no-interference assumptions. Define direct, indirect, total, or saturation effects and randomize at a level consistent with delivery.</p>
+<h2 id="415-noncompliance-and-late">41.5 Noncompliance and LATE</h2>
+<p>Assignment $Z$ differs from treatment received $A$. The first stage is:</p>
+<p>$$
+E(A\mid Z=1)-E(A\mid Z=0).
+$$</p>
+<p>Under relevance, assignment independence, exclusion, and monotonicity, the Wald ratio:</p>
+<p>$$
+\frac{E(Y\mid Z=1)-E(Y\mid Z=0)}
+{E(A\mid Z=1)-E(A\mid Z=0)}
+$$</p>
+<p>identifies a local average effect for compliers whose receipt changes with assignment. It is not automatically the ATE. Exclusion can fail if assignment itself motivates action; monotonicity excludes defiers.</p>
+<p>Weak first stages create unstable ratios and unusual inference.</p>
+<h2 id="416-per-protocol-attrition-and-missing-outcomes">41.6 Per-protocol, attrition, and missing outcomes</h2>
+<p>Per-protocol effects concern adherence to a strategy and require adjustment for post-assignment predictors of adherence and outcome. Simply restricting to adherers is biased.</p>
+<p>Attrition can destroy exchangeability if related to assignment and prognosis. Report reasons and rates by arm, preserve assignment, model or weight observation under explicit assumptions, and perform sensitivity analyses for missing outcomes.</p>
+<p>Complete-case precision does not prove missingness is harmless.</p>
+<h2 id="417-minimal-randomized-laboratory">41.7 Minimal randomized laboratory</h2>
+<p>Simulate assignment independently, generate noncompliance and outcomes, then calculate assignment risk difference, receipt difference, first stage, and Wald ratio. Repeat many trials to distinguish one noisy realization from estimator behavior.</p>
+<hr /></template><template id="companion-template-day-42"><h1 id="day-42-standardisation-matching-and-weighting">Day 42 — Standardisation, matching, and weighting</h1>
+<h2 id="421-three-views-of-the-same-identified-target">42.1 Three views of the same identified target</h2>
+<p>Under the same consistency, exchangeability, and positivity assumptions:</p>
+<h3 id="standardization">Standardization</h3>
+<p>$$
+\psi=E_X\{m_1(X)-m_0(X)\},
+\quad m_a(X)=E(Y\mid A=a,X).
+$$</p>
+<p>Fit outcome means, predict every row under both actions, average, subtract.</p>
+<h3 id="inverse-probability-weighting">Inverse probability weighting</h3>
+<p>$$
+\psi=E\left[\frac{AY}{e(X)}-\frac{(1-A)Y}{1-e(X)}\right].
+$$</p>
+<p>Weight each observed outcome by inverse probability of receiving its action.</p>
+<h3 id="matching-or-balancing">Matching or balancing</h3>
+<p>Construct treated and untreated comparisons with similar confounder distributions, then average the contrast over the intended population.</p>
+<p>Agreement cannot test unmeasured exchangeability because all methods can share the same hidden bias.</p>
+<h2 id="422-regression-standardization">42.2 Regression standardization</h2>
+<ol>
+<li>Fit $m(A,X)$.</li>
+<li>copy every row and set $A=1$; predict $\hat m_1(X_i)$.</li>
+<li>Set $A=0$; predict $\hat m_0(X_i)$.</li>
+<li>Average each intervention world.</li>
+<li>Subtract.</li>
+</ol>
+<p>Even with logistic regression this produces a marginal risk difference. The treatment coefficient alone is a conditional log-odds ratio, not the ATE.</p>
+<h2 id="423-propensity-scores">42.3 Propensity scores</h2>
+<p>$$
+e(X)=P(A=1\mid X).
+$$</p>
+<p>The true propensity is a balancing score under the causal assumptions. Its job is design and covariate balance, not maximum treatment AUC. Perfect separation reveals absent comparisons, not a wonderful model.</p>
+<p>Use propensity scores for matching, strata, IPW, overlap weighting, or balancing estimation. Select specifications using causal knowledge, overlap, and balance—not the preferred effect estimate.</p>
+<h2 id="424-matching-changes-the-target-population">42.4 Matching changes the target population</h2>
+<p>Document distance, caliper, ratio, replacement, exact matches, order, discards, balance, overlap, and outcome analysis. Discarding unmatched units often changes ATE to an effect in matched/overlap-support units.</p>
+<p>Design matching without repeatedly inspecting outcomes. Account for reused controls, pairs, and matching weights in inference.</p>
+<h2 id="425-weighting-and-pseudo-populations">42.5 Weighting and pseudo-populations</h2>
+<p>ATE weight:</p>
+<p>$$
+w_i=\frac{A_i}{e(X_i)}+\frac{1-A_i}{1-e(X_i)}.
+$$</p>
+<p>ATT keeps treated weight 1 and controls weight $e/(1-e)$. Stabilized weights can reduce variance. Overlap weights emphasize treatment equipoise and target the overlap population.</p>
+<p>Extreme weights reveal weak support or misspecification. Truncation trades variance for bias and defines a registered procedure. Do not tune truncation after seeing effects.</p>
+<h2 id="426-balance-and-effective-sample-size">42.6 Balance and effective sample size</h2>
+<p>Standardized mean difference:</p>
+<p>$$
+SMD_j=\frac{\bar X_{1j}-\bar X_{0j}}
+{\sqrt{(s_{1j}^2+s_{0j}^2)/2}}.
+$$</p>
+<p>Inspect weighted continuous distributions, categories, nonlinear terms, and interactions required by the graph. A threshold like 0.1 is a convention, not proof.</p>
+<p>$$
+ESS=\frac{(\sum_iw_i)^2}{\sum_iw_i^2}.
+$$</p>
+<p>Concentrated weights can reduce thousands of rows to far less effective information. Plot treatment-specific propensities and inspect influential profiles.</p>
+<h2 id="427-reading-the-adjustment-code">42.7 Reading the adjustment code</h2>
+<p>The outcome pipeline includes treatment and baseline covariates, then predicts copied rows under both treatments. The propensity pipeline predicts treatment from baseline covariates. Preprocessing and model fitting must remain inside the relevant design/resampling boundary.</p>
+<p>Clipping propensities is not innocuous. Report raw range, clipping rule, clipped count, balance, weights, ESS, and sensitivity. Flexible nuisance models still require causal covariate timing.</p>
+<hr /></template><template id="companion-template-day-43"><h1 id="day-43-doubly-robust-estimation-and-sensitivity">Day 43 — Doubly robust estimation and sensitivity</h1>
+<h2 id="431-aipw-score">43.1 AIPW score</h2>
+<p>$$
+\hat\phi_i=\hat m_1(X_i)-\hat m_0(X_i)
++\frac{A_i\{Y_i-\hat m_1(X_i)\}}{\hat e(X_i)}
+-\frac{(1-A_i)\{Y_i-\hat m_0(X_i)\}}{1-\hat e(X_i)}.
+$$</p>
+<p>Average scores to estimate ATE. The first term standardizes predicted outcomes. Weighted residual terms correct prediction error using observed outcomes.</p>
+<h2 id="432-double-robustnessprecise-meaning">43.2 Double robustness—precise meaning</h2>
+<p>Under identification and regularity conditions, AIPW can be consistent if either the outcome models or propensity model are correctly specified.</p>
+<p>It does not mean two wrong models cancel, hidden confounding vanishes, positivity is optional, measurement no longer matters, or standard errors are automatic. Robustness concerns nuisance functions inside an already identified problem.</p>
+<h2 id="433-influence-function-uncertainty">43.3 Influence-function uncertainty</h2>
+<p>$$
+\hat\psi=\frac1n\sum_i\hat\phi_i,
+\qquad
+\widehat{SE}(\hat\psi)=\frac{SD(\hat\phi_i)}{\sqrt n}.
+$$</p>
+<p>Large scores reveal influential residuals and small propensities. Clustered data require cluster-level influence aggregation or appropriate bootstrap.</p>
+<h2 id="434-cross-fitting">43.4 Cross-fitting</h2>
+<p>Split observations into folds. Train nuisance models outside each fold and predict $e,m_1,m_0$ inside the held-out fold. After all rows have out-of-fold predictions, compute the effect score once.</p>
+<p>Cross-fitting reduces own-observation overfit and enables flexible nuisance estimation under rate conditions. It does not tune itself, prevent preprocessing leakage, or repair causal assumptions. Any tuning stays within nuisance training data.</p>
+<h2 id="435-tmle-and-double-machine-learning">43.5 TMLE and double machine learning</h2>
+<p>TMLE updates initial outcome predictions along a targeted fluctuation submodel and can preserve outcome bounds. Double/debiased machine learning uses orthogonal scores and sample splitting so small nuisance errors have reduced first-order influence.</p>
+<p>These are frameworks, not magic brands. Report estimand, score, learners, folds, tuning, truncation, variance, and failures.</p>
+<h2 id="436-whole-procedure-bootstrap">43.6 Whole-procedure bootstrap</h2>
+<p>Resample the independent unit, redo folds, transformations, tuning, nuisance fitting, score calculation, and effect estimation. Bootstrapping only saved predictions omits fitting uncertainty.</p>
+<p>Use cluster or block bootstrap where independence is higher-level. Compare full-procedure and influence intervals; disagreement is diagnostic, not permission to choose the favorable interval.</p>
+<h2 id="437-sensitivity-to-hidden-confounding">43.7 Sensitivity to hidden confounding</h2>
+<p>Observed balance cannot prove exchangeability. Methods include bias-parameter grids, tipping points, E-values for suitable ratio measures, Rosenbaum bounds for matched designs, negative controls, quantitative bias analysis, and partial-identification bounds.</p>
+<p>Each has assumptions. Calibrate sensitivity parameters against measured covariates and domain evidence. An E-value is not a certificate; a negative control only detects biases it shares.</p>
+<h2 id="438-specification-and-overlap-sensitivity">43.8 Specification and overlap sensitivity</h2>
+<p>Change one registered choice at a time: nonlinear terms, justified covariate sets, weight truncation, overlap target, outcome definition, missing-data scenario, or negative control.</p>
+<p>Agreement among models sharing the same flawed identification strategy is not causal robustness.</p>
+<hr /></template><template id="companion-template-day-44"><h1 id="day-44-target-trials-and-time-varying-treatment">Day 44 — Target trials and time-varying treatment</h1>
+<h2 id="441-write-the-imaginary-experiment">44.1 Write the imaginary experiment</h2>
+<p>A target trial specifies eligibility, strategies and versions, assignment, time zero, outcome/horizon, causal contrast, and analysis. Observational emulation follows that protocol as closely as data allow.</p>
+<p>Eligibility assessment, treatment assignment, and follow-up must align at time zero. Selecting month-12 survivors while calling review at month 6 baseline creates a mismatched population.</p>
+<h2 id="442-immortal-time-and-time-zero-bias">44.2 Immortal-time and time-zero bias</h2>
+<p>If “treated” means receiving review any time in the first year but follow-up starts at approval, treated projects must survive warning-free until review. Assigning this guaranteed time to treatment can make it appear protective.</p>
+<p>Solutions include aligned time zero, time-varying treatment, repeated trials, clone–censor–weight, or properly analyzed grace periods. Adding time-to-review as a baseline covariate does not repair design.</p>
+<h2 id="443-longitudinal-histories">44.3 Longitudinal histories</h2>
+<p>At visit $k$, $L_k$ is covariate history observed before decision $A_k$. Bars denote history:</p>
+<p>$$
+\bar L_k=(L_0,\ldots,L_k),
+\quad
+\bar A_k=(A_0,\ldots,A_k).
+$$</p>
+<p>A dynamic strategy $d$ maps history to action. $Y^d$ is outcome under sustained strategy. Define realistic grace periods and adherence.</p>
+<h2 id="444-treatmentconfounder-feedback">44.4 Treatment–confounder feedback</h2>
+<p>Earlier treatment affects later health; later health affects both future treatment and outcome. Conventional adjustment for later health blocks part of early treatment effect, while omitting it confounds later treatment.</p>
+<p>This motivates longitudinal g-methods, not ordinary baseline regression.</p>
+<h2 id="445-sequential-assumptions">44.5 Sequential assumptions</h2>
+<p>$$
+Y^{\bar a}\perp A_k\mid \bar L_k,\bar A_{k-1}
+$$</p>
+<p>is sequential exchangeability. Strategies also require sequential positivity, longitudinal consistency, censoring assumptions, and interference treatment. Richer history makes support harder.</p>
+<h2 id="446-parametric-g-formula">44.6 Parametric g-formula</h2>
+<p>Fit models for next covariates and outcomes given past history; sample baseline units; impose strategy; simulate covariates forward; impose later actions; simulate outcomes; average; repeat for each strategy.</p>
+<p>It standardizes over complete histories and depends on correct longitudinal process models. Make Monte Carlo simulation error negligible relative to sampling uncertainty.</p>
+<h2 id="447-marginal-structural-models">44.7 Marginal structural models</h2>
+<p>Stabilized longitudinal treatment weight:</p>
+<p>$$
+SW_i=\prod_k
+\frac{P(A_{ik}\mid\bar A_{i,k-1},L_{i0})}
+{P(A_{ik}\mid\bar A_{i,k-1},\bar L_{ik})}.
+$$</p>
+<p>Additional censoring weights handle measured informative loss. Fit a marginal outcome model in the pseudo-population.</p>
+<p>Inspect probabilities and weights by visit, late-history support, balance, ESS, truncation sensitivity, and treatment/censoring calibration. Multiplication can make long-horizon weights unstable.</p>
+<h2 id="448-clonecensorweight-and-repeated-trials">44.8 Clone–censor–weight and repeated trials</h2>
+<p>Clone a subject into every strategy compatible at baseline, artificially censor a clone on deviation, and weight continued compatibility. Clones share origin, so inference must account for dependence. Artificial censoring requires its own ignorability model.</p>
+<p>Repeated target trials enroll eligible projects at successive months, align assignment and follow-up each time, then pool with trial/calendar controls and project-clustered inference. Treatment versions and policy periods may change.</p>
+<h2 id="449-censoring-and-competing-outcomes">44.9 Censoring and competing outcomes</h2>
+<p>Cancellation may remain a competing event for total real-world incidence, join a composite policy-failure outcome, be eliminated in a hypothetical estimand under stronger assumptions, or enter separable-effects analysis.</p>
+<p>Calling it censoring changes the question and can create informative loss. Carry Chapter 5's event-process discipline into causal work.</p>
+<hr /></template><template id="companion-template-day-45"><h1 id="day-45-quasi-experimental-designs">Day 45 — Quasi-experimental designs</h1>
+<h2 id="451-difference-in-differences">45.1 Difference-in-differences</h2>
+<p>$$
+\hat\tau_{DiD}=(\bar Y_{T,post}-\bar Y_{T,pre})
+-(\bar Y_{C,post}-\bar Y_{C,pre}).
+$$</p>
+<p>Identification requires treated group's untreated counterfactual trend to match comparison trend on the chosen scale. Pre-trends can reveal problems but cannot prove post-policy parallel trends.</p>
+<p>Threats include anticipation, changing composition, concurrent shocks, measurement change, spillovers, functional form, and serial correlation. Cluster inference at policy-assignment level.</p>
+<h2 id="452-event-studies-and-staggered-adoption">45.2 Event studies and staggered adoption</h2>
+<p>Event studies show effects relative to adoption and pre-period patterns. With staggered timing and heterogeneous effects, ordinary two-way fixed effects can combine inappropriate comparisons and negative weights.</p>
+<p>Use group-time estimands with never-treated or not-yet-treated comparisons, transparent aggregation, cohort/event-time support, and modern methods such as Callaway–Sant'Anna when assumptions fit.</p>
+<h2 id="453-regression-discontinuity">45.3 Regression discontinuity</h2>
+<p>For cutoff $c$:</p>
+<p>$$
+\tau_{RD}=\lim_{r\downarrow c}E(Y\mid R=r)
+-\lim_{r\uparrow c}E(Y\mid R=r).
+$$</p>
+<p>This is local to the cutoff. It requires continuity of potential outcomes absent treatment and no precise manipulation around the threshold.</p>
+<p>Plot raw data and treatment probability, inspect running-variable density and baseline continuity, use low-order local polynomials, justified bandwidths, robust bias correction, and bandwidth/kernel sensitivity. Avoid high-order global polynomials.</p>
+<p>Fuzzy RD divides outcome discontinuity by treatment discontinuity and identifies a local complier effect under IV-like assumptions.</p>
+<h2 id="454-instrumental-variables">45.4 Instrumental variables</h2>
+<p>Wald ratio:</p>
+<p>$$
+\frac{E(Y\mid Z=1)-E(Y\mid Z=0)}
+{E(A\mid Z=1)-E(A\mid Z=0)}.
+$$</p>
+<p>Requires relevance, independence, exclusion, and usually monotonicity. Under heterogeneity it targets compliers, not population ATE. Weak instruments yield instability; a strong first stage does not defend exclusion.</p>
+<p>Distance to a review office may directly affect outcomes, violating exclusion. Attack the DAG before fitting two-stage regression.</p>
+<h2 id="455-synthetic-control-and-interrupted-time-series">45.5 Synthetic control and interrupted time series</h2>
+<p>Synthetic control weights unaffected donors to reproduce a treated unit's pre-policy trajectory. It needs stable long pre-period, unaffected donors, good fit, and placebos.</p>
+<p>Interrupted time series estimates level/slope changes and needs enough observations, seasonality/autocorrelation handling, stable measurement, and absence of concurrent explanations. A comparison series strengthens it.</p>
+<h2 id="456-placebos-and-falsification">45.6 Placebos and falsification</h2>
+<p>Use fake dates/cutoffs, outcomes treatment cannot affect, pre-treatment effects, covariate continuity, instrument associations with baseline outcomes, and leave-one-donor-out checks.</p>
+<p>Passing tests cannot prove identification; failing a well-chosen falsification requires investigation.</p>
+<hr /></template><template id="companion-template-day-46"><h1 id="day-46-heterogeneous-effects-and-policy-learning">Day 46 — Heterogeneous effects and policy learning</h1>
+<h2 id="461-cate-is-still-an-average">46.1 CATE is still an average</h2>
+<p>$$
+\tau(x)=E\{Y(1)-Y(0)\mid X=x\}.
+$$</p>
+<p>It is an average for profile/subgroup, not an observed individual effect. Even randomized trials do not reveal both outcomes for one person.</p>
+<h2 id="462-confirmatory-and-exploratory-heterogeneity">46.2 Confirmatory and exploratory heterogeneity</h2>
+<p>Prespecify a small set of plausible modifiers, coding, functional form, scale, interaction contrast, multiplicity control, sample/overlap requirements, and missingness handling.</p>
+<p>“Significant here, nonsignificant there” does not prove interaction; test the difference. Exploratory discoveries need independent confirmation and must be labeled hypothesis-generating.</p>
+<h2 id="463-effect-scale-matters">46.3 Effect scale matters</h2>
+<p>Constant risk ratio can yield larger absolute benefit in high-risk groups. Constant risk difference can yield varying ratios. Report baseline risks and register the policy-relevant scale.</p>
+<h2 id="464-subgroup-aipw-scores">46.4 Subgroup AIPW scores</h2>
+<p>Cross-fitted AIPW scores can be averaged within prespecified groups to estimate subgroup effects, with group-appropriate uncertainty. Nuisance models can be global while effect aggregation is subgroup-specific.</p>
+<p>Small groups, poor treatment overlap, multiple testing, and learned subgroup boundaries undermine apparent precision.</p>
+<h2 id="465-meta-learners">46.5 Meta-learners</h2>
+<ul>
+<li>S-learner fits one outcome model including treatment.</li>
+<li>T-learner fits separate treated/control models.</li>
+<li>X-learner imputes pseudo-effects and can help unequal group sizes.</li>
+<li>R-/DR-learners residualize or use orthogonal pseudo-outcomes.</li>
+</ul>
+<p>Their assumptions and tuning matter. Cross-fitting reduces overfit but does not create exchangeability.</p>
+<h2 id="466-honest-causal-trees-and-forests">46.6 Honest causal trees and forests</h2>
+<p>Honesty separates data choosing tree splits from data estimating leaf effects. Causal forests average honest trees and can estimate conditional effects with uncertainty under conditions.</p>
+<p>Tune for treatment-effect estimation rather than outcome prediction. Require overlap and sufficient treated/control observations in leaves. Importance does not prove true effect modification.</p>
+<h2 id="467-evaluating-heterogeneity-without-labels">46.7 Evaluating heterogeneity without labels</h2>
+<p>Individual treatment effects are unobserved, so ordinary prediction RMSE is unavailable. Use simulation, randomized validation, held-out policy value, calibration of grouped scores, best-linear-predictor tests, and stability across samples.</p>
+<p>Ranking apparent effects can overfit noise even if average ATE is correct.</p>
+<h2 id="468-from-cate-to-policy">46.8 From CATE to policy</h2>
+<p>A policy treats when expected benefit exceeds cost subject to capacity and constraints. Estimate policy value on data not used to learn the rule, using randomized comparison or doubly robust off-policy evaluation.</p>
+<p>Compare with simple treat-all, treat-none, and risk-based rules. Account for treatment cost, harm, capacity, uncertainty, and implementation. A high-risk subject need not benefit most.</p>
+<h2 id="469-fairness-and-transport">46.9 Fairness and transport</h2>
+<p>Audit who is eligible, has overlap, receives action, benefits, bears burden, and is excluded. Maximizing average value can concentrate resources or harms. Protected group rules may face legal and ethical constraints.</p>
+<p>Transporting CATE requires stable conditional effects or measured effect modifiers plus target-population data. New settings can differ in treatment version, adherence, resources, baseline risk, and interference.</p>
+<hr /></template><template id="companion-template-day-47"><h1 id="day-47-comparison-reproducibility-and-responsible-production">Day 47 — Comparison, reproducibility, and responsible production</h1>
+<h2 id="471-define-what-is-compared">47.1 Define what is compared</h2>
+<p>Distinguish algorithms, tuned procedures, estimands, decision policies, and complete systems. Equalize data, folds, preprocessing, search budgets, censoring/uncertainty rules, and action definitions where the scientific comparison requires it.</p>
+<h2 id="472-paired-evaluation">47.2 Paired evaluation</h2>
+<p>Compare methods on the same observations or resamples and analyze paired differences. Pairing removes shared case difficulty from variance.</p>
+<p>Repeated CV folds overlap heavily. Fold scores are not independent replicates, so ordinary paired $t$-tests on folds understate uncertainty. Use nested/locked evaluation, corrected resampled tests with limitations, bootstrap at the independent unit, or dataset-level comparison across genuinely independent tasks.</p>
+<h2 id="473-practical-equivalence-and-multiplicity">47.3 Practical equivalence and multiplicity</h2>
+<p>Predefine the smallest practically important difference and consider equivalence/noninferiority, not only “different from zero.” Multiple models, metrics, horizons, and groups create selection opportunities; control or label multiplicity and preserve all results.</p>
+<h2 id="474-ablation-studies">47.4 Ablation studies</h2>
+<p>Removing a feature or component asks how this fitted procedure changes without it. It does not establish the component's causal importance. Rerun preprocessing and tuning fairly for each ablation, use paired evidence, and disclose the full ablation set.</p>
+<h2 id="475-reproducibility-levels">47.5 Reproducibility levels</h2>
+<ul>
+<li>Computational reproducibility: same data/code/environment regenerate outputs.</li>
+<li>Replicability: independent study obtains compatible evidence.</li>
+<li>Robustness: conclusions survive justified analysis choices.</li>
+<li>Generalizability/transport: results hold in new populations/settings.</li>
+</ul>
+<p>One does not imply the others.</p>
+<h2 id="476-research-bundle">47.6 Research bundle</h2>
+<p>Include registration, README, scripted cohort construction, data dictionary, environment lock, seeds/determinism notes, tests, analysis code, all results, individual predictions/scores where allowed, figures, model objects, manifests/hashes, data sheet, model card, causal-study card, deviation log, and plain-language summary.</p>
+<p>No hidden notebook state or manual spreadsheet step should be required.</p>
+<h2 id="477-seeds-hashes-and-manifests">47.7 Seeds, hashes, and manifests</h2>
+<p>A seed controls specified pseudo-randomness but cannot guarantee identical results across libraries, hardware, parallelism, or versions. Record all seed locations and deterministic limitations.</p>
+<p>A cryptographic hash fingerprints an exact file; it does not prove correctness. A manifest lists paths, sizes, hashes, sources, timestamps, licenses, and roles. Hash raw and derived artifacts while respecting privacy.</p>
+<h2 id="478-data-sheets-model-cards-and-causal-study-cards">47.8 Data sheets, model cards, and causal-study cards</h2>
+<p>Data sheet: motivation, creators, units, collection, sampling, timestamps, missingness, labels, groups, consent/governance, limitations, update history.</p>
+<p>Model card: intended use, prohibited use, population, inputs/outputs, training, metrics, groups, thresholds, calibration, uncertainty, failures, monitoring, version.</p>
+<p>Causal-study card: target trial, estimand, DAG, identification assumptions, assignment mechanism, overlap, adjustment, diagnostics, sensitivity, transport, deviations, allowed wording.</p>
+<h2 id="479-trainingserving-consistency">47.9 Training–serving consistency</h2>
+<p>Verify production feature definitions, units, category handling, missingness, time availability, model version, threshold, and action exactly match validation. Use schema tests, fixture predictions, shadow runs, and parity checks.</p>
+<h2 id="4710-monitor-the-decision-system">47.10 Monitor the decision system</h2>
+<p>Monitor service health, input/measurement drift, missingness, predicted values, treatment/action rates, capacity, overrides, subgroup burden, delayed outcomes, calibration/impact when mature, incidents, appeals, and downstream consequences.</p>
+<p>Actions create feedback: intervention changes outcomes and future labels; selection changes who is observed; staff adapt to scores. Monitoring a score distribution alone misses system drift.</p>
+<h2 id="4711-retraining-rollback-and-retirement">47.11 Retraining, rollback, and retirement</h2>
+<p>Predefine triggers, owners, validation gates, prospective/shadow periods, versioning, rollback artifacts, communication, and retirement criteria. Retraining is a new intervention and can invalidate causal interpretation. Preserve prior versions and decision logs.</p>
+<hr /></template><template id="companion-template-day-48"><h1 id="day-48-the-registered-final-study">Day 48 — The registered final study</h1>
+<h2 id="481-registration-and-lockbox">48.1 Registration and lockbox</h2>
+<p>Freeze causal question, target trial, estimand, DAG, adjustment set, data rules, exclusions, missingness, primary estimator, nuisance learners/tuning, diagnostics, sensitivity, uncertainty, groups, claim rule, and code version before primary outcomes are opened.</p>
+<p>Lockbox access should be logged and technically separated. After opening, changes are deviations or exploratory. Reusing the test to revise the procedure consumes it.</p>
+<h2 id="482-executable-primary-analysis">48.2 Executable primary analysis</h2>
+<p>A complete script regenerates cohort, validates timestamps, constructs treatment/outcome, fits the registered method, computes diagnostics and effect, produces uncertainty, saves artifacts, and exits on failed integrity assertions.</p>
+<p>Run synthetic fixtures with known truth and known failure cases before real outcomes. Assertions should check eligibility, treatment timing, outcome window, feature timing, overlap, finite scores, reproducible counts, and output schema.</p>
+<h2 id="483-integrity-before-interpretation">48.3 Integrity before interpretation</h2>
+<p>Verify cohort counts and flow, duplicates, missingness, treatment provenance, balance, overlap, weights/ESS, nuisance predictions, influential scores, seed/environment, hash manifest, and lockbox log before interpreting the estimate.</p>
+<p>If a primary integrity test fails, stop. Do not rationalize because the estimate looks plausible.</p>
+<h2 id="484-writing-the-result">48.4 Writing the result</h2>
+<p>Report population, intervention/comparator, time zero, horizon, estimand/scale, design, identification assumptions, estimator, diagnostics, primary estimate and interval, sensitivity, deviations, transport limits, and allowed decision implication.</p>
+<p>A narrow interval does not incorporate unmeasured confounding or undefined treatment versions. Null, harmful, unstable, or unidentified results must be reported.</p>
+<h2 id="485-three-graduation-capstones">48.5 Three graduation capstones</h2>
+<h3 id="capstone-a-target-trial-emulation">Capstone A: target-trial emulation</h3>
+<p>Emulate senior review using aligned eligibility and treatment, causal adjustment, overlap/balance, sensitivity, and bounded claim.</p>
+<h3 id="capstone-b-threshold-or-rollout-evaluation">Capstone B: threshold or rollout evaluation</h3>
+<p>Use RD, DiD, IV, or another defensible assignment mechanism; define its local/group-time/complier estimand and falsification evidence.</p>
+<h3 id="capstone-c-prospective-model-impact-trial">Capstone C: prospective model-impact trial</h3>
+<p>Randomize or prospectively compare use of a decision system, recording actions, adherence, spillovers, harms, capacity, subgroup outcomes, and workflow impact.</p>
+<p>Prediction performance and intervention impact are separate endpoints.</p>
+<h2 id="486-oral-defense">48.6 Oral defense</h2>
+<p>Be ready to defend why the estimand matters, how treatment is defined, where time zero lies, which paths are adjusted, what is unmeasured, where positivity fails, why estimator matches identification, how uncertainty was calculated, what sensitivity means, where results transport, and what would falsify the claim.</p>
+<p>“The software did it” is not a research defense.</p>
+<hr /></template><template id="companion-template-capstone"><h1 id="capstone-companion-exercises-and-certification">Capstone companion: exercises and certification</h1>
+<h2 id="c1-exercise-method">C.1 Exercise method</h2>
+<p>Before coding each exercise, write:</p>
+<ol>
+<li>target trial or assignment mechanism;</li>
+<li>counterfactual estimand and population;</li>
+<li>identification assumptions;</li>
+<li>estimator and diagnostic;</li>
+<li>deliberate failure case; and</li>
+<li>bounded conclusion.</li>
+</ol>
+<p>The exercises progress from potential-outcome arithmetic and DAG adjustment through trials, noncompliance, propensity design, standardization, doubly robust failure matrices, whole-procedure bootstrap, hidden-confounding tipping points, longitudinal treatment, DiD, RD, IV, honest heterogeneity, reproducibility, incidents, and a registered study.</p>
+<h2 id="c2-certification-dimensions">C.2 Certification dimensions</h2>
+<p>A research-ready submission:</p>
+<ul>
+<li>defines treatment versions and time zero;</li>
+<li>separates observed and counterfactual quantities;</li>
+<li>makes identification assumptions criticizable;</li>
+<li>matches adjustment to causal structure;</li>
+<li>demonstrates overlap and balance;</li>
+<li>propagates procedural uncertainty;</li>
+<li>distinguishes confirmatory and exploratory work;</li>
+<li>preserves unfavorable results and deviations;</li>
+<li>produces a clean research bundle;</li>
+<li>communicates transport and sensitivity limits; and</li>
+<li>connects deployment to monitoring, appeal, rollback, and prospective impact evaluation.</li>
+</ul>
+<p>An honest conclusion that the effect is unidentified or too uncertain can pass. Unsupported certainty cannot.</p>
+<hr /></template><template id="companion-template-reference"><h1 id="chapter-6-synthesis-and-practical-laboratories">Chapter 6 synthesis and practical laboratories</h1>
+<h2 id="s1-one-question-six-layers">S.1 One question, six layers</h2>
+<ol>
+<li>Measurement: are treatment, outcome, time, and population valid?</li>
+<li>Counterfactual target: which intervention worlds and scale?</li>
+<li>Identification: which design and assumptions connect data to target?</li>
+<li>Estimation/inference: which procedure and uncertainty?</li>
+<li>Translation: where does result transport and what decision follows?</li>
+<li>Production: how is action delivered, monitored, contested, and stopped?</li>
+</ol>
+<p>Reproducibility preserves the chain; it cannot repair a wrong early link.</p>
+<h2 id="s2-derivations-to-complete">S.2 Derivations to complete</h2>
+<ol>
+<li>Observed outcome from potential outcomes.</li>
+<li>ATE, ATT, CATE, risk difference/ratio/odds ratio.</li>
+<li>G-formula identification steps.</li>
+<li>Backdoor adjustment for a small DAG.</li>
+<li>ITT, first stage, and Wald LATE.</li>
+<li>Standardization and IPW identification.</li>
+<li>SMD and ESS.</li>
+<li>AIPW score and influence standard error.</li>
+<li>Longitudinal stabilized weights.</li>
+<li>Two-period DiD.</li>
+<li>Sharp and fuzzy RD contrasts.</li>
+<li>Policy value and incremental net benefit.</li>
+<li>Paired method differences and dependence explanation.</li>
+</ol>
+<h2 id="s3-practical-laboratories">S.3 Practical laboratories</h2>
+<h3 id="laboratory-a-simulation-truth">Laboratory A: simulation truth</h3>
+<p>Reveal both potential outcomes only after freezing analysis; compare naive, standardization, IPW, and AIPW over repeated samples.</p>
+<h3 id="laboratory-b-dag-traps">Laboratory B: DAG traps</h3>
+<p>Simulate a confounder, mediator, collider, selection variable, proxy, and instrument. Adjust valid and invalid sets and trace bias paths.</p>
+<h3 id="laboratory-c-randomized-noncompliance">Laboratory C: randomized noncompliance</h3>
+<p>Simulate compliers, always-takers, never-takers, and exclusion violation. Compare ITT, receipt contrast, first stage, and LATE.</p>
+<h3 id="laboratory-d-overlap-failure">Laboratory D: overlap failure</h3>
+<p>Make treatment deterministic for one profile. Compare ATE, restricted, ATT, and overlap targets, weights, ESS, and extrapolation.</p>
+<h3 id="laboratory-e-double-robustness">Laboratory E: double robustness</h3>
+<p>Cross correct/incorrect outcome and propensity models over repetitions. Add hidden confounding to show all adjustment estimators fail together.</p>
+<h3 id="laboratory-f-longitudinal-feedback">Laboratory F: longitudinal feedback</h3>
+<p>Simulate three treatment decisions with confounder feedback. Compare naive adjustment, g-formula, and marginal structural model.</p>
+<h3 id="laboratory-g-quasi-experiment-contamination">Laboratory G: quasi-experiment contamination</h3>
+<p>Break DiD with concurrent shock, RD with manipulation, and IV with direct instrument effect. Test design-specific placebos.</p>
+<h3 id="laboratory-h-honest-heterogeneity">Laboratory H: honest heterogeneity</h3>
+<p>Use separate discovery and estimation samples; evaluate policy value on untouched data under true constant and varying effects.</p>
+<h3 id="laboratory-i-reproducibility-handoff">Laboratory I: reproducibility handoff</h3>
+<p>Give a peer only the bundle. Record and repair every hidden dependency needed to reproduce cohort, estimate, interval, and figure.</p>
+<h3 id="laboratory-j-production-incident">Laboratory J: production incident</h3>
+<p>Simulate unit change, delayed labels, group action spike, or feedback. Exercise detection, containment, rollback, communication, and prevention.</p>
 <hr />
-<h2 class="companion-detail-heading" data-section="6i-7" id="detail-6i-7">Detail 6I 7</h2>
-<h2 id="9-day-47-48-reproducibility-and-the-registered-study">9. Day 47 &amp; 48: Reproducibility and The Registered Study</h2>
-<p>A causal claim is worthless if the exact data, pipeline, hyperparameters, and code cannot be audited [cite: 24].</p>
-<h2 class="companion-detail-heading" data-section="capstone" id="detail-capstone">Detail CAPSTONE</h2>
-<h2 id="10-master-rosetta-stone-formula-sheet">10. Master Rosetta Stone &amp; Formula Sheet</h2>
+<h1 id="formula-sheet-with-plain-language-readings">Formula sheet with plain-language readings</h1>
 <table>
 <thead>
 <tr>
-<th>Concept</th>
 <th>Formula</th>
-<th>Purpose</th>
+<th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>ATE Estimand</td>
-<td>$E{Y(1)-Y(0)}$</td>
-<td>Population average causal effect [cite: 24]</td>
+<td>$Y=AY(1)+(1-A)Y(0)$</td>
+<td>observed potential outcome</td>
 </tr>
 <tr>
-<td>Risk Difference</td>
-<td>$p_1 - p_0$</td>
-<td>Absolute effect scale [cite: 24]</td>
+<td>$E[Y(1)-Y(0)]$</td>
+<td>population ATE</td>
 </tr>
 <tr>
-<td>ITT Effect</td>
-<td>$\bar Y_{Z=1} - \bar Y_{Z=0}$</td>
-<td>Effect of assignment, ignoring compliance [cite: 24]</td>
+<td>$E[Y(1)-Y(0)\mid A=1]$</td>
+<td>ATT</td>
 </tr>
 <tr>
-<td>LATE (Wald Ratio)</td>
-<td>$\frac{E(Y\mid Z=1)-E(Y\mid Z=0)}{E(A\mid Z=1)-E(A\mid Z=0)}$</td>
-<td>Complier effect under IV assumptions [cite: 24]</td>
-</tr>
-<tr>
-<td>Propensity Score</td>
-<td>$e(X) = P(A=1\mid X)$</td>
-<td>Conditional probability of treatment [cite: 24]</td>
-</tr>
-<tr>
-<td>IPW Weights</td>
-<td>$\frac{A_i}{e(X_i)}+\frac{1-A_i}{1-e(X_i)}$</td>
-<td>Pseudo-population weighting [cite: 24]</td>
-</tr>
-<tr>
-<td>Standardised Mean Difference</td>
-<td>$\frac{\bar X_{1j}-\bar X_{0j}}{\sqrt{(s_{1j}^2+s_{0j}^2)/2}}$</td>
-<td>Covariate balance diagnostic [cite: 24]</td>
-</tr>
-<tr>
-<td>Effective Sample Size</td>
-<td>$(\sum w_i)^2 / \sum w_i^2$</td>
-<td>Information retention under weighting [cite: 24]</td>
-</tr>
-<tr>
-<td>AIPW Score</td>
-<td>$\hat m_1 - \hat m_0 + \frac{A(Y-\hat m_1)}{\hat e} - \frac{(1-A)(Y-\hat m_0)}{1-\hat e}$</td>
-<td>Doubly robust orthogonal estimation [cite: 24]</td>
-</tr>
-<tr>
-<td>DiD Estimator</td>
-<td>$(\bar Y_{T,post}-\bar Y_{T,pre}) - (\bar Y_{C,post}-\bar Y_{C,pre})$</td>
-<td>Effect estimation assuming parallel trends [cite: 24]</td>
-</tr>
-<tr>
-<td>RD Estimator</td>
-<td>$\lim_{r\downarrow c}E(Y\mid R=r) - \lim_{r\uparrow c}E(Y\mid R=r)$</td>
-<td>Local effect at assignment threshold [cite: 24]</td>
-</tr>
-<tr>
+<td>$E[Y(1)-Y(0)\mid X=x]$</td>
 <td>CATE</td>
-<td>$E{Y(1)-Y(0)\mid X=x}$</td>
-<td>Conditional effect for a specific profile [cite: 24]</td>
 </tr>
 <tr>
-<td>Corrected CV Variance</td>
-<td>$\sqrt{(\frac{1}{r}+q)s_d^2}$</td>
-<td>Penalizes variance for overlapping folds [cite: 24]</td>
+<td>${Y(1),Y(0)}\perp A\mid X$</td>
+<td>conditional exchangeability</td>
+</tr>
+<tr>
+<td>$0&lt;P(A=1\mid X)&lt;1$</td>
+<td>positivity</td>
+</tr>
+<tr>
+<td>$E_X[E(Y\mid A=a,X)]$</td>
+<td>g-formula intervention mean</td>
+</tr>
+<tr>
+<td>$\bar Y_{Z=1}-\bar Y_{Z=0}$</td>
+<td>ITT estimate</td>
+</tr>
+<tr>
+<td>outcome ITT / treatment first stage</td>
+<td>Wald LATE</td>
+</tr>
+<tr>
+<td>$e(X)=P(A=1\mid X)$</td>
+<td>propensity score</td>
+</tr>
+<tr>
+<td>$A/e+(1-A)/(1-e)$</td>
+<td>ATE weight</td>
+</tr>
+<tr>
+<td>$SMD$</td>
+<td>standardized covariate imbalance</td>
+</tr>
+<tr>
+<td>$(\sum w)^2/\sum w^2$</td>
+<td>effective sample size</td>
+</tr>
+<tr>
+<td>$m_1-m_0+A(Y-m_1)/e-(1-A)(Y-m_0)/(1-e)$</td>
+<td>AIPW score</td>
+</tr>
+<tr>
+<td>$SD(\phi)/\sqrt n$</td>
+<td>influence-score standard error</td>
+</tr>
+<tr>
+<td>$\prod_k P(A_k\mid\text{limited past})/P(A_k\mid\text{full past})$</td>
+<td>longitudinal stabilized weight</td>
+</tr>
+<tr>
+<td>$(T_{post}-T_{pre})-(C_{post}-C_{pre})$</td>
+<td>DiD contrast</td>
+</tr>
+<tr>
+<td>outcome jump / treatment jump</td>
+<td>fuzzy-RD or IV local ratio</td>
+</tr>
+<tr>
+<td>$E[Y{d(X)}]$</td>
+<td>policy value</td>
 </tr>
 </tbody>
 </table>
+<hr />
+<h1 id="expanded-glossary">Expanded glossary</h1>
+<p><strong>ATE</strong> — Average potential-outcome contrast in a stated population.</p>
+<p><strong>ATT</strong> — Average contrast among actually treated units.</p>
+<p><strong>Backdoor path</strong> — Treatment–outcome path beginning with an arrow into treatment.</p>
+<p><strong>Balance</strong> — Similarity of treatment-group covariate distributions after design.</p>
+<p><strong>CATE</strong> — Average effect conditional on baseline profile or subgroup.</p>
+<p><strong>Causal estimand</strong> — Counterfactual contrast including intervention, comparator, population, outcome, horizon, and scale.</p>
+<p><strong>Collider</strong> — Common effect; conditioning can associate its causes.</p>
+<p><strong>Consistency</strong> — Observed outcome equals potential outcome under received well-defined treatment.</p>
+<p><strong>Confounder</strong> — Pre-treatment common cause of treatment and outcome for the question.</p>
+<p><strong>Cross-fitting</strong> — Nuisance models trained outside observations receiving their predictions.</p>
+<p><strong>DAG</strong> — Directed acyclic graph encoding causal assumptions.</p>
+<p><strong>Difference-in-differences</strong> — Treated change minus comparison change under parallel counterfactual trends.</p>
+<p><strong>Double robustness</strong> — Consistency if one of two nuisance models is correct, given identification.</p>
+<p><strong>Effective sample size</strong> — Concentration summary for nonnegative weights.</p>
+<p><strong>Exchangeability</strong> — Treatment independent of potential outcomes, by design or conditionally.</p>
+<p><strong>Exclusion restriction</strong> — Instrument affects outcome only through treatment.</p>
+<p><strong>G-formula</strong> — Standardization of conditional outcome distributions over target covariates/histories.</p>
+<p><strong>Honesty</strong> — Separate data for structure discovery and effect estimation.</p>
+<p><strong>Instrument</strong> — Treatment shifter satisfying relevance, independence, exclusion, and often monotonicity.</p>
+<p><strong>Interference</strong> — One unit's treatment affects another unit's outcome.</p>
+<p><strong>ITT</strong> — Effect of randomized assignment or offer.</p>
+<p><strong>LATE</strong> — Average effect among instrument compliers under assumptions.</p>
+<p><strong>Marginal structural model</strong> — Model for counterfactual outcomes under histories, often fit with inverse weights.</p>
+<p><strong>Mediator</strong> — Post-treatment variable on a causal pathway.</p>
+<p><strong>Negative control</strong> — Variable expected to share bias but not the causal relation.</p>
+<p><strong>Nuisance function</strong> — Auxiliary propensity or outcome function needed for target estimation.</p>
+<p><strong>Overlap</strong> — Credible presence of both treatment comparisons across target profiles.</p>
+<p><strong>Policy value</strong> — Expected outcome or utility under an assignment rule.</p>
+<p><strong>Positivity</strong> — Required actions have nonzero probability in target histories.</p>
+<p><strong>Potential outcome</strong> — Outcome under a specified intervention.</p>
+<p><strong>Propensity score</strong> — Conditional treatment probability given baseline covariates.</p>
+<p><strong>Regression discontinuity</strong> — Local design exploiting an assignment cutoff.</p>
+<p><strong>Sensitivity analysis</strong> — Structured variation of assumptions or choices.</p>
+<p><strong>Standardization</strong> — Averaging conditional predictions under interventions over a target distribution.</p>
+<p><strong>Target trial</strong> — Protocol of the ideal randomized experiment being emulated.</p>
+<p><strong>Time-zero bias</strong> — Bias from misaligned eligibility, treatment classification, and follow-up.</p>
+<p><strong>Transportability</strong> — Conditions under which a causal result applies to another target setting.</p>
+<hr />
+<h1 id="research-paper-reading-ladder">Research-paper reading ladder</h1>
+<table>
+<thead>
+<tr>
+<th>Paper</th>
+<th>Central contribution</th>
+<th>Replication focus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rubin (1974), Holland (1986)</td>
+<td>potential outcomes and causal estimands</td>
+<td>observed versus missing counterfactuals</td>
+</tr>
+<tr>
+<td>Greenland, Pearl &amp; Robins (1999)</td>
+<td>causal diagrams and adjustment</td>
+<td>collider and mediator failures</td>
+</tr>
+<tr>
+<td>Rosenbaum &amp; Rubin (1983)</td>
+<td>propensity-score balancing</td>
+<td>balance before outcomes</td>
+</tr>
+<tr>
+<td>Bang &amp; Robins (2005)</td>
+<td>doubly robust estimation</td>
+<td>four-model failure matrix</td>
+</tr>
+<tr>
+<td>Chernozhukov et al. (2018)</td>
+<td>orthogonal scores and cross-fitting</td>
+<td>in-sample versus cross-fit nuisance predictions</td>
+</tr>
+<tr>
+<td>Hernán &amp; Robins (2016)</td>
+<td>target-trial emulation</td>
+<td>align time zero</td>
+</tr>
+<tr>
+<td>Robins, Hernán &amp; Brumback (2000)</td>
+<td>marginal structural models</td>
+<td>treatment-confounder feedback</td>
+</tr>
+<tr>
+<td>Angrist, Imbens &amp; Rubin (1996)</td>
+<td>IV and local effects</td>
+<td>exclusion and complier population</td>
+</tr>
+<tr>
+<td>Hahn, Todd &amp; van der Klaauw (2001)</td>
+<td>RD identification</td>
+<td>bandwidth and manipulation</td>
+</tr>
+<tr>
+<td>Callaway &amp; Sant'Anna (2021)</td>
+<td>staggered DiD group-time effects</td>
+<td>heterogeneous adoption</td>
+</tr>
+<tr>
+<td>Athey &amp; Imbens (2016), Wager &amp; Athey (2018)</td>
+<td>honest trees and causal forests</td>
+<td>discovery/estimation separation</td>
+</tr>
+<tr>
+<td>Nadeau &amp; Bengio (2003)</td>
+<td>dependence in resampled comparison</td>
+<td>overlapping-fold uncertainty</td>
+</tr>
+<tr>
+<td>Gebru et al. (2021), Mitchell et al. (2019)</td>
+<td>dataset and model documentation</td>
+<td>complete research cards</td>
+</tr>
+</tbody>
+</table>
+<p>For each paper identify estimand, assignment mechanism, population, assumptions, estimator, uncertainty, evidence, failure mode, and smallest falsifying simulation.</p>
+<hr />
+<h1 id="suggested-ten-day-study-rhythm">Suggested ten-day study rhythm</h1>
+<p>Each day:</p>
+<ol>
+<li>15 minutes: retrieve yesterday's assumptions.</li>
+<li>20 minutes: write target trial/assignment mechanism.</li>
+<li>30 minutes: draw DAG or timeline.</li>
+<li>40 minutes: derive central identification or estimator.</li>
+<li>55 minutes: code and validate on simulation.</li>
+<li>25 minutes: deliberately violate one assumption.</li>
+<li>20 minutes: reconstruct one paper claim.</li>
+<li>15 minutes: write diagnostics, sensitivity, and bounded result.</li>
+</ol>
+<p>Do not learn causal inference as a menu of estimators. Repeatedly rebuild the path from intervention to observed comparison.</p>
+<hr />
+<h1 id="common-beginner-misconceptions">Common beginner misconceptions</h1>
+<ul>
+<li>Conditioning is not intervention.</li>
+<li>Both potential outcomes are never observed for one unit.</li>
+<li>“Treatment effect” needs population, interventions, outcome, horizon, and scale.</li>
+<li>More data do not fix identification.</li>
+<li>No measured imbalance does not prove exchangeability.</li>
+<li>Adjusting for every variable can create bias.</li>
+<li>Mediator adjustment changes the estimand.</li>
+<li>Collider conditioning opens paths.</li>
+<li>Randomization balances in expectation, not perfectly in every sample.</li>
+<li>Receipt comparison is not ITT.</li>
+<li>IV usually identifies a complier effect, not ATE.</li>
+<li>Propensity AUC is not the design objective.</li>
+<li>Extreme weights are scientific lack-of-support warnings.</li>
+<li>Matching discards can change the target population.</li>
+<li>Double robustness does not repair two wrong models or hidden confounding.</li>
+<li>Cross-fitting does not repair causal assumptions.</li>
+<li>A non-significant sensitivity or placebo test does not prove validity.</li>
+<li>Time-varying treatment cannot be backfilled to baseline.</li>
+<li>Pre-trends do not prove parallel trends.</li>
+<li>RD is local to a cutoff.</li>
+<li>High predicted risk is not high treatment benefit.</li>
+<li>CATE is not an individual causal label.</li>
+<li>Cross-validation folds are not independent datasets.</li>
+<li>Reproducibility is not replication or validity.</li>
+<li>A model card does not absolve unsafe deployment.</li>
+<li>Retraining changes the intervention system.</li>
+<li>A lockbox revised against is no longer a test.</li>
+</ul>
+<hr />
+<h1 id="ethical-and-governance-questions">Ethical and governance questions</h1>
+<ul>
+<li>Is the intervention sufficiently defined and deliverable?</li>
+<li>Who receives benefits, burdens, or opportunity costs?</li>
+<li>Does treating one project reduce resources for another?</li>
+<li>Who is excluded by positivity or missingness?</li>
+<li>Can affected teams contest data, assignment, and outcome definitions?</li>
+<li>Are local/complier effects being generalized beyond their population?</li>
+<li>Are subgroup policies lawful and legitimate?</li>
+<li>Who approves deviations from registration?</li>
+<li>Who owns incident response, rollback, and retirement?</li>
+<li>Are delayed harms and spillovers monitored?</li>
+<li>Will feedback change future labels and eligibility?</li>
+<li>What prospective design can test actual system impact?</li>
+</ul>
+<hr />
+<h1 id="final-readiness-checklist">Final readiness checklist</h1>
+<p>You are ready to complete the book when you can:</p>
+<ul>
+<li>translate policy language into a target trial and estimand;</li>
+<li>distinguish predictive conditioning from intervention;</li>
+<li>explain potential outcomes and identification assumptions;</li>
+<li>draw confounders, mediators, colliders, instruments, and selection;</li>
+<li>defend an adjustment set from paths and timing;</li>
+<li>analyze randomized assignment, clusters, attrition, and noncompliance;</li>
+<li>derive standardization, IPW, SMD, ESS, and AIPW;</li>
+<li>diagnose overlap and balance without outcome fishing;</li>
+<li>implement cross-fitting and whole-procedure uncertainty;</li>
+<li>quantify sensitivity to hidden confounding;</li>
+<li>align longitudinal treatment and time zero;</li>
+<li>explain g-formula, MSM, clone–censor–weight, and repeated trials;</li>
+<li>distinguish DiD, RD, IV, synthetic control, and interrupted time series;</li>
+<li>investigate heterogeneity honestly and evaluate policies out of sample;</li>
+<li>compare methods using paired evidence and practical equivalence;</li>
+<li>build data, model, and causal-study documentation;</li>
+<li>verify training-serving parity and monitor feedback;</li>
+<li>define retraining, rollback, and retirement governance;</li>
+<li>execute a registered lockbox analysis without outcome-driven revision; and</li>
+<li>state exactly what the result does not establish.</li>
+</ul>
+<p>The book's final principle is:</p>
+<blockquote>
+<p>Reproducibility preserves a causal argument; it cannot create one.</p>
+</blockquote></template>
+<script>
+(function () {
+    var modal = document.getElementById('companion-more-modal');
+    var body = document.getElementById('companion-more-body');
+    var close = modal && modal.querySelector('.companion-more-close');
+    var previousFocus = null;
+    if (!modal || !body || !close) return;
+
+    function closeModal() {
+        modal.hidden = true;
+        body.replaceChildren();
+        document.body.style.overflow = '';
+        if (previousFocus) previousFocus.focus();
+    }
+
+    document.querySelectorAll('.companion-more-button').forEach(function (button) {
+        button.addEventListener('click', function () {
+            var key = button.getAttribute('data-companion-section');
+            var template = document.getElementById('companion-template-' + key);
+            if (!template) return;
+            previousFocus = button;
+            body.replaceChildren(template.content.cloneNode(true));
+            modal.hidden = false;
+            document.body.style.overflow = 'hidden';
+            close.focus();
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise([body]);
+            }
+        });
+    });
+    close.addEventListener('click', closeModal);
+    modal.addEventListener('click', function (event) {
+        if (event.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && !modal.hidden) closeModal();
+    });
+    var requestedSection = new URLSearchParams(window.location.search).get('companion');
+    if (requestedSection) {
+        var requestedButton = Array.from(
+            document.querySelectorAll('.companion-more-button')
+        ).find(function (button) {
+            return button.getAttribute('data-companion-section') === requestedSection;
+        });
+        if (requestedButton) requestedButton.click();
+    }
+})();
+</script>
+
         </article>
     </div>
 
@@ -3897,11 +4489,11 @@ $$\tau(x) = E{Y(1) - Y(0) \mid X=x}$$</p>
         };
         (function loadMathJax() {
             var local = document.createElement('script');
-            local.src = '../vendor/mathjax/tex-mml-chtml.js';
+            local.src = '../vendor/mathjax/tex-mml-svg.js';
             local.async = true;
             local.onerror = function () {
                 var cdn = document.createElement('script');
-                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-svg.js';
                 cdn.async = true;
                 document.head.appendChild(cdn);
             };
