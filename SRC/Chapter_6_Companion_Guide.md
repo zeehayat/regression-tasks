@@ -247,6 +247,50 @@ This derivation justifies standardization—not loyalty to one regression packag
 
 More data reduce some estimation error but cannot repair undefined interventions, colliders, positivity gaps, or hidden confounding. Confidence intervals are conditional on identification and model assumptions.
 
+## Day 39 mastery assignment
+
+### Level 1 — Vocabulary and recognition
+
+1. For “Does a reminder reduce missed appointments?”, identify $A$, $Y$, $Y(1)$, $Y(0)$, $X$, population, time zero, and horizon.
+2. Classify each quantity as observed, counterfactual, or sometimes observed: $A$, $Y$, $Y(1)$, $Y(0)$, $P(Y=1\mid A=1)$, and $E[Y(1)]$.
+3. Explain the fundamental problem of causal inference without using the word “counterfactual.”
+4. Translate consistency, exchangeability, positivity, and no interference into one sentence each for senior review.
+
+### Level 2 — Hand calculations
+
+Given six simulated pairs $(Y(1),Y(0))$: `(0,1), (0,0), (1,1), (0,1), (1,1), (0,0)` and assignments `1,0,1,0,1,0`:
+
+1. calculate every individual effect, ATE, ATT, and average effect among untreated;
+2. construct the observed $Y$ vector;
+3. calculate the naive treated-minus-control risk difference;
+4. calculate causal bias as naive contrast minus ATE; and
+5. explain why this calculation is possible only in a simulation.
+
+For $p_1=0.18$ and $p_0=0.30$, calculate risk difference, risk ratio, odds under each action, odds ratio, and number of warnings prevented per 1,000 projects.
+
+### Level 3 — Applied design and code
+
+1. Run `make_mhp_causal_data` without revealing counterfactuals. Produce a cohort table by treatment with counts, outcome risk, and baseline summaries.
+2. Write three distinct target trials for the same review program: effect of offer, effect of receipt, and effect of sustained adherence.
+3. Reveal simulation truth only after freezing the three estimands. Compare their populations and explain which observed columns cannot identify each without assumptions.
+4. Modify the generator so every remote project is treated. Diagnose the resulting positivity failure by profile.
+
+### Level 4 — Research challenge
+
+Choose an intervention in education, health, infrastructure, finance, or public administration. Write a one-page estimand specification containing treatment versions, comparator, eligibility, time zero, outcome, competing events, horizon, population, scale, interference unit, and the exact counterfactual contrast. Propose one realistic violation of each identification assumption and state whether more observations would fix it.
+
+### Probing questions
+
+- Can an ATE be well identified when individual treatment effects cannot be observed?
+- When would ATT be more useful than ATE for a policy decision?
+- If the risk difference is constant across populations, must the risk ratio be constant?
+- Does excellent treatment-overlap prove exchangeability?
+- Which part of your intervention definition is most vulnerable to hidden treatment versions?
+
+### Completion evidence
+
+You have mastered Day 39 when another reader can reconstruct your target trial, reproduce every hand calculation, distinguish estimand from estimator, and identify at least one untestable assumption without prompting.
+
 ---
 
 # Day 40 — Causal diagrams and adjustment
@@ -310,6 +354,55 @@ External predictive accuracy does not by itself prove causal transport. Treatmen
 8. Publish and challenge the graph before effect estimation.
 
 Different plausible DAGs imply sensitivity analyses or that identification is not credible.
+
+## Day 40 mastery assignment
+
+### Level 1 — Path recognition
+
+For each structure, name the variable role and state whether conditioning is normally appropriate for a total effect:
+
+1. $A\leftarrow C\rightarrow Y$;
+2. $A\rightarrow M\rightarrow Y$;
+3. $A\rightarrow K\leftarrow Y$;
+4. $Z\rightarrow A\rightarrow Y$; and
+5. $A\rightarrow S\leftarrow U\rightarrow Y$ with analysis restricted to $S=1$.
+
+Trace every open path from $A$ to $Y$ before and after conditioning.
+
+### Level 2 — Draw and criticize
+
+1. Draw a DAG for review and warnings containing terrain, contractor experience, review, updated month-12 progress, cancellation, and warning.
+2. Add one unmeasured management-quality variable, one selection variable, one proxy, and one possible instrument.
+3. Find a minimally sufficient total-effect adjustment set.
+4. Construct three invalid adjustment sets: one containing a mediator, one opening a collider, and one failing to block confounding.
+5. Explain in words which path each invalid set opens or leaves open.
+
+### Level 3 — Simulation laboratory
+
+Simulate four datasets:
+
+1. confounding only;
+2. confounding plus a mediator;
+3. treatment and outcome both causing selection; and
+4. treatment and an unmeasured outcome cause both causing a collider.
+
+For each, compare unadjusted regression with graph-appropriate and graph-inappropriate adjustment. Repeat at least 500 times and plot estimator bias. Confirm that a highly predictive adjustment variable can increase causal bias.
+
+### Level 4 — Research challenge
+
+Interview or consult a domain process description before seeing outcomes. Produce a DAG change log documenting who proposed each arrow, what evidence supports it, which nodes are unmeasured, which alternative graphs remain plausible, and how estimates would be reported across those graphs. Include a transport/selection diagram for a second setting.
+
+### Probing questions
+
+- Can a variable be a confounder for one estimand and a mediator for another?
+- Why can conditioning on complete records create bias?
+- When might adjustment for an instrument amplify residual confounding?
+- What would make two experts disagree about a valid adjustment set?
+- Which arrows in your DAG are most consequential yet least measurable?
+
+### Completion evidence
+
+Mastery requires correctly tracing paths without software, defending covariate timing, explaining why every adjusted variable is included, and stating how a plausible alternative DAG changes identification.
 
 ---
 
@@ -375,6 +468,48 @@ Complete-case precision does not prove missingness is harmless.
 ## 41.7 Minimal randomized laboratory
 
 Simulate assignment independently, generate noncompliance and outcomes, then calculate assignment risk difference, receipt difference, first stage, and Wald ratio. Repeat many trials to distinguish one noisy realization from estimator behavior.
+
+## Day 41 mastery assignment
+
+### Level 1 — Trial mechanics
+
+1. Distinguish allocation sequence generation, allocation concealment, blinding, treatment receipt, adherence, and outcome ascertainment.
+2. Explain why baseline balance is expected across repeated randomizations but not guaranteed in one trial.
+3. Identify the independent analysis unit in individual, classroom, clinic, and district randomization.
+4. State the causal question answered by ITT.
+
+### Level 2 — Hand calculations
+
+For a trial with 200 assigned to review and 200 to control, 34 versus 50 warnings, and 150 versus 20 actually receiving review:
+
+1. calculate arm risks, ITT risk difference, risk ratio, and first stage;
+2. calculate the Wald estimate and name its target population;
+3. compare treatment-received risks and explain why their difference is not protected by randomization; and
+4. calculate cluster-level means for a supplied four-district version before attempting individual regression.
+
+### Level 3 — Randomization simulation
+
+1. Simulate 1,000 blocked trials and verify average ITT bias and interval coverage.
+2. Add noncompliance driven by prognosis. Compare ITT, as-treated, per-protocol restriction, and Wald LATE.
+3. Violate exclusion by making assignment itself motivate better reporting. Explain the changed meaning of the Wald ratio.
+4. Simulate 12 cluster-randomized districts with within-district correlation. Compare naive individual standard errors with cluster-aware uncertainty.
+5. Add differential attrition and implement best/worst-case outcome bounds.
+
+### Level 4 — Research challenge
+
+Write a randomized evaluation protocol for a realistic intervention. Include randomization unit, blocking, concealment, treatment versions, adherence measurement, spillovers, primary ITT, secondary per-protocol strategy, attrition prevention, missing-outcome sensitivity, analysis unit, stopping, harms, and transport population.
+
+### Probing questions
+
+- Can ITT be policy-relevant when adherence is low?
+- When is cluster randomization necessary rather than convenient?
+- Why does exclusion concern assignment as well as treatment?
+- What population comprises compliers, and can they be identified individually?
+- Could blinding be impossible yet randomized evidence remain useful?
+
+### Completion evidence
+
+Mastery means you can recover the effect of assignment from raw arm counts, diagnose why receipt comparisons fail, state every LATE assumption, and align uncertainty with the randomization unit.
 
 ---
 
@@ -468,6 +603,51 @@ The outcome pipeline includes treatment and baseline covariates, then predicts c
 
 Clipping propensities is not innocuous. Report raw range, clipping rule, clipped count, balance, weights, ESS, and sensitivity. Flexible nuisance models still require causal covariate timing.
 
+## Day 42 mastery assignment
+
+### Level 1 — Method mapping
+
+1. Match standardization, IPW, matching, stratification, ATT weighting, and overlap weighting to the population each targets.
+2. Explain why a treatment-prediction AUC of 1 can be disastrous for ATE estimation.
+3. Identify which components model outcome, treatment assignment, or covariate distribution.
+4. Explain why propensity analysis should initially hide outcomes.
+
+### Level 2 — Hand calculations
+
+For five rows with supplied $A,Y,e(X),m_1(X),m_0(X)$:
+
+1. calculate standardized intervention means and ATE;
+2. calculate Horvitz–Thompson ATE contributions;
+3. calculate ATE, ATT, stabilized, and overlap weights;
+4. calculate weighted means, one SMD, and ESS; and
+5. identify which row dominates and why.
+
+Then fit a two-stratum example by hand and show that standardization and correctly weighted estimation target the same marginal contrast.
+
+### Level 3 — Design laboratory
+
+1. Hide outcomes and design four comparisons: nearest-neighbor matching, propensity strata, ATE IPW, and overlap weighting.
+2. Produce propensity-overlap plots, love plots for SMDs, weight histograms, ESS, discarded-profile table, and target-population description.
+3. Freeze designs, reveal outcomes, and estimate effects with uncertainty respecting pairs/weights.
+4. Remove terrain from the propensity model and observe whether balance diagnostics detect the omission.
+5. Force deterministic treatment in remote projects. Compare unrestricted ATE with restricted and overlap-population effects.
+
+### Level 4 — Research challenge
+
+Design an observational adjustment analysis without using outcome data. Justify the confounder set from a DAG, choose a primary target population, define acceptable overlap, register match/weight rules, specify what happens if balance fails, and write the exact sentence that will replace an ATE claim if support is inadequate.
+
+### Probing questions
+
+- When matching discards treated units, whose effect remains?
+- Can all SMDs be small while nonlinear or joint imbalance remains?
+- Is weight truncation a numerical fix or an estimand/procedure change?
+- Why can standardization extrapolate silently where IPW becomes visibly unstable?
+- Which method makes your target population easiest to explain?
+
+### Completion evidence
+
+Mastery requires reproducing weights and standardized predictions by hand, reporting balance beyond one threshold, identifying the target population after design, and refusing unsupported extrapolation.
+
 ---
 
 # Day 43 — Doubly robust estimation and sensitivity
@@ -527,6 +707,52 @@ Each has assumptions. Calibrate sensitivity parameters against measured covariat
 Change one registered choice at a time: nonlinear terms, justified covariate sets, weight truncation, overlap target, outcome definition, missing-data scenario, or negative control.
 
 Agreement among models sharing the same flawed identification strategy is not causal robustness.
+
+## Day 43 mastery assignment
+
+### Level 1 — AIPW anatomy
+
+1. Label the plug-in contrast and two residual-correction terms in the AIPW score.
+2. Explain what happens to a treated row's correction when $e(X)$ approaches zero.
+3. State double robustness precisely and list five things it does not guarantee.
+4. Explain cross-fitting to a reader who knows train/test splitting but not influence functions.
+
+### Level 2 — Score calculation
+
+Using a six-row table of $A,Y,\hat e,\hat m_1,\hat m_0$:
+
+1. compute every AIPW score;
+2. average them and calculate the influence-score standard error;
+3. identify the most influential row;
+4. recalculate after clipping propensities; and
+5. explain the bias–variance trade-off introduced by clipping.
+
+### Level 3 — Four-cell failure matrix
+
+Simulate a nonlinear confounded outcome and compare g-computation, IPW, in-sample AIPW, and cross-fitted AIPW when:
+
+1. both nuisance models are adequate;
+2. only the outcome model is adequate;
+3. only the propensity model is adequate; and
+4. neither is adequate.
+
+Repeat across sample sizes and overlap levels. Report bias, RMSE, coverage, nuisance calibration, maximum score, and failure rate. Then add an unmeasured confounder and demonstrate that all four statistically sophisticated estimators can converge to the wrong causal answer.
+
+### Level 4 — Uncertainty and sensitivity study
+
+Implement a whole-procedure bootstrap that resamples the independent unit, recreates folds, retunes nuisance learners, and recomputes AIPW. Compare percentile, normal, and influence intervals. Add a quantitative bias analysis calibrated to the strongest measured confounders and identify a decision-relevant tipping point.
+
+### Probing questions
+
+- Why can good nuisance prediction coexist with biased effect estimation?
+- Which product of nuisance errors matters for orthogonal estimation?
+- What uncertainty is omitted when saved scores alone are bootstrapped?
+- How should folds change for clustered or temporal data?
+- What hidden-confounding strength would be plausible in your domain?
+
+### Completion evidence
+
+Mastery means you can calculate the score manually, implement out-of-fold nuisance prediction without leakage, demonstrate double robustness by simulation, and present a substantively calibrated sensitivity statement.
 
 ---
 
@@ -602,6 +828,45 @@ Cancellation may remain a competing event for total real-world incidence, join a
 
 Calling it censoring changes the question and can create informative loss. Carry Chapter 5's event-process discipline into causal work.
 
+## Day 44 mastery assignment
+
+### Level 1 — Timeline diagnosis
+
+1. Draw eligibility, assignment, treatment receipt, outcome follow-up, censoring, and competing-event times for five example projects.
+2. Mark every immortal period created by an “ever treated” definition.
+3. Rewrite a misaligned observational question so eligibility, strategy assignment, and follow-up share time zero.
+4. Distinguish baseline, time-varying, and dynamic strategies.
+
+### Level 2 — Longitudinal notation
+
+For three visits, write $L_0,A_0,L_1,A_1,L_2,A_2,Y$ in temporal order. Specify two static strategies and one realistic dynamic rule. State sequential exchangeability and positivity at each decision.
+
+Given numerator and denominator treatment probabilities at each visit, calculate individual stabilized weights, final ESS, and the change after adding censoring weights.
+
+### Level 3 — Simulation laboratory
+
+1. Simulate treatment–confounder feedback where $A_0$ affects $L_1$, which affects $A_1$ and $Y$.
+2. Compare naive final-treatment regression, conventional adjustment for $L_1$, parametric g-formula, and an MSM.
+3. Plot weight growth by visit and truncate on a registered grid.
+4. Implement clone–censor–weight for two sustained strategies and cluster inference by original subject.
+5. Emulate repeated monthly trials and verify one project never crosses train/test or independent-unit boundaries incorrectly.
+
+### Level 4 — Research challenge
+
+Write a full target-trial table for a longitudinal intervention with grace period. Define eligibility, strategies, assignment, time zero, follow-up, outcome, competing events, adherence, causal contrast, covariate history, censoring, analysis, and transport. Create a data-availability matrix showing whether every required variable is measured before each decision.
+
+### Probing questions
+
+- Why does adjusting for $L_1$ both help and harm in treatment–confounder feedback?
+- When does a dynamic strategy violate positivity even if each single treatment is common?
+- What new assumption does artificial censoring introduce?
+- How should cancellation enter a total-effect versus hypothetical estimand?
+- When do repeated trials improve information but worsen transport ambiguity?
+
+### Completion evidence
+
+Mastery requires detecting immortal time from a timeline, computing longitudinal weights, explaining g-formula versus MSM assumptions, and producing an implementable target-trial protocol whose variables exist at the needed times.
+
 ---
 
 # Day 45 — Quasi-experimental designs
@@ -663,6 +928,44 @@ Use fake dates/cutoffs, outcomes treatment cannot affect, pre-treatment effects,
 
 Passing tests cannot prove identification; failing a well-chosen falsification requires investigation.
 
+## Day 45 mastery assignment
+
+### Level 1 — Design identification
+
+For ten short scenarios, choose adjustment, randomized trial, DiD, RD, IV, synthetic control, or interrupted time series. For each, name the assignment leverage, target population, estimand, and central untestable assumption.
+
+### Level 2 — Hand calculations
+
+1. Calculate a two-period DiD from four cell means and reconstruct the missing treated counterfactual mean.
+2. Calculate sharp-RD jumps from left/right limits and explain why the effect is local.
+3. Calculate reduced form, first stage, and Wald IV ratio from binary assignment counts.
+4. Construct a simple three-donor synthetic-control weighted pre-period trajectory.
+5. Calculate an interrupted-series level and slope change from a supplied segmented regression.
+
+### Level 3 — Failure laboratories
+
+1. DiD: simulate parallel trends, then add anticipation, heterogeneous staggered effects, serial correlation, composition change, and a concurrent shock. Compare two-way fixed effects with group-time effects.
+2. RD: simulate a sharp cutoff, estimate local linear effects over bandwidths, then add score manipulation and a discontinuous baseline covariate.
+3. IV: simulate valid compliance types, then add weak relevance, direct instrument effect, and defiers.
+4. Synthetic control: remove one donor at a time and run placebo interventions.
+5. Interrupted series: add seasonality and autocorrelation, then show naive standard errors.
+
+### Level 4 — Research challenge
+
+Find a real or hypothetical policy assignment mechanism and prepare a design memo before outcomes. Include institutional history, exact estimand, comparison population, manipulation/anticipation/spillover risks, falsification tests, inference unit, data support, and reasons alternative designs are weaker or stronger.
+
+### Probing questions
+
+- Why can many parallel pre-periods still fail to identify DiD?
+- Who are controls under staggered adoption?
+- How far from an RD cutoff may the result reasonably travel?
+- Can instrument relevance be strong while exclusion is implausible?
+- Which placebo would most directly expose your design's likely failure?
+
+### Completion evidence
+
+Mastery means you can derive each basic contrast, state its local/group-time/complier population, select design-specific diagnostics, and decline “natural experiment” language without a defended assignment mechanism.
+
 ---
 
 # Day 46 — Heterogeneous effects and policy learning
@@ -723,6 +1026,54 @@ Compare with simple treat-all, treat-none, and risk-based rules. Account for tre
 Audit who is eligible, has overlap, receives action, benefits, bears burden, and is excluded. Maximizing average value can concentrate resources or harms. Protected group rules may face legal and ethical constraints.
 
 Transporting CATE requires stable conditional effects or measured effect modifiers plus target-population data. New settings can differ in treatment version, adherence, resources, baseline risk, and interference.
+
+## Day 46 mastery assignment
+
+### Level 1 — Interpretation
+
+1. Explain why CATE is not an individual treatment effect.
+2. Give an example of constant risk ratio with varying risk difference.
+3. Distinguish prognostic risk from treatment benefit.
+4. Explain why subgroup significance versus nonsignificance is not an interaction test.
+
+### Level 2 — Prespecified subgroup work
+
+Using cross-fitted AIPW scores and a prespecified binary modifier:
+
+1. calculate group-specific effects and standard errors;
+2. calculate the interaction contrast;
+3. report baseline risks, overlap, treated/control counts, and multiplicity plan;
+4. repeat on risk-difference and risk-ratio scales; and
+5. explain why conclusions differ across scales.
+
+### Level 3 — Learner comparison
+
+Simulate constant and heterogeneous effects. Compare S-, T-, X-, R-, and DR-learners plus honest causal forest using nested/cross-fitted nuisance estimation. Evaluate:
+
+- ATE recovery;
+- calibration of grouped predicted effects;
+- policy value on untouched data;
+- stability of modifier rankings;
+- overlap within learned subgroups; and
+- performance under a truly constant effect.
+
+Do not evaluate individual CATE RMSE on real data where individual effects are unobserved.
+
+### Level 4 — Policy learning challenge
+
+Learn a capacity-constrained rule that may treat 20% of projects. Compare treat-all, treat-none, highest-risk, and highest-estimated-benefit policies using doubly robust held-out policy value. Add treatment cost, uncertainty penalty, minimum group access, and a rule-complexity constraint. Produce a policy card describing eligibility, expected value, burden, exclusions, support, appeals, and monitoring.
+
+### Probing questions
+
+- When can a high-risk rule outperform an estimated-benefit rule?
+- How does weak overlap masquerade as large heterogeneity?
+- What is gained and lost through honest sample splitting?
+- Which fairness constraint belongs in policy learning rather than model fitting?
+- What evidence is required to transport a modifier to another setting?
+
+### Completion evidence
+
+Mastery requires separating risk and benefit, testing interactions directly, evaluating learned policies out of sample, and reporting uncertainty/support for every subgroup used in a decision.
 
 ---
 
@@ -789,6 +1140,56 @@ Actions create feedback: intervention changes outcomes and future labels; select
 
 Predefine triggers, owners, validation gates, prospective/shadow periods, versioning, rollback artifacts, communication, and retirement criteria. Retraining is a new intervention and can invalidate causal interpretation. Preserve prior versions and decision logs.
 
+## Day 47 mastery assignment
+
+### Level 1 — Reproducibility audit
+
+Classify each artifact as needed for computational reproducibility, replication, robustness, transport, or governance: source data hash, environment lock, seed, independent dataset, sensitivity grid, model card, causal-study card, incident runbook, and external validation.
+
+Explain why a seed, notebook, container, or hash alone is insufficient.
+
+### Level 2 — Paired comparison
+
+Given two models' losses on the same 20 projects:
+
+1. calculate rowwise differences, mean difference, standard error, and interval;
+2. compare with an incorrect unpaired calculation;
+3. define a smallest practically important difference and assess equivalence;
+4. adjust interpretation for five metrics and four horizons; and
+5. explain why ten cross-validation fold scores are not ten independent studies.
+
+### Level 3 — Build the research bundle
+
+From a clean checkout or directory, create a one-command workflow that regenerates cohort count, primary estimate, interval, table, and figure. Include:
+
+- README and entry command;
+- environment lock;
+- data and artifact manifests with hashes;
+- deterministic limitations;
+- schema and synthetic fixture tests;
+- full result tables, not only winners;
+- data sheet, model card, and causal-study card;
+- registration and deviation log; and
+- plain-language summary.
+
+Give the bundle to a peer without verbal help and record every hidden dependency.
+
+### Level 4 — Production stress test
+
+Design and rehearse incidents for a unit conversion, unseen category, delayed outcomes, subgroup action spike, capacity failure, corrupted feature timestamp, feedback-driven label change, and harmful override pattern. For each specify detection, severity, owner, containment, rollback, communication, root-cause analysis, and prevention.
+
+### Probing questions
+
+- Can an exactly reproducible result be causally invalid?
+- What does a hash prove and not prove?
+- Which changes require recalibration, full revalidation, or a new causal study?
+- How does deployment change the future data-generating process?
+- What retirement signal cannot be solved by retraining?
+
+### Completion evidence
+
+Mastery requires an independent peer successfully reproducing the registered outputs, a defensible paired comparison, complete cards/manifests, and a tested rollback path.
+
 ---
 
 # Day 48 — The registered final study
@@ -838,6 +1239,61 @@ Prediction performance and intervention impact are separate endpoints.
 Be ready to defend why the estimand matters, how treatment is defined, where time zero lies, which paths are adjusted, what is unmeasured, where positivity fails, why estimator matches identification, how uncertainty was calculated, what sensitivity means, where results transport, and what would falsify the claim.
 
 “The software did it” is not a research defense.
+
+## Day 48 mastery assignment
+
+### Level 1 — Protocol reconstruction
+
+Read a published or fictional result paragraph and reconstruct its population, treatment, comparator, time zero, outcome, horizon, estimand, design, assumptions, estimator, uncertainty, and transport claim. Mark every missing element.
+
+### Level 2 — Lockbox rehearsal
+
+1. Create synthetic development and lockbox files with hashes.
+2. Write integrity tests before opening lockbox outcomes.
+3. Freeze configuration, code revision, environment, and allowed claim rules.
+4. Simulate an integrity-test failure and practice stopping without inspecting the effect.
+5. Open once, save individual scores/predictions where allowed, and create an immutable access/deviation record.
+
+### Level 3 — Complete registered mini-study
+
+Choose one:
+
+1. baseline target-trial emulation with standardization/IPW/AIPW;
+2. RD, DiD, or IV analysis tied to a genuine assignment mechanism; or
+3. prospective randomized model-impact evaluation.
+
+Submit registration before primary outcome access. Deliver cohort flow, DAG, estimand, primary and secondary methods, diagnostics, sensitivity, uncertainty, groups, full results, research bundle, cards, and a 300-word bounded conclusion.
+
+### Level 4 — Adversarial oral defense
+
+Ask a peer to challenge:
+
+- treatment versions and time zero;
+- missing confounders and collider adjustment;
+- positivity and target population;
+- estimator/estimand mismatch;
+- multiplicity and researcher choices;
+- uncertainty unit;
+- sensitivity calibration;
+- transport, interference, and implementation;
+- unfavorable or null findings; and
+- conditions that would reverse the decision.
+
+Revise documentation, not the locked primary estimate, in response.
+
+### Research and probing questions
+
+- What observation would falsify the deployment claim?
+- Which assumption contributes the largest uncertainty not shown in the interval?
+- Would a different stakeholder choose a different estimand or effect scale?
+- If the primary model loses to a simple baseline, what happens next?
+- Which outcome or harm should be measured prospectively before deployment?
+- What evidence would justify expanding from the study population?
+- When is “we cannot identify this effect” the most useful result?
+
+### Completion evidence
+
+Chapter mastery is demonstrated when the study can be rerun from a clean environment, the lockbox history is auditable, every assumption is connected to evidence or sensitivity, an adversarial reader can reproduce the result, and the conclusion remains bounded after criticism.
 
 ---
 
