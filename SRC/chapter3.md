@@ -220,6 +220,7 @@ $$
 The missingness mechanism describes how $R$ relates to observed and unobserved data. The terms below concern conditional relationships, not moral judgements about data quality.
 
 ## 13.2 MCAR, MAR, and MNAR
+<button class="read-details-btn" data-section="3a-2">✦ Read Details</button>
 
 Let $X_{obs}$ denote observed values and $X_{mis}$ missing values.
 
@@ -280,6 +281,7 @@ print(df.groupby("access_mode")["road_distance_observed_km"].apply(lambda x: x.i
 The target is shown here for a retrospective missingness audit. It must not be used by an appraisal-time imputer.
 
 ## 13.4 Simple imputation is a learned rule
+<button class="read-details-btn" data-section="3a-4">✦ Read Details</button>
 
 Median imputation replaces missing training values with the training median:
 
@@ -376,6 +378,7 @@ $\bar U$ reflects ordinary estimation uncertainty if the completed values were k
 These rules are not valid merely because several datasets were generated. The imputation and analysis models must be compatible enough for the intended estimand, all variables governing missingness and the analysis should be considered, and pooling degrees of freedom require appropriate finite-sample formulas. For predictive assessment, imputation must occur separately inside each training fold, and performance is evaluated on the observed held-out outcomes—not by pooling a leaky completion of the entire dataset.
 
 ## 13.7 Categorical variables are hypotheses about similarity
+<button class="read-details-btn" data-section="3a-7">✦ Read Details</button>
 
 Encoding does more than convert strings to numbers. It tells the model which category differences can share information.
 
@@ -598,6 +601,7 @@ You are ready for Day 14 when you can explain why MAR is not “missing for no r
 > **Today’s central idea:** Creating a feature changes the family of relationships a model can express. A feature is a mathematical hypothesis about the world, not a free source of accuracy.
 
 ## 14.1 Linear regression is linear in parameters
+<button class="read-details-btn" data-section="3b-1">✦ Read Details</button>
 
 Consider:
 
@@ -800,6 +804,7 @@ Interpretation examples:
 When predicting on a log target, $\exp(\widehat{\log y})$ is generally a conditional median under a log-error model, not automatically the conditional mean. Retransformation bias needs explicit treatment.
 
 ## 14.10 Piecewise linear features
+<button class="read-details-btn" data-section="3b-1">✦ Read Details</button>
 
 For a knot $k$, define the hinge:
 
@@ -819,6 +824,7 @@ $$
 This expresses a slope change without forcing a global parabola. The knot must be pre-specified or selected inside validation.
 
 ## 14.11 Splines: flexible curves built from controlled pieces
+<button class="read-details-btn" data-section="3b-1">✦ Read Details</button>
 
 A spline represents a curve as a weighted combination of basis functions:
 
@@ -854,6 +860,7 @@ spline_model = Pipeline(
 The spline shown is for one numeric feature. A full mixed-type model uses a `ColumnTransformer` so only selected columns receive spline expansion.
 
 ## 14.12 Feature explosion
+<button class="read-details-btn" data-section="3b-1">✦ Read Details</button>
 
 With $p$ original features, degree-2 expansion can create:
 
@@ -864,6 +871,7 @@ With $p$ original features, degree-2 expansion can create:
 The number grows quadratically. High-degree expansion grows faster. This increases computation, multicollinearity, model-selection opportunity, and the risk of fitting noise. Domain knowledge and regularisation are therefore partners, not rivals.
 
 ## 14.13 Build an explicit engineering transformer
+<button class="read-details-btn" data-section="3b-1">✦ Read Details</button>
 
 ```python
 import numpy as np
@@ -912,6 +920,7 @@ class MHPFeatureEngineer(BaseEstimator, TransformerMixin):
 Because missing road distance has not yet been imputed, this transformer must be placed after an appropriate imputation step or written to handle missing values deliberately. Pipeline order is part of the model.
 
 ## 14.14 Visualise before and after extrapolation
+<button class="read-details-btn" data-section="3b-1">✦ Read Details</button>
 
 ```python
 import numpy as np
@@ -940,6 +949,7 @@ plt.show()
 Two models can fit the observed range similarly and diverge dramatically outside it. Validation cannot certify extrapolation where no comparable cases exist.
 
 ## 14.15 Day 14 build, break, and reflect
+<button class="read-details-btn" data-section="3b-1">✦ Read Details</button>
 
 **Build**
 
@@ -977,6 +987,7 @@ Can we accept a little bias in order to obtain a more stable model with better p
 Ridge regression answers yes. It prefers coefficients that fit the observations while remaining collectively small.
 
 ## 15.2 From OLS to a penalised objective
+<button class="read-details-btn" data-section="3c-2">✦ Read Details</button>
 
 Assume for the moment that:
 
@@ -1073,6 +1084,7 @@ Standardisation makes a one-unit movement correspond to one training standard de
 The scaler must be fitted inside each training fold. Fitting it once on all observations lets validation values affect the representation used during training.
 
 ## 15.5 Ridge through singular-value decomposition
+<button class="read-details-btn" data-section="3c-5">✦ Read Details</button>
 
 Let the centred design have singular-value decomposition
 
@@ -1364,6 +1376,7 @@ The lasso replaces the squared $L_2$ penalty with an $L_1$ penalty. Elastic net 
 Sparsity can simplify a deployed model, but it must not be confused with scientific discovery. A variable can receive a zero coefficient because its information is redundant, its scale was mishandled, the penalty is strong, or the sample happened to favour a correlated alternative.
 
 ## 16.2 The lasso objective
+<button class="read-details-btn" data-section="3d-2">✦ Read Details</button>
 
 For centred $y$ and standardised $X$, define
 
@@ -1418,6 +1431,7 @@ $$
 A coefficient can remain zero whenever the feature's residual correlation lies inside the interval $[-\alpha,\alpha]$.
 
 ## 16.4 Deriving soft thresholding
+<button class="read-details-btn" data-section="3d-4">✦ Read Details</button>
 
 The mechanism is easiest to see when the standardised columns are orthonormal in the convention
 
@@ -1609,6 +1623,7 @@ def selection_frequency(pipeline, X, y, feature_names, repeats=200, seed=16):
 The helper assumes the transformed feature names already match `feature_names`. In a real pipeline, obtain them from the fitted `ColumnTransformer` rather than guessing their order.
 
 ## 16.8 Elastic net
+<button class="read-details-btn" data-section="3d-8">✦ Read Details</button>
 
 Elastic net combines $L_1$ and squared $L_2$ penalties:
 
@@ -1749,6 +1764,7 @@ Consequences differ by goal:
 Collinearity does not bias OLS under the classical model. It inflates variance and weakens the separation of effects.
 
 ## 17.3 Variance inflation factor
+<button class="read-details-btn" data-section="3e-3">✦ Read Details</button>
 
 To diagnose predictor $x_j$, regress it on all the other predictors and calculate the auxiliary $R_j^2$. Define
 
@@ -1878,6 +1894,7 @@ $$
 An externally studentised residual uses an error-variance estimate calculated with row $i$ deleted. It is especially useful for formal outlier procedures, which must account for multiple testing if many rows are screened.
 
 ## 17.6 Cook's distance
+<button class="read-details-btn" data-section="3e-6">✦ Read Details</button>
 
 Influence concerns change in the fitted model, not merely a large residual. Cook's distance combines residual size and leverage:
 
@@ -2090,6 +2107,7 @@ The two outer matrices are the “bread.” The middle matrix is the “meat.”
 When observations are independent but have variances $\sigma_i^2$, $\Omega$ is diagonal. Because the true errors are unobserved, residuals estimate their scale.
 
 ## 18.4 HC0 through HC3
+<button class="read-details-btn" data-section="3f-4">✦ Read Details</button>
 
 Let $x_i^\top$ denote row $i$ of $X$ and $e_i$ its OLS residual. HC0 uses
 
@@ -2187,6 +2205,7 @@ The Breusch–Pagan test relates squared residuals to predictors. White's test p
 Use tests together with residual plots and design knowledge. If heteroskedasticity is plausible by construction—as when large remote projects naturally have wider cost variation—pre-specifying HC3 can be more coherent than using a preliminary test to decide whether robust inference is “allowed.”
 
 ## 18.8 Dependence within clusters
+<button class="read-details-btn" data-section="3f-8">✦ Read Details</button>
 
 MHP projects in the same district may share geology, administrative practice, contractor markets, or measurement processes. If district-level shocks induce correlated errors, treating every project as independent overstates the effective information.
 
@@ -2351,6 +2370,7 @@ Large residuals can arise from:
 Changing the loss can reduce sensitivity, but it does not identify which explanation is correct.
 
 ## 19.3 Huber loss
+<button class="read-details-btn" data-section="3g-3">✦ Read Details</button>
 
 Huber loss is quadratic for small residuals and linear for large residuals:
 
@@ -2470,6 +2490,7 @@ huber_pipeline = Pipeline([
 Tune `epsilon` and `alpha` inside validation. A smaller `epsilon` treats more observations as outlying; it is not automatically more robust in a useful decision sense. Excessive clipping can discard important structure.
 
 ## 19.7 From the mean to conditional quantiles
+<button class="read-details-btn" data-section="3g-7">✦ Read Details</button>
 
 OLS targets the conditional mean under squared loss:
 
@@ -2732,6 +2753,7 @@ Use explicit labels.
 A benchmark can contain model selection and remain honest because the selection occurs entirely inside the development period. The final test evaluates the whole selection procedure's result.
 
 ## 20.3 The registered prediction contract
+<button class="read-details-btn" data-section="3h-3">✦ Read Details</button>
 
 For the MHP capstone, freeze the following statement before fitting candidates.
 
@@ -3369,6 +3391,7 @@ You have completed Chapter 3 when you can hand another researcher a frozen predi
 ---
 
 # Chapter 3 Synthesis
+<button class="read-details-btn" data-section="capstone">✦ Read Details</button>
 
 ## From technique collection to research procedure
 
@@ -3737,3 +3760,395 @@ At each arrow, ask what could leak, what could shift, what assumption entered, a
 - van Buuren, S. *Flexible Imputation of Missing Data*.
 
 Use textbooks to consolidate notation and breadth. Return to primary papers to understand what was actually established and under which assumptions.
+<style>
+.read-details-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(34, 211, 238, 0.08);
+    border: 1px solid rgba(34, 211, 238, 0.3);
+    color: #22d3ee;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 0.5rem 0 1rem 0;
+    font-family: inherit;
+}
+.read-details-btn:hover {
+    background: rgba(34, 211, 238, 0.2);
+    border-color: #22d3ee;
+    box-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
+}
+.comp-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(11, 15, 25, 0.85);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    align-items: center;
+    justify-content: center;
+}
+.comp-modal.open {
+    display: flex;
+    opacity: 1;
+}
+.comp-modal-content {
+    background-color: #151d30;
+    border: 1px solid #223150;
+    border-radius: 0.75rem;
+    width: 90%;
+    max-width: 48rem;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.6);
+    position: relative;
+    padding: 2.5rem 2rem 2rem 2rem;
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.comp-modal.open .comp-modal-content {
+    transform: scale(1);
+}
+.comp-modal-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 1.25rem;
+    color: #cbd5e1;
+    font-size: 2rem;
+    font-weight: 300;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    line-height: 1;
+}
+.comp-modal-close:hover {
+    color: #fff;
+}
+#comp-modal-body {
+    color: #cbd5e1;
+    font-size: 0.95rem;
+}
+#comp-modal-body h1, #comp-modal-body h2 {
+    color: #fff;
+    border-bottom: 1px solid #223150;
+    padding-bottom: 0.5rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+#comp-modal-body h3, #comp-modal-body h4 {
+    color: #fff;
+    margin-top: 1.75rem;
+    margin-bottom: 0.75rem;
+}
+#comp-modal-body p {
+    margin-bottom: 1rem;
+}
+#comp-modal-body code {
+    color: #67e8f9;
+    background: #0b0f19;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+}
+#comp-modal-body pre {
+    background: #0b0f19;
+    border: 1px solid #223150;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 1rem 0;
+    overflow-x: auto;
+}
+#comp-modal-body pre code {
+    background: transparent;
+    padding: 0;
+    color: #e2e8f0;
+}
+#comp-modal-body table {
+    width: 100%;
+    font-size: 0.875rem;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+}
+#comp-modal-body th, #comp-modal-body td {
+    border: 1px solid #223150;
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+}
+#comp-modal-body th {
+    background: #151d30;
+    color: #fff;
+    font-weight: 600;
+}
+.companion-details-area, .companion-details-area ~ * {
+    display: none;
+}
+</style>
+
+<div id="companion-modal" class="comp-modal">
+    <div class="comp-modal-content">
+        <span class="comp-modal-close">&times;</span>
+        <div id="comp-modal-body"></div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var store = {};
+    var area = document.querySelector('.companion-details-area');
+    if (!area) return;
+    
+    var currentSection = null;
+    var currentElements = [];
+    var sibling = area.nextElementSibling;
+    
+    while (sibling) {
+        if (sibling.classList.contains('companion-detail-heading')) {
+            if (currentSection) {
+                store[currentSection] = currentElements;
+            }
+            currentSection = sibling.getAttribute('data-section');
+            currentElements = [];
+        } else {
+            if (currentSection) {
+                currentElements.push(sibling.cloneNode(true));
+            }
+        }
+        sibling = sibling.nextElementSibling;
+    }
+    if (currentSection) {
+        store[currentSection] = currentElements;
+    }
+    
+    // Wire up buttons
+    document.querySelectorAll('.read-details-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var section = this.getAttribute('data-section');
+            var elements = store[section];
+            var modalBody = document.getElementById('comp-modal-body');
+            modalBody.innerHTML = '';
+            
+            if (elements && elements.length > 0) {
+                elements.forEach(function(el) {
+                    el.style.display = '';
+                    modalBody.appendChild(el);
+                });
+                
+                // Trigger MathJax typesetting if loaded
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    window.MathJax.typesetPromise([modalBody]);
+                }
+            } else {
+                modalBody.innerHTML = '<p>No details found for this section.</p>';
+            }
+            
+            var modal = document.getElementById('companion-modal');
+            modal.style.display = 'flex';
+            // Reflow
+            modal.offsetHeight;
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        });
+    });
+    
+    // Close modal function
+    function closeModal() {
+        var modal = document.getElementById('companion-modal');
+        modal.classList.remove('open');
+        setTimeout(function() {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }, 300);
+    }
+    
+    document.querySelector('.comp-modal-close').addEventListener('click', closeModal);
+    window.addEventListener('click', function(event) {
+        var modal = document.getElementById('companion-modal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    });
+});
+</script>
+
+
+---
+
+# Companion Details Area {: .companion-details-area}
+## Detail 3A 2 {: .companion-detail-heading data-section="3a-2"}
+### Missing Data Mechanisms
+* **MCAR (Missing Completely at Random):** Missingness is unrelated to the observed or missing data [cite: 18].
+* **MAR (Missing at Random):** Missingness depends only on *observed* information (e.g., surveys from early years are missing more often) [cite: 18].
+* **MNAR (Missing Not at Random):** Missingness depends on the unobserved value itself (e.g., remote projects omit survey distances because the distance was too difficult to establish) [cite: 18].
+
+
+## Detail 3A 4 {: .companion-detail-heading data-section="3a-4"}
+### Handling Missing Data
+* **Complete-Case Analysis (Deletion):** Deleting rows with missing values can severely bias the model by excluding specific sub-populations (e.g., deleting all remote projects) [cite: 18].
+* **Median Imputation + Missing Indicator:** Imputing missing values with the training median ($x_{ij}^{imp} = 	ext{median}(X_{j,train})$) changes the distribution (reduces variance) [cite: 18]. We add a binary missingness indicator ($M_{ij} = 1 - R_{ij}$) so the model can learn an offset for imputed rows [cite: 18].
+
+
+## Detail 3A 7 {: .companion-detail-heading data-section="3a-7"}
+### Categorical Encoding
+* **One-Hot Encoding:** Creates binary indicators. One category must be dropped as the reference to prevent exact collinearity [cite: 18].
+* **Target Encoding:** Replaces a category with the mean of the target variable for that category ($TE(c) = \frac{1}{n_c}\sum_{i:C_i=c}y_i$) [cite: 18]. 
+  * *Critical Rule:* Target encoding must use **cross-fitting** inside the training data to prevent same-row target leakage [cite: 18].
+
+---
+
+
+## Detail 3B 1 {: .companion-detail-heading data-section="3b-1"}
+### Feature Transformations
+* **Polynomials (Quadratic):** $\hat{y} = \beta_0 + \beta_1x + \beta_2x^2$ [cite: 18].
+  * *Derivative Interpretation:* The slope is $\frac{df(x)}{dx} = \beta_1 + 2\beta_2x$. The curve has a stationary point at $x^* = -\frac{\beta_1}{2\beta_2}$ [cite: 18]. You must check if this turning point actually exists within the credible, observed data range [cite: 18].
+* **Interactions:** $\hat{y} = \beta_0 + \beta_1x_1 + \beta_2x_2 + \beta_3x_1x_2$ [cite: 18].
+  * The effect of $x_1$ now depends on the value of $x_2$: $\frac{\partial\hat{y}}{\partial x_1} = \beta_1 + \beta_3x_2$ [cite: 18].
+* **The Hierarchy Principle:** If a model includes a higher-order term (like $x^2$ or $x_1x_2$), it must generally retain the lower-order "main effects" ($x$, $x_1$, $x_2$) so the interaction's meaning is properly anchored [cite: 18].
+
+---
+
+
+## Detail 3C 2 {: .companion-detail-heading data-section="3c-2"}
+### The Ridge Objective and Solution
+The objective function adds an $L_2$ penalty controlled by hyperparameter $\lambda$ [cite: 18]:
+$$J_{	ext{ridge}}(\beta) = \lVert y - X\beta 
+Vert_2^2 + \lambda\lVert\beta
+Vert_2^2$$
+Taking the derivative and setting it to zero yields the closed-form Ridge solution [cite: 18]:
+$$\hat{\beta}_{	ext{ridge}} = (X^	op X + \lambda I)^{-1}X^	op y$$
+
+
+## Detail 3C 5 {: .companion-detail-heading data-section="3c-5"}
+### Why It Works: SVD Shrinkage
+Using Singular Value Decomposition ($X=U\Sigma V^	op$), the Ridge fitted values become [cite: 18]:
+$$\hat{y}_{	ext{ridge}} = U\,\operatorname{diag}\left(\frac{\sigma_j^2}{\sigma_j^2+\lambda}
+ight)U^	op y$$
+* In standard OLS, a tiny singular value ($\sigma_j$) massively amplifies noise [cite: 18].
+* Ridge applies a shrinkage factor $s_j(\lambda) = \frac{\sigma_j^2}{\sigma_j^2+\lambda}$. Weak directions (small $\sigma$) are suppressed toward zero, stabilizing the predictions [cite: 18].
+
+**Crucial Scaling Requirement:** Because the penalty applies to coefficient magnitude, all features must be standardized ($z = \frac{x-\mu}{s}$) before fitting Ridge. Otherwise, features with small arbitrary units (like millimeters) will be unfairly penalized [cite: 18].
+
+---
+
+
+## Detail 3D 2 {: .companion-detail-heading data-section="3d-2"}
+### The Lasso Objective
+Lasso replaces the $L_2$ penalty with an $L_1$ penalty (sum of absolute values) [cite: 18]:
+$$J_{	ext{lasso}}(\beta) = \frac{1}{2n}\lVert y - X\beta 
+Vert_2^2 + \alpha\lVert\beta
+Vert_1$$
+
+
+## Detail 3D 4 {: .companion-detail-heading data-section="3d-4"}
+### Soft Thresholding and Exact Zeros
+The $L_1$ penalty has sharp "corners" in its geometric constraint [cite: 18]. When optimized, coefficients can be pushed to **exactly zero** [cite: 18]. For orthonormal features, the coordinate solution is the soft-thresholding operator [cite: 18]:
+$$\hat{\beta}_j = \operatorname{sign}(z_j)\max(|z_j| - \alpha, 0)$$
+* **WARNING:** A zero lasso coefficient does *not* prove a feature has no scientific relationship with the target. It merely means the feature was dropped under this specific penalty and correlation structure [cite: 18].
+
+
+## Detail 3D 8 {: .companion-detail-heading data-section="3d-8"}
+## 4. Day 16: Lasso, Elastic Net, and Sparse Models
+
+
+## Detail 3E 3 {: .companion-detail-heading data-section="3e-3"}
+### Variance Inflation Factor (VIF)
+VIF measures how much a feature's coefficient variance is inflated due to correlation with other features [cite: 18]:
+$$\operatorname{VIF}_j = \frac{1}{1 - R_j^2}$$
+* A VIF of 9 means the standard error is inflated by a factor of $\sqrt{9} = 3$ [cite: 18]. 
+* There is no universal "cutoff" for VIF. High VIF does not inherently bias predictions, it simply increases parameter uncertainty [cite: 18].
+
+
+## Detail 3E 6 {: .companion-detail-heading data-section="3e-6"}
+### Leverage vs. Influence
+* **Leverage ($h_{ii}$):** Measures how unusual a row's predictor configuration is. Extracted from the diagonal of the Hat Matrix $H = X(X^	op X)^{-1}X^	op$ [cite: 18].
+* **Influence (Cook's Distance $D_i$):** Measures how much the fitted model would change if observation $i$ were deleted [cite: 18]. It combines both the residual size and the leverage [cite: 18]:
+  $$D_i = \frac{e_i^2}{k s^2} \frac{h_{ii}}{(1 - h_{ii})^2}$$
+
+---
+
+
+## Detail 3F 4 {: .companion-detail-heading data-section="3f-4"}
+### Robust Covariance (HC0 - HC3)
+If error variance changes across observations (Heteroskedasticity), standard OLS standard errors are incorrect [cite: 18]. The **Sandwich Estimator** corrects this [cite: 18]:
+$$\operatorname{Var}(\hat{\beta}) = (X^	op X)^{-1} X^	op \Omega X (X^	op X)^{-1}$$
+* **HC3** adjusts the "meat" of the sandwich by heavily weighting squared residuals by their leverage [cite: 18]: $\frac{e_i^2}{(1 - h_{ii})^2}$.
+* *Limitation:* HC3 fixes variance estimation; it *does not* fix a misspecified mean model (e.g., missing a curved relationship) [cite: 18].
+
+
+## Detail 3F 8 {: .companion-detail-heading data-section="3f-8"}
+### Cluster-Robust Standard Errors
+If projects in the same district share unobserved shocks, we must group errors by cluster $g$ [cite: 18]:
+$$	ext{Meat} = \sum_{g=1}^G (X_g^	op e_g)(X_g^	op e_g)^	op$$
+* *Limitation:* Asymptotic cluster confidence requires many independent clusters [cite: 18]. Five districts are too few for reliable large-$G$ asymptotic confidence [cite: 18].
+
+---
+
+
+## Detail 3G 3 {: .companion-detail-heading data-section="3g-3"}
+### Huber Regression (Robust to Outliers)
+Squared loss highly penalizes outliers. **Huber Loss** transitions from quadratic (near zero) to linear (in the tails) beyond a threshold $\delta$ [cite: 18]:
+$$L_\delta(r) = \begin{cases} \frac{1}{2}r^2 & |r| \le \delta \ \delta(|r| - \frac{1}{2}\delta) & |r| > \delta \end{cases}$$
+Huber downweights vertical outliers, preventing extreme cost values from pulling the entire regression line [cite: 18].
+
+
+## Detail 3G 7 {: .companion-detail-heading data-section="3g-7"}
+## 7. Day 19: Robust and Quantile Regression
+
+
+## Detail 3H 3 {: .companion-detail-heading data-section="3h-3"}
+## 8. Day 20: A Pre-Specified Regression Benchmark
+
+Exploratory modeling can easily turn noise into a publishable result [cite: 18]. To build a research-grade study, use a **Pre-Specified Prediction Contract** [cite: 18]:
+
+1. **Temporal Boundary:** Validate only on data chronologically *before* the validation year [cite: 18].
+2. **Locked Test Set:** The final test set (e.g., 2023-2025 projects) must not be touched until all feature engineering, imputation, and hyperparameter tuning is complete [cite: 18].
+3. **Pipeline Encapsulation:** All missing-data handling, target encoding, standardizing, and modeling must occur inside a `Pipeline` to prevent train-test leakage [cite: 18].
+4. **Subgroup Audits:** Overall MAE can hide failures. Always audit performance by operational subgroups (e.g., remote vs. accessible sites) [cite: 18].
+
+---
+
+
+## Detail CAPSTONE {: .companion-detail-heading data-section="capstone"}
+## 9. Master Rosetta Stone & Formula Sheet
+
+| Concept | Formula | Use |
+|---|---|---|
+| Standardisation | $z_{ij}=(x_{ij}-\bar x_j)/s_j$ | Comparable penalty scale using training statistics [cite: 18] |
+| Ridge objective | $\lVert y-X\beta
+Vert_2^2+\lambda\lVert\beta
+Vert_2^2$ | Stable $L_2$ shrinkage [cite: 18] |
+| Ridge estimate | $(X^	op X+\lambda I)^{-1}X^	op y$ | Closed form for centred penalised slopes [cite: 18] |
+| Ridge shrinkage | $\sigma_j^2/(\sigma_j^2+\lambda)$ | Fitted-value retention in singular direction $j$ [cite: 18] |
+| Lasso objective | $\frac{\lVert y-X\beta
+Vert_2^2}{2n}+\alpha\lVert\beta
+Vert_1$ | Sparse shrinkage [cite: 18] |
+| Soft threshold | $S(z,\alpha)=\operatorname{sign}(z)(\lvert z
+vert-\alpha)_+$ | One-coordinate lasso solution [cite: 18] |
+| Elastic net | Loss $+\alpha
+ho\lVert\beta
+Vert_1+\frac{\alpha(1-
+ho)}{2}\lVert\beta
+Vert_2^2$ | Sparsity plus correlated-feature stabilisation [cite: 18] |
+| VIF | $1/(1-R_j^2)$ | Conditional variance inflation for slope $j$ [cite: 18] |
+| Hat matrix | $H=X(X^	op X)^{-1}X^	op$ | Maps outcomes to OLS fitted values [cite: 18] |
+| Average leverage | $k/n$ | Reference leverage for $k$ design columns [cite: 18] |
+| Studentised residual | $e_i/[s\sqrt{1-h_{ii}}]$ | Residual adjusted for its model variance [cite: 18] |
+| Cook's distance | $e_i^2h_{ii}/[ks^2(1-h_{ii})^2]$ | Aggregate case influence [cite: 18] |
+| General sandwich | $(X^	op X)^{-1}X^	op\Omega X(X^	op X)^{-1}$ | Coefficient covariance under general error covariance [cite: 18] |
+| HC3 residual square | $e_i^2/(1-h_{ii})^2$ | Stronger leverage correction for heteroskedasticity [cite: 18] |
+| Huber loss | quadratic inside $\delta$, linear outside | Reduce large-residual gradient [cite: 18] |
+| Pinball loss | $u(	au-\mathbb1\{u<0\})$ | Proper loss for a conditional quantile $	au$ [cite: 18] |
+

@@ -1461,9 +1461,7 @@ TEMPLATE = """<!DOCTYPE html>
 </head>
 <body>
     <div id="content">
-        <nav class="chapters">
 {nav_links}
-        </nav>
         <article class="markdown-body">
 {body}
         </article>
@@ -1528,7 +1526,8 @@ NAV_LINK = '            <a href="{href}" class="{classes}">{label}</a>'
 
 
 def build_nav(current_slug: str) -> str:
-    links = []
+    # 1. Main book chapters navigation group
+    chapter_links = []
     for slug in CHAPTER_ORDER:
         if slug == "level_0_orientation":
             label = "Level 0 Orientation"
@@ -1536,9 +1535,32 @@ def build_nav(current_slug: str) -> str:
             label = slug.replace("chapter", "Ch. ").replace("_5_interlude", ".5 Interlude").replace("_", " ")
         active = slug == current_slug
         classes = "active" if active else ""
-        links.append(NAV_LINK.format(href=f"{slug}.html", classes=classes, label=label))
-    links.append(NAV_LINK.format(href="settings.html", classes="active" if current_slug == "settings" else "", label="Settings"))
-    return "\n".join(links)
+        chapter_links.append(NAV_LINK.format(href=f"{slug}.html", classes=classes, label=label))
+    chapter_links.append(NAV_LINK.format(href="settings.html", classes="active" if current_slug == "settings" else "", label="Settings"))
+    
+    # 2. Companion guides navigation group
+    companion_links = []
+    companion_order = ["chapter0_companion", "chapter1_companion", "chapter2_companion", "chapter3_companion", "chapter6_companion"]
+    for slug in companion_order:
+        label = slug.replace("chapter", "Ch. ").replace("_companion", " Companion")
+        active = slug == current_slug
+        classes = "active" if active else ""
+        companion_links.append(NAV_LINK.format(href=f"{slug}.html", classes=classes, label=label))
+        
+    joined_chapters = "\n".join(chapter_links)
+    joined_companions = "\n".join(companion_links)
+    
+    nav_html = f'''
+    <nav class="chapters" style="margin-bottom: 1rem; padding-bottom: 1rem;">
+        <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.05em; width: 100%; margin-bottom: 0.5rem; display: block;">Book Chapters</span>
+        {joined_chapters}
+    </nav>
+    <nav class="chapters" style="margin-bottom: 2.5rem; padding-bottom: 1.5rem;">
+        <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.05em; width: 100%; margin-bottom: 0.5rem; display: block;">Companion Guides</span>
+        {joined_companions}
+    </nav>
+    '''
+    return nav_html
 
 
 def title_from_markdown(text: str, fallback: str) -> str:
@@ -1566,6 +1588,10 @@ def convert_mermaid_fences(md_text: str) -> str:
     return re.sub(r"```mermaid\n(.*?)```", replacer, md_text, flags=re.DOTALL)
 
 
+def clean_control_characters(text: str) -> str:
+    return text.replace("\x08", "\\b").replace("\x0c", "\\f").replace("\x07", "\\a")
+
+
 def compile_chapter(slug: str) -> None:
     src_path = SRC_DIR / f"{slug}.md"
     if not src_path.exists():
@@ -1573,6 +1599,7 @@ def compile_chapter(slug: str) -> None:
         return
 
     md_text = src_path.read_text(encoding="utf-8")
+    md_text = clean_control_characters(md_text)
     title = title_from_markdown(md_text, fallback=slug)
     md_text = convert_mermaid_fences(md_text)
 
@@ -1590,6 +1617,39 @@ def compile_chapter(slug: str) -> None:
         platform_css=PLATFORM_CSS,
         platform_panel=PLATFORM_PANEL,
         platform_js=PLATFORM_JS.replace("{chapter_slug}", slug),
+    )
+
+    OUTPUT_DIR.mkdir(exist_ok=True)
+    out_path = OUTPUT_DIR / f"{slug}.html"
+    out_path.write_text(html, encoding="utf-8")
+    print(f"Compiled {src_path.name} -> {out_path.relative_to(ROOT)}")
+
+
+def compile_companion(slug: str, filename: str) -> None:
+    src_path = SRC_DIR / filename
+    if not src_path.exists():
+        print(f"Warning: {src_path.name} not found, skipping.")
+        return
+
+    md_text = src_path.read_text(encoding="utf-8")
+    md_text = clean_control_characters(md_text)
+    title = title_from_markdown(md_text, fallback=slug)
+    md_text = convert_mermaid_fences(md_text)
+
+    body_html = markdown.markdown(
+        md_text,
+        extensions=["fenced_code", "tables", "toc", "sane_lists", "attr_list", "nl2br"],
+    )
+
+    html = TEMPLATE.format(
+        title=title,
+        nav_links=build_nav(slug),
+        body=body_html,
+        mermaid_local=VENDOR_MERMAID_REL,
+        mathjax_local=VENDOR_MATHJAX_REL,
+        platform_css=PLATFORM_CSS,
+        platform_panel="",
+        platform_js="",
     )
 
     OUTPUT_DIR.mkdir(exist_ok=True)
@@ -1644,6 +1704,16 @@ def main() -> None:
     ensure_vendor_readme()
     for slug in CHAPTER_ORDER:
         compile_chapter(slug)
+    
+    COMPANIONS = {
+        "chapter0_companion": "Chapter_0_Companion_Guide_v2.md",
+        "chapter1_companion": "Chapter_1_Companion_Guide.md",
+        "chapter2_companion": "Chapter_2_Companion_Guide.md",
+        "chapter3_companion": "Chapter_3_Companion_Guide.md",
+        "chapter6_companion": "Chapter_6_Companion_Guide.md",
+    }
+    for slug, filename in COMPANIONS.items():
+        compile_companion(slug, filename)
     compile_settings_page()
     print("SRC markdown compilation complete.")
 

@@ -491,8 +491,10 @@
 </head>
 <body>
     <div id="content">
-        <nav class="chapters">
-            <a href="chapter0.html" class="">Ch. 0</a>
+
+    <nav class="chapters" style="margin-bottom: 1rem; padding-bottom: 1rem;">
+        <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.05em; width: 100%; margin-bottom: 0.5rem; display: block;">Book Chapters</span>
+                    <a href="chapter0.html" class="">Ch. 0</a>
             <a href="level_0_orientation.html" class="">Level 0 Orientation</a>
             <a href="chapter1.html" class="active">Ch. 1</a>
             <a href="chapter2.html" class="">Ch. 2</a>
@@ -502,7 +504,16 @@
             <a href="chapter5.html" class="">Ch. 5</a>
             <a href="chapter6.html" class="">Ch. 6</a>
             <a href="settings.html" class="">Settings</a>
-        </nav>
+    </nav>
+    <nav class="chapters" style="margin-bottom: 2.5rem; padding-bottom: 1.5rem;">
+        <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.05em; width: 100%; margin-bottom: 0.5rem; display: block;">Companion Guides</span>
+                    <a href="chapter0_companion.html" class="">Ch. 0 Companion</a>
+            <a href="chapter1_companion.html" class="">Ch. 1 Companion</a>
+            <a href="chapter2_companion.html" class="">Ch. 2 Companion</a>
+            <a href="chapter3_companion.html" class="">Ch. 3 Companion</a>
+            <a href="chapter6_companion.html" class="">Ch. 6 Companion</a>
+    </nav>
+    
         <article class="markdown-body">
 <h1 id="chapter-1-from-a-question-to-ordinary-least-squares">Chapter 1 — From a Question to Ordinary Least Squares</h1>
 <h2 id="level-1-data-explorer-week-1-of-the-mhp-cost-estimator">Level 1 Data Explorer: Week 1 of the MHP Cost Estimator</h2>
@@ -677,6 +688,7 @@ python -m pip install numpy matplotlib
 </table>
 <p>The distinction is not philosophical decoration. It changes the data you need, the assumptions you must defend, and the way the result may be used.</p>
 <h2 id="12-prediction-estimating-an-unknown-outcome">1.2 Prediction: estimating an unknown outcome</h2>
+<p><button class="read-details-btn" data-section="1a-2">✦ Read Details</button></p>
 <p>For prediction, we want a function $f$ that converts the observed features of project $i$ into an estimate:</p>
 <p>$$<br />
 \hat{y}<em i1="i1">i = f(x</em>).},x_{i2},\ldots,x_{ip<br />
@@ -692,6 +704,7 @@ $$</p>
 <p>A predictor may be useful even when a feature is not causal. For instance, the number of difficult river crossings may predict transport cost because it summarises remoteness. A planning unit can use that signal to improve a contingency estimate without claiming that a river crossing, by itself, causes every extra rupee.</p>
 <p>Prediction must be evaluated on data not used to fit the model. A rule that memorises completed projects can appear perfect and still fail on the next valley.</p>
 <h2 id="13-explanation-describing-conditional-association">1.3 Explanation: describing conditional association</h2>
+<p><button class="read-details-btn" data-section="1a-3">✦ Read Details</button></p>
 <p>For explanation, attention shifts from the prediction alone to the model’s parameters. Consider:</p>
 <p>$$<br />
 \hat{y}_i = \beta_0 + \beta_1\,\text{road_distance}_i + \beta_2\,\text{capacity}_i.<br />
@@ -700,6 +713,7 @@ $$</p>
 <p>The phrase in bold is essential. In multiple regression, a coefficient is conditional on the other included features. It does not automatically control for variables that are absent, poorly measured, or structurally different across districts.</p>
 <p>An explanatory analysis also needs uncertainty. A coefficient of 0.8 million PKR per kilometre is not equally persuasive if it comes from 6 projects or 600 projects. Standard errors and confidence intervals arrive later; Week 1 first establishes what is being estimated.</p>
 <h2 id="14-causation-estimating-an-intervention">1.4 Causation: estimating an intervention</h2>
+<p><button class="read-details-btn" data-section="1a-4">✦ Read Details</button></p>
 <p>A causal question asks about a change we could make:</p>
 <blockquote>
 <p>If an all-weather access road were constructed before the MHP works began, how would the final project cost differ from what it would otherwise have been?</p>
@@ -711,6 +725,7 @@ $$</p>
 <p>We can observe only one of those outcomes for a given project. The unobserved alternative is the <strong>counterfactual</strong>. Causal inference is therefore a problem of constructing a credible comparison, not merely fitting a line.</p>
 <p>Ordinary regression can be part of a causal design, but the regression output is causal only when the research design and assumptions make it so. Random assignment, natural experiments, careful matching, panel designs, and defensible causal graphs can help. A high $R^2$ cannot turn an associational design into a causal one.</p>
 <h2 id="15-confounding-the-hidden-common-cause">1.5 Confounding: the hidden common cause</h2>
+<p><button class="read-details-btn" data-section="1a-5">✦ Read Details</button></p>
 <p>Suppose projects in rugged terrain are more likely to require helicopter transport, and rugged terrain independently increases excavation delays and labour costs.</p>
 <div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart TD
     T["Rugged terrain"] --> H["Helicopter transport"]
@@ -722,6 +737,7 @@ $$</p>
 <p>If terrain is ignored, projects using helicopters will look more expensive even if helicopter transport reduced cost relative to the feasible alternative—weeks of manual carriage or an unfinished project.</p>
 <p>A variable is a confounder when it is causally related to both the exposure or decision and the outcome, and is not itself a consequence of that exposure. The precise definition depends on the full causal structure; “control for everything available” is not a safe rule because controlling for mediators or colliders can introduce new bias.</p>
 <h2 id="16-simpsons-paradox-when-aggregation-reverses-a-pattern">1.6 Simpson’s paradox: when aggregation reverses a pattern</h2>
+<p><button class="read-details-btn" data-section="1a-6">✦ Read Details</button></p>
 <p>Imagine eight projects, four in relatively accessible terrain and four in remote mountain terrain. Within each terrain group, longer cable raises cost. Yet remote projects happen to use shorter cable and start from a much higher cost base.</p>
 <table>
 <thead>
@@ -936,6 +952,7 @@ if __name__ == &quot;__main__&quot;:
 <p><strong>Today’s central idea:</strong> Data have roles, shapes, units, and provenance. Most early modeling errors are representation errors before they are statistical errors.</p>
 </blockquote>
 <h2 id="21-the-vocabulary-of-one-project-table">2.1 The vocabulary of one project table</h2>
+<p><button class="read-details-btn" data-section="1b-1">✦ Read Details</button></p>
 <p>Suppose the rows of a table are completed MHP projects.</p>
 <table>
 <thead>
@@ -1005,6 +1022,7 @@ if __name__ == &quot;__main__&quot;:
 </table>
 <p><strong>Parameter</strong> and <strong>hyperparameter</strong> should not be explained through a loose physical analogy. The reliable distinction is procedural: the fitting algorithm learns parameters from the training data; the analyst sets hyperparameters or design choices.</p>
 <h2 id="22-scalars-vectors-matrices-and-tensors">2.2 Scalars, vectors, matrices, and tensors</h2>
+<p><button class="read-details-btn" data-section="1b-2">✦ Read Details</button></p>
 <p>A <strong>scalar</strong> is one number. A <strong>vector</strong> is an ordered one-dimensional array. A <strong>matrix</strong> is a two-dimensional rectangular array. A <strong>tensor</strong> is the general term for an array with any number of axes.</p>
 <p>The number of tensor axes is sometimes called its order or tensor rank. Do not confuse that usage with <strong>matrix rank</strong>, introduced on Day 5, which counts independent directions in a matrix.</p>
 <div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart LR
@@ -1048,6 +1066,7 @@ y =<br />
 $$</p>
 <p>Then $X$ has shape $3\times2$ and $y$ has length 3. Row 2 means that the second project is 25 km from an all-weather road, has planned capacity 150 kW, and actually cost 44 million PKR.</p>
 <h2 id="23-shape-is-part-of-meaning">2.3 Shape is part of meaning</h2>
+<p><button class="read-details-btn" data-section="1b-3">✦ Read Details</button></p>
 <p>These arrays contain the same three numbers but do not have the same shape:</p>
 <pre><code class="language-python">import numpy as np
 
@@ -1061,6 +1080,7 @@ print(a.shape, b.shape, c.shape)
 <p>In NumPy, <code>(3,)</code> is a one-dimensional vector. <code>(3, 1)</code> is a two-dimensional column matrix. <code>(1, 3)</code> is a two-dimensional row matrix. They can behave differently under multiplication and broadcasting.</p>
 <p>Our application will accept a one-dimensional target vector <code>y.shape == (n,)</code>. It will convert a single feature from <code>(n,)</code> to a two-dimensional matrix <code>(n, 1)</code>.</p>
 <h2 id="24-the-design-matrix-and-row-alignment">2.4 The design matrix and row alignment</h2>
+<p><button class="read-details-btn" data-section="1b-4">✦ Read Details</button></p>
 <p>The feature matrix used in a regression is called the <strong>design matrix</strong>. “Design” here refers to the arrangement of predictor columns; it does not mean the projects were experimentally assigned.</p>
 <p>The $i$th row of $X$ and the $i$th entry of $y$ must refer to the same project.</p>
 <div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart LR
@@ -1191,6 +1211,7 @@ assert np.allclose(y_hat_loop, y_hat_matrix)
 </code></pre>
 <p>The <code>@</code> operator is compact, but it is not magic. The loops show exactly what it does.</p>
 <h2 id="28-build-robust-input-validation">2.8 Build: robust input validation</h2>
+<p><button class="read-details-btn" data-section="1b-8">✦ Read Details</button></p>
 <p>Add these methods inside <code>MHPCostEstimator</code>:</p>
 <pre><code class="language-python">    @staticmethod
     def _validate_inputs(X, y=None):
@@ -1259,6 +1280,7 @@ for X_bad, y_bad in bad_cases:
 </code></pre>
 <p>Then construct the more dangerous failure: create <code>X</code> and <code>y</code> with the same number of rows but place <code>y</code> in reverse project order. Validation cannot detect the mistake unless project identifiers are checked during data assembly.</p>
 <h2 id="210-day-2-practice">2.10 Day 2 practice</h2>
+<p><button class="read-details-btn" data-section="1b-1">✦ Read Details</button></p>
 <ol>
 <li>State the shape of a dataset containing 70 projects and 5 features.</li>
 <li>After adding an intercept, what are the shapes of $X$ and $\beta$?</li>
@@ -1274,6 +1296,7 @@ for X_bad, y_bad in bad_cases:
 <p><strong>Today’s central idea:</strong> A linear model forms each prediction by adding weighted features. Matrix notation performs that same operation for every project at once.</p>
 </blockquote>
 <h2 id="31-from-a-verbal-rule-to-a-linear-equation">3.1 From a verbal rule to a linear equation</h2>
+<p><button class="read-details-btn" data-section="1c-1">✦ Read Details</button></p>
 <p>Suppose a deliberately simple budget rule uses only cable length:</p>
 <blockquote>
 <p>Begin with a fixed base cost of 8 million PKR, then add 4 million PKR for each kilometre of cable.</p>
@@ -1293,6 +1316,7 @@ $$</p>
 <p>If $y$ is million PKR and $x$ is km, the slope’s units are million PKR per km.</p>
 <p>The intercept may be necessary for good predictions without having a useful physical interpretation. “A project with zero cable” may lie outside the scope of the data. An intercept is an algebraic baseline, not automatically the price of a literal zero-feature project.</p>
 <h2 id="32-multiple-features-are-still-a-weighted-sum">3.2 Multiple features are still a weighted sum</h2>
+<p><button class="read-details-btn" data-section="1c-2">✦ Read Details</button></p>
 <p>With road distance, capacity, and terrain difficulty:</p>
 <p>$$<br />
 \hat{y}_i<br />
@@ -1307,6 +1331,7 @@ $$</p>
 $$</p>
 <p>The apparent simplicity of the matrix equation is earned by carefully constructing $X$.</p>
 <h2 id="33-why-a-column-of-ones-creates-an-intercept">3.3 Why a column of ones creates an intercept</h2>
+<p><button class="read-details-btn" data-section="1c-3">✦ Read Details</button></p>
 <p>For three projects and one measured feature, start with:</p>
 <p>$$<br />
 X_{\text{raw}} =<br />
@@ -1469,6 +1494,7 @@ print(&quot;Intercept and slope:&quot;, beta)
 <p><strong>Figure 3.2 — The effect of the intercept.</strong> The through-origin model is required to predict zero cost at zero cable length. The intercept model is allowed to fit the observed baseline.</p>
 <p>Notice that the code uses <code>np.linalg.solve(A, b)</code> for $A\beta=b$, not <code>np.linalg.inv(A) @ b</code>. The inverse formula is useful for derivation, but directly solving the linear system is clearer and usually more numerically stable.</p>
 <h2 id="38-scaling-and-units">3.8 Scaling and units</h2>
+<p><button class="read-details-btn" data-section="1c-8">✦ Read Details</button></p>
 <p>Suppose cable is changed from kilometres to metres:</p>
 <p>$$<br />
 x_{\text{metres}}=1000x_{\text{km}}.<br />
@@ -1521,6 +1547,7 @@ assert np.allclose(beta_km * x_km, beta_m * x_m)
 <p><code>predict</code> cannot yet succeed because <code>fit</code> has not been built. This is intentional. We have defined the behaviour of a fitted application before learning how to estimate the parameters.</p>
 <p>The context resolves a genuine shape ambiguity: during fitting, a one-dimensional <code>X</code> means one feature observed across many projects; during prediction, a one-dimensional <code>X</code> means one new project containing several features. Passing an explicit two-dimensional array remains safest.</p>
 <h2 id="310-break-it-deliberately-broadcasting-is-not-matrix-multiplication">3.10 Break it deliberately: broadcasting is not matrix multiplication</h2>
+<p><button class="read-details-btn" data-section="1c-1">✦ Read Details</button></p>
 <pre><code class="language-python">X = np.array([
     [1.0, 12.0, 100.0],
     [1.0, 25.0, 150.0],
@@ -1537,6 +1564,7 @@ print(elementwise)
 <p><code>X * beta</code> broadcasts the parameter vector across rows and multiplies element by element. It returns a matrix of products, not a prediction vector. The expression runs without an error, which makes it more dangerous than a crash.</p>
 <p>Also try multiplying the same <code>X</code> by <code>np.array([5.0, 0.6])</code>. Matrix multiplication should fail because the number of parameters does not equal the number of columns.</p>
 <h2 id="311-day-3-practice">3.11 Day 3 practice</h2>
+<p><button class="read-details-btn" data-section="1c-1">✦ Read Details</button></p>
 <ol>
 <li>Expand one row of $X\beta$ for an intercept plus three features.</li>
 <li>Explain why a column of twos would not estimate the conventional intercept. What would its coefficient represent?</li>
@@ -1557,6 +1585,7 @@ print(elementwise)
 <p><strong>Today’s central idea:</strong> OLS chooses the attainable prediction vector closest to the observed target vector in squared Euclidean distance.</p>
 </blockquote>
 <h2 id="41-a-prediction-becomes-testable-through-its-residual">4.1 A prediction becomes testable through its residual</h2>
+<p><button class="read-details-btn" data-section="1d-1">✦ Read Details</button></p>
 <p>For project $i$:</p>
 <p>$$<br />
 e_i = y_i-\hat{y}_i.<br />
@@ -1589,6 +1618,7 @@ print(e_vector)  # [ 1.5 -1.   1.5]
 </code></pre>
 <p>Residuals are observed after fitting. They are not the same as the unobservable population errors in a statistical model, though introductory discussions often use the words loosely.</p>
 <h2 id="42-why-ols-squares-residuals">4.2 Why OLS squares residuals</h2>
+<p><button class="read-details-btn" data-section="1d-2">✦ Read Details</button></p>
 <p>The <strong>sum of squared residuals</strong> (SSR), also called the residual sum of squares (RSS) or sum of squared errors (SSE), is:</p>
 <p>$$<br />
 SSR(\beta)=\sum_{i=1}^{n}e_i^2<br />
@@ -1621,6 +1651,7 @@ assert np.isclose(ssr_loop, ssr_sum)
 assert np.isclose(ssr_sum, ssr_dot)
 </code></pre>
 <h2 id="43-ssr-mse-rmse-and-mae-answer-different-reporting-needs">4.3 SSR, MSE, RMSE, and MAE answer different reporting needs</h2>
+<p><button class="read-details-btn" data-section="1d-3">✦ Read Details</button></p>
 <p>$$<br />
 MSE = \frac{1}{n}\sum_{i=1}^{n}e_i^2,<br />
 $$</p>
@@ -1690,6 +1721,7 @@ print(metrics)
 </code></pre>
 <p>For training data, some texts divide SSR by $n-p-1$ to estimate error variance. That is a different quantity from predictive MSE. Always name the denominator.</p>
 <h2 id="44-ols-as-a-constrained-search-in-observation-space">4.4 OLS as a constrained search in observation space</h2>
+<p><button class="read-details-btn" data-section="1d-4">✦ Read Details</button></p>
 <p>The target vector $y$ contains one coordinate for each project, so it lives in $\mathbb{R}^n$. Every possible $X\beta$ is a weighted combination of the columns of $X$. The set of all such combinations is the <strong>column space</strong> of $X$.</p>
 <p>OLS cannot choose any point in $\mathbb{R}^n$. It must choose a point inside that column space. It selects the point closest to $y$.</p>
 <div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart TD
@@ -1701,6 +1733,7 @@ print(metrics)
 
 <p><strong>Figure 4.1 — Projection view of OLS.</strong> The diagram is conceptual: $\hat{y}$ and $q$ lie in the column space, while the residual from $\hat{y}$ to $y$ is perpendicular to it.</p>
 <h2 id="45-the-pythagorean-proof-of-minimum-distance">4.5 The Pythagorean proof of minimum distance</h2>
+<p><button class="read-details-btn" data-section="1d-5">✦ Read Details</button></p>
 <p>Let:</p>
 <ul>
 <li>$\hat{y}$ be the perpendicular projection of $y$ onto the column space of $X$;</li>
@@ -1728,6 +1761,7 @@ $$</p>
 $$</p>
 <p>The last step holds because a squared length cannot be negative. Therefore no other attainable prediction $q$ can be closer to $y$ than $\hat{y}$.</p>
 <h2 id="46-why-orthogonality-produces-the-normal-equations">4.6 Why orthogonality produces the normal equations</h2>
+<p><button class="read-details-btn" data-section="1d-6">✦ Read Details</button></p>
 <p>Every column of $X$ lies in the column space. If the residual is perpendicular to the whole column space, it is perpendicular to every column:</p>
 <p>$$<br />
 X^Te=0.<br />
@@ -1846,6 +1880,7 @@ plt.show()
 </code></pre>
 <p>The method does not call these “test metrics” because the caller may supply training, validation, or test data. The application should not pretend to know the provenance of an array.</p>
 <h2 id="410-break-it-deliberately-one-outlier">4.10 Break it deliberately: one outlier</h2>
+<p><button class="read-details-btn" data-section="1d-1">✦ Read Details</button></p>
 <pre><code class="language-python">y = np.array([20.0, 22.0, 24.0, 26.0])
 y_hat = np.array([21.0, 21.0, 25.0, 25.0])
 
@@ -1860,6 +1895,7 @@ print(&quot;Contaminated:&quot;, contaminated)
 </code></pre>
 <p>Compare the change in RMSE and MAE. Do not conclude merely that MAE is “better.” First determine whether 260 is a genuine extreme project, a different type of project, or an error. Robustness cannot replace data investigation.</p>
 <h2 id="411-day-4-practice">4.11 Day 4 practice</h2>
+<p><button class="read-details-btn" data-section="1d-1">✦ Read Details</button></p>
 <ol>
 <li>Calculate the residuals and SSR for $y=[3,5]$ and $\hat{y}=[4,3]$.</li>
 <li>Prove in code that RMSE has the same units as the target under a change from million PKR to PKR.</li>
@@ -2017,6 +2053,7 @@ assert np.isclose(partial_b0, 0.0, atol=1e-10)
 assert np.isclose(partial_b1, 0.0, atol=1e-10)
 </code></pre>
 <h2 id="53-the-matrix-objective">5.3 The matrix objective</h2>
+<p><button class="read-details-btn" data-section="1e-3">✦ Read Details</button></p>
 <p>For multiple features, collect all parameters in $\beta$ and write:</p>
 <p>$$<br />
 S(\beta)=(y-X\beta)^T(y-X\beta).<br />
@@ -2039,6 +2076,7 @@ S(\beta)<br />
 =y^Ty-2\beta^TX^Ty+\beta^TX^TX\beta.<br />
 $$</p>
 <h2 id="54-the-matrix-derivative-without-hand-waving">5.4 The matrix derivative without hand-waving</h2>
+<p><button class="read-details-btn" data-section="1e-4">✦ Read Details</button></p>
 <p>Three derivative facts are needed.</p>
 <p>First, $y^Ty$ contains no $\beta$, so:</p>
 <p>$$<br />
@@ -2122,6 +2160,7 @@ assert np.allclose(analytic_gradient, finite_difference_gradient, rtol=1e-6)
 </code></pre>
 <p>The finite-difference calculation is an independent numerical audit of the matrix derivative. A poor choice of $h$ can introduce approximation or floating-point error; its role is verification, not fitting.</p>
 <h2 id="55-isolating-hatbeta-and-stating-the-missing-condition">5.5 Isolating $\hat{\beta}$ and stating the missing condition</h2>
+<p><button class="read-details-btn" data-section="1e-5">✦ Read Details</button></p>
 <p>If $X^TX$ is invertible:</p>
 <p>$$<br />
 \hat{\beta}=(X^TX)^{-1}X^Ty.<br />
@@ -2149,6 +2188,7 @@ assert np.isclose(left, right)
 assert left &gt;= -1e-12  # tolerance for floating-point roundoff
 </code></pre>
 <h2 id="56-why-we-do-not-compute-the-inverse-in-application-code">5.6 Why we do not compute the inverse in application code</h2>
+<p><button class="read-details-btn" data-section="1e-6">✦ Read Details</button></p>
 <p>The derivation uses $(X^TX)^{-1}$ to express the mathematical solution. A program should usually solve:</p>
 <p>$$<br />
 (X^TX)\hat{\beta}=X^Ty<br />
@@ -2177,6 +2217,7 @@ $$</p>
 </ol>
 <p>A perfect answer at the first layer does not settle the next two.</p>
 <h2 id="57-rank-failure-two-columns-carrying-the-same-information">5.7 Rank failure: two columns carrying the same information</h2>
+<p><button class="read-details-btn" data-section="1e-7">✦ Read Details</button></p>
 <p>Suppose the design matrix includes both cable length in kilometres and the same cable length in metres:</p>
 <p>$$<br />
 x_{\text{metres}}=1000x_{\text{kilometres}}.<br />
@@ -2505,6 +2546,7 @@ assert np.isclose(metrics[&quot;rmse&quot;], np.sqrt(np.mean(residuals ** 2)))
 
 <hr />
 <h1 id="week-1-capstone-build-it-break-it-rebuild-it">Week 1 Capstone — Build It, Break It, Rebuild It</h1>
+<p><button class="read-details-btn" data-section="capstone">✦ Read Details</button></p>
 <h2 id="capstone-brief">Capstone brief</h2>
 <p>You are given 40 synthetic completed MHP projects and asked to create an early-stage cost estimator. Complete the work in four passes.</p>
 <h3 id="pass-1-define">Pass 1: define</h3>
@@ -2580,6 +2622,7 @@ assert np.isclose(metrics[&quot;rmse&quot;], np.sqrt(np.mean(residuals ** 2)))
 </table>
 <hr />
 <h1 id="formula-sheet">Formula Sheet</h1>
+<p><button class="read-details-btn" data-section="formula-sheet">✦ Read Details</button></p>
 <table>
 <thead>
 <tr>
@@ -2653,6 +2696,7 @@ assert np.isclose(metrics[&quot;rmse&quot;], np.sqrt(np.mean(residuals ** 2)))
 </table>
 <hr />
 <h1 id="glossary">Glossary</h1>
+<p><button class="read-details-btn" data-section="glossary">✦ Read Details</button></p>
 <p><strong>Association:</strong> A numerical relationship in observed data; it need not be causal.</p>
 <p><strong>Column space:</strong> All vectors that can be formed as weighted combinations of a matrix’s columns.</p>
 <p><strong>Confounder:</strong> A common cause that can distort an exposure–outcome association.</p>
@@ -2765,6 +2809,490 @@ assert np.isclose(metrics[&quot;rmse&quot;], np.sqrt(np.mean(residuals ** 2)))
 </pre></div>
 
 <p>You now know enough to be dangerous if you report coefficients carelessly—and enough to begin becoming useful if you preserve the chain from question to judgement.</p>
+<style>
+.read-details-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(34, 211, 238, 0.08);
+    border: 1px solid rgba(34, 211, 238, 0.3);
+    color: #22d3ee;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 0.5rem 0 1rem 0;
+    font-family: inherit;
+}
+.read-details-btn:hover {
+    background: rgba(34, 211, 238, 0.2);
+    border-color: #22d3ee;
+    box-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
+}
+.comp-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(11, 15, 25, 0.85);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    align-items: center;
+    justify-content: center;
+}
+.comp-modal.open {
+    display: flex;
+    opacity: 1;
+}
+.comp-modal-content {
+    background-color: #151d30;
+    border: 1px solid #223150;
+    border-radius: 0.75rem;
+    width: 90%;
+    max-width: 48rem;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.6);
+    position: relative;
+    padding: 2.5rem 2rem 2rem 2rem;
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.comp-modal.open .comp-modal-content {
+    transform: scale(1);
+}
+.comp-modal-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 1.25rem;
+    color: #cbd5e1;
+    font-size: 2rem;
+    font-weight: 300;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    line-height: 1;
+}
+.comp-modal-close:hover {
+    color: #fff;
+}
+#comp-modal-body {
+    color: #cbd5e1;
+    font-size: 0.95rem;
+}
+#comp-modal-body h1, #comp-modal-body h2 {
+    color: #fff;
+    border-bottom: 1px solid #223150;
+    padding-bottom: 0.5rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+#comp-modal-body h3, #comp-modal-body h4 {
+    color: #fff;
+    margin-top: 1.75rem;
+    margin-bottom: 0.75rem;
+}
+#comp-modal-body p {
+    margin-bottom: 1rem;
+}
+#comp-modal-body code {
+    color: #67e8f9;
+    background: #0b0f19;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+}
+#comp-modal-body pre {
+    background: #0b0f19;
+    border: 1px solid #223150;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 1rem 0;
+    overflow-x: auto;
+}
+#comp-modal-body pre code {
+    background: transparent;
+    padding: 0;
+    color: #e2e8f0;
+}
+#comp-modal-body table {
+    width: 100%;
+    font-size: 0.875rem;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+}
+#comp-modal-body th, #comp-modal-body td {
+    border: 1px solid #223150;
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+}
+#comp-modal-body th {
+    background: #151d30;
+    color: #fff;
+    font-weight: 600;
+}
+.companion-details-area, .companion-details-area ~ * {
+    display: none;
+}
+</style>
+
+<div id="companion-modal" class="comp-modal">
+    <div class="comp-modal-content">
+        <span class="comp-modal-close">&times;</span>
+        <div id="comp-modal-body"></div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var store = {};
+    var area = document.querySelector('.companion-details-area');
+    if (!area) return;
+
+    var currentSection = null;
+    var currentElements = [];
+    var sibling = area.nextElementSibling;
+
+    while (sibling) {
+        if (sibling.classList.contains('companion-detail-heading')) {
+            if (currentSection) {
+                store[currentSection] = currentElements;
+            }
+            currentSection = sibling.getAttribute('data-section');
+            currentElements = [];
+        } else {
+            if (currentSection) {
+                currentElements.push(sibling.cloneNode(true));
+            }
+        }
+        sibling = sibling.nextElementSibling;
+    }
+    if (currentSection) {
+        store[currentSection] = currentElements;
+    }
+
+    // Wire up buttons
+    document.querySelectorAll('.read-details-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var section = this.getAttribute('data-section');
+            var elements = store[section];
+            var modalBody = document.getElementById('comp-modal-body');
+            modalBody.innerHTML = '';
+
+            if (elements && elements.length > 0) {
+                elements.forEach(function(el) {
+                    el.style.display = '';
+                    modalBody.appendChild(el);
+                });
+
+                // Trigger MathJax typesetting if loaded
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    window.MathJax.typesetPromise([modalBody]);
+                }
+            } else {
+                modalBody.innerHTML = '<p>No details found for this section.</p>';
+            }
+
+            var modal = document.getElementById('companion-modal');
+            modal.style.display = 'flex';
+            // Reflow
+            modal.offsetHeight;
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        });
+    });
+
+    // Close modal function
+    function closeModal() {
+        var modal = document.getElementById('companion-modal');
+        modal.classList.remove('open');
+        setTimeout(function() {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }, 300);
+    }
+
+    document.querySelector('.comp-modal-close').addEventListener('click', closeModal);
+    window.addEventListener('click', function(event) {
+        var modal = document.getElementById('companion-modal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    });
+});
+</script>
+
+<hr />
+<h1 class="companion-details-area" id="companion-details-area">Companion Details Area</h1>
+<h2 class="companion-detail-heading" data-section="1a-2" id="detail-1a-2">Detail 1A 2</h2>
+<h3 id="the-three-jobs-of-regression">The Three Jobs of Regression</h3>
+<ul>
+<li><strong>Prediction:</strong> Estimating an unknown outcome based on observed features [cite: 12].</li>
+<li><em>Success:</em> Low error on genuinely new projects [cite: 12].</li>
+<li><em>Danger:</em> The model may fail when external conditions change [cite: 12].</li>
+<li><strong>Explanation:</strong> Describing the conditional association between variables [cite: 12].</li>
+<li><em>Success:</em> Stable, interpretable coefficients with measured uncertainty [cite: 12].</li>
+<li><em>Danger:</em> Omitted variables and correlated features can distort interpretation [cite: 12].</li>
+<li><strong>Causal Inference:</strong> Estimating the effect of a specific intervention [cite: 12].</li>
+<li><em>Success:</em> A credible estimate comparing observed outcomes to an unobserved counterfactual [cite: 12].</li>
+<li><em>Danger:</em> Mistaking a mere association for the effect of a direct action [cite: 12].</li>
+</ul>
+<h2 class="companion-detail-heading" data-section="1a-3" id="detail-1a-3">Detail 1A 3</h2>
+<h3 id="the-three-jobs-of-regression_1">The Three Jobs of Regression</h3>
+<ul>
+<li><strong>Prediction:</strong> Estimating an unknown outcome based on observed features [cite: 12].</li>
+<li><em>Success:</em> Low error on genuinely new projects [cite: 12].</li>
+<li><em>Danger:</em> The model may fail when external conditions change [cite: 12].</li>
+<li><strong>Explanation:</strong> Describing the conditional association between variables [cite: 12].</li>
+<li><em>Success:</em> Stable, interpretable coefficients with measured uncertainty [cite: 12].</li>
+<li><em>Danger:</em> Omitted variables and correlated features can distort interpretation [cite: 12].</li>
+<li><strong>Causal Inference:</strong> Estimating the effect of a specific intervention [cite: 12].</li>
+<li><em>Success:</em> A credible estimate comparing observed outcomes to an unobserved counterfactual [cite: 12].</li>
+<li><em>Danger:</em> Mistaking a mere association for the effect of a direct action [cite: 12].</li>
+</ul>
+<h2 class="companion-detail-heading" data-section="1a-4" id="detail-1a-4">Detail 1A 4</h2>
+<h3 id="the-three-jobs-of-regression_2">The Three Jobs of Regression</h3>
+<ul>
+<li><strong>Prediction:</strong> Estimating an unknown outcome based on observed features [cite: 12].</li>
+<li><em>Success:</em> Low error on genuinely new projects [cite: 12].</li>
+<li><em>Danger:</em> The model may fail when external conditions change [cite: 12].</li>
+<li><strong>Explanation:</strong> Describing the conditional association between variables [cite: 12].</li>
+<li><em>Success:</em> Stable, interpretable coefficients with measured uncertainty [cite: 12].</li>
+<li><em>Danger:</em> Omitted variables and correlated features can distort interpretation [cite: 12].</li>
+<li><strong>Causal Inference:</strong> Estimating the effect of a specific intervention [cite: 12].</li>
+<li><em>Success:</em> A credible estimate comparing observed outcomes to an unobserved counterfactual [cite: 12].</li>
+<li><em>Danger:</em> Mistaking a mere association for the effect of a direct action [cite: 12].</li>
+</ul>
+<h2 class="companion-detail-heading" data-section="1a-5" id="detail-1a-5">Detail 1A 5</h2>
+<h3 id="confounding-and-simpsons-paradox">Confounding and Simpson's Paradox</h3>
+<ul>
+<li>A <strong>confounder</strong> is a hidden common cause related to both the decision/exposure and the outcome [cite: 12].</li>
+<li>For example, rugged terrain might cause both the use of helicopter transport and higher cost overruns [cite: 12].</li>
+<li>Ignoring this confounder makes helicopters look like the cause of the expense, even if they actually saved money compared to manual labor [cite: 12].</li>
+<li><strong>Simpson's Paradox</strong> occurs when an aggregated dataset shows one trend (e.g., a downward slope), but the trend reverses within specific subgroups (e.g., an upward slope for both accessible and remote terrain groups) [cite: 12].</li>
+</ul>
+<hr />
+<h2 class="companion-detail-heading" data-section="1a-6" id="detail-1a-6">Detail 1A 6</h2>
+<h3 id="confounding-and-simpsons-paradox_1">Confounding and Simpson's Paradox</h3>
+<ul>
+<li>A <strong>confounder</strong> is a hidden common cause related to both the decision/exposure and the outcome [cite: 12].</li>
+<li>For example, rugged terrain might cause both the use of helicopter transport and higher cost overruns [cite: 12].</li>
+<li>Ignoring this confounder makes helicopters look like the cause of the expense, even if they actually saved money compared to manual labor [cite: 12].</li>
+<li><strong>Simpson's Paradox</strong> occurs when an aggregated dataset shows one trend (e.g., a downward slope), but the trend reverses within specific subgroups (e.g., an upward slope for both accessible and remote terrain groups) [cite: 12].</li>
+</ul>
+<hr />
+<h2 class="companion-detail-heading" data-section="1b-1" id="detail-1b-1">Detail 1B 1</h2>
+<h3 id="the-vocabulary-of-regression">The Vocabulary of Regression</h3>
+<ul>
+<li><strong>Observation:</strong> One unit represented by a single row in the data (e.g., one completed MHP project) [cite: 12].</li>
+<li><strong>Feature:</strong> An input measured <em>before</em> the target is known (e.g., planned capacity) [cite: 12].</li>
+<li><strong>Target:</strong> The outcome variable to be estimated (e.g., actual project cost) [cite: 12].</li>
+<li><strong>Parameter:</strong> A value learned from the data by the fitting algorithm (e.g., cost coefficient for road distance) [cite: 12].</li>
+<li><strong>Hyperparameter:</strong> A setting chosen by the analyst outside the fitting calculation (e.g., whether to include an intercept) [cite: 12].</li>
+</ul>
+<h2 class="companion-detail-heading" data-section="1b-2" id="detail-1b-2">Detail 1B 2</h2>
+<h3 id="mathematical-array-shapes">Mathematical Array Shapes</h3>
+<ul>
+<li>$X \in \mathbb{R}^{n  imes p}$: A real-valued design matrix with $n$ rows (projects) and $p$ feature columns [cite: 12].</li>
+<li>$y \in \mathbb{R}^{n}$: A real-valued target vector with $n$ entries [cite: 12].</li>
+<li>$\beta \in \mathbb{R}^{p}$: A parameter vector with one entry per feature [cite: 12].</li>
+</ul>
+<p><strong>Shape Validation in Code:</strong><br />
+NumPy strictly distinguishes between shapes [cite: 12].<br />
+* <code>(3,)</code> is a 1D vector [cite: 12].<br />
+* <code>(3, 1)</code> is a 2D column matrix [cite: 12].<br />
+* <code>(1, 3)</code> is a 2D row matrix [cite: 12].</p>
+<h2 class="companion-detail-heading" data-section="1b-3" id="detail-1b-3">Detail 1B 3</h2>
+<h3 id="mathematical-array-shapes_1">Mathematical Array Shapes</h3>
+<ul>
+<li>$X \in \mathbb{R}^{n  imes p}$: A real-valued design matrix with $n$ rows (projects) and $p$ feature columns [cite: 12].</li>
+<li>$y \in \mathbb{R}^{n}$: A real-valued target vector with $n$ entries [cite: 12].</li>
+<li>$\beta \in \mathbb{R}^{p}$: A parameter vector with one entry per feature [cite: 12].</li>
+</ul>
+<p><strong>Shape Validation in Code:</strong><br />
+NumPy strictly distinguishes between shapes [cite: 12].<br />
+* <code>(3,)</code> is a 1D vector [cite: 12].<br />
+* <code>(3, 1)</code> is a 2D column matrix [cite: 12].<br />
+* <code>(1, 3)</code> is a 2D row matrix [cite: 12].</p>
+<h2 class="companion-detail-heading" data-section="1b-4" id="detail-1b-4">Detail 1B 4</h2>
+<h3 id="mathematical-array-shapes_2">Mathematical Array Shapes</h3>
+<ul>
+<li>$X \in \mathbb{R}^{n  imes p}$: A real-valued design matrix with $n$ rows (projects) and $p$ feature columns [cite: 12].</li>
+<li>$y \in \mathbb{R}^{n}$: A real-valued target vector with $n$ entries [cite: 12].</li>
+<li>$\beta \in \mathbb{R}^{p}$: A parameter vector with one entry per feature [cite: 12].</li>
+</ul>
+<p><strong>Shape Validation in Code:</strong><br />
+NumPy strictly distinguishes between shapes [cite: 12].<br />
+* <code>(3,)</code> is a 1D vector [cite: 12].<br />
+* <code>(3, 1)</code> is a 2D column matrix [cite: 12].<br />
+* <code>(1, 3)</code> is a 2D row matrix [cite: 12].</p>
+<h2 class="companion-detail-heading" data-section="1b-8" id="detail-1b-8">Detail 1B 8</h2>
+<h3 id="target-leakage">Target Leakage</h3>
+<ul>
+<li>Including a feature recorded <em>after</em> the outcome is known (e.g., "number of contract amendments" to predict final cost) is called <strong>target leakage</strong> [cite: 12].</li>
+<li>This creates a deceptively accurate model that cannot be used for early-stage prediction [cite: 12].</li>
+</ul>
+<hr />
+<h2 class="companion-detail-heading" data-section="1c-1" id="detail-1c-1">Detail 1C 1</h2>
+<h3 id="the-linear-equation">The Linear Equation</h3>
+<p>For a single project $i$ with a single feature, the linear model is [cite: 12]:<br />
+$$\hat{y}_i = \beta_0 + \beta_1x_i$$<br />
+* $\beta_0$ is the <strong>intercept</strong>: the model's predicted target when $x_i = 0$ [cite: 12].<br />
+* $\beta_1$ is the <strong>slope</strong>: the predicted change in $y$ associated with a one-unit increase in $x$ [cite: 12].</p>
+<h2 class="companion-detail-heading" data-section="1c-2" id="detail-1c-2">Detail 1C 2</h2>
+<h3 id="the-linear-equation_1">The Linear Equation</h3>
+<p>For a single project $i$ with a single feature, the linear model is [cite: 12]:<br />
+$$\hat{y}_i = \beta_0 + \beta_1x_i$$<br />
+* $\beta_0$ is the <strong>intercept</strong>: the model's predicted target when $x_i = 0$ [cite: 12].<br />
+* $\beta_1$ is the <strong>slope</strong>: the predicted change in $y$ associated with a one-unit increase in $x$ [cite: 12].</p>
+<h2 class="companion-detail-heading" data-section="1c-3" id="detail-1c-3">Detail 1C 3</h2>
+<h3 id="why-we-add-a-column-of-ones">Why We Add a Column of Ones</h3>
+<ul>
+<li>To compute predictions using matrix multiplication ($\hat{y} = X\beta$), we prepend a column of $1$s to the design matrix $X$ [cite: 12].</li>
+<li>When multiplying $X\beta$, the parameter $\beta_0$ is multiplied by $1$ and added to every project's prediction, effectively creating an affine transformation (translation + scaling) [cite: 12].</li>
+<li>Without this column of ones, the model is forced through the origin ($\hat{y} = 0$ when $x = 0$), which may not fit the observed baseline [cite: 12].</li>
+</ul>
+<h2 class="companion-detail-heading" data-section="1c-8" id="detail-1c-8">Detail 1C 8</h2>
+<h3 id="unit-scaling">Unit Scaling</h3>
+<ul>
+<li>Changing a feature's units changes its coefficient, not the final prediction [cite: 12].</li>
+<li>If cable length is measured in meters instead of kilometers ($x_{metres} = 1000 x_{km}$), the parameter scales inversely ($\beta_{metres} = \frac{\beta_{km}}{1000}$) [cite: 12].</li>
+<li>Therefore, comparing coefficient magnitudes across differently scaled features is misleading [cite: 12].</li>
+</ul>
+<hr />
+<h2 class="companion-detail-heading" data-section="1d-1" id="detail-1d-1">Detail 1D 1</h2>
+<h2 id="4-day-4-residuals-loss-and-ols-geometry">4. Day 4: Residuals, Loss, and OLS Geometry</h2>
+<h2 class="companion-detail-heading" data-section="1d-2" id="detail-1d-2">Detail 1D 2</h2>
+<h3 id="error-metrics">Error Metrics</h3>
+<ul>
+<li><strong>Sum of Squared Residuals (SSR):</strong> $SSR = \sum_{i=1}^{n} e_i^2 = e^T e$ [cite: 12].</li>
+<li><em>Why square?</em> It prevents positive and negative residuals from canceling out, heavily penalizes large outliers, and creates a smooth, differentiable surface [cite: 12].</li>
+<li><strong>Mean Squared Error (MSE):</strong> $\frac{1}{n} \sum e_i^2$ [cite: 12].</li>
+<li><strong>Root Mean Squared Error (RMSE):</strong> $\sqrt{MSE}$ (Interpretable in the original target units) [cite: 12].</li>
+<li><strong>Mean Absolute Error (MAE):</strong> $\frac{1}{n} \sum |e_i|$ (More robust to massive outliers than RMSE) [cite: 12].</li>
+</ul>
+<h2 class="companion-detail-heading" data-section="1d-3" id="detail-1d-3">Detail 1D 3</h2>
+<h3 id="error-metrics_1">Error Metrics</h3>
+<ul>
+<li><strong>Sum of Squared Residuals (SSR):</strong> $SSR = \sum_{i=1}^{n} e_i^2 = e^T e$ [cite: 12].</li>
+<li><em>Why square?</em> It prevents positive and negative residuals from canceling out, heavily penalizes large outliers, and creates a smooth, differentiable surface [cite: 12].</li>
+<li><strong>Mean Squared Error (MSE):</strong> $\frac{1}{n} \sum e_i^2$ [cite: 12].</li>
+<li><strong>Root Mean Squared Error (RMSE):</strong> $\sqrt{MSE}$ (Interpretable in the original target units) [cite: 12].</li>
+<li><strong>Mean Absolute Error (MAE):</strong> $\frac{1}{n} \sum |e_i|$ (More robust to massive outliers than RMSE) [cite: 12].</li>
+</ul>
+<h2 class="companion-detail-heading" data-section="1d-4" id="detail-1d-4">Detail 1D 4</h2>
+<h3 id="the-geometric-proof-of-ols">The Geometric Proof of OLS</h3>
+<ul>
+<li><strong>Goal:</strong> OLS seeks the prediction vector $\hat{y}$ (in the column space of $X$) that is closest to the observed target $y$ [cite: 12].</li>
+<li><strong>Orthogonality:</strong> The shortest distance from $y$ to the column space is a perpendicular drop. Therefore, the residual vector $e$ must be perpendicular to every column of $X$ [cite: 12].<br />
+  $$X^T e = 0$$</li>
+<li><strong>Pythagorean Theorem:</strong> For any other prediction $q$ in the column space, let the displacement be $d = \hat{y} - q$ [cite: 12].</li>
+<li>$y - q = e + d$ [cite: 12].</li>
+<li>Because $e$ is perpendicular to $d$ ($e^T d = 0$), expanding the squared length yields: $\lVert y - q <br />
+Vert_2^2 = \lVert e <br />
+Vert_2^2 + \lVert d <br />
+Vert_2^2$ [cite: 12].</li>
+<li>Since $\lVert d <br />
+Vert_2^2 \ge 0$, no alternative prediction $q$ can be closer to $y$ than $\hat{y}$ [cite: 12].</li>
+</ul>
+<hr />
+<h2 class="companion-detail-heading" data-section="1d-5" id="detail-1d-5">Detail 1D 5</h2>
+<h3 id="the-geometric-proof-of-ols_1">The Geometric Proof of OLS</h3>
+<ul>
+<li><strong>Goal:</strong> OLS seeks the prediction vector $\hat{y}$ (in the column space of $X$) that is closest to the observed target $y$ [cite: 12].</li>
+<li><strong>Orthogonality:</strong> The shortest distance from $y$ to the column space is a perpendicular drop. Therefore, the residual vector $e$ must be perpendicular to every column of $X$ [cite: 12].<br />
+  $$X^T e = 0$$</li>
+<li><strong>Pythagorean Theorem:</strong> For any other prediction $q$ in the column space, let the displacement be $d = \hat{y} - q$ [cite: 12].</li>
+<li>$y - q = e + d$ [cite: 12].</li>
+<li>Because $e$ is perpendicular to $d$ ($e^T d = 0$), expanding the squared length yields: $\lVert y - q <br />
+Vert_2^2 = \lVert e <br />
+Vert_2^2 + \lVert d <br />
+Vert_2^2$ [cite: 12].</li>
+<li>Since $\lVert d <br />
+Vert_2^2 \ge 0$, no alternative prediction $q$ can be closer to $y$ than $\hat{y}$ [cite: 12].</li>
+</ul>
+<hr />
+<h2 class="companion-detail-heading" data-section="1d-6" id="detail-1d-6">Detail 1D 6</h2>
+<h3 id="the-geometric-proof-of-ols_2">The Geometric Proof of OLS</h3>
+<ul>
+<li><strong>Goal:</strong> OLS seeks the prediction vector $\hat{y}$ (in the column space of $X$) that is closest to the observed target $y$ [cite: 12].</li>
+<li><strong>Orthogonality:</strong> The shortest distance from $y$ to the column space is a perpendicular drop. Therefore, the residual vector $e$ must be perpendicular to every column of $X$ [cite: 12].<br />
+  $$X^T e = 0$$</li>
+<li><strong>Pythagorean Theorem:</strong> For any other prediction $q$ in the column space, let the displacement be $d = \hat{y} - q$ [cite: 12].</li>
+<li>$y - q = e + d$ [cite: 12].</li>
+<li>Because $e$ is perpendicular to $d$ ($e^T d = 0$), expanding the squared length yields: $\lVert y - q <br />
+Vert_2^2 = \lVert e <br />
+Vert_2^2 + \lVert d <br />
+Vert_2^2$ [cite: 12].</li>
+<li>Since $\lVert d <br />
+Vert_2^2 \ge 0$, no alternative prediction $q$ can be closer to $y$ than $\hat{y}$ [cite: 12].</li>
+</ul>
+<hr />
+<h2 class="companion-detail-heading" data-section="1e-3" id="detail-1e-3">Detail 1E 3</h2>
+<h3 id="the-matrix-derivative">The Matrix Derivative</h3>
+<ul>
+<li>The objective function is $S(\beta) = (y - X\beta)^T(y - X\beta)$ [cite: 12].</li>
+<li>Expanded: $S(\beta) = y^Ty - 2\beta^TX^Ty + \beta^TX^TX\beta$ [cite: 12].</li>
+<li>Differentiating with respect to $\beta$ yields the gradient: <br />
+  $$<br />
+abla_\beta S(\beta) = -2X^Ty + 2X^TX\beta$$</li>
+<li>Setting the gradient to zero at the minimum yields the <strong>Normal Equations</strong> [cite: 12]:<br />
+  $$X^TX\hat{\beta} = X^Ty$$</li>
+</ul>
+<h2 class="companion-detail-heading" data-section="1e-4" id="detail-1e-4">Detail 1E 4</h2>
+<h3 id="the-matrix-derivative_1">The Matrix Derivative</h3>
+<ul>
+<li>The objective function is $S(\beta) = (y - X\beta)^T(y - X\beta)$ [cite: 12].</li>
+<li>Expanded: $S(\beta) = y^Ty - 2\beta^TX^Ty + \beta^TX^TX\beta$ [cite: 12].</li>
+<li>Differentiating with respect to $\beta$ yields the gradient: <br />
+  $$<br />
+abla_\beta S(\beta) = -2X^Ty + 2X^TX\beta$$</li>
+<li>Setting the gradient to zero at the minimum yields the <strong>Normal Equations</strong> [cite: 12]:<br />
+  $$X^TX\hat{\beta} = X^Ty$$</li>
+</ul>
+<h2 class="companion-detail-heading" data-section="1e-5" id="detail-1e-5">Detail 1E 5</h2>
+<h3 id="the-matrix-derivative_2">The Matrix Derivative</h3>
+<ul>
+<li>The objective function is $S(\beta) = (y - X\beta)^T(y - X\beta)$ [cite: 12].</li>
+<li>Expanded: $S(\beta) = y^Ty - 2\beta^TX^Ty + \beta^TX^TX\beta$ [cite: 12].</li>
+<li>Differentiating with respect to $\beta$ yields the gradient: <br />
+  $$<br />
+abla_\beta S(\beta) = -2X^Ty + 2X^TX\beta$$</li>
+<li>Setting the gradient to zero at the minimum yields the <strong>Normal Equations</strong> [cite: 12]:<br />
+  $$X^TX\hat{\beta} = X^Ty$$</li>
+</ul>
+<h2 class="companion-detail-heading" data-section="1e-6" id="detail-1e-6">Detail 1E 6</h2>
+<h3 id="fitting-in-code-lstsq-vs-inverse">Fitting in Code: <code>lstsq</code> vs. Inverse</h3>
+<ul>
+<li>Mathematically, if $X^TX$ is invertible, the solution is $\hat{\beta} = (X^TX)^{-1}X^Ty$ [cite: 12].</li>
+<li>Computationally, explicitly calculating the inverse squares the condition number and causes numerical instability [cite: 12].</li>
+<li><strong>Best Practice:</strong> Use <code>np.linalg.lstsq(X, y)</code> directly, which utilizes stable matrix decomposition rather than raw inversion [cite: 12].</li>
+</ul>
+<h2 class="companion-detail-heading" data-section="1e-7" id="detail-1e-7">Detail 1E 7</h2>
+<h3 id="perfect-multicollinearity-rank-failure">Perfect Multicollinearity (Rank Failure)</h3>
+<ul>
+<li>If one column in the design matrix is an exact multiple of another (e.g., having both cable length in km and cable length in meters), the matrix loses <strong>full column rank</strong> [cite: 12].</li>
+<li>The model cannot uniquely identify the parameters because infinitely many coefficient pairs yield the exact same combined prediction [cite: 12].</li>
+<li>The solution is to remove the redundant feature from the matrix [cite: 12].</li>
+</ul>
+<hr />
+<h2 class="companion-detail-heading" data-section="capstone" id="detail-capstone">Detail CAPSTONE</h2>
+<h2 id="6-master-rosetta-stone-formula-sheet">6. Master Rosetta Stone &amp; Formula Sheet</h2>
+<h2 class="companion-detail-heading" data-section="formula-sheet" id="detail-formula-sheet">Detail FORMULA SHEET</h2>
+<h2 id="6-master-rosetta-stone-formula-sheet_1">6. Master Rosetta Stone &amp; Formula Sheet</h2>
+<h2 class="companion-detail-heading" data-section="glossary" id="detail-glossary">Detail GLOSSARY</h2>
+<h2 id="6-master-rosetta-stone-formula-sheet_2">6. Master Rosetta Stone &amp; Formula Sheet</h2>
         </article>
     </div>
 

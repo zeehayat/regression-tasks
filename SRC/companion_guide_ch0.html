@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 0 Companion Guide: From Nothing to Ready</title>
+<style>
+    @page {
+        size: A4;
+        margin: 18mm 14mm 18mm 14mm;
+        background-color: #ffffff;
+        @bottom-right {
+            content: "Page " counter(page) " of " counter(pages);
+            font-size: 8pt;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #64748b;
+        }
+        @bottom-left {
+            content: "Chapter 0 Reference Companion | Beginners Guide";
+            font-size: 8pt;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #64748b;
+        }
+    }
+
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        color: #1e293b;
+        line-height: 1.6;
+        font-size: 9.5pt;
+    }
+
+    /* Header Banner */
+    .header-banner {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: #ffffff;
+        padding: 24px 22px;
+        border-radius: 8px;
+        margin-bottom: 22px;
+    }
+
+    .header-banner h1 {
+        margin: 0 0 6px 0;
+        font-size: 20pt;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        color: #f8fafc;
+    }
+
+    .header-banner .subtitle {
+        font-size: 11pt;
+        color: #94a3b8;
+        margin: 0 0 14px 0;
+        font-weight: 400;
+    }
+
+    .header-meta {
+        border-top: 1px solid #334155;
+        padding-top: 10px;
+        margin-top: 10px;
+        font-size: 8.5pt;
+        color: #cbd5e1;
+    }
+
+    .header-meta table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .header-meta td {
+        padding: 2px 0;
+    }
+
+    /* Headings */
+    h1, h2, h3, h4 {
+        color: #0f172a;
+        font-weight: 700;
+        page-break-after: avoid;
+    }
+
+    h2 {
+        font-size: 13pt;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 4px;
+        margin-top: 22px;
+        margin-bottom: 10px;
+    }
+
+    h3 {
+        font-size: 10.5pt;
+        color: #1e293b;
+        margin-top: 14px;
+        margin-bottom: 6px;
+        font-weight: 600;
+    }
+
+    p {
+        margin-top: 0;
+        margin-bottom: 10px;
+        text-align: justify;
+    }
+
+    /* Code Blocks */
+    pre, code {
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    }
+
+    code {
+        background-color: #f1f5f9;
+        color: #0f172a;
+        padding: 1px 5px;
+        border-radius: 3px;
+        font-size: 8.5pt;
+    }
+
+    pre {
+        background-color: #0f172a;
+        color: #f8fafc;
+        padding: 10px 12px;
+        border-radius: 6px;
+        font-size: 8pt;
+        line-height: 1.45;
+        overflow-x: auto;
+        margin-top: 6px;
+        margin-bottom: 12px;
+        page-break-inside: avoid;
+    }
+
+    pre code {
+        background-color: transparent;
+        color: inherit;
+        padding: 0;
+        border-radius: 0;
+    }
+
+    /* Math Styling */
+    .math {
+        font-family: "Times New Roman", Times, Georgia, serif;
+        font-style: italic;
+        font-weight: bold;
+        color: #1e3a8a;
+    }
+
+    .math-block {
+        text-align: center;
+        margin: 10px 0;
+        padding: 8px 12px;
+        background-color: #f1f5f9;
+        border-radius: 4px;
+        font-size: 10pt;
+        border-left: 3px solid #2563eb;
+    }
+
+    /* Callouts & Cards */
+    .callout {
+        background-color: #eff6ff;
+        border-left: 4px solid #2563eb;
+        padding: 10px 12px;
+        margin: 12px 0;
+        border-radius: 0 6px 6px 0;
+        font-size: 9pt;
+    }
+
+    .callout-title {
+        font-weight: bold;
+        color: #1e40af;
+        margin-bottom: 4px;
+    }
+
+    .warning-box {
+        background-color: #fef2f2;
+        border-left: 4px solid #dc2626;
+        padding: 10px 12px;
+        margin: 12px 0;
+        border-radius: 0 6px 6px 0;
+        font-size: 9pt;
+    }
+
+    .warning-title {
+        font-weight: bold;
+        color: #991b1b;
+        margin-bottom: 4px;
+    }
+
+    .tip-box {
+        background-color: #f0fdf4;
+        border-left: 4px solid #16a34a;
+        padding: 10px 12px;
+        margin: 12px 0;
+        border-radius: 0 6px 6px 0;
+        font-size: 9pt;
+    }
+
+    .tip-title {
+        font-weight: bold;
+        color: #166534;
+        margin-bottom: 4px;
+    }
+
+    /* Tables */
+    table.data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 12px 0;
+        font-size: 8.5pt;
+    }
+
+    table.data-table th {
+        background-color: #1e293b;
+        color: #ffffff;
+        text-align: left;
+        padding: 6px 8px;
+        font-weight: 600;
+    }
+
+    table.data-table td {
+        padding: 5px 8px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    table.data-table tr:nth-child(even) td {
+        background-color: #f8fafc;
+    }
+
+    /* Lists */
+    ul, ol {
+        margin-top: 0;
+        margin-bottom: 10px;
+        padding-left: 18px;
+    }
+
+    li {
+        margin-bottom: 4px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 2px 6px;
+        font-size: 7.5pt;
+        font-weight: bold;
+        color: #fff;
+        background-color: #2563eb;
+        border-radius: 4px;
+        text-transform: uppercase;
+        margin-bottom: 6px;
+    }
+</style>
+</head>
+<body>
+
+<div class="header-banner">
+    <span class="badge">First-Principles Reference Manual</span>
+    <h1>Chapter 0 Companion Guide: From Nothing to Ready</h1>
+    <div class="subtitle">A Beginner-Friendly Mathematical, Computational & Statistical Reference</div>
+    <div class="header-meta">
+        <table>
+            <tr>
+                <td><strong>Target Audience:</strong> Beginners in Data Science, Engineering & ML</td>
+                <td><strong>Prerequisites:</strong> High School Algebra & Basic Python</td>
+            </tr>
+            <tr>
+                <td><strong>Core Topics:</strong> Python Mechanics, Vectorized NumPy, Summation, Statistics, Calculus</td>
+                <td><strong>Case Study:</strong> MHP Cost Estimator Level 0</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<h2>1. Pedagogical Philosophy & Operational Contract</h2>
+<p>
+The primary objective of Chapter 0 is to eliminate all mathematical, computational, and statistical friction before encountering matrix regression, multivariate calculus, and statistical estimation in Chapter 1.
+</p>
+
+<div class="callout">
+    <div class="callout-title">The Five Rules of the Pedagogical Contract</div>
+    <ul>
+        <li><strong>One Central Idea Per Day:</strong> Structured, incremental progression over five foundational days without skipping steps.</li>
+        <li><strong>No Mathematical Hand-Waving:</strong> Every algebraic symbol, subscript, and operator is unpacked into concrete arithmetic and visible Python outputs.</li>
+        <li><strong>Code as Proof:</strong> Every mathematical formula or property is validated using clean Python code.</li>
+        <li><strong>Build, Break, Rebuild:</strong> Deliberate injection of synthetic bugs (shape mismatches, non-existent dictionary keys, zero-variance division) to build debugging reflexes.</li>
+        <li><strong>Type Everything:</strong> Muscle memory in writing Python syntax and NumPy indexing is mandatory for long-term mastery.</li>
+    </ul>
+</div>
+
+<h2>2. Day 0A — Python Foundations Refresher</h2>
+
+<h3>2.1 Variables and Functions: State vs. Behavior</h3>
+<p>
+A <strong>variable</strong> assigns a symbolic label to a memory location holding a specific value. A <strong>function</strong> encapsulates a reusable sequence of computations (a behavior) that accepts inputs, executes a contract, and explicitly returns an output.
+</p>
+
+<pre><code># Variable assignment: Storing a scalar value
+capacity_kw = 250.0
+
+# Function definition: Defining an operational contract
+def kw_to_mw(capacity_kw: float) -> float:
+    '''Convert electrical capacity from kilowatts (kW) to megawatts (MW).'''
+    return capacity_kw / 1000.0
+
+# Calling the function
+result_mw = kw_to_mw(capacity_kw)
+print(result_mw)  # Output: 0.25
+</code></pre>
+
+<h4>Line-by-Line Breakdown:</h4>
+<ul>
+    <li><code>def kw_to_mw(capacity_kw: float) -> float:</code> — <code>def</code> tells Python we are defining a new function. <code>capacity_kw</code> is the parameter. <code>: float</code> and <code>-> float</code> are type hints.</li>
+    <li><code>'''Convert electrical capacity...'''</code> — The <strong>docstring</strong>, accessible via <code>help(kw_to_mw)</code>.</li>
+    <li><code>return capacity_kw / 1000.0</code> — Explicitly returns the result. Omitting <code>return</code> defaults to returning <code>None</code>.</li>
+</ul>
+
+<h3>2.2 Loops and List Iteration</h3>
+<p>
+A <code>for</code> loop iterates over a sequential collection (such as a list), binding each element to a loop variable one step at a time.
+</p>
+
+<pre><code>capacities_kw = [100.0, 250.0, 500.0, 1800.0, 60.0]
+
+capacities_mw = []
+for c in capacities_kw:
+    capacities_mw.append(kw_to_mw(c))
+
+print(capacities_mw)  # Output: [0.1, 0.25, 0.5, 1.8, 0.06]
+</code></pre>
+
+<h3>2.3 List Comprehensions: Syntactic Unrolling</h3>
+<p>
+A <strong>list comprehension</strong> is a concise way to create lists. It performs the exact same operation as a standard <code>for</code> loop with <code>.append()</code>, but in a single line.
+</p>
+
+<pre><code># Syntax: [expression for item in iterable]
+capacities_mw = [kw_to_mw(c) for c in capacities_kw]
+</code></pre>
+
+<h3>2.4 Dictionaries: Label-Value Mapping</h3>
+<p>
+A <strong>dictionary</strong> (<code>dict</code>) stores data using key-value pairs, maintaining explicit labels for every value instead of relying on positional indices.
+</p>
+
+<pre><code>project = {
+    "site_id": "MHP-0042",
+    "cable_length_km": 15.0,
+    "planned_capacity_kw": 100.0,
+    "terrain_index": 3,
+}
+
+print(project["planned_capacity_kw"])  # Output: 100.0
+</code></pre>
+
+<h3>2.5 Object-Oriented Encapsulation: The <code>self</code> Keyword</h3>
+<p>
+A <strong>class</strong> is a blueprint that combines state (data attributes) and behavior (methods) into a single object.
+</p>
+
+<pre><code>class UnitConverter:
+    def __init__(self, factor: float):
+        self.factor = factor  # Store factor inside this specific instance
+
+    def convert(self, value: float) -> float:
+        return value * self.factor
+
+kw_to_mw_converter = UnitConverter(factor=0.001)
+print(kw_to_mw_converter.convert(250.0))  # Output: 0.25
+</code></pre>
+
+<div class="warning-box">
+    <div class="warning-title">The Standard List Multiplication Trap</div>
+    <p>
+        In standard Python, <code>[100.0, 250.0] * 2</code> produces <code>[100.0, 250.0, 100.0, 250.0]</code> (list repetition), NOT <code>[200.0, 500.0]</code>. Vectorized scaling requires <strong>NumPy arrays</strong>.
+    </p>
+</div>
+
+<h2>3. Day 0B — NumPy, Array Shapes, and Matrix Algebra</h2>
+
+<h3>3.1 Why NumPy? Contiguous Memory and Vectorization</h3>
+<p>
+Standard Python lists store pointers to scattered objects. A <strong>NumPy array</strong> (<code>np.ndarray</code>) stores numerical values in contiguous memory blocks, enabling vectorized CPU SIMD execution.
+</p>
+
+<pre><code>import numpy as np
+
+capacities_kw = np.array([100.0, 250.0, 500.0])
+capacities_watts = capacities_kw * 1000.0
+print(capacities_watts)  # [100000. 250000. 500000.]
+</code></pre>
+
+<h3>3.2 Array Dimensions and the <code>.shape</code> Attribute</h3>
+
+<pre><code>a = np.array([1.0, 2.0, 3.0])        # Shape: (3,)   -> 1D Vector
+b = np.array([[1.0, 2.0, 3.0]])      # Shape: (1, 3) -> 2D Row Matrix
+c = np.array([[1.0], [2.0], [3.0]])  # Shape: (3, 1) -> 2D Column Matrix
+</code></pre>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Array Syntax</th>
+            <th>.shape</th>
+            <th>Dimensions (.ndim)</th>
+            <th>Conceptual Meaning</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>np.array([1, 2, 3])</code></td>
+            <td><code>(3,)</code></td>
+            <td>1</td>
+            <td>Flat 1D Vector</td>
+        </tr>
+        <tr>
+            <td><code>np.array([[1, 2, 3]])</code></td>
+            <td><code>(1, 3)</code></td>
+            <td>2</td>
+            <td>2D Row Matrix (1 Row, 3 Cols)</td>
+        </tr>
+        <tr>
+            <td><code>np.array([[1], [2], [3]])</code></td>
+            <td><code>(3, 1)</code></td>
+            <td>2</td>
+            <td>2D Column Matrix (3 Rows, 1 Col)</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>3.3 Matrix Slicing & Indexing</h3>
+<pre><code>X = np.array([
+    [15.0, 100.0, 3.0],   # Row 0
+    [30.0, 250.0, 4.0],   # Row 1
+    [5.0,  500.0, 1.0],   # Row 2
+])
+
+print(X[0, :])   # First row: array([15., 100., 3.])
+print(X[:, 0])   # First column: array([15., 30., 5.])
+print(X[:2, :2]) # First 2 rows, first 2 columns
+</code></pre>
+
+<h3>3.4 Broadcasting Mechanics</h3>
+<p>
+NumPy compares array dimensions <strong>from right to left</strong>. Dimensions match if they are equal or if one of them is <code>1</code>.
+</p>
+
+<pre><code>X = np.array([
+    [15.0, 100.0],
+    [30.0, 250.0],
+    [5.0,  500.0]
+])  # Shape: (3, 2)
+
+means = np.array([16.7, 283.3])  # Shape: (2,)
+
+centred = X - means  # Subtracts column means from every row
+</code></pre>
+
+<h3>3.5 The Dot Product at Three Abstraction Levels</h3>
+<div class="math-block">
+    <span class="math">a &middot; b = &Sigma;<sub>i=1</sub><sup>p</sup> a<sub>i</sub> b<sub>i</sub> = a<sub>1</sub> b<sub>1</sub> + a<sub>2</sub> b<sub>2</sub> + ... + a<sub>p</sub> b<sub>p</sub></span>
+</div>
+
+<pre><code>features = np.array([15.0, 100.0])
+weights  = np.array([0.05, 0.002])
+
+# Level 1: Scalar Expansion
+manual = features[0] * weights[0] + features[1] * weights[1]
+
+# Level 2: Python Loop
+loop_total = sum(f * w for f, w in zip(features, weights))
+
+# Level 3: Vectorized NumPy Operator (@)
+dot_total = features @ weights
+
+print(manual, loop_total, dot_total)  # Output: 0.95 0.95 0.95
+</code></pre>
+
+<h2>4. Day 0C — Algebra, Summation Notation, and Loss Functions</h2>
+
+<h3>4.1 Equations of Lines & Linear Models</h3>
+<div class="math-block">
+    <span class="math">y = m x + c &nbsp;&nbsp;&implies;&nbsp;&nbsp; &ycirc; = &beta;<sub>0</sub> + &beta;<sub>1</sub> x<sub>1</sub> + &beta;<sub>2</sub> x<sub>2</sub> + ... + &beta;<sub>p</sub> x<sub>p</sub></span>
+</div>
+
+<h3>4.2 Summation Notation (&Sigma;) and SSR</h3>
+<div class="math-block">
+    <span class="math">SSR = &Sigma;<sub>i=1</sub><sup>n</sup> (y<sub>i</sub> - &ycirc;<sub>i</sub>)<sup>2</sup></span>
+</div>
+
+<pre><code>y_actual    = np.array([12.0, 30.0, 8.0])
+y_predicted = np.array([11.2, 31.5, 9.0])
+
+# Explicit Loop
+ssr_loop = sum((a - p) ** 2 for a, p in zip(y_actual, y_predicted))
+
+# Vectorized NumPy One-Liner
+ssr_numpy = np.sum((y_actual - y_predicted) ** 2)
+
+print(ssr_loop, ssr_numpy)  # Output: 2.89 2.89
+</code></pre>
+
+<h3>4.3 Critical Distinction: Sum of Squares vs. Square of Sum</h3>
+<div class="math-block">
+    <span class="math">&Sigma; x<sub>i</sub><sup>2</sup>  &ne;  (&Sigma; x<sub>i</sub>)<sup>2</sup></span>
+</div>
+<p>
+For <code>x = [2.0, -3.0, 5.0]</code>:
+<br>&bull; Sum of Squares: <span class="math">2<sup>2</sup> + (-3)<sup>2</sup> + 5<sup>2</sup> = 4 + 9 + 25 = 38.0</span>
+<br>&bull; Square of Sum: <span class="math">(2 - 3 + 5)<sup>2</sup> = 4<sup>2</sup> = 16.0</span>
+</p>
+
+<h2>5. Day 0D — First-Principles Statistics</h2>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Statistic</th>
+            <th>Formula</th>
+            <th>Python Implementation</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Mean (<span class="math">x&bar;</span>)</strong></td>
+            <td><span class="math">1/n &Sigma; x<sub>i</sub></span></td>
+            <td><code>np.sum(x) / len(x)</code> or <code>x.mean()</code></td>
+        </tr>
+        <tr>
+            <td><strong>Variance (<span class="math">&sigma;<sup>2</sup></span>)</strong></td>
+            <td><span class="math">1/n &Sigma; (x<sub>i</sub> - x&bar;)<sup>2</sup></span></td>
+            <td><code>np.sum((x - x.mean())**2) / len(x)</code></td>
+        </tr>
+        <tr>
+            <td><strong>Std Dev (<span class="math">&sigma;</span>)</strong></td>
+            <td><span class="math">&radic;(&sigma;<sup>2</sup>)</span></td>
+            <td><code>np.sqrt(x.var())</code> or <code>x.std()</code></td>
+        </tr>
+        <tr>
+            <td><strong>Covariance</strong></td>
+            <td><span class="math">1/n &Sigma; (x<sub>i</sub> - x&bar;)(y<sub>i</sub> - y&bar;)</span></td>
+            <td><code>np.sum((x - x.mean())*(y - y.mean())) / len(x)</code></td>
+        </tr>
+        <tr>
+            <td><strong>Correlation (<span class="math">r</span>)</strong></td>
+            <td><span class="math">cov(x,y) / (&sigma;<sub>x</sub> &sigma;<sub>y</sub>)</span></td>
+            <td><code>cov_xy / (x.std() * y.std())</code></td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="tip-box">
+    <div class="tip-title">Proof that Raw Deviations Sum to Zero</div>
+    <div class="math-block">
+        <span class="math">&Sigma; (x<sub>i</sub> - x&bar;) = &Sigma; x<sub>i</sub> - &Sigma; x&bar; = n x&bar; - n x&bar; = 0</span>
+    </div>
+    <p>Because raw positive and negative deviations always sum to zero, we must square deviations before taking their average.</p>
+</div>
+
+<h2>6. Day 0E — Calculus, Gradients & Gradient Descent</h2>
+
+<h3>6.1 Limit Definition of Derivative</h3>
+<div class="math-block">
+    <span class="math">f'(x) = lim<sub>h &rarr; 0</sub> [f(x + h) - f(x)] / h</span>
+</div>
+
+<pre><code>def f(x): return x ** 2
+def numerical_slope(f, x, h=1e-6):
+    return (f(x + h) - f(x)) / h
+
+print(numerical_slope(f, 3.0))  # Output: ~6.000001
+</code></pre>
+
+<h3>6.2 Partial Derivatives & Gradient Descent</h3>
+<div class="math-block">
+    <span class="math">&nabla; E(m, c) = [ &part;E/&part;m, &part;E/&part;c ]<sup>T</sup> &nbsp;&nbsp;&implies;&nbsp;&nbsp; &theta;<sub>new</sub> = &theta;<sub>old</sub> - &alpha; &nabla; E(&theta;)</span>
+</div>
+
+<pre><code>def error(m, c): return (10.0 - (m * 2.0 + c)) ** 2
+def partial_m(m, c, h=1e-6): return (error(m + h, c) - error(m, c)) / h
+def partial_c(m, c, h=1e-6): return (error(m, c + h) - error(m, c)) / h
+
+m, c, lr = 0.0, 0.0, 0.01
+for _ in range(50):
+    m -= lr * partial_m(m, c)
+    c -= lr * partial_c(m, c)
+
+print(f"Optimized: m={m:.3f}, c={c:.3f}")
+</code></pre>
+
+<h2>7. Level 0 Capstone Complete Reference Solution</h2>
+
+<pre><code>import numpy as np
+
+projects = np.array([
+    [12.0, 15.0],
+    [30.0, 25.0],
+    [5.0,  8.0],
+    [40.0, 45.0],
+    [15.0, 12.0]
+])
+costs = np.array([12.0, 30.0, 8.0, 45.0, 15.0])
+n_obs = len(projects)
+
+# 1. Shape Inspection
+print("1. Shape:", projects.shape)  # (5, 2)
+
+# 2. Custom Loop Means & Stds
+means, stds = [], []
+for j in range(projects.shape[1]):
+    col = projects[:, j]
+    m = sum(col) / n_obs
+    s = np.sqrt(sum((x - m)**2 for x in col) / n_obs)
+    means.append(m)
+    stds.append(s)
+
+print("2. Means match:", np.allclose(means, projects.mean(axis=0)))
+print("   Stds match :", np.allclose(stds, projects.std(axis=0)))
+
+# 3. Pearson Correlation
+x = projects[:, 0]
+cov_xy = sum((x[i] - means[0]) * (costs[i] - costs.mean()) for i in range(n_obs)) / n_obs
+r_manual = cov_xy / (stds[0] * costs.std())
+print(f"3. Correlation r = {r_manual:.4f}")
+
+# 4. Matrix Prediction
+beta = np.array([0.5, 0.2])
+pred_loop = np.array([sum(projects[i] * beta) for i in range(n_obs)])
+pred_matrix = projects @ beta
+print("4. Predictions match:", np.allclose(pred_loop, pred_matrix))
+
+# 5. SSE
+def sse(y_true, y_pred): return np.sum((y_true - y_pred) ** 2)
+current_sse = sse(costs, pred_matrix)
+print(f"5. Current SSE: {current_sse:.4f}")
+
+# 6. Finite Difference Derivative
+h = 1e-5
+beta_nudged = beta.copy()
+beta_nudged[0] += h
+nudged_sse = sse(costs, projects @ beta_nudged)
+d_sse_dbeta0 = (nudged_sse - current_sse) / h
+print(f"6. d(SSE)/d(beta_0) = {d_sse_dbeta0:.4f}")
+
+# 7. Intentional Shape Error
+try:
+    bad_beta = np.array([0.5, 0.2, 0.9])
+    invalid_pred = projects @ bad_beta
+except ValueError as e:
+    print("7. Caught expected error:", e)
+</code></pre>
+
+<h2>8. Rosetta Stone & Traceback Cheat Sheet</h2>
+
+<table class="data-table">
+    <thead>
+        <tr>
+            <th>Concept</th>
+            <th>Math Notation</th>
+            <th>Python Loop</th>
+            <th>NumPy Expression</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Dot Product</td>
+            <td><span class="math">&Sigma; a<sub>i</sub> b<sub>i</sub></span></td>
+            <td><code>sum(a[i]*b[i] for i in range(p))</code></td>
+            <td><code>a @ b</code></td>
+        </tr>
+        <tr>
+            <td>Mean</td>
+            <td><span class="math">x&bar; = 1/n &Sigma; x<sub>i</sub></span></td>
+            <td><code>sum(x) / len(x)</code></td>
+            <td><code>x.mean()</code></td>
+        </tr>
+        <tr>
+            <td>Mean Centering</td>
+            <td><span class="math">x<sub>i</sub> - x&bar;</span></td>
+            <td><code>[v - mx for v in x]</code></td>
+            <td><code>x - x.mean()</code></td>
+        </tr>
+        <tr>
+            <td>SSR</td>
+            <td><span class="math">&Sigma; (y<sub>i</sub> - &ycirc;<sub>i</sub>)<sup>2</sup></span></td>
+            <td><code>sum((y[i]-yp[i])**2 for i in range(n))</code></td>
+            <td><code>np.sum((y - yp)**2)</code></td>
+        </tr>
+        <tr>
+            <td>Variance</td>
+            <td><span class="math">1/n &Sigma; (x<sub>i</sub> - x&bar;)<sup>2</sup></span></td>
+            <td><code>sum((x[i]-mx)**2 for i in range(n))/n</code></td>
+            <td><code>x.var()</code></td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

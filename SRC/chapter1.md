@@ -122,6 +122,7 @@ That sentence describes the mechanism but not the purpose. The same regression e
 The distinction is not philosophical decoration. It changes the data you need, the assumptions you must defend, and the way the result may be used.
 
 ## 1.2 Prediction: estimating an unknown outcome
+<button class="read-details-btn" data-section="1a-2">✦ Read Details</button>
 
 For prediction, we want a function $f$ that converts the observed features of project $i$ into an estimate:
 
@@ -142,6 +143,7 @@ A predictor may be useful even when a feature is not causal. For instance, the n
 Prediction must be evaluated on data not used to fit the model. A rule that memorises completed projects can appear perfect and still fail on the next valley.
 
 ## 1.3 Explanation: describing conditional association
+<button class="read-details-btn" data-section="1a-3">✦ Read Details</button>
 
 For explanation, attention shifts from the prediction alone to the model’s parameters. Consider:
 
@@ -156,6 +158,7 @@ The phrase in bold is essential. In multiple regression, a coefficient is condit
 An explanatory analysis also needs uncertainty. A coefficient of 0.8 million PKR per kilometre is not equally persuasive if it comes from 6 projects or 600 projects. Standard errors and confidence intervals arrive later; Week 1 first establishes what is being estimated.
 
 ## 1.4 Causation: estimating an intervention
+<button class="read-details-btn" data-section="1a-4">✦ Read Details</button>
 
 A causal question asks about a change we could make:
 
@@ -172,6 +175,7 @@ We can observe only one of those outcomes for a given project. The unobserved al
 Ordinary regression can be part of a causal design, but the regression output is causal only when the research design and assumptions make it so. Random assignment, natural experiments, careful matching, panel designs, and defensible causal graphs can help. A high $R^2$ cannot turn an associational design into a causal one.
 
 ## 1.5 Confounding: the hidden common cause
+<button class="read-details-btn" data-section="1a-5">✦ Read Details</button>
 
 Suppose projects in rugged terrain are more likely to require helicopter transport, and rugged terrain independently increases excavation delays and labour costs.
 
@@ -189,6 +193,7 @@ If terrain is ignored, projects using helicopters will look more expensive even 
 A variable is a confounder when it is causally related to both the exposure or decision and the outcome, and is not itself a consequence of that exposure. The precise definition depends on the full causal structure; “control for everything available” is not a safe rule because controlling for mediators or colliders can introduce new bias.
 
 ## 1.6 Simpson’s paradox: when aggregation reverses a pattern
+<button class="read-details-btn" data-section="1a-6">✦ Read Details</button>
 
 Imagine eight projects, four in relatively accessible terrain and four in remote mountain terrain. Within each terrain group, longer cable raises cost. Yet remote projects happen to use shorter cable and start from a much higher cost base.
 
@@ -392,6 +397,7 @@ A defensible completion is: “the design and assumptions make the comparison eq
 > **Today’s central idea:** Data have roles, shapes, units, and provenance. Most early modeling errors are representation errors before they are statistical errors.
 
 ## 2.1 The vocabulary of one project table
+<button class="read-details-btn" data-section="1b-1">✦ Read Details</button>
 
 Suppose the rows of a table are completed MHP projects.
 
@@ -412,6 +418,7 @@ Suppose the rows of a table are completed MHP projects.
 **Parameter** and **hyperparameter** should not be explained through a loose physical analogy. The reliable distinction is procedural: the fitting algorithm learns parameters from the training data; the analyst sets hyperparameters or design choices.
 
 ## 2.2 Scalars, vectors, matrices, and tensors
+<button class="read-details-btn" data-section="1b-2">✦ Read Details</button>
 
 A **scalar** is one number. A **vector** is an ordered one-dimensional array. A **matrix** is a two-dimensional rectangular array. A **tensor** is the general term for an array with any number of axes.
 
@@ -467,6 +474,7 @@ $$
 Then $X$ has shape $3\times2$ and $y$ has length 3. Row 2 means that the second project is 25 km from an all-weather road, has planned capacity 150 kW, and actually cost 44 million PKR.
 
 ## 2.3 Shape is part of meaning
+<button class="read-details-btn" data-section="1b-3">✦ Read Details</button>
 
 These arrays contain the same three numbers but do not have the same shape:
 
@@ -486,6 +494,7 @@ In NumPy, `(3,)` is a one-dimensional vector. `(3, 1)` is a two-dimensional colu
 Our application will accept a one-dimensional target vector `y.shape == (n,)`. It will convert a single feature from `(n,)` to a two-dimensional matrix `(n, 1)`.
 
 ## 2.4 The design matrix and row alignment
+<button class="read-details-btn" data-section="1b-4">✦ Read Details</button>
 
 The feature matrix used in a regression is called the **design matrix**. “Design” here refers to the arrangement of predictor columns; it does not mean the projects were experimentally assigned.
 
@@ -596,6 +605,7 @@ assert np.allclose(y_hat_loop, y_hat_matrix)
 The `@` operator is compact, but it is not magic. The loops show exactly what it does.
 
 ## 2.8 Build: robust input validation
+<button class="read-details-btn" data-section="1b-8">✦ Read Details</button>
 
 Add these methods inside `MHPCostEstimator`:
 
@@ -673,6 +683,7 @@ for X_bad, y_bad in bad_cases:
 Then construct the more dangerous failure: create `X` and `y` with the same number of rows but place `y` in reverse project order. Validation cannot detect the mistake unless project identifiers are checked during data assembly.
 
 ## 2.10 Day 2 practice
+<button class="read-details-btn" data-section="1b-1">✦ Read Details</button>
 
 1. State the shape of a dataset containing 70 projects and 5 features.
 2. After adding an intercept, what are the shapes of $X$ and $\beta$?
@@ -691,6 +702,7 @@ Given `X.shape == (40, 6)` and `beta.shape == (5,)`, you should immediately say:
 > **Today’s central idea:** A linear model forms each prediction by adding weighted features. Matrix notation performs that same operation for every project at once.
 
 ## 3.1 From a verbal rule to a linear equation
+<button class="read-details-btn" data-section="1c-1">✦ Read Details</button>
 
 Suppose a deliberately simple budget rule uses only cable length:
 
@@ -716,6 +728,7 @@ If $y$ is million PKR and $x$ is km, the slope’s units are million PKR per km.
 The intercept may be necessary for good predictions without having a useful physical interpretation. “A project with zero cable” may lie outside the scope of the data. An intercept is an algebraic baseline, not automatically the price of a literal zero-feature project.
 
 ## 3.2 Multiple features are still a weighted sum
+<button class="read-details-btn" data-section="1c-2">✦ Read Details</button>
 
 With road distance, capacity, and terrain difficulty:
 
@@ -736,6 +749,7 @@ $$
 The apparent simplicity of the matrix equation is earned by carefully constructing $X$.
 
 ## 3.3 Why a column of ones creates an intercept
+<button class="read-details-btn" data-section="1c-3">✦ Read Details</button>
 
 For three projects and one measured feature, start with:
 
@@ -901,6 +915,7 @@ print("Intercept and slope:", beta)
 Notice that the code uses `np.linalg.solve(A, b)` for $A\beta=b$, not `np.linalg.inv(A) @ b`. The inverse formula is useful for derivation, but directly solving the linear system is clearer and usually more numerically stable.
 
 ## 3.8 Scaling and units
+<button class="read-details-btn" data-section="1c-8">✦ Read Details</button>
 
 Suppose cable is changed from kilometres to metres:
 
@@ -970,6 +985,7 @@ Add these methods inside `MHPCostEstimator`:
 The context resolves a genuine shape ambiguity: during fitting, a one-dimensional `X` means one feature observed across many projects; during prediction, a one-dimensional `X` means one new project containing several features. Passing an explicit two-dimensional array remains safest.
 
 ## 3.10 Break it deliberately: broadcasting is not matrix multiplication
+<button class="read-details-btn" data-section="1c-1">✦ Read Details</button>
 
 ```python
 X = np.array([
@@ -991,6 +1007,7 @@ print(elementwise)
 Also try multiplying the same `X` by `np.array([5.0, 0.6])`. Matrix multiplication should fail because the number of parameters does not equal the number of columns.
 
 ## 3.11 Day 3 practice
+<button class="read-details-btn" data-section="1c-1">✦ Read Details</button>
 
 1. Expand one row of $X\beta$ for an intercept plus three features.
 2. Explain why a column of twos would not estimate the conventional intercept. What would its coefficient represent?
@@ -1014,6 +1031,7 @@ They are two views of the same operation.
 > **Today’s central idea:** OLS chooses the attainable prediction vector closest to the observed target vector in squared Euclidean distance.
 
 ## 4.1 A prediction becomes testable through its residual
+<button class="read-details-btn" data-section="1d-1">✦ Read Details</button>
 
 For project $i$:
 
@@ -1055,6 +1073,7 @@ print(e_vector)  # [ 1.5 -1.   1.5]
 Residuals are observed after fitting. They are not the same as the unobservable population errors in a statistical model, though introductory discussions often use the words loosely.
 
 ## 4.2 Why OLS squares residuals
+<button class="read-details-btn" data-section="1d-2">✦ Read Details</button>
 
 The **sum of squared residuals** (SSR), also called the residual sum of squares (RSS) or sum of squared errors (SSE), is:
 
@@ -1096,6 +1115,7 @@ assert np.isclose(ssr_sum, ssr_dot)
 ```
 
 ## 4.3 SSR, MSE, RMSE, and MAE answer different reporting needs
+<button class="read-details-btn" data-section="1d-3">✦ Read Details</button>
 
 $$
 MSE = \frac{1}{n}\sum_{i=1}^{n}e_i^2,
@@ -1145,6 +1165,7 @@ print(metrics)
 For training data, some texts divide SSR by $n-p-1$ to estimate error variance. That is a different quantity from predictive MSE. Always name the denominator.
 
 ## 4.4 OLS as a constrained search in observation space
+<button class="read-details-btn" data-section="1d-4">✦ Read Details</button>
 
 The target vector $y$ contains one coordinate for each project, so it lives in $\mathbb{R}^n$. Every possible $X\beta$ is a weighted combination of the columns of $X$. The set of all such combinations is the **column space** of $X$.
 
@@ -1161,6 +1182,7 @@ flowchart TD
 **Figure 4.1 — Projection view of OLS.** The diagram is conceptual: $\hat{y}$ and $q$ lie in the column space, while the residual from $\hat{y}$ to $y$ is perpendicular to it.
 
 ## 4.5 The Pythagorean proof of minimum distance
+<button class="read-details-btn" data-section="1d-5">✦ Read Details</button>
 
 Let:
 
@@ -1196,6 +1218,7 @@ $$
 The last step holds because a squared length cannot be negative. Therefore no other attainable prediction $q$ can be closer to $y$ than $\hat{y}$.
 
 ## 4.6 Why orthogonality produces the normal equations
+<button class="read-details-btn" data-section="1d-6">✦ Read Details</button>
 
 Every column of $X$ lies in the column space. If the residual is perpendicular to the whole column space, it is perpendicular to every column:
 
@@ -1341,6 +1364,7 @@ Add these methods to `MHPCostEstimator`:
 The method does not call these “test metrics” because the caller may supply training, validation, or test data. The application should not pretend to know the provenance of an array.
 
 ## 4.10 Break it deliberately: one outlier
+<button class="read-details-btn" data-section="1d-1">✦ Read Details</button>
 
 ```python
 y = np.array([20.0, 22.0, 24.0, 26.0])
@@ -1359,6 +1383,7 @@ print("Contaminated:", contaminated)
 Compare the change in RMSE and MAE. Do not conclude merely that MAE is “better.” First determine whether 260 is a genuine extreme project, a different type of project, or an error. Robustness cannot replace data investigation.
 
 ## 4.11 Day 4 practice
+<button class="read-details-btn" data-section="1d-1">✦ Read Details</button>
 
 1. Calculate the residuals and SSR for $y=[3,5]$ and $\hat{y}=[4,3]$.
 2. Prove in code that RMSE has the same units as the target under a change from million PKR to PKR.
@@ -1565,6 +1590,7 @@ assert np.isclose(partial_b1, 0.0, atol=1e-10)
 ```
 
 ## 5.3 The matrix objective
+<button class="read-details-btn" data-section="1e-3">✦ Read Details</button>
 
 For multiple features, collect all parameters in $\beta$ and write:
 
@@ -1596,6 +1622,7 @@ S(\beta)
 $$
 
 ## 5.4 The matrix derivative without hand-waving
+<button class="read-details-btn" data-section="1e-4">✦ Read Details</button>
 
 Three derivative facts are needed.
 
@@ -1708,6 +1735,7 @@ assert np.allclose(analytic_gradient, finite_difference_gradient, rtol=1e-6)
 The finite-difference calculation is an independent numerical audit of the matrix derivative. A poor choice of $h$ can introduce approximation or floating-point error; its role is verification, not fitting.
 
 ## 5.5 Isolating $\hat{\beta}$ and stating the missing condition
+<button class="read-details-btn" data-section="1e-5">✦ Read Details</button>
 
 If $X^TX$ is invertible:
 
@@ -1747,6 +1775,7 @@ assert left >= -1e-12  # tolerance for floating-point roundoff
 ```
 
 ## 5.6 Why we do not compute the inverse in application code
+<button class="read-details-btn" data-section="1e-6">✦ Read Details</button>
 
 The derivation uses $(X^TX)^{-1}$ to express the mathematical solution. A program should usually solve:
 
@@ -1789,6 +1818,7 @@ Keep three layers separate:
 A perfect answer at the first layer does not settle the next two.
 
 ## 5.7 Rank failure: two columns carrying the same information
+<button class="read-details-btn" data-section="1e-7">✦ Read Details</button>
 
 Suppose the design matrix includes both cable length in kilometres and the same cable length in metres:
 
@@ -2154,6 +2184,7 @@ flowchart LR
 ---
 
 # Week 1 Capstone — Build It, Break It, Rebuild It
+<button class="read-details-btn" data-section="capstone">✦ Read Details</button>
 
 ## Capstone brief
 
@@ -2201,6 +2232,7 @@ Correct the failures. Add a held-out set of projects. Compare training and held-
 ---
 
 # Formula Sheet
+<button class="read-details-btn" data-section="formula-sheet">✦ Read Details</button>
 
 | Concept | Equation | Meaning |
 |---|---|---|
@@ -2220,6 +2252,7 @@ Correct the failures. Add a held-out set of projects. Compare training and held-
 ---
 
 # Glossary
+<button class="read-details-btn" data-section="glossary">✦ Read Details</button>
 
 **Association:** A numerical relationship in observed data; it need not be causal.
 
@@ -2337,3 +2370,511 @@ flowchart TD
 ```
 
 You now know enough to be dangerous if you report coefficients carelessly—and enough to begin becoming useful if you preserve the chain from question to judgement.
+<style>
+.read-details-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(34, 211, 238, 0.08);
+    border: 1px solid rgba(34, 211, 238, 0.3);
+    color: #22d3ee;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 0.5rem 0 1rem 0;
+    font-family: inherit;
+}
+.read-details-btn:hover {
+    background: rgba(34, 211, 238, 0.2);
+    border-color: #22d3ee;
+    box-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
+}
+.comp-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(11, 15, 25, 0.85);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    align-items: center;
+    justify-content: center;
+}
+.comp-modal.open {
+    display: flex;
+    opacity: 1;
+}
+.comp-modal-content {
+    background-color: #151d30;
+    border: 1px solid #223150;
+    border-radius: 0.75rem;
+    width: 90%;
+    max-width: 48rem;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.6);
+    position: relative;
+    padding: 2.5rem 2rem 2rem 2rem;
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.comp-modal.open .comp-modal-content {
+    transform: scale(1);
+}
+.comp-modal-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 1.25rem;
+    color: #cbd5e1;
+    font-size: 2rem;
+    font-weight: 300;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    line-height: 1;
+}
+.comp-modal-close:hover {
+    color: #fff;
+}
+#comp-modal-body {
+    color: #cbd5e1;
+    font-size: 0.95rem;
+}
+#comp-modal-body h1, #comp-modal-body h2 {
+    color: #fff;
+    border-bottom: 1px solid #223150;
+    padding-bottom: 0.5rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+#comp-modal-body h3, #comp-modal-body h4 {
+    color: #fff;
+    margin-top: 1.75rem;
+    margin-bottom: 0.75rem;
+}
+#comp-modal-body p {
+    margin-bottom: 1rem;
+}
+#comp-modal-body code {
+    color: #67e8f9;
+    background: #0b0f19;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+}
+#comp-modal-body pre {
+    background: #0b0f19;
+    border: 1px solid #223150;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 1rem 0;
+    overflow-x: auto;
+}
+#comp-modal-body pre code {
+    background: transparent;
+    padding: 0;
+    color: #e2e8f0;
+}
+#comp-modal-body table {
+    width: 100%;
+    font-size: 0.875rem;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+}
+#comp-modal-body th, #comp-modal-body td {
+    border: 1px solid #223150;
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+}
+#comp-modal-body th {
+    background: #151d30;
+    color: #fff;
+    font-weight: 600;
+}
+.companion-details-area, .companion-details-area ~ * {
+    display: none;
+}
+</style>
+
+<div id="companion-modal" class="comp-modal">
+    <div class="comp-modal-content">
+        <span class="comp-modal-close">&times;</span>
+        <div id="comp-modal-body"></div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var store = {};
+    var area = document.querySelector('.companion-details-area');
+    if (!area) return;
+    
+    var currentSection = null;
+    var currentElements = [];
+    var sibling = area.nextElementSibling;
+    
+    while (sibling) {
+        if (sibling.classList.contains('companion-detail-heading')) {
+            if (currentSection) {
+                store[currentSection] = currentElements;
+            }
+            currentSection = sibling.getAttribute('data-section');
+            currentElements = [];
+        } else {
+            if (currentSection) {
+                currentElements.push(sibling.cloneNode(true));
+            }
+        }
+        sibling = sibling.nextElementSibling;
+    }
+    if (currentSection) {
+        store[currentSection] = currentElements;
+    }
+    
+    // Wire up buttons
+    document.querySelectorAll('.read-details-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var section = this.getAttribute('data-section');
+            var elements = store[section];
+            var modalBody = document.getElementById('comp-modal-body');
+            modalBody.innerHTML = '';
+            
+            if (elements && elements.length > 0) {
+                elements.forEach(function(el) {
+                    el.style.display = '';
+                    modalBody.appendChild(el);
+                });
+                
+                // Trigger MathJax typesetting if loaded
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    window.MathJax.typesetPromise([modalBody]);
+                }
+            } else {
+                modalBody.innerHTML = '<p>No details found for this section.</p>';
+            }
+            
+            var modal = document.getElementById('companion-modal');
+            modal.style.display = 'flex';
+            // Reflow
+            modal.offsetHeight;
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        });
+    });
+    
+    // Close modal function
+    function closeModal() {
+        var modal = document.getElementById('companion-modal');
+        modal.classList.remove('open');
+        setTimeout(function() {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }, 300);
+    }
+    
+    document.querySelector('.comp-modal-close').addEventListener('click', closeModal);
+    window.addEventListener('click', function(event) {
+        var modal = document.getElementById('companion-modal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    });
+});
+</script>
+
+
+---
+
+# Companion Details Area {: .companion-details-area}
+## Detail 1A 2 {: .companion-detail-heading data-section="1a-2"}
+### The Three Jobs of Regression
+* **Prediction:** Estimating an unknown outcome based on observed features [cite: 12].
+  * *Success:* Low error on genuinely new projects [cite: 12].
+  * *Danger:* The model may fail when external conditions change [cite: 12].
+* **Explanation:** Describing the conditional association between variables [cite: 12].
+  * *Success:* Stable, interpretable coefficients with measured uncertainty [cite: 12].
+  * *Danger:* Omitted variables and correlated features can distort interpretation [cite: 12].
+* **Causal Inference:** Estimating the effect of a specific intervention [cite: 12].
+  * *Success:* A credible estimate comparing observed outcomes to an unobserved counterfactual [cite: 12].
+  * *Danger:* Mistaking a mere association for the effect of a direct action [cite: 12].
+
+
+## Detail 1A 3 {: .companion-detail-heading data-section="1a-3"}
+### The Three Jobs of Regression
+* **Prediction:** Estimating an unknown outcome based on observed features [cite: 12].
+  * *Success:* Low error on genuinely new projects [cite: 12].
+  * *Danger:* The model may fail when external conditions change [cite: 12].
+* **Explanation:** Describing the conditional association between variables [cite: 12].
+  * *Success:* Stable, interpretable coefficients with measured uncertainty [cite: 12].
+  * *Danger:* Omitted variables and correlated features can distort interpretation [cite: 12].
+* **Causal Inference:** Estimating the effect of a specific intervention [cite: 12].
+  * *Success:* A credible estimate comparing observed outcomes to an unobserved counterfactual [cite: 12].
+  * *Danger:* Mistaking a mere association for the effect of a direct action [cite: 12].
+
+
+## Detail 1A 4 {: .companion-detail-heading data-section="1a-4"}
+### The Three Jobs of Regression
+* **Prediction:** Estimating an unknown outcome based on observed features [cite: 12].
+  * *Success:* Low error on genuinely new projects [cite: 12].
+  * *Danger:* The model may fail when external conditions change [cite: 12].
+* **Explanation:** Describing the conditional association between variables [cite: 12].
+  * *Success:* Stable, interpretable coefficients with measured uncertainty [cite: 12].
+  * *Danger:* Omitted variables and correlated features can distort interpretation [cite: 12].
+* **Causal Inference:** Estimating the effect of a specific intervention [cite: 12].
+  * *Success:* A credible estimate comparing observed outcomes to an unobserved counterfactual [cite: 12].
+  * *Danger:* Mistaking a mere association for the effect of a direct action [cite: 12].
+
+
+## Detail 1A 5 {: .companion-detail-heading data-section="1a-5"}
+### Confounding and Simpson's Paradox
+* A **confounder** is a hidden common cause related to both the decision/exposure and the outcome [cite: 12].
+* For example, rugged terrain might cause both the use of helicopter transport and higher cost overruns [cite: 12].
+* Ignoring this confounder makes helicopters look like the cause of the expense, even if they actually saved money compared to manual labor [cite: 12].
+* **Simpson's Paradox** occurs when an aggregated dataset shows one trend (e.g., a downward slope), but the trend reverses within specific subgroups (e.g., an upward slope for both accessible and remote terrain groups) [cite: 12].
+
+---
+
+
+## Detail 1A 6 {: .companion-detail-heading data-section="1a-6"}
+### Confounding and Simpson's Paradox
+* A **confounder** is a hidden common cause related to both the decision/exposure and the outcome [cite: 12].
+* For example, rugged terrain might cause both the use of helicopter transport and higher cost overruns [cite: 12].
+* Ignoring this confounder makes helicopters look like the cause of the expense, even if they actually saved money compared to manual labor [cite: 12].
+* **Simpson's Paradox** occurs when an aggregated dataset shows one trend (e.g., a downward slope), but the trend reverses within specific subgroups (e.g., an upward slope for both accessible and remote terrain groups) [cite: 12].
+
+---
+
+
+## Detail 1B 1 {: .companion-detail-heading data-section="1b-1"}
+### The Vocabulary of Regression
+* **Observation:** One unit represented by a single row in the data (e.g., one completed MHP project) [cite: 12].
+* **Feature:** An input measured *before* the target is known (e.g., planned capacity) [cite: 12].
+* **Target:** The outcome variable to be estimated (e.g., actual project cost) [cite: 12].
+* **Parameter:** A value learned from the data by the fitting algorithm (e.g., cost coefficient for road distance) [cite: 12].
+* **Hyperparameter:** A setting chosen by the analyst outside the fitting calculation (e.g., whether to include an intercept) [cite: 12].
+
+
+## Detail 1B 2 {: .companion-detail-heading data-section="1b-2"}
+### Mathematical Array Shapes
+* $X \in \mathbb{R}^{n 	imes p}$: A real-valued design matrix with $n$ rows (projects) and $p$ feature columns [cite: 12].
+* $y \in \mathbb{R}^{n}$: A real-valued target vector with $n$ entries [cite: 12].
+* $\beta \in \mathbb{R}^{p}$: A parameter vector with one entry per feature [cite: 12].
+
+**Shape Validation in Code:**
+NumPy strictly distinguishes between shapes [cite: 12].
+* `(3,)` is a 1D vector [cite: 12].
+* `(3, 1)` is a 2D column matrix [cite: 12].
+* `(1, 3)` is a 2D row matrix [cite: 12].
+
+
+## Detail 1B 3 {: .companion-detail-heading data-section="1b-3"}
+### Mathematical Array Shapes
+* $X \in \mathbb{R}^{n 	imes p}$: A real-valued design matrix with $n$ rows (projects) and $p$ feature columns [cite: 12].
+* $y \in \mathbb{R}^{n}$: A real-valued target vector with $n$ entries [cite: 12].
+* $\beta \in \mathbb{R}^{p}$: A parameter vector with one entry per feature [cite: 12].
+
+**Shape Validation in Code:**
+NumPy strictly distinguishes between shapes [cite: 12].
+* `(3,)` is a 1D vector [cite: 12].
+* `(3, 1)` is a 2D column matrix [cite: 12].
+* `(1, 3)` is a 2D row matrix [cite: 12].
+
+
+## Detail 1B 4 {: .companion-detail-heading data-section="1b-4"}
+### Mathematical Array Shapes
+* $X \in \mathbb{R}^{n 	imes p}$: A real-valued design matrix with $n$ rows (projects) and $p$ feature columns [cite: 12].
+* $y \in \mathbb{R}^{n}$: A real-valued target vector with $n$ entries [cite: 12].
+* $\beta \in \mathbb{R}^{p}$: A parameter vector with one entry per feature [cite: 12].
+
+**Shape Validation in Code:**
+NumPy strictly distinguishes between shapes [cite: 12].
+* `(3,)` is a 1D vector [cite: 12].
+* `(3, 1)` is a 2D column matrix [cite: 12].
+* `(1, 3)` is a 2D row matrix [cite: 12].
+
+
+## Detail 1B 8 {: .companion-detail-heading data-section="1b-8"}
+### Target Leakage
+* Including a feature recorded *after* the outcome is known (e.g., "number of contract amendments" to predict final cost) is called **target leakage** [cite: 12].
+* This creates a deceptively accurate model that cannot be used for early-stage prediction [cite: 12].
+
+---
+
+
+## Detail 1C 1 {: .companion-detail-heading data-section="1c-1"}
+### The Linear Equation
+For a single project $i$ with a single feature, the linear model is [cite: 12]:
+$$\hat{y}_i = \beta_0 + \beta_1x_i$$
+* $\beta_0$ is the **intercept**: the model's predicted target when $x_i = 0$ [cite: 12].
+* $\beta_1$ is the **slope**: the predicted change in $y$ associated with a one-unit increase in $x$ [cite: 12].
+
+
+## Detail 1C 2 {: .companion-detail-heading data-section="1c-2"}
+### The Linear Equation
+For a single project $i$ with a single feature, the linear model is [cite: 12]:
+$$\hat{y}_i = \beta_0 + \beta_1x_i$$
+* $\beta_0$ is the **intercept**: the model's predicted target when $x_i = 0$ [cite: 12].
+* $\beta_1$ is the **slope**: the predicted change in $y$ associated with a one-unit increase in $x$ [cite: 12].
+
+
+## Detail 1C 3 {: .companion-detail-heading data-section="1c-3"}
+### Why We Add a Column of Ones
+* To compute predictions using matrix multiplication ($\hat{y} = X\beta$), we prepend a column of $1$s to the design matrix $X$ [cite: 12].
+* When multiplying $X\beta$, the parameter $\beta_0$ is multiplied by $1$ and added to every project's prediction, effectively creating an affine transformation (translation + scaling) [cite: 12].
+* Without this column of ones, the model is forced through the origin ($\hat{y} = 0$ when $x = 0$), which may not fit the observed baseline [cite: 12].
+
+
+## Detail 1C 8 {: .companion-detail-heading data-section="1c-8"}
+### Unit Scaling
+* Changing a feature's units changes its coefficient, not the final prediction [cite: 12].
+* If cable length is measured in meters instead of kilometers ($x_{metres} = 1000 x_{km}$), the parameter scales inversely ($\beta_{metres} = \frac{\beta_{km}}{1000}$) [cite: 12].
+* Therefore, comparing coefficient magnitudes across differently scaled features is misleading [cite: 12].
+
+---
+
+
+## Detail 1D 1 {: .companion-detail-heading data-section="1d-1"}
+## 4. Day 4: Residuals, Loss, and OLS Geometry
+
+
+## Detail 1D 2 {: .companion-detail-heading data-section="1d-2"}
+### Error Metrics
+* **Sum of Squared Residuals (SSR):** $SSR = \sum_{i=1}^{n} e_i^2 = e^T e$ [cite: 12].
+  * *Why square?* It prevents positive and negative residuals from canceling out, heavily penalizes large outliers, and creates a smooth, differentiable surface [cite: 12].
+* **Mean Squared Error (MSE):** $\frac{1}{n} \sum e_i^2$ [cite: 12].
+* **Root Mean Squared Error (RMSE):** $\sqrt{MSE}$ (Interpretable in the original target units) [cite: 12].
+* **Mean Absolute Error (MAE):** $\frac{1}{n} \sum |e_i|$ (More robust to massive outliers than RMSE) [cite: 12].
+
+
+## Detail 1D 3 {: .companion-detail-heading data-section="1d-3"}
+### Error Metrics
+* **Sum of Squared Residuals (SSR):** $SSR = \sum_{i=1}^{n} e_i^2 = e^T e$ [cite: 12].
+  * *Why square?* It prevents positive and negative residuals from canceling out, heavily penalizes large outliers, and creates a smooth, differentiable surface [cite: 12].
+* **Mean Squared Error (MSE):** $\frac{1}{n} \sum e_i^2$ [cite: 12].
+* **Root Mean Squared Error (RMSE):** $\sqrt{MSE}$ (Interpretable in the original target units) [cite: 12].
+* **Mean Absolute Error (MAE):** $\frac{1}{n} \sum |e_i|$ (More robust to massive outliers than RMSE) [cite: 12].
+
+
+## Detail 1D 4 {: .companion-detail-heading data-section="1d-4"}
+### The Geometric Proof of OLS
+* **Goal:** OLS seeks the prediction vector $\hat{y}$ (in the column space of $X$) that is closest to the observed target $y$ [cite: 12].
+* **Orthogonality:** The shortest distance from $y$ to the column space is a perpendicular drop. Therefore, the residual vector $e$ must be perpendicular to every column of $X$ [cite: 12].
+  $$X^T e = 0$$
+* **Pythagorean Theorem:** For any other prediction $q$ in the column space, let the displacement be $d = \hat{y} - q$ [cite: 12].
+  * $y - q = e + d$ [cite: 12].
+  * Because $e$ is perpendicular to $d$ ($e^T d = 0$), expanding the squared length yields: $\lVert y - q 
+Vert_2^2 = \lVert e 
+Vert_2^2 + \lVert d 
+Vert_2^2$ [cite: 12].
+  * Since $\lVert d 
+Vert_2^2 \ge 0$, no alternative prediction $q$ can be closer to $y$ than $\hat{y}$ [cite: 12].
+
+---
+
+
+## Detail 1D 5 {: .companion-detail-heading data-section="1d-5"}
+### The Geometric Proof of OLS
+* **Goal:** OLS seeks the prediction vector $\hat{y}$ (in the column space of $X$) that is closest to the observed target $y$ [cite: 12].
+* **Orthogonality:** The shortest distance from $y$ to the column space is a perpendicular drop. Therefore, the residual vector $e$ must be perpendicular to every column of $X$ [cite: 12].
+  $$X^T e = 0$$
+* **Pythagorean Theorem:** For any other prediction $q$ in the column space, let the displacement be $d = \hat{y} - q$ [cite: 12].
+  * $y - q = e + d$ [cite: 12].
+  * Because $e$ is perpendicular to $d$ ($e^T d = 0$), expanding the squared length yields: $\lVert y - q 
+Vert_2^2 = \lVert e 
+Vert_2^2 + \lVert d 
+Vert_2^2$ [cite: 12].
+  * Since $\lVert d 
+Vert_2^2 \ge 0$, no alternative prediction $q$ can be closer to $y$ than $\hat{y}$ [cite: 12].
+
+---
+
+
+## Detail 1D 6 {: .companion-detail-heading data-section="1d-6"}
+### The Geometric Proof of OLS
+* **Goal:** OLS seeks the prediction vector $\hat{y}$ (in the column space of $X$) that is closest to the observed target $y$ [cite: 12].
+* **Orthogonality:** The shortest distance from $y$ to the column space is a perpendicular drop. Therefore, the residual vector $e$ must be perpendicular to every column of $X$ [cite: 12].
+  $$X^T e = 0$$
+* **Pythagorean Theorem:** For any other prediction $q$ in the column space, let the displacement be $d = \hat{y} - q$ [cite: 12].
+  * $y - q = e + d$ [cite: 12].
+  * Because $e$ is perpendicular to $d$ ($e^T d = 0$), expanding the squared length yields: $\lVert y - q 
+Vert_2^2 = \lVert e 
+Vert_2^2 + \lVert d 
+Vert_2^2$ [cite: 12].
+  * Since $\lVert d 
+Vert_2^2 \ge 0$, no alternative prediction $q$ can be closer to $y$ than $\hat{y}$ [cite: 12].
+
+---
+
+
+## Detail 1E 3 {: .companion-detail-heading data-section="1e-3"}
+### The Matrix Derivative
+* The objective function is $S(\beta) = (y - X\beta)^T(y - X\beta)$ [cite: 12].
+* Expanded: $S(\beta) = y^Ty - 2\beta^TX^Ty + \beta^TX^TX\beta$ [cite: 12].
+* Differentiating with respect to $\beta$ yields the gradient: 
+  $$
+abla_\beta S(\beta) = -2X^Ty + 2X^TX\beta$$
+* Setting the gradient to zero at the minimum yields the **Normal Equations** [cite: 12]:
+  $$X^TX\hat{\beta} = X^Ty$$
+
+
+## Detail 1E 4 {: .companion-detail-heading data-section="1e-4"}
+### The Matrix Derivative
+* The objective function is $S(\beta) = (y - X\beta)^T(y - X\beta)$ [cite: 12].
+* Expanded: $S(\beta) = y^Ty - 2\beta^TX^Ty + \beta^TX^TX\beta$ [cite: 12].
+* Differentiating with respect to $\beta$ yields the gradient: 
+  $$
+abla_\beta S(\beta) = -2X^Ty + 2X^TX\beta$$
+* Setting the gradient to zero at the minimum yields the **Normal Equations** [cite: 12]:
+  $$X^TX\hat{\beta} = X^Ty$$
+
+
+## Detail 1E 5 {: .companion-detail-heading data-section="1e-5"}
+### The Matrix Derivative
+* The objective function is $S(\beta) = (y - X\beta)^T(y - X\beta)$ [cite: 12].
+* Expanded: $S(\beta) = y^Ty - 2\beta^TX^Ty + \beta^TX^TX\beta$ [cite: 12].
+* Differentiating with respect to $\beta$ yields the gradient: 
+  $$
+abla_\beta S(\beta) = -2X^Ty + 2X^TX\beta$$
+* Setting the gradient to zero at the minimum yields the **Normal Equations** [cite: 12]:
+  $$X^TX\hat{\beta} = X^Ty$$
+
+
+## Detail 1E 6 {: .companion-detail-heading data-section="1e-6"}
+### Fitting in Code: `lstsq` vs. Inverse
+* Mathematically, if $X^TX$ is invertible, the solution is $\hat{\beta} = (X^TX)^{-1}X^Ty$ [cite: 12].
+* Computationally, explicitly calculating the inverse squares the condition number and causes numerical instability [cite: 12].
+* **Best Practice:** Use `np.linalg.lstsq(X, y)` directly, which utilizes stable matrix decomposition rather than raw inversion [cite: 12].
+
+
+## Detail 1E 7 {: .companion-detail-heading data-section="1e-7"}
+### Perfect Multicollinearity (Rank Failure)
+* If one column in the design matrix is an exact multiple of another (e.g., having both cable length in km and cable length in meters), the matrix loses **full column rank** [cite: 12].
+* The model cannot uniquely identify the parameters because infinitely many coefficient pairs yield the exact same combined prediction [cite: 12].
+* The solution is to remove the redundant feature from the matrix [cite: 12].
+
+---
+
+
+## Detail CAPSTONE {: .companion-detail-heading data-section="capstone"}
+## 6. Master Rosetta Stone & Formula Sheet
+
+
+## Detail FORMULA SHEET {: .companion-detail-heading data-section="formula-sheet"}
+## 6. Master Rosetta Stone & Formula Sheet
+
+
+## Detail GLOSSARY {: .companion-detail-heading data-section="glossary"}
+## 6. Master Rosetta Stone & Formula Sheet
+

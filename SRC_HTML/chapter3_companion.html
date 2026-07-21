@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 3 Companion Guide: From a Trustworthy Baseline to a Research-Grade Regression Study</title>
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --panel: #151d30;
+            --border: #223150;
+            --text: #f1f5f9;
+            --text-muted: #cbd5e1;
+            --accent: #22d3ee;
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; overflow-x: hidden; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        code, pre, .mono {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        }
+        #content {
+            width: 100%;
+            max-width: 56rem;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+        nav.chapters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        nav.chapters a {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+        nav.chapters a:hover { border-color: rgba(34, 211, 238, 0.4); }
+        nav.chapters a.active {
+            color: var(--accent);
+            background: rgba(21, 29, 48, 0.8);
+            border-color: rgba(34, 211, 238, 0.4);
+        }
+        .markdown-body h1 { font-size: 2.25rem; font-weight: 800; color: #fff; margin: 0.5rem 0 1.5rem; }
+        .markdown-body h2 { font-size: 1.5rem; font-weight: 700; color: #fff; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin: 2.5rem 0 1rem; }
+        .markdown-body h3 { font-size: 1.25rem; font-weight: 600; color: #fff; margin: 2rem 0 0.75rem; }
+        .markdown-body h4 { font-size: 1.1rem; font-weight: 600; color: #fff; margin: 1.5rem 0 0.5rem; }
+        .markdown-body p { color: var(--text-muted); margin: 0 0 1rem; }
+        .markdown-body ul, .markdown-body ol { color: var(--text-muted); margin: 0 0 1rem; padding-left: 1.5rem; }
+        .markdown-body li { margin-bottom: 0.25rem; }
+        .markdown-body blockquote {
+            border-left: 4px solid var(--accent);
+            padding: 0.5rem 1rem;
+            font-style: italic;
+            background: rgba(34, 211, 238, 0.05);
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 1rem 0;
+        }
+        .markdown-body a { color: var(--accent); text-decoration: underline; }
+        .markdown-body a:hover { color: #67e8f9; }
+        .markdown-body :not(pre) > code {
+            font-size: 0.875rem;
+            color: #67e8f9;
+            background: var(--panel);
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+        }
+        .markdown-body pre {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+        .markdown-body pre code {
+            background: transparent;
+            padding: 0;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+        }
+        .markdown-body table { width: 100%; font-size: 0.875rem; border-collapse: collapse; margin: 1.5rem 0; }
+        .markdown-body th, .markdown-body td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: left; }
+        .markdown-body th { background: var(--panel); color: #fff; font-weight: 600; }
+        .markdown-body td { color: var(--text-muted); }
+        .markdown-body hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+        /* Mermaid diagram panel: readable offline as labeled source; mermaid.js
+           (if vendored) replaces the <pre> contents with a rendered <svg>. */
+        .diagram-panel {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+        .diagram-panel__label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: rgba(34, 211, 238, 0.08);
+            padding: 0.4rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .diagram-panel .mermaid {
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+        }
+        .diagram-panel pre.mermaid-source {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+            padding: 1rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+        }
+
+        .platform-shell {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            width: min(25rem, calc(100vw - 2rem));
+            max-height: calc(100vh - 2rem);
+            display: flex;
+            flex-direction: column;
+            background: rgba(12, 18, 30, 0.96);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            z-index: 50;
+        }
+        .platform-shell.collapsed { width: auto; }
+        .platform-shell.collapsed .platform-body { display: none; }
+        .platform-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.9);
+        }
+        .platform-title { font-size: 0.85rem; font-weight: 700; color: #fff; }
+        .platform-section { font-size: 0.72rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .platform-body { overflow-y: auto; padding: 0.85rem; }
+        .platform-group { border-top: 1px solid var(--border); padding-top: 0.85rem; margin-top: 0.85rem; }
+        .platform-group:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+        .platform-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+        .platform-label { display: block; margin-bottom: 0.35rem; font-size: 0.72rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.04em; }
+        .platform-button {
+            border: 1px solid rgba(34, 211, 238, 0.45);
+            background: rgba(34, 211, 238, 0.08);
+            color: var(--accent);
+            border-radius: 0.35rem;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.78rem;
+            font-weight: 650;
+            cursor: pointer;
+        }
+        .platform-button:hover:not(:disabled) { background: rgba(34, 211, 238, 0.14); }
+        .platform-button:disabled {
+            cursor: not-allowed;
+            color: #94a3b8;
+            border-color: #334155;
+            background: rgba(148, 163, 184, 0.08);
+        }
+        .platform-textarea {
+            width: 100%;
+            min-height: 4.5rem;
+            resize: vertical;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.55rem;
+            font: inherit;
+            font-size: 0.85rem;
+        }
+        .platform-message {
+            margin-top: 0.45rem;
+            color: #fbbf24;
+            font-size: 0.78rem;
+        }
+        .platform-output {
+            margin-top: 0.55rem;
+            white-space: pre-wrap;
+            color: var(--text-muted);
+            font-size: 0.84rem;
+        }
+        .platform-history {
+            max-height: 12rem;
+            overflow: auto;
+            display: grid;
+            gap: 0.45rem;
+            margin: 0.55rem 0;
+        }
+        .platform-turn {
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            padding: 0.45rem 0.55rem;
+            background: rgba(21, 29, 48, 0.55);
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+        .platform-turn strong { color: #fff; }
+        .paper-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 0.8rem;
+            margin: 1rem 0;
+            background: rgba(21, 29, 48, 0.55);
+        }
+        .paper-card h4 { margin: 0 0 0.3rem; font-size: 1rem; }
+        .paper-card p { margin: 0.35rem 0; font-size: 0.9rem; }
+        .paper-card .paper-meta { color: #93c5fd; font-size: 0.82rem; }
+        .paper-card .paper-status { color: #fbbf24; font-size: 0.8rem; }
+        .settings-grid {
+            display: grid;
+            gap: 1rem;
+        }
+        .settings-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: rgba(21, 29, 48, 0.55);
+            padding: 1rem;
+        }
+        .settings-card h2 {
+            margin-top: 0;
+        }
+        .settings-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .settings-field {
+            display: grid;
+            gap: 0.25rem;
+        }
+        .settings-field.full {
+            grid-column: 1 / -1;
+        }
+        .settings-field label,
+        .settings-check {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .settings-field input,
+        .settings-field select {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.5rem;
+            font: inherit;
+        }
+        .settings-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .settings-status {
+            color: #fbbf24;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        .settings-file-viewer {
+            margin-top: 1rem;
+            display: grid;
+            gap: 1rem;
+        }
+        .settings-file-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: rgba(21, 29, 48, 0.55);
+            padding: 1rem;
+        }
+        .settings-file-card h2 {
+            margin: 0 0 0.35rem;
+        }
+        .settings-file-card pre {
+            max-height: 26rem;
+            overflow: auto;
+            margin: 0.75rem 0 0;
+        }
+        .settings-file-meta {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .notes-list {
+            display: grid;
+            gap: 0.35rem;
+            margin-top: 0.55rem;
+        }
+        .note-link {
+            display: block;
+            width: 100%;
+            text-align: left;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: rgba(21, 29, 48, 0.5);
+            color: var(--accent);
+            padding: 0.45rem 0.55rem;
+            cursor: pointer;
+            font: inherit;
+        }
+        .note-link:hover { border-color: rgba(34, 211, 238, 0.5); }
+        .note-link small {
+            display: block;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.68);
+            z-index: 100;
+        }
+        .modal-backdrop.open { display: flex; }
+        .note-modal {
+            width: min(58rem, 100%);
+            max-height: min(46rem, calc(100vh - 2rem));
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: #0b0f19;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
+            overflow: hidden;
+        }
+        .note-modal-header,
+        .note-modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.9);
+        }
+        .note-modal-footer {
+            border-top: 1px solid var(--border);
+            border-bottom: 0;
+        }
+        .note-title-input {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.55rem;
+            font: inherit;
+            font-weight: 700;
+        }
+        .note-toolbar,
+        .note-modal .ql-toolbar.ql-snow {
+            border: 0;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.45);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-picker,
+        .note-modal .ql-toolbar.ql-snow button {
+            color: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-stroke {
+            stroke: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-fill {
+            fill: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-picker-options {
+            background: #0b0f19;
+            border-color: var(--border);
+        }
+        .note-modal .ql-container.ql-snow {
+            border: 0;
+            font: inherit;
+        }
+        .note-editor {
+            min-height: 18rem;
+            flex: 1 1 auto;
+            overflow: auto;
+            color: var(--text);
+            background: #080c14;
+            outline: none;
+        }
+        .note-editor .ql-editor,
+        .note-editor[contenteditable="true"] {
+            min-height: 18rem;
+            color: var(--text);
+            font-size: 1rem;
+            line-height: 1.6;
+            padding: 1rem;
+        }
+        .note-editor .ql-editor.ql-blank::before {
+            color: #64748b;
+            font-style: normal;
+        }
+        .note-editor:empty::before {
+            content: attr(data-placeholder);
+            color: #64748b;
+        }
+        .note-attachments {
+            border-top: 1px solid var(--border);
+            background: rgba(8, 12, 20, 0.95);
+            padding: 0.75rem;
+            max-height: 11rem;
+            overflow: auto;
+        }
+        .attachment-input {
+            max-width: 22rem;
+            color: var(--text-muted);
+            font: inherit;
+        }
+        .attachment-list {
+            display: grid;
+            gap: 0.5rem;
+            margin-top: 0.65rem;
+        }
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: rgba(21, 29, 48, 0.45);
+            padding: 0.5rem;
+        }
+        .attachment-preview {
+            width: 3.5rem;
+            height: 3.5rem;
+            flex: 0 0 3.5rem;
+            display: grid;
+            place-items: center;
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text-muted);
+            overflow: hidden;
+            font-size: 0.78rem;
+        }
+        .attachment-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .attachment-meta {
+            min-width: 0;
+        }
+        .attachment-meta a {
+            display: block;
+            color: var(--accent);
+            overflow-wrap: anywhere;
+        }
+        .attachment-meta small {
+            color: var(--text-muted);
+        }
+        @media (min-width: 72.01rem) {
+            body { padding-right: 27rem; }
+        }
+        @media (max-width: 72rem) {
+            .platform-shell { position: static; width: auto; max-height: none; margin: 0 1rem 1rem; }
+            .platform-shell.collapsed .platform-body { display: none; }
+        }
+
+    </style>
+</head>
+<body>
+    <div id="content">
+
+    <nav class="chapters" style="margin-bottom: 1rem; padding-bottom: 1rem;">
+        <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.05em; width: 100%; margin-bottom: 0.5rem; display: block;">Book Chapters</span>
+                    <a href="chapter0.html" class="">Ch. 0</a>
+            <a href="level_0_orientation.html" class="">Level 0 Orientation</a>
+            <a href="chapter1.html" class="">Ch. 1</a>
+            <a href="chapter2.html" class="">Ch. 2</a>
+            <a href="chapter3.html" class="">Ch. 3</a>
+            <a href="chapter4.html" class="">Ch. 4</a>
+            <a href="chapter4_5_interlude.html" class="">Ch. 4.5 Interlude</a>
+            <a href="chapter5.html" class="">Ch. 5</a>
+            <a href="chapter6.html" class="">Ch. 6</a>
+            <a href="settings.html" class="">Settings</a>
+    </nav>
+    <nav class="chapters" style="margin-bottom: 2.5rem; padding-bottom: 1.5rem;">
+        <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.05em; width: 100%; margin-bottom: 0.5rem; display: block;">Companion Guides</span>
+                    <a href="chapter0_companion.html" class="">Ch. 0 Companion</a>
+            <a href="chapter1_companion.html" class="">Ch. 1 Companion</a>
+            <a href="chapter2_companion.html" class="">Ch. 2 Companion</a>
+            <a href="chapter3_companion.html" class="active">Ch. 3 Companion</a>
+            <a href="chapter6_companion.html" class="">Ch. 6 Companion</a>
+    </nav>
+    
+        <article class="markdown-body">
+<h1 id="chapter-3-companion-guide-from-a-trustworthy-baseline-to-a-research-grade-regression-study">Chapter 3 Companion Guide: From a Trustworthy Baseline to a Research-Grade Regression Study</h1>
+<h2 id="a-first-principles-mathematical-computational-reference-manual">A First-Principles Mathematical &amp; Computational Reference Manual</h2>
+<p>This companion guide is an exhaustive, first-principles reference manual accompanying <strong>Chapter 3: From a Trustworthy Baseline to a Research-Grade Regression Study</strong> [cite: 18]. It unpacks mathematical derivations, feature engineering hypotheses, advanced regularized regression ($L_1$/$L_2$), robust diagnostic methodologies, and the mechanics of a pre-specified research benchmark for the Microhydro Power (MHP) Cost Estimator [cite: 18].</p>
+<p>All mathematical notation is strictly formatted using standard LaTeX delimiters (<code>$inline$</code> and <code>$$display$$</code>) for seamless rendering.</p>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><strong>Day 13: Preprocessing Is Part of the Model</strong></li>
+<li><strong>Day 14: Feature Engineering as Model Specification</strong></li>
+<li><strong>Day 15: Ridge Regression: Shrinkage and Stability</strong></li>
+<li><strong>Day 16: Lasso, Elastic Net, and Sparse Models</strong></li>
+<li><strong>Day 17: Multicollinearity, Leverage, and Influence</strong></li>
+<li><strong>Day 18: Heteroskedasticity and Dependent Data</strong></li>
+<li><strong>Day 19: Robust and Quantile Regression</strong></li>
+<li><strong>Day 20: A Pre-Specified Regression Benchmark</strong></li>
+<li><strong>Master Rosetta Stone &amp; Formula Sheet</strong></li>
+</ol>
+<hr />
+<h2 id="1-day-13-preprocessing-is-part-of-the-model">1. Day 13: Preprocessing Is Part of the Model</h2>
+<p>Preprocessing (handling missing data and categorical variables) is not neutral "cleaning"; it mathematically alters the distribution of the data [cite: 18]. Therefore, preprocessing must be learned exclusively inside the training folds of cross-validation to prevent leakage [cite: 18].</p>
+<h3 id="missing-data-mechanisms">Missing Data Mechanisms</h3>
+<ul>
+<li><strong>MCAR (Missing Completely at Random):</strong> Missingness is unrelated to the observed or missing data [cite: 18].</li>
+<li><strong>MAR (Missing at Random):</strong> Missingness depends only on <em>observed</em> information (e.g., surveys from early years are missing more often) [cite: 18].</li>
+<li><strong>MNAR (Missing Not at Random):</strong> Missingness depends on the unobserved value itself (e.g., remote projects omit survey distances because the distance was too difficult to establish) [cite: 18].</li>
+</ul>
+<h3 id="handling-missing-data">Handling Missing Data</h3>
+<ul>
+<li><strong>Complete-Case Analysis (Deletion):</strong> Deleting rows with missing values can severely bias the model by excluding specific sub-populations (e.g., deleting all remote projects) [cite: 18].</li>
+<li><strong>Median Imputation + Missing Indicator:</strong> Imputing missing values with the training median ($x_{ij}^{imp} =  ext{median}(X_{j,train})$) changes the distribution (reduces variance) [cite: 18]. We add a binary missingness indicator ($M_{ij} = 1 - R_{ij}$) so the model can learn an offset for imputed rows [cite: 18].</li>
+</ul>
+<h3 id="categorical-encoding">Categorical Encoding</h3>
+<ul>
+<li><strong>One-Hot Encoding:</strong> Creates binary indicators. One category must be dropped as the reference to prevent exact collinearity [cite: 18].</li>
+<li><strong>Target Encoding:</strong> Replaces a category with the mean of the target variable for that category ($TE(c) = \frac{1}{n_c}\sum_{i:C_i=c}y_i$) [cite: 18]. </li>
+<li><em>Critical Rule:</em> Target encoding must use <strong>cross-fitting</strong> inside the training data to prevent same-row target leakage [cite: 18].</li>
+</ul>
+<hr />
+<h2 id="2-day-14-feature-engineering-as-model-specification">2. Day 14: Feature Engineering as Model Specification</h2>
+<p>Feature engineering alters the columns of the design matrix $X$. The regression remains <em>linear in parameters</em> ($\beta$) even if the engineered feature represents a non-linear relationship (like $x^2$) [cite: 18].</p>
+<h3 id="feature-transformations">Feature Transformations</h3>
+<ul>
+<li><strong>Polynomials (Quadratic):</strong> $\hat{y} = \beta_0 + \beta_1x + \beta_2x^2$ [cite: 18].</li>
+<li><em>Derivative Interpretation:</em> The slope is $\frac{df(x)}{dx} = \beta_1 + 2\beta_2x$. The curve has a stationary point at $x^* = -\frac{\beta_1}{2\beta_2}$ [cite: 18]. You must check if this turning point actually exists within the credible, observed data range [cite: 18].</li>
+<li><strong>Interactions:</strong> $\hat{y} = \beta_0 + \beta_1x_1 + \beta_2x_2 + \beta_3x_1x_2$ [cite: 18].</li>
+<li>The effect of $x_1$ now depends on the value of $x_2$: $\frac{\partial\hat{y}}{\partial x_1} = \beta_1 + \beta_3x_2$ [cite: 18].</li>
+<li><strong>The Hierarchy Principle:</strong> If a model includes a higher-order term (like $x^2$ or $x_1x_2$), it must generally retain the lower-order "main effects" ($x$, $x_1$, $x_2$) so the interaction's meaning is properly anchored [cite: 18].</li>
+</ul>
+<hr />
+<h2 id="3-day-15-ridge-regression-shrinkage-and-stability">3. Day 15: Ridge Regression: Shrinkage and Stability</h2>
+<p>When predictors are highly correlated, unpenalized OLS coefficients can become massive and unstable [cite: 18]. Ridge regression stabilizes this by adding a penalty on the squared Euclidean length of the parameter vector [cite: 18].</p>
+<h3 id="the-ridge-objective-and-solution">The Ridge Objective and Solution</h3>
+<p>The objective function adds an $L_2$ penalty controlled by hyperparameter $\lambda$ [cite: 18]:<br />
+$$J_{   ext{ridge}}(\beta) = \lVert y - X\beta <br />
+Vert_2^2 + \lambda\lVert\beta<br />
+Vert_2^2$$<br />
+Taking the derivative and setting it to zero yields the closed-form Ridge solution [cite: 18]:<br />
+$$\hat{\beta}_{ ext{ridge}} = (X^   op X + \lambda I)^{-1}X^    op y$$</p>
+<h3 id="why-it-works-svd-shrinkage">Why It Works: SVD Shrinkage</h3>
+<p>Using Singular Value Decomposition ($X=U\Sigma V^   op$), the Ridge fitted values become [cite: 18]:<br />
+$$\hat{y}_{ ext{ridge}} = U\,\operatorname{diag}\left(\frac{\sigma_j^2}{\sigma_j^2+\lambda}<br />
+ight)U^ op y$$<br />
+* In standard OLS, a tiny singular value ($\sigma_j$) massively amplifies noise [cite: 18].<br />
+* Ridge applies a shrinkage factor $s_j(\lambda) = \frac{\sigma_j^2}{\sigma_j^2+\lambda}$. Weak directions (small $\sigma$) are suppressed toward zero, stabilizing the predictions [cite: 18].</p>
+<p><strong>Crucial Scaling Requirement:</strong> Because the penalty applies to coefficient magnitude, all features must be standardized ($z = \frac{x-\mu}{s}$) before fitting Ridge. Otherwise, features with small arbitrary units (like millimeters) will be unfairly penalized [cite: 18].</p>
+<hr />
+<h2 id="4-day-16-lasso-elastic-net-and-sparse-models">4. Day 16: Lasso, Elastic Net, and Sparse Models</h2>
+<h3 id="the-lasso-objective">The Lasso Objective</h3>
+<p>Lasso replaces the $L_2$ penalty with an $L_1$ penalty (sum of absolute values) [cite: 18]:<br />
+$$J_{   ext{lasso}}(\beta) = \frac{1}{2n}\lVert y - X\beta <br />
+Vert_2^2 + \alpha\lVert\beta<br />
+Vert_1$$</p>
+<h3 id="soft-thresholding-and-exact-zeros">Soft Thresholding and Exact Zeros</h3>
+<p>The $L_1$ penalty has sharp "corners" in its geometric constraint [cite: 18]. When optimized, coefficients can be pushed to <strong>exactly zero</strong> [cite: 18]. For orthonormal features, the coordinate solution is the soft-thresholding operator [cite: 18]:<br />
+$$\hat{\beta}_j = \operatorname{sign}(z_j)\max(|z_j| - \alpha, 0)$$<br />
+* <strong>WARNING:</strong> A zero lasso coefficient does <em>not</em> prove a feature has no scientific relationship with the target. It merely means the feature was dropped under this specific penalty and correlation structure [cite: 18].</p>
+<h3 id="elastic-net">Elastic Net</h3>
+<p>Combines both penalties using a mixing ratio $<br />
+ho$ [cite: 18]:<br />
+$$J_{   ext{EN}}(\beta) =   ext{Loss} + \alpha<br />
+ho\lVert\beta<br />
+Vert_1 + \frac{\alpha(1-<br />
+ho)}{2}\lVert\beta<br />
+Vert_2^2$$<br />
+This provides the exact sparsity of Lasso while maintaining the correlated-feature stability of Ridge [cite: 18].</p>
+<hr />
+<h2 id="5-day-17-multicollinearity-leverage-and-influence">5. Day 17: Multicollinearity, Leverage, and Influence</h2>
+<h3 id="variance-inflation-factor-vif">Variance Inflation Factor (VIF)</h3>
+<p>VIF measures how much a feature's coefficient variance is inflated due to correlation with other features [cite: 18]:<br />
+$$\operatorname{VIF}_j = \frac{1}{1 - R_j^2}$$<br />
+* A VIF of 9 means the standard error is inflated by a factor of $\sqrt{9} = 3$ [cite: 18]. <br />
+* There is no universal "cutoff" for VIF. High VIF does not inherently bias predictions, it simply increases parameter uncertainty [cite: 18].</p>
+<h3 id="leverage-vs-influence">Leverage vs. Influence</h3>
+<ul>
+<li><strong>Leverage ($h_{ii}$):</strong> Measures how unusual a row's predictor configuration is. Extracted from the diagonal of the Hat Matrix $H = X(X^ op X)^{-1}X^    op$ [cite: 18].</li>
+<li><strong>Influence (Cook's Distance $D_i$):</strong> Measures how much the fitted model would change if observation $i$ were deleted [cite: 18]. It combines both the residual size and the leverage [cite: 18]:<br />
+  $$D_i = \frac{e_i^2}{k s^2} \frac{h_{ii}}{(1 - h_{ii})^2}$$</li>
+</ul>
+<hr />
+<h2 id="6-day-18-heteroskedasticity-and-dependent-data">6. Day 18: Heteroskedasticity and Dependent Data</h2>
+<h3 id="robust-covariance-hc0-hc3">Robust Covariance (HC0 - HC3)</h3>
+<p>If error variance changes across observations (Heteroskedasticity), standard OLS standard errors are incorrect [cite: 18]. The <strong>Sandwich Estimator</strong> corrects this [cite: 18]:<br />
+$$\operatorname{Var}(\hat{\beta}) = (X^ op X)^{-1} X^   op \Omega X (X^ op X)^{-1}$$<br />
+* <strong>HC3</strong> adjusts the "meat" of the sandwich by heavily weighting squared residuals by their leverage [cite: 18]: $\frac{e_i^2}{(1 - h_{ii})^2}$.<br />
+* <em>Limitation:</em> HC3 fixes variance estimation; it <em>does not</em> fix a misspecified mean model (e.g., missing a curved relationship) [cite: 18].</p>
+<h3 id="cluster-robust-standard-errors">Cluster-Robust Standard Errors</h3>
+<p>If projects in the same district share unobserved shocks, we must group errors by cluster $g$ [cite: 18]:<br />
+$$  ext{Meat} = \sum_{g=1}^G (X_g^  op e_g)(X_g^    op e_g)^    op$$<br />
+* <em>Limitation:</em> Asymptotic cluster confidence requires many independent clusters [cite: 18]. Five districts are too few for reliable large-$G$ asymptotic confidence [cite: 18].</p>
+<hr />
+<h2 id="7-day-19-robust-and-quantile-regression">7. Day 19: Robust and Quantile Regression</h2>
+<h3 id="huber-regression-robust-to-outliers">Huber Regression (Robust to Outliers)</h3>
+<p>Squared loss highly penalizes outliers. <strong>Huber Loss</strong> transitions from quadratic (near zero) to linear (in the tails) beyond a threshold $\delta$ [cite: 18]:<br />
+$$L_\delta(r) = \begin{cases} \frac{1}{2}r^2 &amp; |r| \le \delta \ \delta(|r| - \frac{1}{2}\delta) &amp; |r| &gt; \delta \end{cases}$$<br />
+Huber downweights vertical outliers, preventing extreme cost values from pulling the entire regression line [cite: 18].</p>
+<h3 id="quantile-regression">Quantile Regression</h3>
+<p>OLS estimates the conditional <em>mean</em> [cite: 18]. Quantile regression uses asymmetric <strong>Pinball Loss</strong> to estimate a specific conditional quantile $ au$ [cite: 18]:<br />
+$$<br />
+ho_ au(u) = \begin{cases}   au u &amp; u \ge 0 \ (  au - 1)u &amp; u &lt; 0 \end{cases}$$<br />
+* If $  au = 0.80$, underpredicting the cost is penalized 4 times more than overpredicting [cite: 18]. This yields the 80th-percentile cost prediction, which is ideal for conservative contingency budgeting [cite: 18].</p>
+<hr />
+<h2 id="8-day-20-a-pre-specified-regression-benchmark">8. Day 20: A Pre-Specified Regression Benchmark</h2>
+<p>Exploratory modeling can easily turn noise into a publishable result [cite: 18]. To build a research-grade study, use a <strong>Pre-Specified Prediction Contract</strong> [cite: 18]:</p>
+<ol>
+<li><strong>Temporal Boundary:</strong> Validate only on data chronologically <em>before</em> the validation year [cite: 18].</li>
+<li><strong>Locked Test Set:</strong> The final test set (e.g., 2023-2025 projects) must not be touched until all feature engineering, imputation, and hyperparameter tuning is complete [cite: 18].</li>
+<li><strong>Pipeline Encapsulation:</strong> All missing-data handling, target encoding, standardizing, and modeling must occur inside a <code>Pipeline</code> to prevent train-test leakage [cite: 18].</li>
+<li><strong>Subgroup Audits:</strong> Overall MAE can hide failures. Always audit performance by operational subgroups (e.g., remote vs. accessible sites) [cite: 18].</li>
+</ol>
+<hr />
+<h2 id="9-master-rosetta-stone-formula-sheet">9. Master Rosetta Stone &amp; Formula Sheet</h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Formula</th>
+<th>Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Standardisation</td>
+<td>$z_{ij}=(x_{ij}-\bar x_j)/s_j$</td>
+<td>Comparable penalty scale using training statistics [cite: 18]</td>
+</tr>
+<tr>
+<td>Ridge objective</td>
+<td>$\lVert y-X\beta</td>
+<td></td>
+</tr>
+<tr>
+<td>Vert_2^2+\lambda\lVert\beta</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Vert_2^2$</td>
+<td>Stable $L_2$ shrinkage [cite: 18]</td>
+<td></td>
+</tr>
+<tr>
+<td>Ridge estimate</td>
+<td>$(X^ op X+\lambda I)^{-1}X^  op y$</td>
+<td>Closed form for centred penalised slopes [cite: 18]</td>
+</tr>
+<tr>
+<td>Ridge shrinkage</td>
+<td>$\sigma_j^2/(\sigma_j^2+\lambda)$</td>
+<td>Fitted-value retention in singular direction $j$ [cite: 18]</td>
+</tr>
+<tr>
+<td>Lasso objective</td>
+<td>$\frac{\lVert y-X\beta</td>
+<td></td>
+</tr>
+<tr>
+<td>Vert_2^2}{2n}+\alpha\lVert\beta</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Vert_1$</td>
+<td>Sparse shrinkage [cite: 18]</td>
+<td></td>
+</tr>
+<tr>
+<td>Soft threshold</td>
+<td>$S(z,\alpha)=\operatorname{sign}(z)(\lvert z</td>
+<td></td>
+</tr>
+<tr>
+<td>vert-\alpha)_+$</td>
+<td>One-coordinate lasso solution [cite: 18]</td>
+<td></td>
+</tr>
+<tr>
+<td>Elastic net</td>
+<td>Loss $+\alpha</td>
+<td></td>
+</tr>
+<tr>
+<td>ho\lVert\beta</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Vert_1+\frac{\alpha(1-</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ho)}{2}\lVert\beta</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Vert_2^2$</td>
+<td>Sparsity plus correlated-feature stabilisation [cite: 18]</td>
+<td></td>
+</tr>
+<tr>
+<td>VIF</td>
+<td>$1/(1-R_j^2)$</td>
+<td>Conditional variance inflation for slope $j$ [cite: 18]</td>
+</tr>
+<tr>
+<td>Hat matrix</td>
+<td>$H=X(X^  op X)^{-1}X^    op$</td>
+<td>Maps outcomes to OLS fitted values [cite: 18]</td>
+</tr>
+<tr>
+<td>Average leverage</td>
+<td>$k/n$</td>
+<td>Reference leverage for $k$ design columns [cite: 18]</td>
+</tr>
+<tr>
+<td>Studentised residual</td>
+<td>$e_i/[s\sqrt{1-h_{ii}}]$</td>
+<td>Residual adjusted for its model variance [cite: 18]</td>
+</tr>
+<tr>
+<td>Cook's distance</td>
+<td>$e_i^2h_{ii}/[ks^2(1-h_{ii})^2]$</td>
+<td>Aggregate case influence [cite: 18]</td>
+</tr>
+<tr>
+<td>General sandwich</td>
+<td>$(X^   op X)^{-1}X^    op\Omega X(X^   op X)^{-1}$</td>
+<td>Coefficient covariance under general error covariance [cite: 18]</td>
+</tr>
+<tr>
+<td>HC3 residual square</td>
+<td>$e_i^2/(1-h_{ii})^2$</td>
+<td>Stronger leverage correction for heteroskedasticity [cite: 18]</td>
+</tr>
+<tr>
+<td>Huber loss</td>
+<td>quadratic inside $\delta$, linear outside</td>
+<td>Reduce large-residual gradient [cite: 18]</td>
+</tr>
+<tr>
+<td>Pinball loss</td>
+<td>$u(    au-\mathbb1{u&lt;0})$</td>
+<td>Proper loss for a conditional quantile $ au$ [cite: 18]</td>
+</tr>
+</tbody>
+</table>
+        </article>
+    </div>
+
+
+
+    <!-- Math: local vendor copy preferred, CDN used only as a fallback when online. -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] }
+        };
+        (function loadMathJax() {
+            var local = document.createElement('script');
+            local.src = '../vendor/mathjax/tex-mml-chtml.js';
+            local.async = true;
+            local.onerror = function () {
+                var cdn = document.createElement('script');
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+                cdn.async = true;
+                document.head.appendChild(cdn);
+            };
+            document.head.appendChild(local);
+        })();
+    </script>
+
+    <!-- Diagrams: local vendor copy preferred, CDN used only as a fallback when online.
+         If neither loads (fully offline, no vendor file), the labeled diagram-source
+         panels above remain readable as plain text. -->
+    <script>
+        (function loadMermaid() {
+            function init(mermaid) {
+                mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+                document.querySelectorAll('.diagram-panel').forEach(function (panel) {
+                    var sourceEl = panel.querySelector('.mermaid-source');
+                    if (!sourceEl) return;
+                    var container = document.createElement('div');
+                    container.className = 'mermaid';
+                    container.textContent = sourceEl.textContent;
+                    panel.replaceChild(container, sourceEl);
+                });
+                mermaid.run();
+            }
+
+            var local = document.createElement('script');
+            local.src = '../vendor/mermaid.min.js';
+            local.onload = function () { init(window.mermaid); };
+            local.onerror = function () {
+                var cdn = document.createElement('script');
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+                cdn.onload = function () { init(window.mermaid); };
+                document.head.appendChild(cdn);
+            };
+            document.head.appendChild(local);
+        })();
+    </script>
+</body>
+</html>

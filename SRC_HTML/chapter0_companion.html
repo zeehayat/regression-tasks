@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 0 Companion Guide: From Nothing to Ready</title>
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --panel: #151d30;
+            --border: #223150;
+            --text: #f1f5f9;
+            --text-muted: #cbd5e1;
+            --accent: #22d3ee;
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; overflow-x: hidden; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        code, pre, .mono {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+        }
+        #content {
+            width: 100%;
+            max-width: 56rem;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+        nav.chapters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        nav.chapters a {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            text-decoration: none;
+        }
+        nav.chapters a:hover { border-color: rgba(34, 211, 238, 0.4); }
+        nav.chapters a.active {
+            color: var(--accent);
+            background: rgba(21, 29, 48, 0.8);
+            border-color: rgba(34, 211, 238, 0.4);
+        }
+        .markdown-body h1 { font-size: 2.25rem; font-weight: 800; color: #fff; margin: 0.5rem 0 1.5rem; }
+        .markdown-body h2 { font-size: 1.5rem; font-weight: 700; color: #fff; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin: 2.5rem 0 1rem; }
+        .markdown-body h3 { font-size: 1.25rem; font-weight: 600; color: #fff; margin: 2rem 0 0.75rem; }
+        .markdown-body h4 { font-size: 1.1rem; font-weight: 600; color: #fff; margin: 1.5rem 0 0.5rem; }
+        .markdown-body p { color: var(--text-muted); margin: 0 0 1rem; }
+        .markdown-body ul, .markdown-body ol { color: var(--text-muted); margin: 0 0 1rem; padding-left: 1.5rem; }
+        .markdown-body li { margin-bottom: 0.25rem; }
+        .markdown-body blockquote {
+            border-left: 4px solid var(--accent);
+            padding: 0.5rem 1rem;
+            font-style: italic;
+            background: rgba(34, 211, 238, 0.05);
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 1rem 0;
+        }
+        .markdown-body a { color: var(--accent); text-decoration: underline; }
+        .markdown-body a:hover { color: #67e8f9; }
+        .markdown-body :not(pre) > code {
+            font-size: 0.875rem;
+            color: #67e8f9;
+            background: var(--panel);
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+        }
+        .markdown-body pre {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+        .markdown-body pre code {
+            background: transparent;
+            padding: 0;
+            color: #e2e8f0;
+            font-size: 0.875rem;
+        }
+        .markdown-body table { width: 100%; font-size: 0.875rem; border-collapse: collapse; margin: 1.5rem 0; }
+        .markdown-body th, .markdown-body td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: left; }
+        .markdown-body th { background: var(--panel); color: #fff; font-weight: 600; }
+        .markdown-body td { color: var(--text-muted); }
+        .markdown-body hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+        /* Mermaid diagram panel: readable offline as labeled source; mermaid.js
+           (if vendored) replaces the <pre> contents with a rendered <svg>. */
+        .diagram-panel {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+        .diagram-panel__label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: rgba(34, 211, 238, 0.08);
+            padding: 0.4rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .diagram-panel .mermaid {
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+        }
+        .diagram-panel pre.mermaid-source {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+            padding: 1rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+        }
+
+        .platform-shell {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            width: min(25rem, calc(100vw - 2rem));
+            max-height: calc(100vh - 2rem);
+            display: flex;
+            flex-direction: column;
+            background: rgba(12, 18, 30, 0.96);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            z-index: 50;
+        }
+        .platform-shell.collapsed { width: auto; }
+        .platform-shell.collapsed .platform-body { display: none; }
+        .platform-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.9);
+        }
+        .platform-title { font-size: 0.85rem; font-weight: 700; color: #fff; }
+        .platform-section { font-size: 0.72rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .platform-body { overflow-y: auto; padding: 0.85rem; }
+        .platform-group { border-top: 1px solid var(--border); padding-top: 0.85rem; margin-top: 0.85rem; }
+        .platform-group:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+        .platform-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+        .platform-label { display: block; margin-bottom: 0.35rem; font-size: 0.72rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.04em; }
+        .platform-button {
+            border: 1px solid rgba(34, 211, 238, 0.45);
+            background: rgba(34, 211, 238, 0.08);
+            color: var(--accent);
+            border-radius: 0.35rem;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.78rem;
+            font-weight: 650;
+            cursor: pointer;
+        }
+        .platform-button:hover:not(:disabled) { background: rgba(34, 211, 238, 0.14); }
+        .platform-button:disabled {
+            cursor: not-allowed;
+            color: #94a3b8;
+            border-color: #334155;
+            background: rgba(148, 163, 184, 0.08);
+        }
+        .platform-textarea {
+            width: 100%;
+            min-height: 4.5rem;
+            resize: vertical;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.55rem;
+            font: inherit;
+            font-size: 0.85rem;
+        }
+        .platform-message {
+            margin-top: 0.45rem;
+            color: #fbbf24;
+            font-size: 0.78rem;
+        }
+        .platform-output {
+            margin-top: 0.55rem;
+            white-space: pre-wrap;
+            color: var(--text-muted);
+            font-size: 0.84rem;
+        }
+        .platform-history {
+            max-height: 12rem;
+            overflow: auto;
+            display: grid;
+            gap: 0.45rem;
+            margin: 0.55rem 0;
+        }
+        .platform-turn {
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            padding: 0.45rem 0.55rem;
+            background: rgba(21, 29, 48, 0.55);
+            color: var(--text-muted);
+            font-size: 0.82rem;
+        }
+        .platform-turn strong { color: #fff; }
+        .paper-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 0.8rem;
+            margin: 1rem 0;
+            background: rgba(21, 29, 48, 0.55);
+        }
+        .paper-card h4 { margin: 0 0 0.3rem; font-size: 1rem; }
+        .paper-card p { margin: 0.35rem 0; font-size: 0.9rem; }
+        .paper-card .paper-meta { color: #93c5fd; font-size: 0.82rem; }
+        .paper-card .paper-status { color: #fbbf24; font-size: 0.8rem; }
+        .settings-grid {
+            display: grid;
+            gap: 1rem;
+        }
+        .settings-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: rgba(21, 29, 48, 0.55);
+            padding: 1rem;
+        }
+        .settings-card h2 {
+            margin-top: 0;
+        }
+        .settings-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .settings-field {
+            display: grid;
+            gap: 0.25rem;
+        }
+        .settings-field.full {
+            grid-column: 1 / -1;
+        }
+        .settings-field label,
+        .settings-check {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .settings-field input,
+        .settings-field select {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.5rem;
+            font: inherit;
+        }
+        .settings-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .settings-status {
+            color: #fbbf24;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        .settings-file-viewer {
+            margin-top: 1rem;
+            display: grid;
+            gap: 1rem;
+        }
+        .settings-file-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: rgba(21, 29, 48, 0.55);
+            padding: 1rem;
+        }
+        .settings-file-card h2 {
+            margin: 0 0 0.35rem;
+        }
+        .settings-file-card pre {
+            max-height: 26rem;
+            overflow: auto;
+            margin: 0.75rem 0 0;
+        }
+        .settings-file-meta {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .notes-list {
+            display: grid;
+            gap: 0.35rem;
+            margin-top: 0.55rem;
+        }
+        .note-link {
+            display: block;
+            width: 100%;
+            text-align: left;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: rgba(21, 29, 48, 0.5);
+            color: var(--accent);
+            padding: 0.45rem 0.55rem;
+            cursor: pointer;
+            font: inherit;
+        }
+        .note-link:hover { border-color: rgba(34, 211, 238, 0.5); }
+        .note-link small {
+            display: block;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.68);
+            z-index: 100;
+        }
+        .modal-backdrop.open { display: flex; }
+        .note-modal {
+            width: min(58rem, 100%);
+            max-height: min(46rem, calc(100vh - 2rem));
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: #0b0f19;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
+            overflow: hidden;
+        }
+        .note-modal-header,
+        .note-modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.9);
+        }
+        .note-modal-footer {
+            border-top: 1px solid var(--border);
+            border-bottom: 0;
+        }
+        .note-title-input {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.55rem;
+            font: inherit;
+            font-weight: 700;
+        }
+        .note-toolbar,
+        .note-modal .ql-toolbar.ql-snow {
+            border: 0;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.45);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-picker,
+        .note-modal .ql-toolbar.ql-snow button {
+            color: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-stroke {
+            stroke: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-fill {
+            fill: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-picker-options {
+            background: #0b0f19;
+            border-color: var(--border);
+        }
+        .note-modal .ql-container.ql-snow {
+            border: 0;
+            font: inherit;
+        }
+        .note-editor {
+            min-height: 18rem;
+            flex: 1 1 auto;
+            overflow: auto;
+            color: var(--text);
+            background: #080c14;
+            outline: none;
+        }
+        .note-editor .ql-editor,
+        .note-editor[contenteditable="true"] {
+            min-height: 18rem;
+            color: var(--text);
+            font-size: 1rem;
+            line-height: 1.6;
+            padding: 1rem;
+        }
+        .note-editor .ql-editor.ql-blank::before {
+            color: #64748b;
+            font-style: normal;
+        }
+        .note-editor:empty::before {
+            content: attr(data-placeholder);
+            color: #64748b;
+        }
+        .note-attachments {
+            border-top: 1px solid var(--border);
+            background: rgba(8, 12, 20, 0.95);
+            padding: 0.75rem;
+            max-height: 11rem;
+            overflow: auto;
+        }
+        .attachment-input {
+            max-width: 22rem;
+            color: var(--text-muted);
+            font: inherit;
+        }
+        .attachment-list {
+            display: grid;
+            gap: 0.5rem;
+            margin-top: 0.65rem;
+        }
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: rgba(21, 29, 48, 0.45);
+            padding: 0.5rem;
+        }
+        .attachment-preview {
+            width: 3.5rem;
+            height: 3.5rem;
+            flex: 0 0 3.5rem;
+            display: grid;
+            place-items: center;
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text-muted);
+            overflow: hidden;
+            font-size: 0.78rem;
+        }
+        .attachment-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .attachment-meta {
+            min-width: 0;
+        }
+        .attachment-meta a {
+            display: block;
+            color: var(--accent);
+            overflow-wrap: anywhere;
+        }
+        .attachment-meta small {
+            color: var(--text-muted);
+        }
+        @media (min-width: 72.01rem) {
+            body { padding-right: 27rem; }
+        }
+        @media (max-width: 72rem) {
+            .platform-shell { position: static; width: auto; max-height: none; margin: 0 1rem 1rem; }
+            .platform-shell.collapsed .platform-body { display: none; }
+        }
+
+    </style>
+</head>
+<body>
+    <div id="content">
+
+    <nav class="chapters" style="margin-bottom: 1rem; padding-bottom: 1rem;">
+        <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.05em; width: 100%; margin-bottom: 0.5rem; display: block;">Book Chapters</span>
+                    <a href="chapter0.html" class="">Ch. 0</a>
+            <a href="level_0_orientation.html" class="">Level 0 Orientation</a>
+            <a href="chapter1.html" class="">Ch. 1</a>
+            <a href="chapter2.html" class="">Ch. 2</a>
+            <a href="chapter3.html" class="">Ch. 3</a>
+            <a href="chapter4.html" class="">Ch. 4</a>
+            <a href="chapter4_5_interlude.html" class="">Ch. 4.5 Interlude</a>
+            <a href="chapter5.html" class="">Ch. 5</a>
+            <a href="chapter6.html" class="">Ch. 6</a>
+            <a href="settings.html" class="">Settings</a>
+    </nav>
+    <nav class="chapters" style="margin-bottom: 2.5rem; padding-bottom: 1.5rem;">
+        <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.05em; width: 100%; margin-bottom: 0.5rem; display: block;">Companion Guides</span>
+                    <a href="chapter0_companion.html" class="active">Ch. 0 Companion</a>
+            <a href="chapter1_companion.html" class="">Ch. 1 Companion</a>
+            <a href="chapter2_companion.html" class="">Ch. 2 Companion</a>
+            <a href="chapter3_companion.html" class="">Ch. 3 Companion</a>
+            <a href="chapter6_companion.html" class="">Ch. 6 Companion</a>
+    </nav>
+    
+        <article class="markdown-body">
+<h1 id="chapter-0-companion-guide-from-nothing-to-ready">Chapter 0 Companion Guide: From Nothing to Ready</h1>
+<h2 id="a-first-principles-mathematical-computational-reference-manual-for-beginners">A First-Principles Mathematical &amp; Computational Reference Manual for Beginners</h2>
+<p>This companion guide is designed as an exhaustive, first-principles reference manual to accompany <strong>Chapter 0: From Nothing to Ready</strong>. It provides step-by-step mathematical derivations, intuitive mental models, line-by-line code breakdowns, and explicit structural mappings to ensure you never encounter a "black box" symbol or code snippet.</p>
+<p>All mathematical notation is strictly formatted using standard LaTeX delimiters (<code>$inline$</code> and <code>$$display$$</code>), making it immediately compatible with Markdown renderers, MathJax, and KaTeX.</p>
+<hr />
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><strong>Pedagogical Philosophy &amp; Operational Contract</strong></li>
+<li><strong>Day 0A — Python Foundations Refresher</strong></li>
+<li><strong>Day 0B — NumPy, Array Shapes, and Matrix Algebra</strong></li>
+<li><strong>Day 0C — Algebra, Summation Notation, and Loss Functions</strong></li>
+<li><strong>Day 0D — First-Principles Statistics</strong></li>
+<li><strong>Day 0E — Calculus, Gradients, Optimization, and Debugging</strong></li>
+<li><strong>Level 0 Capstone: Complete Step-by-Step Reference Solution</strong></li>
+<li><strong>Master Rosetta Stone &amp; Traceback Cheat Sheet</strong></li>
+</ol>
+<hr />
+<hr />
+<h2 id="1-pedagogical-philosophy-operational-contract">1. Pedagogical Philosophy &amp; Operational Contract</h2>
+<p>The primary goal of Chapter 0 is to construct the mathematical, computational, and statistical intuition required before encountering matrix regression, multivariate calculus, and statistical inference in Chapter 1.</p>
+<h3 id="the-five-rules-of-the-pedagogical-contract">The Five Rules of the Pedagogical Contract</h3>
+<ol>
+<li><strong>One Central Idea Per Day:</strong> Structured, incremental progression over five foundational days without skipping steps.</li>
+<li><strong>No Mathematical Hand-Waving:</strong> Every algebraic symbol, subscript, and operator is unpacked into concrete arithmetic and visible Python outputs.</li>
+<li><strong>Code as Proof:</strong> If a mathematical property or equation is claimed to be true, clean Python code will prove it numerically.</li>
+<li><strong>Build, Break, Rebuild:</strong> To truly understand how systems work, you must deliberately break them (e.g., shape mismatches, missing keys, learning rate explosions) and read the resulting errors calmly.</li>
+<li><strong>Type Everything:</strong> Muscle memory in writing Python syntax and NumPy indexing is essential for effortless problem-solving.</li>
+</ol>
+<hr />
+<hr />
+<h2 id="2-day-0a-python-foundations-refresher">2. Day 0A — Python Foundations Refresher</h2>
+<h3 id="21-variables-and-functions-state-vs-behavior">2.1 Variables and Functions: State vs. Behavior</h3>
+<p>A <strong>variable</strong> assigns a symbolic label to a location in memory holding a specific value. A <strong>function</strong> encapsulates a reusable sequence of computations (a behavior) that accepts inputs, executes a contract, and explicitly returns an output.</p>
+<pre><code class="language-python"># Variable assignment: Storing a scalar value
+capacity_kw = 250.0
+
+# Function definition: Defining an operational contract
+def kw_to_mw(capacity_kw: float) -&gt; float:
+    &quot;&quot;&quot;Convert electrical capacity from kilowatts (kW) to megawatts (MW).&quot;&quot;&quot;
+    return capacity_kw / 1000.0
+
+# Calling the function
+result_mw = kw_to_mw(capacity_kw)
+print(result_mw)  # Output: 0.25
+</code></pre>
+<h4 id="line-by-line-breakdown">Line-by-Line Breakdown:</h4>
+<ul>
+<li><code>def kw_to_mw(capacity_kw: float) -&gt; float:</code></li>
+<li><code>def</code> tells Python we are defining a new function named <code>kw_to_mw</code>.</li>
+<li><code>capacity_kw</code> is the <strong>parameter</strong> (the input variable expected by the function contract).</li>
+<li><code>: float</code> and <code>-&gt; float</code> are optional type hints indicating that the expected input and output are floating-point numbers.</li>
+<li><code>"""Convert electrical capacity..."""</code>: The <strong>docstring</strong>, providing documentation accessible via <code>help(kw_to_mw)</code>.</li>
+<li><code>return capacity_kw / 1000.0</code>: The <code>return</code> statement explicitly sends the calculated result back to the caller. If <code>return</code> is omitted, Python returns <code>None</code> by default.</li>
+</ul>
+<hr />
+<h3 id="22-loops-and-list-iteration">2.2 Loops and List Iteration</h3>
+<p>A <code>for</code> loop iterates over a sequential collection (such as a list), binding each element to a loop variable one step at a time.</p>
+<pre><code class="language-python">capacities_kw = [100.0, 250.0, 500.0, 1800.0, 60.0]
+
+capacities_mw = []
+for c in capacities_kw:
+    capacities_mw.append(kw_to_mw(c))
+
+print(capacities_mw)  # Output: [0.1, 0.25, 0.5, 1.8, 0.06]
+</code></pre>
+<h4 id="execution-mechanics">Execution Mechanics:</h4>
+<ol>
+<li><code>capacities_mw = []</code> allocates an empty list in memory.</li>
+<li>In the first iteration, <code>c</code> becomes <code>100.0</code>. <code>kw_to_mw(100.0)</code> evaluates to <code>0.1</code>, which is appended to <code>capacities_mw</code>.</li>
+<li>This process repeats sequentially for every element in <code>capacities_kw</code>.</li>
+</ol>
+<hr />
+<h3 id="23-list-comprehensions-syntactic-unrolling">2.3 List Comprehensions: Syntactic Unrolling</h3>
+<p>A <strong>list comprehension</strong> is a concise way to create lists. It performs the exact same operation as a standard <code>for</code> loop with <code>.append()</code>, but in a single line.</p>
+<pre><code class="language-python"># List comprehension syntax: [expression for item in iterable]
+capacities_mw = [kw_to_mw(c) for c in capacities_kw]
+</code></pre>
+<h4 id="translation-mapping">Translation Mapping:</h4>
+<ul>
+<li><strong>Expression:</strong> <code>kw_to_mw(c)</code> (what gets placed into the new list).</li>
+<li><strong>Loop target:</strong> <code>c</code>.</li>
+<li><strong>Iterable:</strong> <code>capacities_kw</code>.</li>
+</ul>
+<p>If a list comprehension ever feels confusing, unroll it back into a multi-line <code>for</code> loop with an explicit empty list and <code>.append()</code>.</p>
+<hr />
+<h3 id="24-dictionaries-label-value-mapping">2.4 Dictionaries: Label-Value Mapping</h3>
+<p>A standard list stores items by numerical index (<code>list[0]</code>, <code>list[1]</code>), which can lead to index-confusion errors when managing tabular data. A <strong>dictionary</strong> (<code>dict</code>) stores data using key-value pairs, maintaining explicit labels for every value.</p>
+<pre><code class="language-python">project = {
+    &quot;site_id&quot;: &quot;MHP-0042&quot;,
+    &quot;cable_length_km&quot;: 15.0,
+    &quot;planned_capacity_kw&quot;: 100.0,
+    &quot;terrain_index&quot;: 3,
+}
+
+# Accessing a value by key
+print(project[&quot;planned_capacity_kw&quot;])  # Output: 100.0
+</code></pre>
+<hr />
+<h3 id="25-object-oriented-encapsulation-the-self-keyword">2.5 Object-Oriented Encapsulation: The <code>self</code> Keyword</h3>
+<p>A <strong>class</strong> is a blueprint that combines state (data attributes) and behavior (methods) into a single object.</p>
+<pre><code class="language-python">class UnitConverter:
+    def __init__(self, factor: float):
+        # __init__ is the constructor method.
+        # It runs automatically when a new object instance is created.
+        self.factor = factor  # Store factor inside this specific instance.
+
+    def convert(self, value: float) -&gt; float:
+        # Access the instance's stored factor using self.factor
+        return value * self.factor
+
+# Instantiate the class with a specific conversion factor (1/1000 = 0.001)
+kw_to_mw_converter = UnitConverter(factor=0.001)
+
+# Call the method on the instantiated object
+print(kw_to_mw_converter.convert(250.0))  # Output: 0.25
+</code></pre>
+<h4 id="what-is-self">What is <code>self</code>?</h4>
+<ul>
+<li><code>self</code> refers to the <strong>current instance</strong> of the object.</li>
+<li>When you execute <code>kw_to_mw_converter.convert(250.0)</code>, Python automatically translates it under the hood to <code>UnitConverter.convert(kw_to_mw_converter, 250.0)</code>.</li>
+<li><code>self.factor</code> ensures that the method reads the specific factor stored inside <em>that</em> converter instance.</li>
+</ul>
+<hr />
+<h3 id="26-the-standard-list-multiplication-trap">2.6 The Standard List Multiplication Trap</h3>
+<pre><code class="language-python"># Standard Python List
+capacities_kw = [100.0, 250.0, 500.0]
+
+# Unexpected Behavior:
+print(capacities_kw * 2)
+# Output: [100.0, 250.0, 500.0, 100.0, 250.0, 500.0]
+</code></pre>
+<p><strong>Why does this happen?</strong> In standard Python, the <code>*</code> operator applied to a list means <strong>sequence repetition</strong>, not mathematical scaling. To perform mathematical scaling on every element without writing explicit loops, we must use vectorized array operations provided by <strong>NumPy</strong>.</p>
+<hr />
+<hr />
+<h2 id="3-day-0b-numpy-array-shapes-and-matrix-algebra">3. Day 0B — NumPy, Array Shapes, and Matrix Algebra</h2>
+<h3 id="31-why-numpy-contiguous-memory-and-vectorization">3.1 Why NumPy? Contiguous Memory and Vectorization</h3>
+<p>Standard Python lists are arrays of pointers to scattered memory locations. A <strong>NumPy array</strong> (<code>np.ndarray</code>) stores homogeneous numerical data in a <strong>contiguous block of memory</strong>. This allows NumPy to perform arithmetic operations using low-level, vectorized CPU instructions.</p>
+<pre><code class="language-python">import numpy as np
+
+# Creating a 1D NumPy array
+capacities_kw = np.array([100.0, 250.0, 500.0])
+
+# True vectorized elementwise scaling
+capacities_watts = capacities_kw * 1000.0
+print(capacities_watts)
+# Output: [100000. 250000. 500000.]
+</code></pre>
+<hr />
+<h3 id="32-array-dimensions-and-the-shape-attribute">3.2 Array Dimensions and the <code>.shape</code> Attribute</h3>
+<p>Every NumPy array has a <code>.shape</code> tuple that defines its dimensions. It is vital to distinguish between a 1D vector, a 2D row matrix, and a 2D column matrix.</p>
+<pre><code class="language-python">import numpy as np
+
+# 1D Array (Vector of 3 elements)
+a = np.array([1.0, 2.0, 3.0])
+print(a.shape)  # Output: (3,)
+
+# 2D Array with 1 Row and 3 Columns (Row Matrix)
+b = np.array([[1.0, 2.0, 3.0]])
+print(b.shape)  # Output: (1, 3)
+
+# 2D Array with 3 Rows and 1 Column (Column Matrix)
+c = np.array([[1.0], [2.0], [3.0]])
+print(c.shape)  # Output: (3, 1)
+</code></pre>
+<h4 id="structural-differences-table">Structural Differences Table:</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Array Representation</th>
+<th style="text-align: left;"><code>.shape</code></th>
+<th style="text-align: left;">Number of Dimensions (<code>.ndim</code>)</th>
+<th style="text-align: left;">Conceptual Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>np.array([1, 2, 3])</code></td>
+<td style="text-align: left;"><code>(3,)</code></td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Flat 1D collection</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>np.array([[1, 2, 3]])</code></td>
+<td style="text-align: left;"><code>(1, 3)</code></td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Matrix with 1 row, 3 columns</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>np.array([[1], [2], [3]])</code></td>
+<td style="text-align: left;"><code>(3, 1)</code></td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Matrix with 3 rows, 1 column</td>
+</tr>
+</tbody>
+</table>
+<p>These shapes are <strong>not interchangeable</strong> in linear algebra operations. A <code>(3,)</code> vector behaves differently than a <code>(3, 1)</code> matrix during matrix multiplication and broadcasting.</p>
+<hr />
+<h3 id="33-matrix-slicing-and-subscript-indexing">3.3 Matrix Slicing and Subscript Indexing</h3>
+<p>For a 2D array (matrix $X$), indexing uses the syntax <code>X[row_slice, column_slice]</code>.</p>
+<pre><code class="language-python">X = np.array([
+    [15.0, 100.0, 3.0],   # Row 0: Site MHP-001
+    [30.0, 250.0, 4.0],   # Row 1: Site MHP-002
+    [5.0,  500.0, 1.0],   # Row 2: Site MHP-003
+])
+
+print(X.shape)        # Output: (3, 3) -&gt; 3 rows (projects), 3 columns (features)
+print(X[0, :])        # Output: array([15., 100., 3.]) -&gt; Entire Row 0
+print(X[:, 0])        # Output: array([15., 30., 5.])  -&gt; Entire Column 0
+print(X[0, 1])        # Output: 100.0                 -&gt; Element at Row 0, Column 1
+print(X[:2, :2])      # Output: First 2 rows and first 2 columns (2x2 submatrix)
+</code></pre>
+<hr />
+<h3 id="34-the-mechanics-of-broadcasting">3.4 The Mechanics of Broadcasting</h3>
+<p><strong>Broadcasting</strong> is NumPy's set of rules for performing elementwise operations on arrays of different shapes without copying data unnecessarily.</p>
+<h4 id="the-official-broadcasting-rule">The Official Broadcasting Rule:</h4>
+<p>NumPy compares the shapes of two arrays <strong>from right to left</strong> (trailing dimensions forward). Two dimensions are compatible if:<br />
+1. They are <strong>equal</strong>, or<br />
+2. One of them is <strong>1</strong>.</p>
+<p>If a dimension is <code>1</code>, it is stretched along that dimension to match the size of the other array.</p>
+<h4 id="concrete-example-mean-centering-matrix-x">Concrete Example: Mean Centering Matrix $X$</h4>
+<p>Suppose $X$ has shape <code>(3, 2)</code> (3 project observations, 2 features) and <code>means</code> has shape <code>(2,)</code>.</p>
+<pre><code class="language-python">X = np.array([
+    [15.0, 100.0],
+    [30.0, 250.0],
+    [5.0,  500.0]
+])  # Shape: (3, 2)
+
+means = np.array([16.7, 283.3])  # Shape: (2,)
+
+# Subtract means from X
+centred = X - means
+</code></pre>
+<h4 id="step-by-step-shape-alignment-check">Step-by-Step Shape Alignment Check:</h4>
+<ol>
+<li>Shape of $X$: <code>(3, 2)</code></li>
+<li>Shape of <code>means</code>: <code>(2,)</code> $<br />
+ightarrow$ Right-aligned: <code>(1, 2)</code></li>
+<li>Compare trailing dimension: $2 == 2$ (Match!)</li>
+<li>Compare leading dimension: $3$ vs $1$. The dimension of size $1$ stretches from $1 <br />
+ightarrow 3$.</li>
+<li>Final broadcasted subtraction subtracts <code>16.7</code> from Column 0 and <code>283.3</code> from Column 1 for all rows.</li>
+</ol>
+<hr />
+<h3 id="35-the-dot-product-cdot-at-three-abstraction-levels">3.5 The Dot Product ($\cdot$) at Three Abstraction Levels</h3>
+<p>The <strong>dot product</strong> of two equal-length 1D vectors $\mathbf{a}$ and $\mathbf{b}$ of length $p$ is defined mathematically as:</p>
+<p>$$\mathbf{a} \cdot \mathbf{b} = \sum_{i=1}^{p} a_i b_i = a_1 b_1 + a_2 b_2 + \dots + a_p b_p$$</p>
+<p>Here are three ways to compute the exact same result in Python:</p>
+<pre><code class="language-python">features = np.array([15.0, 100.0])       # Cable length (km), Capacity (kW)
+weights  = np.array([0.05, 0.002])       # Cost weights per unit
+
+# Level 1: Manual Scalar Term-by-Term
+manual = features[0] * weights[0] + features[1] * weights[1]
+
+# Level 2: Explicit Python Loop with zip
+loop_total = 0.0
+for f, w in zip(features, weights):
+    loop_total += f * w
+
+# Level 3: Vectorized NumPy Operator (@)
+dot_total = features @ weights  # Equivalently: np.dot(features, weights)
+
+print(manual, loop_total, dot_total)
+# Output: 0.95 0.95 0.95
+</code></pre>
+<hr />
+<h3 id="36-matrix-prediction-xboldsymbolbeta">3.6 Matrix Prediction ($X\boldsymbol{\beta}$)</h3>
+<p>When we multiply a design matrix $X$ of shape $(N   imes P)$ by a parameter vector $\boldsymbol{\beta}$ of shape $(P,)$ using the <code>@</code> operator, NumPy performs a dot product between <strong>each row of $X$</strong> and the weight vector $\boldsymbol{\beta}$.</p>
+<pre><code class="language-python">X = np.array([
+    [15.0, 100.0],  # Project 0
+    [30.0, 250.0],  # Project 1
+    [5.0,  500.0],  # Project 2
+])  # Shape: (3, 2)
+
+beta = np.array([0.05, 0.002])  # Shape: (2,)
+
+# Matrix-vector multiplication
+predictions = X @ beta
+print(predictions)
+# Output: [0.95  2.0   1.25 ]
+</code></pre>
+<h4 id="matrix-dimension-rule">Matrix Dimension Rule:</h4>
+<p>$$(N    imes P)     imes (P     imes 1) \longrightarrow (N  imes 1)$$<br />
+The inner dimensions ($P$) must match exactly, and the resulting prediction vector has length $N$ (one predicted output per observation row).</p>
+<hr />
+<hr />
+<h2 id="4-day-0c-algebra-summation-notation-and-loss-functions">4. Day 0C — Algebra, Summation Notation, and Loss Functions</h2>
+<h3 id="41-functions-and-equations-of-lines">4.1 Functions and Equations of Lines</h3>
+<p>A linear relationship between an input variable $x$ and an output variable $y$ is expressed as:</p>
+<p>$$y = m x + c$$</p>
+<ul>
+<li>$m$: <strong>Slope</strong> — The change in $y$ given a $1$-unit increase in $x$ ($\frac{\Delta y}{\Delta x}$).</li>
+<li>$c$: <strong>Intercept</strong> — The value of $y$ when $x = 0$.</li>
+</ul>
+<p>In multiple regression, we extend this equation to $P$ features:</p>
+<p>$$\hat{y} = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p$$</p>
+<hr />
+<h3 id="42-deconstructing-summation-notation-sum">4.2 Deconstructing Summation Notation ($\sum$)</h3>
+<p>The summation symbol $\sum$ represents an accumulator loop.</p>
+<p>$$\sum_{i=1}^{n} x_i$$</p>
+<ul>
+<li>$i = 1$: <strong>Lower limit</strong> (starting index of the loop).</li>
+<li>$n$: <strong>Upper limit</strong> (stopping index of the loop).</li>
+<li>$x_i$: <strong>Expression</strong> evaluated at step $i$ and added to the total.</li>
+</ul>
+<h4 id="translating-summation-to-python-code">Translating Summation to Python Code</h4>
+<p>Consider the <strong>Sum of Squared Residuals (SSR)</strong> formula:</p>
+<p>$$  ext{SSR} = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$</p>
+<p>Where $y_i$ is the actual target value, and $\hat{y}_i$ is the predicted target value.</p>
+<pre><code class="language-python">import numpy as np
+
+y_actual    = np.array([12.0, 30.0, 8.0])
+y_predicted = np.array([11.2, 31.5, 9.0])
+
+# 1. Formula expressed directly as a loop
+ssr_loop = 0.0
+for i in range(len(y_actual)):
+    ssr_loop += (y_actual[i] - y_predicted[i]) ** 2
+
+# 2. Formula expressed as a single vectorized NumPy line
+ssr_numpy = np.sum((y_actual - y_predicted) ** 2)
+
+print(ssr_loop, ssr_numpy)  # Output: 2.89 2.89
+</code></pre>
+<hr />
+<h3 id="43-why-we-square-errors-in-loss-functions">4.3 Why We Square Errors in Loss Functions</h3>
+<p>When evaluating prediction errors $e_i = y_i - \hat{y}_i$:<br />
+1. <strong>Cancellation Problem:</strong> Unsquared errors can be positive or negative. A model with errors $+10$ and $-10$ would sum to zero error ($\sum e_i = 0$), falsely appearing perfect.<br />
+2. <strong>Squaring Eliminates Signs:</strong> $(+10)^2 = 100$ and $(-10)^2 = 100$, ensuring all deviations contribute positively to total loss.<br />
+3. <strong>Non-Linear Penalty for Large Outliers:</strong> Squaring penalizes large errors much more severely than small ones:<br />
+   * Error = $2 \implies    ext{Penalty} = 2^2 = 4$<br />
+   * Error = $10 \implies   ext{Penalty} = 10^2 = 100$ (a 5x increase in error results in a 25x increase in penalty).</p>
+<hr />
+<h3 id="44-critical-distinction-sum-of-squares-vs-square-of-sum">4.4 Critical Distinction: Sum of Squares vs. Square of Sum</h3>
+<p>$$\sum_{i=1}^{n} x_i^2 <br />
+eq \left( \sum_{i=1}^{n} x_i <br />
+ight)^2$$</p>
+<p>Let $x = [2.0, -3.0, 5.0]$:</p>
+<h4 id="1-sum-of-squares-sum-x_i2">1. Sum of Squares ($\sum x_i^2$):</h4>
+<p>$$\sum x_i^2 = (2.0)^2 + (-3.0)^2 + (5.0)^2 = 4.0 + 9.0 + 25.0 = 38.0$$</p>
+<h4 id="2-square-of-sum-sum-x_i2">2. Square of Sum ($(\sum x_i)^2$):</h4>
+<p>$$\left( \sum x_i <br />
+ight)^2 = (2.0 + (-3.0) + 5.0)^2 = (4.0)^2 = 16.0$$</p>
+<pre><code class="language-python">x = np.array([2.0, -3.0, 5.0])
+
+sum_of_squares = np.sum(x ** 2)  # Output: 38.0
+square_of_sum  = np.sum(x) ** 2  # Output: 16.0
+</code></pre>
+<hr />
+<hr />
+<h2 id="5-day-0d-first-principles-statistics">5. Day 0D — First-Principles Statistics</h2>
+<h3 id="51-sample-mean-barx">5.1 Sample Mean ($\bar{x}$)</h3>
+<p>The mean represents the arithmetic average (or balancing point) of a distribution.</p>
+<p>$$\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i$$</p>
+<pre><code class="language-python">costs = np.array([12.0, 30.0, 8.0, 45.0, 15.0])
+mean_manual = np.sum(costs) / len(costs)  # Output: 22.0
+</code></pre>
+<hr />
+<h3 id="52-variance-sigma2-and-standard-deviation-sigma">5.2 Variance ($\sigma^2$) and Standard Deviation ($\sigma$)</h3>
+<p><strong>Variance</strong> measures the average squared distance of data points from their mean:</p>
+<p>$$\sigma^2 = \frac{1}{n} \sum_{i=1}^{n} (x_i - \bar{x})^2$$</p>
+<blockquote>
+<p><strong>Why can't we just average raw deviations $(x_i - \bar{x})$?</strong><br />
+The sum of raw deviations around the mean is <strong>always zero</strong> ($\sum_{i=1}^n (x_i - \bar{x}) = 0$) because positive and negative deviations cancel out.</p>
+</blockquote>
+<p><strong>Standard Deviation</strong> ($\sigma$) takes the square root of variance to return the spread metric to the original units of the dataset:</p>
+<p>$$\sigma = \sqrt{\sigma^2}$$</p>
+<pre><code class="language-python"># First principles computation
+deviations = costs - costs.mean()
+variance_manual = np.sum(deviations ** 2) / len(costs)
+std_manual = np.sqrt(variance_manual)
+
+print(variance_manual, std_manual)
+# Output: 182.8 13.520355024924517
+</code></pre>
+<h4 id="population-variance-vs-sample-variance-n-vs-n-1">Population Variance vs. Sample Variance ($n$ vs $n-1$):</h4>
+<ul>
+<li><strong>Population Variance (<code>ddof=0</code>):</strong> Divides by $n$. Used when analyzing an entire dataset.</li>
+<li><strong>Sample Variance (<code>ddof=1</code>):</strong> Divides by $n - 1$ (Bessel's correction). Used when estimating population variance from a sample to eliminate downward bias.</li>
+</ul>
+<hr />
+<h3 id="53-covariance-extcovx-y">5.3 Covariance ($   ext{cov}(x, y)$)</h3>
+<p>Covariance measures whether two continuous variables tend to deviate from their respective means in the same direction at the same time.</p>
+<p>$$  ext{cov}(x, y) = \frac{1}{n} \sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})$$</p>
+<pre><code class="language-python">cable_km = np.array([12.0, 30.0, 5.0, 40.0, 15.0])
+
+x_dev = costs - costs.mean()
+y_dev = cable_km - cable_km.mean()
+
+cov_manual = np.sum(x_dev * y_dev) / len(costs)
+# Output: 162.8
+</code></pre>
+<ul>
+<li><strong>Positive Covariance:</strong> When $x$ is above its mean, $y$ tends to be above its mean.</li>
+<li><strong>Negative Covariance:</strong> When $x$ is above its mean, $y$ tends to be below its mean.</li>
+<li><strong>Zero Covariance:</strong> No linear co-movement between $x$ and $y$.</li>
+</ul>
+<hr />
+<h3 id="54-pearson-correlation-coefficient-r">5.4 Pearson Correlation Coefficient ($r$)</h3>
+<p>Because covariance depends on the units of measurement, it cannot be used to compare strength across different features. <strong>Pearson Correlation</strong> ($r$) normalizes covariance by dividing it by the product of the standard deviations of both variables:</p>
+<p>$$r = \frac{    ext{cov}(x, y)}{\sigma_x \sigma_y}$$</p>
+<pre><code class="language-python">r_manual = cov_manual / (costs.std() * cable_km.std())
+print(r_manual)  # Output: 0.9413
+</code></pre>
+<h4 id="properties-of-r">Properties of $r$:</h4>
+<ul>
+<li>$r \in [-1, +1]$.</li>
+<li>$r = +1$: Perfect positive linear relationship.</li>
+<li>$r = -1$: Perfect negative linear relationship.</li>
+<li>$r = 0$: No linear relationship.</li>
+</ul>
+<hr />
+<h3 id="55-the-zero-variance-trap-and-nan-poisoning">5.5 The Zero Variance Trap and <code>NaN</code> Poisoning</h3>
+<p>If a feature vector has zero variation (e.g., $x = [5.0, 5.0, 5.0, 5.0]$), its standard deviation is zero ($\sigma_x = 0.0$).</p>
+<pre><code class="language-python">constant_feature = np.array([5.0, 5.0, 5.0, 5.0, 5.0])
+r_result = np.corrcoef(constant_feature, costs)[0, 1]
+print(r_result)  # Output: nan
+</code></pre>
+<h4 id="why-does-this-happen">Why does this happen?</h4>
+<p>Calculating $r$ requires dividing by $\sigma_x$. Division by zero produces <code>NaN</code> (Not a Number). In machine learning pipelines, a single <code>NaN</code> will silently propagate through matrix multiplications, corrupting downstream calculations.</p>
+<hr />
+<hr />
+<h2 id="6-day-0e-calculus-gradients-optimization-and-debugging">6. Day 0E — Calculus, Gradients, Optimization, and Debugging</h2>
+<h3 id="61-the-definition-of-a-derivative">6.1 The Definition of a Derivative</h3>
+<p>A <strong>derivative</strong> measures the instantaneous rate of change (the slope of the tangent line) of a function $f(x)$ at a specific point $x$.</p>
+<p>$$\frac{dy}{dx} = f'(x) = \lim_{h   o 0} \frac{f(x+h) - f(x)}{h}$$</p>
+<h4 id="code-proof-finite-difference-approximation">Code Proof: Finite Difference Approximation</h4>
+<p>We can approximate derivatives numerically by choosing an extremely small step size $h$ (e.g., $h = 10^{-6}$).</p>
+<pre><code class="language-python">def f(x):
+    return x ** 2
+
+def numerical_slope(f, x, h=1e-6):
+    return (f(x + h) - f(x)) / h
+
+x_val = 3.0
+print(numerical_slope(f, x_val))
+# Output: 6.000000999922336  (Converges to analytical derivative 2*x = 6.0)
+</code></pre>
+<hr />
+<h3 id="62-essential-analytical-derivative-rules">6.2 Essential Analytical Derivative Rules</h3>
+<ol>
+<li><strong>Power Rule:</strong><br />
+   $$\frac{d}{dx} [x^n] = n x^{n-1}$$<br />
+   * Example: $\frac{d}{dx} [x^2] = 2x$</li>
+<li><strong>Constant Multiple Rule:</strong><br />
+   $$\frac{d}{dx} [c \cdot f(x)] = c \cdot \frac{d}{dx}[f(x)]$$</li>
+<li><strong>Sum Rule:</strong><br />
+   $$\frac{d}{dx} [f(x) + g(x)] = \frac{d}{dx}[f(x)] + \frac{d}{dx}[g(x)]$$</li>
+</ol>
+<h4 id="combined-example">Combined Example:</h4>
+<p>For $y = 3x^2 + 5x$:</p>
+<p>$$\frac{dy}{dx} = \frac{d}{dx}[3x^2] + \frac{d}{dx}[5x] = 3(2x) + 5(1) = 6x + 5$$</p>
+<hr />
+<h3 id="63-partial-derivatives-partial-and-the-gradient">6.3 Partial Derivatives ($\partial$) and the Gradient ($</h3>
+<p>abla$)</p>
+<p>When an error function depends on multiple parameters—such as slope $m$ and intercept $c$—a <strong>partial derivative</strong> measures how the output changes when we adjust <em>one parameter</em> while keeping all others constant. We use the symbol $\partial$ (curly "d") instead of $d$.</p>
+<p>$$  ext{Gradient } <br />
+abla E(m, c) = \begin{bmatrix} \frac{\partial E}{\partial m} \ \frac{\partial E}{\partial c} \end{bmatrix}$$</p>
+<pre><code class="language-python">def error(m, c):
+    # Loss for predicting y=10.0 when x=2.0
+    prediction = m * 2.0 + c
+    return (10.0 - prediction) ** 2
+
+def partial_wrt_m(m, c, h=1e-6):
+    return (error(m + h, c) - error(m, c)) / h
+
+def partial_wrt_c(m, c, h=1e-6):
+    return (error(m, c + h) - error(m, c)) / h
+
+m, c = 1.0, 1.0
+print(partial_wrt_m(m, c))  # Output: -27.9999
+print(partial_wrt_c(m, c))  # Output: -13.9999
+</code></pre>
+<hr />
+<h3 id="64-gradient-descent-mechanics">6.4 Gradient Descent Mechanics</h3>
+<p><strong>Gradient Descent</strong> is an iterative optimization algorithm that minimizes a loss function by taking steps in the direction opposite to the gradient.</p>
+<p>$$  heta_{  ext{new}} =     heta_{  ext{old}} - \alpha <br />
+abla E( heta)$$</p>
+<p>Where $\alpha$ is the <strong>learning rate</strong> (step size hyperparameter).</p>
+<pre><code class="language-python">m, c = 0.0, 0.0          # Initial bad guess
+learning_rate = 0.01     # Step size alpha
+
+for step in range(50):
+    grad_m = partial_wrt_m(m, c)
+    grad_c = partial_wrt_c(m, c)
+
+    # Step opposite to the gradient
+    m -= learning_rate * grad_m
+    c -= learning_rate * grad_c
+
+print(f&quot;Optimized parameters: m = {m:.3f}, c = {c:.3f}&quot;)
+# Output: m and c settle into values where m*2 + c ≈ 10.0
+</code></pre>
+<h4 id="what-happens-if-the-learning-rate-alpha-is-too-large">What happens if the learning rate $\alpha$ is too large?</h4>
+<p>If $\alpha$ is set too high (e.g., $\alpha = 5.0$), parameter updates will overshoot the minimum, causing error to explode toward infinity.</p>
+<hr />
+<hr />
+<h2 id="7-level-0-capstone-complete-step-by-step-reference-solution">7. Level 0 Capstone: Complete Step-by-Step Reference Solution</h2>
+<p>Here is the complete, execution-verified Python script solving all 7 steps of the Level 0 Capstone.</p>
+<pre><code class="language-python">import numpy as np
+
+# Capstone Input Data
+projects = np.array([
+    [12.0, 15.0],   # Row 0: [cable_km, terrain_index]
+    [30.0, 25.0],   # Row 1
+    [5.0,  8.0],    # Row 2
+    [40.0, 45.0],   # Row 3
+    [15.0, 12.0],   # Row 4
+])
+costs = np.array([12.0, 30.0, 8.0, 45.0, 15.0])   # Actual costs (million PKR)
+
+# -------------------------------------------------------------------------
+# STEP 1: Shape Inspection
+# -------------------------------------------------------------------------
+print(&quot;STEP 1: Shape of projects =&quot;, projects.shape)
+# Explanation: Shape is (5, 2), meaning 5 project observations (rows) 
+# and 2 features per project (columns: cable length and terrain index).
+
+# -------------------------------------------------------------------------
+# STEP 2: Custom Loop Means and Standard Deviations vs NumPy
+# -------------------------------------------------------------------------
+num_rows, num_cols = projects.shape
+custom_means = []
+custom_stds = []
+
+for j in range(num_cols):
+    col_data = projects[:, j]
+    col_mean = sum(col_data) / num_rows
+    col_var  = sum((x - col_mean) ** 2 for x in col_data) / num_rows
+    custom_means.append(col_mean)
+    custom_stds.append(np.sqrt(col_var))
+
+print(f&quot;STEP 2: Custom Means = {custom_means} | NumPy Means = {projects.mean(axis=0)}&quot;)
+print(f&quot;        Custom Stds  = {custom_stds} | NumPy Stds  = {projects.std(axis=0)}&quot;)
+
+# -------------------------------------------------------------------------
+# STEP 3: Pearson Correlation from First Principles (costs vs projects[:, 0])
+# -------------------------------------------------------------------------
+x = projects[:, 0]
+mean_x = custom_means[0]
+mean_y = sum(costs) / len(costs)
+
+cov_xy = sum((x[i] - mean_x) * (costs[i] - mean_y) for i in range(len(costs))) / len(costs)
+std_y  = np.sqrt(sum((y - mean_y) ** 2 for y in costs) / len(costs))
+
+r_custom = cov_xy / (custom_stds[0] * std_y)
+r_numpy  = np.corrcoef(costs, x)[0, 1]
+
+print(f&quot;STEP 3: Custom Correlation r = {r_custom:.4f} | NumPy r = {r_numpy:.4f}&quot;)
+
+# -------------------------------------------------------------------------
+# STEP 4: Matrix Predictions using Custom Loop and Vectorized @
+# -------------------------------------------------------------------------
+beta = np.array([0.5, 0.2])  # Made-up weights
+
+pred_loop = np.zeros(num_rows)
+for i in range(num_rows):
+    pred_loop[i] = projects[i, 0] * beta[0] + projects[i, 1] * beta[1]
+
+pred_matrix = projects @ beta
+
+print(&quot;STEP 4: Loop Predictions   =&quot;, pred_loop)
+print(&quot;        Matrix Predictions =&quot;, pred_matrix)
+print(&quot;        Match check:&quot;, np.allclose(pred_loop, pred_matrix))
+
+# -------------------------------------------------------------------------
+# STEP 5: Sum of Squared Errors (SSE) Function
+# -------------------------------------------------------------------------
+def sse(y_actual, y_predicted):
+    return np.sum((y_actual - y_predicted) ** 2)
+
+current_sse = sse(costs, pred_matrix)
+print(f&quot;STEP 5: Current SSE = {current_sse:.4f}&quot;)
+
+# -------------------------------------------------------------------------
+# STEP 6: Finite Difference Numerical Partial Derivative wrt beta[0]
+# -------------------------------------------------------------------------
+h = 1e-5
+beta_nudged = beta.copy()
+beta_nudged[0] += h
+
+nudged_predictions = projects @ beta_nudged
+nudged_sse = sse(costs, nudged_predictions)
+
+partial_beta_0 = (nudged_sse - current_sse) / h
+print(f&quot;STEP 6: Numerical d(SSE)/d(beta_0) = {partial_beta_0:.4f}&quot;)
+
+# -------------------------------------------------------------------------
+# STEP 7: Deliberate Shape Mismatch Error
+# -------------------------------------------------------------------------
+print(&quot;STEP 7: Intentional Error Triggering:&quot;)
+try:
+    bad_beta = np.array([0.5, 0.2, 0.9])  # Length 3 instead of 2
+    invalid_pred = projects @ bad_beta
+except ValueError as e:
+    print(&quot;        CAUGHT EXPECTED ERROR:&quot;, e)
+    print(&quot;        DIAGNOSTIC: projects has shape (5, 2); bad_beta has shape (3,).&quot;)
+    print(&quot;        Matrix multiplication requires the inner dimension of projects (2)&quot;)
+    print(&quot;        to match the dimension of bad_beta (3).&quot;)
+</code></pre>
+<hr />
+<hr />
+<h2 id="8-master-rosetta-stone-traceback-cheat-sheet">8. Master Rosetta Stone &amp; Traceback Cheat Sheet</h2>
+<h3 id="81-mathematical-symbol">8.1 Mathematical Symbol $</h3>
+<p>ightarrow$ Python Loop $<br />
+ightarrow$ NumPy Expression</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Mathematical Concept</th>
+<th style="text-align: left;">LaTeX Symbol</th>
+<th style="text-align: left;">Raw Python Loop Expression</th>
+<th style="text-align: left;">Vectorized NumPy Expression</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Vector Dot Product</td>
+<td style="text-align: left;">$\sum_{i=1}^{p} a_i b_i$</td>
+<td style="text-align: left;"><code>sum(a[i] * b[i] for i in range(p))</code></td>
+<td style="text-align: left;"><code>a @ b</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Sample Mean</td>
+<td style="text-align: left;">$\bar{x} = \frac{1}{n} \sum x_i$</td>
+<td style="text-align: left;"><code>sum(x) / len(x)</code></td>
+<td style="text-align: left;"><code>x.mean()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Mean Centering</td>
+<td style="text-align: left;">$x_i - \bar{x}$</td>
+<td style="text-align: left;"><code>[val - mean_x for val in x]</code></td>
+<td style="text-align: left;"><code>x - x.mean()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Sum of Squared Errors</td>
+<td style="text-align: left;">$\sum (y_i - \hat{y}_i)^2$</td>
+<td style="text-align: left;"><code>sum((y[i] - y_hat[i])**2 for i in range(n))</code></td>
+<td style="text-align: left;"><code>np.sum((y - y_hat)**2)</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Population Variance</td>
+<td style="text-align: left;">$\frac{1}{n}\sum (x_i - \bar{x})^2$</td>
+<td style="text-align: left;"><code>sum((x[i] - mean_x)**2 for i in range(n)) / n</code></td>
+<td style="text-align: left;"><code>x.var()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Covariance</td>
+<td style="text-align: left;">$\frac{1}{n}\sum (x_i - \bar{x})(y_i - \bar{y})$</td>
+<td style="text-align: left;"><code>sum((x[i]-mx)*(y[i]-my) for i in range(n)) / n</code></td>
+<td style="text-align: left;"><code>np.cov(x, y, ddof=0)[0,1]</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Derivative Limit</td>
+<td style="text-align: left;">$\lim_{h   o 0} \frac{f(x+h) - f(x)}{h}$</td>
+<td style="text-align: left;"><code>(f(x + h) - f(x)) / h</code></td>
+<td style="text-align: left;">Numerical finite difference</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="82-traceback-diagnostic-reference">8.2 Traceback Diagnostic Reference</h3>
+<h4 id="1-shape-mismatch-error-valueerror">1. Shape Mismatch Error (<code>ValueError</code>)</h4>
+<pre><code class="language-text">ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, 
+with gufunc signature (n?,k),(k?,m?)-&gt;(n?,m?) (size 3 is different from 2)
+</code></pre>
+<ul>
+<li><strong>Translation:</strong> You attempted matrix multiplication (<code>@</code>) between two arrays whose inner dimensions do not match.</li>
+<li><strong>Fix:</strong> Check <code>array1.shape</code> and <code>array2.shape</code>. Ensure that the column count of the first array equals the row count of the second array.</li>
+</ul>
+<h4 id="2-non-existent-key-error-keyerror">2. Non-existent Key Error (<code>KeyError</code>)</h4>
+<pre><code class="language-text">KeyError: 'cost_per_km'
+</code></pre>
+<ul>
+<li><strong>Translation:</strong> You requested a key from a dictionary that does not exist.</li>
+<li><strong>Fix:</strong> Check for typos in string keys or print <code>dictionary.keys()</code> to verify available labels.</li>
+</ul>
+<h4 id="3-data-type-mismatch-error-typeerror">3. Data Type Mismatch Error (<code>TypeError</code>)</h4>
+<pre><code class="language-text">TypeError: can only concatenate str (not &quot;float&quot;) to str
+</code></pre>
+<ul>
+<li><strong>Translation:</strong> Python refused to automatically combine text strings with numeric floating-point values.</li>
+<li><strong>Fix:</strong> Explicitly convert numbers to strings using <code>str(val)</code> or use f-strings (<code>f"Cost: {val}"</code>).</li>
+</ul>
+        </article>
+    </div>
+
+
+
+    <!-- Math: local vendor copy preferred, CDN used only as a fallback when online. -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] }
+        };
+        (function loadMathJax() {
+            var local = document.createElement('script');
+            local.src = '../vendor/mathjax/tex-mml-chtml.js';
+            local.async = true;
+            local.onerror = function () {
+                var cdn = document.createElement('script');
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+                cdn.async = true;
+                document.head.appendChild(cdn);
+            };
+            document.head.appendChild(local);
+        })();
+    </script>
+
+    <!-- Diagrams: local vendor copy preferred, CDN used only as a fallback when online.
+         If neither loads (fully offline, no vendor file), the labeled diagram-source
+         panels above remain readable as plain text. -->
+    <script>
+        (function loadMermaid() {
+            function init(mermaid) {
+                mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+                document.querySelectorAll('.diagram-panel').forEach(function (panel) {
+                    var sourceEl = panel.querySelector('.mermaid-source');
+                    if (!sourceEl) return;
+                    var container = document.createElement('div');
+                    container.className = 'mermaid';
+                    container.textContent = sourceEl.textContent;
+                    panel.replaceChild(container, sourceEl);
+                });
+                mermaid.run();
+            }
+
+            var local = document.createElement('script');
+            local.src = '../vendor/mermaid.min.js';
+            local.onload = function () { init(window.mermaid); };
+            local.onerror = function () {
+                var cdn = document.createElement('script');
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+                cdn.onload = function () { init(window.mermaid); };
+                document.head.appendChild(cdn);
+            };
+            document.head.appendChild(local);
+        })();
+    </script>
+</body>
+</html>

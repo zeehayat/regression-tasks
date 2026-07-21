@@ -491,8 +491,10 @@
 </head>
 <body>
     <div id="content">
-        <nav class="chapters">
-            <a href="chapter0.html" class="">Ch. 0</a>
+
+    <nav class="chapters" style="margin-bottom: 1rem; padding-bottom: 1rem;">
+        <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.05em; width: 100%; margin-bottom: 0.5rem; display: block;">Book Chapters</span>
+                    <a href="chapter0.html" class="">Ch. 0</a>
             <a href="level_0_orientation.html" class="">Level 0 Orientation</a>
             <a href="chapter1.html" class="">Ch. 1</a>
             <a href="chapter2.html" class="">Ch. 2</a>
@@ -502,7 +504,16 @@
             <a href="chapter5.html" class="">Ch. 5</a>
             <a href="chapter6.html" class="active">Ch. 6</a>
             <a href="settings.html" class="">Settings</a>
-        </nav>
+    </nav>
+    <nav class="chapters" style="margin-bottom: 2.5rem; padding-bottom: 1.5rem;">
+        <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.05em; width: 100%; margin-bottom: 0.5rem; display: block;">Companion Guides</span>
+                    <a href="chapter0_companion.html" class="">Ch. 0 Companion</a>
+            <a href="chapter1_companion.html" class="">Ch. 1 Companion</a>
+            <a href="chapter2_companion.html" class="">Ch. 2 Companion</a>
+            <a href="chapter3_companion.html" class="">Ch. 3 Companion</a>
+            <a href="chapter6_companion.html" class="">Ch. 6 Companion</a>
+    </nav>
+    
         <article class="markdown-body">
 <h1 id="chapter-6-from-prediction-to-intervention">Chapter 6 — From Prediction to Intervention</h1>
 <h2 id="level-6-research-practitioner-ten-days-of-causal-inference-reproducible-evidence-and-responsible-deployment">Level 6 Research Practitioner: ten days of causal inference, reproducible evidence, and responsible deployment</h2>
@@ -790,6 +801,7 @@ $$</p>
 <p>where $Y(a)$ is the outcome the project would have under an intervention setting review to $a$. The conditioning bar and intervention are not interchangeable. If managers send risky projects to review, then $P(Y=1\mid A=1)$ can exceed $P(Y=1\mid A=0)$ even when review prevents warnings.</p>
 <p>Prediction can be excellent without identifying an intervention effect. Causal estimation can be unbiased while predicting individual outcomes poorly. Neither task is superior; they serve different decisions.</p>
 <h2 id="392-potential-outcomes">39.2 Potential outcomes</h2>
+<p><button class="read-details-btn" data-section="6a-2">✦ Read Details</button></p>
 <p>For each project $i$, define:</p>
 <ul>
 <li>$Y_i(1)$: the warning outcome if project $i$ were assigned senior review;</li>
@@ -805,6 +817,7 @@ Y_i=A_iY_i(1)+(1-A_i)Y_i(0).<br />
 $$</p>
 <p>The other is counterfactual. This is the fundamental problem: the same unit cannot be observed at the same time under both assignments. Causal inference therefore targets averages and uses design or assumptions to make groups comparable.</p>
 <h2 id="393-choose-an-estimand-before-an-estimator">39.3 Choose an estimand before an estimator</h2>
+<p><button class="read-details-btn" data-section="6a-3">✦ Read Details</button></p>
 <p>For binary outcomes, common estimands include:</p>
 <table>
 <thead>
@@ -855,6 +868,7 @@ $$</p>
 <p>Risk differences are often easiest for capacity planning: a difference of $-0.06$ means about six fewer warnings per 100 projects under the stated intervention and population. Ratios transport differently and may be scientifically useful. Odds ratios are non-collapsible: a conditional odds ratio can differ from a marginal odds ratio even without confounding. Report the scale you registered; do not switch because another looks more dramatic.</p>
 <p>For time-to-event outcomes, replace the binary risk by $P{T(a)\le t}$, survival $P{T(a)&gt;t}$, or restricted mean event-free time. Always name the horizon and competing-event strategy.</p>
 <h2 id="394-four-core-identification-assumptions">39.4 Four core identification assumptions</h2>
+<p><button class="read-details-btn" data-section="6a-4">✦ Read Details</button></p>
 <p>An estimand is a property of an imagined intervention. Identification connects it to the observed-data distribution.</p>
 <h3 id="consistency">Consistency</h3>
 <p>If a project actually receives treatment $A=a$, its observed outcome equals $Y(a)$:</p>
@@ -947,6 +961,7 @@ print(f&quot;Naive reviewed-minus-unreviewed risk difference: {naive:.3f}&quot;)
 <p>The path $A\leftarrow X\rightarrow Y$ is a backdoor path. It produces association between $A$ and $Y$ that is not caused by the review. Conditioning on a sufficient set of pre-treatment common causes blocks such paths.</p>
 <p>A DAG does not discover causality from the dataset. It records the team's scientific assumptions so that missing variables, questionable timing, and competing explanations can be challenged before modelling.</p>
 <h2 id="402-five-roles-a-variable-can-play">40.2 Five roles a variable can play</h2>
+<p><button class="read-details-btn" data-section="6b-2">✦ Read Details</button></p>
 <table>
 <thead>
 <tr>
@@ -1010,6 +1025,7 @@ $$</p>
 <h2 id="406-descendants-instruments-and-bias-amplification">40.6 Descendants, instruments, and bias amplification</h2>
 <p>Conditioning on a collider's descendant can also open a path. Conditioning on a strong instrument—something that shifts treatment but has no direct outcome path—can worsen finite-sample overlap and amplify bias from an unmeasured confounder in some settings. Neither result means instruments are bad. It means an adjustment model and an instrumental-variable design use variables for different purposes.</p>
 <h2 id="407-backdoor-adjustment">40.7 Backdoor adjustment</h2>
+<p><button class="read-details-btn" data-section="6b-7">✦ Read Details</button></p>
 <p>An adjustment set $X$ identifies the total effect through the backdoor criterion when it:</p>
 <ol>
 <li>contains no descendant of treatment; and</li>
@@ -1071,6 +1087,7 @@ $$</p>
 </ul>
 <p>It addresses confounding of <strong>assignment</strong>. The rest of the protocol still matters.</p>
 <h2 id="412-intention-to-treat-effect">41.2 Intention-to-treat effect</h2>
+<p><button class="read-details-btn" data-section="6c-2">✦ Read Details</button></p>
 <p>Let $Z$ be assignment to offer senior review, whether or not the review is completed. The intention-to-treat, or ITT, estimand is</p>
 <p>$$<br />
 E{Y(Z=1)-Y(Z=0)}.<br />
@@ -1105,6 +1122,7 @@ $$</p>
 </ul>
 <p>The ordinary two-potential-outcome notation is too small for this problem.</p>
 <h2 id="416-noncompliance-assignment-is-not-receipt">41.6 Noncompliance: assignment is not receipt</h2>
+<p><button class="read-details-btn" data-section="6c-6">✦ Read Details</button></p>
 <p>Let $Z$ be random assignment and $A$ actual receipt. Four latent compliance types are defined by $A(1)$ and $A(0)$:</p>
 <table>
 <thead>
@@ -1214,6 +1232,7 @@ $$</p>
 </ol>
 <p>This produces a marginal risk difference even when the working model is logistic. The treatment coefficient alone is a conditional log odds ratio, not the ATE.</p>
 <h2 id="423-propensity-scores">42.3 Propensity scores</h2>
+<p><button class="read-details-btn" data-section="6d-3">✦ Read Details</button></p>
 <p>Rosenbaum and Rubin defined the propensity score as</p>
 <p>$$<br />
 e(X)=P(A=1\mid X).<br />
@@ -1242,6 +1261,7 @@ $$</p>
 </ul>
 <p>Do not inspect outcomes while repeatedly tuning a match to obtain the desired effect.</p>
 <h2 id="425-weighting-creates-a-pseudo-population">42.5 Weighting creates a pseudo-population</h2>
+<p><button class="read-details-btn" data-section="6d-5">✦ Read Details</button></p>
 <p>ATE weights are</p>
 <p>$$<br />
 w_i=\frac{A_i}{e(X_i)}+\frac{1-A_i}{1-e(X_i)}.<br />
@@ -1377,6 +1397,7 @@ print(f&quot;Effective sample size: {ess:.0f} of {len(df)}&quot;)
 <hr />
 <h1 id="day-43-doubly-robust-estimation-and-sensitivity">Day 43 — Doubly Robust Estimation and Sensitivity</h1>
 <h2 id="431-augmented-inverse-probability-weighting">43.1 Augmented inverse-probability weighting</h2>
+<p><button class="read-details-btn" data-section="6e-1">✦ Read Details</button></p>
 <p>Outcome regression can fail if $m_a(X)$ is misspecified. Weighting can fail if $e(X)$ is misspecified and becomes unstable near 0 or 1. Augmented inverse-probability weighting, or AIPW, combines them:</p>
 <p>$$<br />
 \widehat\psi_{\text{AIPW}}=\frac{1}{n}\sum_{i=1}^n\left[<br />
@@ -1416,6 +1437,7 @@ $$</p>
 $$</p>
 <p>This expression reveals influential observations: residuals receive large multipliers where estimated treatment probabilities are small.</p>
 <h2 id="434-why-cross-fitting-helps">43.4 Why cross-fitting helps</h2>
+<p><button class="read-details-btn" data-section="6e-4">✦ Read Details</button></p>
 <p>Flexible models can overfit the same outcomes later used inside the effect score. In $K$-fold cross-fitting:</p>
 <ol>
 <li>split observations into $K$ folds;</li>
@@ -1544,6 +1566,7 @@ print(
 </table>
 <p>Do not call a conclusion “robust” because every model using the same flawed identification strategy agrees.</p>
 <h2 id="4310-research-papers-bangrobins-and-double-machine-learning">43.10 Research papers: Bang–Robins and double machine learning</h2>
+<p><button class="read-details-btn" data-section="6e-1">✦ Read Details</button></p>
 <p>Bang and Robins (2005) explain doubly robust estimation across missing-data and causal settings. Chernozhukov and colleagues (2018) develop orthogonal scores and cross-fitting for high-dimensional nuisance estimation. For each paper, answer:</p>
 <ul>
 <li>What is the target parameter?</li>
@@ -1554,6 +1577,7 @@ print(
 </ul>
 <p>Then implement one deliberate failure: omit a nonlinear confounder from the outcome model but include it in the propensity model; reverse the misspecification; then misspecify both.</p>
 <h2 id="4311-build-break-and-reflect">43.11 Build, break, and reflect</h2>
+<p><button class="read-details-btn" data-section="6e-1">✦ Read Details</button></p>
 <p><strong>Build.</strong> Implement AIPW twice: once with logistic nuisance models and once with tree-based nuisance models. Preserve out-of-fold predictions and effect scores.</p>
 <p><strong>Break.</strong> Compute in-sample nuisance predictions, remove weight clipping, and omit terrain from both models. Which diagnostics react? Which causal failure remains invisible?</p>
 <p><strong>Reflect.</strong> Write a results paragraph containing the estimate, interval, estimand, identification assumptions, overlap population, and one quantitative sensitivity statement.</p>
@@ -1568,6 +1592,7 @@ print(
 </ul>
 <h1 id="day-44-target-trials-and-time-varying-treatment">Day 44 — Target Trials and Time-Varying Treatment</h1>
 <h2 id="441-why-observational-studies-need-an-imaginary-protocol">44.1 Why observational studies need an imaginary protocol</h2>
+<p><button class="read-details-btn" data-section="6f-1">✦ Read Details</button></p>
 <p>A target trial is the randomised experiment we would conduct if it were ethical, feasible, and timely. Target-trial emulation makes an observational analysis imitate that protocol as closely as the data permit. It prevents a common error: comparing vaguely defined groups whose eligibility, treatment assignment, and follow-up begin at different times.</p>
 <p>The protocol should specify:</p>
 <table>
@@ -1610,6 +1635,7 @@ print(
 </table>
 <p>The month-6 review study aligns these pieces: eligibility is assessed at month 6, review is assigned at month 6, and warning follow-up begins immediately afterward. Calling review “baseline” while selecting projects using month-12 survival would not align them.</p>
 <h2 id="442-time-zero-bias">44.2 Time-zero bias</h2>
+<p><button class="read-details-btn" data-section="6f-2">✦ Read Details</button></p>
 <p>Suppose reviewed projects are classified as treated if they receive review anytime in the first year, but follow-up starts at approval. To enter the treated group, a project must remain active and warning-free until its eventual review. The pre-review time is immortal with respect to the classification: an early warning would prevent the project from being labelled treated. Assigning that guaranteed event-free time to treatment can make review look protective.</p>
 <p>Solutions depend on the question:</p>
 <ul>
@@ -1702,6 +1728,7 @@ $$</p>
 </ol>
 <p>This increases information and makes eligibility transparent. It can also mix changing policy periods and treatment versions, so calendar-time adjustment and transport questions remain.</p>
 <h2 id="4410-censoring-and-competing-events">44.10 Censoring and competing events</h2>
+<p><button class="read-details-btn" data-section="6f-1">✦ Read Details</button></p>
 <p>For a causal risk by month 36, decide what cancellation means:</p>
 <ul>
 <li><strong>Total effect on real-world warning incidence:</strong> cancellation remains a competing event; the outcome is warning before cancellation by the horizon.</li>
@@ -1711,6 +1738,7 @@ $$</p>
 </ul>
 <p>Calling cancellation “censoring” quietly changes the causal question and may introduce informative censoring. Chapter 5's event-process discipline still applies.</p>
 <h2 id="4411-research-papers-target-trials-and-marginal-structural-models">44.11 Research papers: target trials and marginal structural models</h2>
+<p><button class="read-details-btn" data-section="6f-1">✦ Read Details</button></p>
 <p>Hernán and Robins (2016) show how explicitly emulating a target trial can prevent avoidable design errors in observational work. Robins, Hernán, and Brumback (2000) develop marginal structural models for time-dependent treatment and confounding. Read them together and ask:</p>
 <ul>
 <li>Where is time zero?</li>
@@ -1720,6 +1748,7 @@ $$</p>
 <li>Which data expansion and weighting choices are part of the procedure?</li>
 </ul>
 <h2 id="4412-build-break-and-reflect">44.12 Build, break, and reflect</h2>
+<p><button class="read-details-btn" data-section="6f-1">✦ Read Details</button></p>
 <p><strong>Build.</strong> Write a target-trial table comparing “review by month 7” with “no review through month 12” among projects eligible at month 6. Specify the grace-period analysis.</p>
 <p><strong>Break.</strong> Define treated projects using any review through month 18 while starting outcomes at approval. Explain every guaranteed-survival interval and selection event.</p>
 <p><strong>Reflect.</strong> Decide whether cancellation is competing, composite, censoring, or hypothetical for your policy question. Defend the choice.</p>
@@ -1736,6 +1765,7 @@ $$</p>
 <h1 id="day-45-quasi-experimental-designs">Day 45 — Quasi-Experimental Designs</h1>
 <p>Quasi-experimental designs exploit assignment mechanisms or discontinuities that can be more credible than adjustment for all measured confounders. Each identifies a particular effect for a particular population. The design, not the estimator's sophistication, carries the causal argument.</p>
 <h2 id="451-difference-in-differences">45.1 Difference-in-differences</h2>
+<p><button class="read-details-btn" data-section="6g-1">✦ Read Details</button></p>
 <p>Suppose some districts introduce mandatory senior review in 2023 and others do not. With one pre and one post period, the difference-in-differences contrast is</p>
 <p>$$<br />
 \widehat\tau_{\text{DiD}}=<br />
@@ -1902,6 +1932,7 @@ $$</p>
 <h2 id="463-interaction-on-one-scale-need-not-exist-on-another">46.3 Interaction on one scale need not exist on another</h2>
 <p>Suppose baseline risk is higher in remote projects. A constant risk ratio can yield a larger absolute risk reduction in that subgroup. A constant risk difference can yield different ratios. Policy capacity often depends on absolute benefit, while mechanisms may be studied on another scale. Register the scale and report baseline risks alongside effects.</p>
 <h2 id="464-pre-specified-subgroup-estimation-with-aipw-scores">46.4 Pre-specified subgroup estimation with AIPW scores</h2>
+<p><button class="read-details-btn" data-section="6h-4">✦ Read Details</button></p>
 <p>The AIPW score has conditional expectation related to the conditional effect when nuisance functions are valid. For the pre-specified terrain modifier in this simulation, compare mean scores by baseline group and test the interaction contrast.</p>
 <pre><code class="language-python">high_terrain = (df[&quot;terrain_index&quot;] &gt; 0.75).to_numpy()
 
@@ -2104,6 +2135,7 @@ print(f&quot;Corrected SE: {se_d:.3f}; 95% CI: [{ci_d[0]:.3f}, {ci_d[1]:.3f}]&qu
 </ul>
 <p>A fixed random seed helps repeatability. It does not prove robustness or replication.</p>
 <h2 id="477-the-research-bundle">47.7 The research bundle</h2>
+<p><button class="read-details-btn" data-section="6i-7">✦ Read Details</button></p>
 <p>Every final study should preserve:</p>
 <ol>
 <li><strong>Protocol or registration</strong> with version and timestamp.</li>
@@ -2531,6 +2563,7 @@ print(&quot;All registered integrity checks passed.&quot;)
 </ul>
 <hr />
 <h1 id="chapter-6-synthesis">Chapter 6 Synthesis</h1>
+<p><button class="read-details-btn" data-section="capstone">✦ Read Details</button></p>
 <h2 id="one-question-six-layers">One question, six layers</h2>
 <p>The question “does senior review prevent overruns?” becomes answerable only after six layers are separated:</p>
 <ol>
@@ -2751,6 +2784,398 @@ print(&quot;All registered integrity checks passed.&quot;)
 <li>Trial registration and reporting standards appropriate to the domain.</li>
 </ul>
 <p>Software can implement an estimator. It cannot choose the causal question, verify an unmeasured assumption, or take responsibility for the decision.</p>
+<style>
+.read-details-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(34, 211, 238, 0.08);
+    border: 1px solid rgba(34, 211, 238, 0.3);
+    color: #22d3ee;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 0.5rem 0 1rem 0;
+    font-family: inherit;
+}
+.read-details-btn:hover {
+    background: rgba(34, 211, 238, 0.2);
+    border-color: #22d3ee;
+    box-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
+}
+.comp-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(11, 15, 25, 0.85);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    align-items: center;
+    justify-content: center;
+}
+.comp-modal.open {
+    display: flex;
+    opacity: 1;
+}
+.comp-modal-content {
+    background-color: #151d30;
+    border: 1px solid #223150;
+    border-radius: 0.75rem;
+    width: 90%;
+    max-width: 48rem;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.6);
+    position: relative;
+    padding: 2.5rem 2rem 2rem 2rem;
+    transform: scale(0.95);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.comp-modal.open .comp-modal-content {
+    transform: scale(1);
+}
+.comp-modal-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 1.25rem;
+    color: #cbd5e1;
+    font-size: 2rem;
+    font-weight: 300;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    line-height: 1;
+}
+.comp-modal-close:hover {
+    color: #fff;
+}
+#comp-modal-body {
+    color: #cbd5e1;
+    font-size: 0.95rem;
+}
+#comp-modal-body h1, #comp-modal-body h2 {
+    color: #fff;
+    border-bottom: 1px solid #223150;
+    padding-bottom: 0.5rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+#comp-modal-body h3, #comp-modal-body h4 {
+    color: #fff;
+    margin-top: 1.75rem;
+    margin-bottom: 0.75rem;
+}
+#comp-modal-body p {
+    margin-bottom: 1rem;
+}
+#comp-modal-body code {
+    color: #67e8f9;
+    background: #0b0f19;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+}
+#comp-modal-body pre {
+    background: #0b0f19;
+    border: 1px solid #223150;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 1rem 0;
+    overflow-x: auto;
+}
+#comp-modal-body pre code {
+    background: transparent;
+    padding: 0;
+    color: #e2e8f0;
+}
+#comp-modal-body table {
+    width: 100%;
+    font-size: 0.875rem;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+}
+#comp-modal-body th, #comp-modal-body td {
+    border: 1px solid #223150;
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+}
+#comp-modal-body th {
+    background: #151d30;
+    color: #fff;
+    font-weight: 600;
+}
+.companion-details-area, .companion-details-area ~ * {
+    display: none;
+}
+</style>
+
+<div id="companion-modal" class="comp-modal">
+    <div class="comp-modal-content">
+        <span class="comp-modal-close">&times;</span>
+        <div id="comp-modal-body"></div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var store = {};
+    var area = document.querySelector('.companion-details-area');
+    if (!area) return;
+
+    var currentSection = null;
+    var currentElements = [];
+    var sibling = area.nextElementSibling;
+
+    while (sibling) {
+        if (sibling.classList.contains('companion-detail-heading')) {
+            if (currentSection) {
+                store[currentSection] = currentElements;
+            }
+            currentSection = sibling.getAttribute('data-section');
+            currentElements = [];
+        } else {
+            if (currentSection) {
+                currentElements.push(sibling.cloneNode(true));
+            }
+        }
+        sibling = sibling.nextElementSibling;
+    }
+    if (currentSection) {
+        store[currentSection] = currentElements;
+    }
+
+    // Wire up buttons
+    document.querySelectorAll('.read-details-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var section = this.getAttribute('data-section');
+            var elements = store[section];
+            var modalBody = document.getElementById('comp-modal-body');
+            modalBody.innerHTML = '';
+
+            if (elements && elements.length > 0) {
+                elements.forEach(function(el) {
+                    el.style.display = '';
+                    modalBody.appendChild(el);
+                });
+
+                // Trigger MathJax typesetting if loaded
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    window.MathJax.typesetPromise([modalBody]);
+                }
+            } else {
+                modalBody.innerHTML = '<p>No details found for this section.</p>';
+            }
+
+            var modal = document.getElementById('companion-modal');
+            modal.style.display = 'flex';
+            // Reflow
+            modal.offsetHeight;
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        });
+    });
+
+    // Close modal function
+    function closeModal() {
+        var modal = document.getElementById('companion-modal');
+        modal.classList.remove('open');
+        setTimeout(function() {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }, 300);
+    }
+
+    document.querySelector('.comp-modal-close').addEventListener('click', closeModal);
+    window.addEventListener('click', function(event) {
+        var modal = document.getElementById('companion-modal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    });
+});
+</script>
+
+<hr />
+<h1 class="companion-details-area" id="companion-details-area">Companion Details Area</h1>
+<h2 class="companion-detail-heading" data-section="6a-2" id="detail-6a-2">Detail 6A 2</h2>
+<h3 id="potential-outcomes">Potential Outcomes</h3>
+<p>For any project $i$, there are two potential outcomes [cite: 24]:<br />
+* $Y_i(1)$: The warning outcome if project $i$ <em>received</em> the senior review [cite: 24].<br />
+* $Y_i(0)$: The warning outcome if project $i$ <em>did not receive</em> the senior review [cite: 24].<br />
+The <strong>fundamental problem of causal inference</strong> is that we can only observe one of these states for a given project at a given time [cite: 24]:<br />
+$$Y_i = A_iY_i(1) + (1-A_i)Y_i(0)$$</p>
+<h2 class="companion-detail-heading" data-section="6a-3" id="detail-6a-3">Detail 6A 3</h2>
+<h3 id="causal-estimands">Causal Estimands</h3>
+<p>Before picking an algorithm, you must define your target quantity [cite: 24]:<br />
+* <strong>Average Treatment Effect (ATE):</strong> $E{Y(1) - Y(0)}$ [cite: 24]. What if <em>everyone</em> was reviewed vs. <em>no one</em>? [cite: 24]<br />
+* <strong>Average Treatment Effect on the Treated (ATT):</strong> $E{Y(1) - Y(0) \mid A=1}$ [cite: 24]. What was the effect for the projects that <em>actually were</em> reviewed? [cite: 24]</p>
+<h2 class="companion-detail-heading" data-section="6a-4" id="detail-6a-4">Detail 6A 4</h2>
+<h3 id="the-four-identification-assumptions">The Four Identification Assumptions</h3>
+<p>To identify a causal effect from observational data, four strict assumptions must hold [cite: 24]:<br />
+1. <strong>Consistency:</strong> If a unit receives treatment $A=a$, its observed outcome exactly equals its potential outcome $Y(a)$ [cite: 24]. This requires the treatment to be well-defined (no hidden variations of "review") [cite: 24].<br />
+2. <strong>Conditional Exchangeability:</strong> ${Y(1), Y(0)} \perp A \mid X$ [cite: 24]. After adjusting for $X$, treatment is assigned as-if randomly [cite: 24]. <em>There are no unmeasured confounders.</em> [cite: 24]<br />
+3. <strong>Positivity:</strong> $0 &lt; P(A=1 \mid X=x) &lt; 1$ [cite: 24]. Every sub-population must have some probability of receiving (or not receiving) the treatment [cite: 24].<br />
+4. <strong>No Interference:</strong> One project's treatment does not affect another project's outcome (e.g., reviewing one project doesn't consume all the engineers and doom the next project) [cite: 24].</p>
+<hr />
+<h2 class="companion-detail-heading" data-section="6b-2" id="detail-6b-2">Detail 6B 2</h2>
+<h3 id="variable-roles-in-a-dag">Variable Roles in a DAG</h3>
+<ul>
+<li><strong>Confounder ($A \leftarrow C \rightarrow Y$):</strong> Causes both treatment and outcome [cite: 24]. <em>Must be adjusted for.</em> [cite: 24]</li>
+<li><strong>Mediator ($A \rightarrow M \rightarrow Y$):</strong> A step on the causal pathway [cite: 24]. <em>Do not adjust for this if you want the total effect.</em> [cite: 24]</li>
+<li><strong>Collider ($A \rightarrow K \leftarrow Y$):</strong> Caused by both treatment and outcome [cite: 24]. <em>Do NOT adjust for this. Doing so opens a biased path.</em> [cite: 24]</li>
+</ul>
+<h2 class="companion-detail-heading" data-section="6b-7" id="detail-6b-7">Detail 6B 7</h2>
+<h3 id="the-backdoor-criterion">The Backdoor Criterion</h3>
+<p>A set of variables $X$ is sufficient for adjustment if [cite: 24]:<br />
+1. It contains no descendants of the treatment [cite: 24].<br />
+2. It blocks every "backdoor path" from $A$ to $Y$ (paths that have an arrow pointing into $A$) [cite: 24].</p>
+<hr />
+<h2 class="companion-detail-heading" data-section="6c-2" id="detail-6c-2">Detail 6C 2</h2>
+<h3 id="intention-to-treat-itt">Intention-to-Treat (ITT)</h3>
+<p>If you randomly assign ($Z$) a review, but some managers refuse to execute the review ($A$), you must analyze based on the <em>assignment</em> ($Z$), not the <em>receipt</em> ($A$) [cite: 24].<br />
+$$\widehat{\tau}<em Z="1">{\text{ITT}} = \bar Y</em>$$} - \bar Y_{Z=0<br />
+Comparing only the people who <em>received</em> treatment breaks randomization, because compliance is driven by confounding factors (e.g., highly competent managers are more likely to comply) [cite: 24].</p>
+<h2 class="companion-detail-heading" data-section="6c-6" id="detail-6c-6">Detail 6C 6</h2>
+<h3 id="instrumental-variables-late">Instrumental Variables &amp; LATE</h3>
+<p>Under strict assumptions (Relevance, Independence, Exclusion, Monotonicity), we can use the assignment $Z$ as an instrument to find the effect on the <strong>Compliers</strong> [cite: 24]:<br />
+$$\widehat\tau_{\text{LATE}} = \frac{E(Y \mid Z=1) - E(Y \mid Z=0)}{E(A \mid Z=1) - E(A \mid Z=0)}$$</p>
+<hr />
+<h2 class="companion-detail-heading" data-section="6d-3" id="detail-6d-3">Detail 6D 3</h2>
+<h3 id="propensity-scores">Propensity Scores</h3>
+<p>The propensity score is the probability of receiving treatment given the covariates [cite: 24]: <br />
+$$e(X) = P(A=1 \mid X)$$<br />
+It is a balancing score, not a predictive model. If the propensity model separates the classes perfectly, you have a severe Positivity violation [cite: 24].</p>
+<h2 class="companion-detail-heading" data-section="6d-5" id="detail-6d-5">Detail 6D 5</h2>
+<h3 id="inverse-probability-weighting-ipw">Inverse-Probability Weighting (IPW)</h3>
+<p>IPW creates a pseudo-population where treatment assignment is independent of the covariates [cite: 24]. The ATE weights are [cite: 24]:<br />
+$$w_i = \frac{A_i}{e(X_i)} + \frac{1-A_i}{1-e(X_i)}$$<br />
+<em>Danger:</em> Extreme weights signal a lack of overlap [cite: 24]. A few heavily weighted observations can destroy the variance of your estimate [cite: 24].</p>
+<hr />
+<h2 class="companion-detail-heading" data-section="6e-1" id="detail-6e-1">Detail 6E 1</h2>
+<h3 id="augmented-inverse-probability-weighting-aipw">Augmented Inverse-Probability Weighting (AIPW)</h3>
+<p>AIPW combines outcome modeling ($\hat{m}$) and propensity weighting ($\hat{e}$) [cite: 24].<br />
+$$\widehat\psi_{\text{AIPW}} = \frac{1}{n}\sum_{i=1}^n\left[ \hat m_1(X_i) - \hat m_0(X_i) + \frac{A_i{Y_i-\hat m_1(X_i)}}{\hat e(X_i)} - \frac{(1-A_i){Y_i-\hat m_0(X_i)}}{1-\hat e(X_i)} \right]$$<br />
+* <strong>"Doubly Robust"</strong> means the estimator is consistent if <em>either</em> the outcome model <em>or</em> the propensity model is correctly specified [cite: 24]. It does <em>not</em> fix unmeasured confounding [cite: 24].</p>
+<h2 class="companion-detail-heading" data-section="6e-4" id="detail-6e-4">Detail 6E 4</h2>
+<h3 id="cross-fitting">Cross-Fitting</h3>
+<p>To prevent the machine learning models ($\hat{m}, \hat{e}$) from overfitting to their own training data, we use $K$-fold cross-fitting [cite: 24]. Nuisance models are trained on $K-1$ folds, and the causal score is evaluated on the held-out fold [cite: 24].</p>
+<hr />
+<h2 class="companion-detail-heading" data-section="6f-1" id="detail-6f-1">Detail 6F 1</h2>
+<h3 id="target-trial-emulation">Target Trial Emulation</h3>
+<p>To prevent biases in observational data, define the hypothetical randomized trial you <em>wish</em> you could have run [cite: 24]. Align Eligibility, Treatment Assignment, and Follow-up exactly at "Time Zero" [cite: 24].</p>
+<h2 class="companion-detail-heading" data-section="6f-2" id="detail-6f-2">Detail 6F 2</h2>
+<h3 id="time-zero-bias-immortal-time-bias">Time-Zero Bias (Immortal Time Bias)</h3>
+<p>If a project is classified as "Reviewed" because it was reviewed at month 10, but observation started at month 0, the project was "immortal" for 10 months [cite: 24] (if it failed at month 5, it could never have reached the review) [cite: 24]. This artificially makes the review look highly protective [cite: 24].</p>
+<hr />
+<h2 class="companion-detail-heading" data-section="6g-1" id="detail-6g-1">Detail 6G 1</h2>
+<h2 id="7-day-45-quasi-experimental-designs">7. Day 45: Quasi-Experimental Designs</h2>
+<p>When you cannot measure all confounders, Quasi-Experiments exploit natural assignment mechanisms [cite: 24].</p>
+<ul>
+<li><strong>Difference-in-Differences (DiD):</strong> Compares the pre/post change in a treated group to the pre/post change in a control group [cite: 24]. Requires the <strong>Parallel Trends Assumption</strong>: absent treatment, the groups would have evolved in parallel [cite: 24].</li>
+<li><strong>Regression Discontinuity (RD):</strong> Explores treatments assigned by a strict threshold (e.g., all projects with risk $&gt; 80$ get reviewed) [cite: 24]. It estimates a local effect right at the boundary $\lim_{r \downarrow c} E(Y \mid R=r) - \lim_{r \uparrow c} E(Y \mid R=r)$ [cite: 24].</li>
+</ul>
+<hr />
+<h2 class="companion-detail-heading" data-section="6h-4" id="detail-6h-4">Detail 6H 4</h2>
+<h3 id="conditional-average-treatment-effect-cate">Conditional Average Treatment Effect (CATE)</h3>
+<p>The effect of a treatment for a specific covariate profile $x$ [cite: 24]:<br />
+$$\tau(x) = E{Y(1) - Y(0) \mid X=x}$$</p>
+<h3 id="honest-causal-forests">Honest Causal Forests</h3>
+<p>Searching for subgroups that react strongly to treatment is highly prone to overfitting [cite: 24]. <strong>Honest Causal Forests</strong> split the data into two parts: one part to define the tree splits, and a completely separate part to estimate the causal effect within those leaves [cite: 24].</p>
+<hr />
+<h2 class="companion-detail-heading" data-section="6i-7" id="detail-6i-7">Detail 6I 7</h2>
+<h2 id="9-day-47-48-reproducibility-and-the-registered-study">9. Day 47 &amp; 48: Reproducibility and The Registered Study</h2>
+<p>A causal claim is worthless if the exact data, pipeline, hyperparameters, and code cannot be audited [cite: 24].</p>
+<h2 class="companion-detail-heading" data-section="capstone" id="detail-capstone">Detail CAPSTONE</h2>
+<h2 id="10-master-rosetta-stone-formula-sheet">10. Master Rosetta Stone &amp; Formula Sheet</h2>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Formula</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ATE Estimand</td>
+<td>$E{Y(1)-Y(0)}$</td>
+<td>Population average causal effect [cite: 24]</td>
+</tr>
+<tr>
+<td>Risk Difference</td>
+<td>$p_1 - p_0$</td>
+<td>Absolute effect scale [cite: 24]</td>
+</tr>
+<tr>
+<td>ITT Effect</td>
+<td>$\bar Y_{Z=1} - \bar Y_{Z=0}$</td>
+<td>Effect of assignment, ignoring compliance [cite: 24]</td>
+</tr>
+<tr>
+<td>LATE (Wald Ratio)</td>
+<td>$\frac{E(Y\mid Z=1)-E(Y\mid Z=0)}{E(A\mid Z=1)-E(A\mid Z=0)}$</td>
+<td>Complier effect under IV assumptions [cite: 24]</td>
+</tr>
+<tr>
+<td>Propensity Score</td>
+<td>$e(X) = P(A=1\mid X)$</td>
+<td>Conditional probability of treatment [cite: 24]</td>
+</tr>
+<tr>
+<td>IPW Weights</td>
+<td>$\frac{A_i}{e(X_i)}+\frac{1-A_i}{1-e(X_i)}$</td>
+<td>Pseudo-population weighting [cite: 24]</td>
+</tr>
+<tr>
+<td>Standardised Mean Difference</td>
+<td>$\frac{\bar X_{1j}-\bar X_{0j}}{\sqrt{(s_{1j}^2+s_{0j}^2)/2}}$</td>
+<td>Covariate balance diagnostic [cite: 24]</td>
+</tr>
+<tr>
+<td>Effective Sample Size</td>
+<td>$(\sum w_i)^2 / \sum w_i^2$</td>
+<td>Information retention under weighting [cite: 24]</td>
+</tr>
+<tr>
+<td>AIPW Score</td>
+<td>$\hat m_1 - \hat m_0 + \frac{A(Y-\hat m_1)}{\hat e} - \frac{(1-A)(Y-\hat m_0)}{1-\hat e}$</td>
+<td>Doubly robust orthogonal estimation [cite: 24]</td>
+</tr>
+<tr>
+<td>DiD Estimator</td>
+<td>$(\bar Y_{T,post}-\bar Y_{T,pre}) - (\bar Y_{C,post}-\bar Y_{C,pre})$</td>
+<td>Effect estimation assuming parallel trends [cite: 24]</td>
+</tr>
+<tr>
+<td>RD Estimator</td>
+<td>$\lim_{r\downarrow c}E(Y\mid R=r) - \lim_{r\uparrow c}E(Y\mid R=r)$</td>
+<td>Local effect at assignment threshold [cite: 24]</td>
+</tr>
+<tr>
+<td>CATE</td>
+<td>$E{Y(1)-Y(0)\mid X=x}$</td>
+<td>Conditional effect for a specific profile [cite: 24]</td>
+</tr>
+<tr>
+<td>Corrected CV Variance</td>
+<td>$\sqrt{(\frac{1}{r}+q)s_d^2}$</td>
+<td>Penalizes variance for overlapping folds [cite: 24]</td>
+</tr>
+</tbody>
+</table>
         </article>
     </div>
 
