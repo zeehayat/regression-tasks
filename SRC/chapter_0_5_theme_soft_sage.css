@@ -1,0 +1,25 @@
+@page { size: A4; margin: 16mm 15mm 18mm; }
+* { box-sizing: border-box; }
+html { background: #f3f6f1; color: #2f3834; font-family: "Ubuntu Sans", "DejaVu Sans", Arial, sans-serif; }
+body { max-width: 100%; margin: 0; font-size: 9.8pt; line-height: 1.55; }
+h1, h2, h3, h4 { font-family: "Ubuntu", "Ubuntu Sans", Arial, sans-serif; color: #254b43; line-height: 1.2; break-after: avoid; }
+h1 { font-size: 24pt; border-bottom: .65mm solid #b7d3c3; padding-bottom: 3mm; margin: 0 0 7mm; }
+h2 { font-size: 15.5pt; margin: 8mm 0 3mm; color: #39705b; }
+h3 { font-size: 12.5pt; margin: 6mm 0 2mm; }
+h4 { font-size: 11pt; margin: 5mm 0 2mm; }
+p, li { orphans: 3; widows: 3; }
+blockquote { margin: 4mm 0; padding: 3mm 4mm; border-left: 1.2mm solid #78a88e; background: #e5f0e8; color: #3e5548; break-inside: avoid; }
+pre { margin: 3mm 0; padding: 3mm; border: .25mm solid #c1d3c6; border-radius: 1.5mm; background: #eaf1eb; color: #263630; font: 7.3pt/1.42 "Ubuntu Mono", "DejaVu Sans Mono", monospace; white-space: pre-wrap; overflow-wrap: anywhere; }
+code { font-family: "Ubuntu Mono", "DejaVu Sans Mono", monospace; font-size: .9em; }
+p code, li code { background: #e6eee7; padding: .2mm .7mm; border-radius: .6mm; }
+table { width: 100%; border-collapse: collapse; margin: 3mm 0 5mm; font-size: 8.3pt; }
+thead { display: table-header-group; }
+tr { break-inside: avoid; }
+th, td { border: .22mm solid #bfd0c4; padding: 1.6mm 1.8mm; vertical-align: top; }
+th { background: #dcebe1; color: #2b5845; text-align: left; }
+img, svg, math { max-width: 100%; }
+math[display="block"] { margin: 3.5mm 0; break-inside: avoid; }
+hr { border: 0; border-top: .25mm solid #c5d6ca; margin: 7mm 0; }
+ol, ul { padding-left: 7mm; }
+li { margin: .8mm 0; }
+@media print { html, body { background: #f3f6f1; } a { color: inherit; text-decoration: none; } }

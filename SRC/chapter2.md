@@ -855,6 +855,8 @@ Then explain what a tiny singular value means in one sentence a nontechnical man
 
 > **Today’s central idea:** OLS can be fitted without a probability model. To make classical probability statements about coefficients and future outcomes, we must add assumptions and state them openly.
 
+> **Day 8 notation checkpoint.** A probability density $f(y)$ is a curve whose *area* represents probability. The integral $\int_a^b f(y)\,dy$ means “add infinitely thin strips of area from $a$ to $b$”; it is the continuous counterpart of the sums used since Chapter 0. An expectation $\mathbb E[Z]$ is a probability-weighted average of the possible values of $Z$. A subscript such as $\mathbb E_{(X,Y)\sim P_{\text{deployment}}}[L(Y,f(X))]$ says both what is averaged—the loss $L$—and which population distribution supplies the cases—the deployment population. You need to read these symbols, not calculate difficult integrals by hand.
+
 ## 8.1 Deterministic fit versus stochastic model
 
 So far, $y$ and $X$ have been arrays and OLS has been a geometric optimisation:
@@ -1131,6 +1133,10 @@ flowchart TD
 
 ## 8.12 Build: `GaussianOLS`
 
+`GaussianOLS` is a **subclass** of the `StableOLS` class built earlier. Class inheritance means “start with the parent class's behaviour, then add or replace selected behaviour.” Inside `fit`, `super().fit(X, y)` calls the parent's already-tested fitting method on this same object before the subclass calculates uncertainty quantities; it avoids copying the original fitting code.
+
+In the code below, `t.ppf(q, df)` uses the Student-$t$ **percent-point function**: it returns the value below which probability $q$ falls, so it is the inverse of the cumulative distribution function. For a two-sided 95% interval, `q=0.975` finds the upper critical value.
+
 ```python
 import numpy as np
 from scipy.stats import t
@@ -1195,6 +1201,8 @@ class GaussianOLS(StableOLS):
             "prediction_upper": predictions + prediction_margin,
         }
 ```
+
+`np.einsum("ij,jk,ik->i", X, A, X)` calculates $x_i^TAx_i$ separately for every row $i$, without writing a Python loop or constructing a large intermediate array. Read the index string as a bookkeeping rule: `i` remains in the output, while repeated `j` and `k` indices are multiplied and summed. Chapter 3 reuses this exact row-wise quadratic-form pattern for leverage.
 
 This class uses $(X^TX)^{-1}$ for the covariance formula after checking full rank. In more advanced work, use numerically stable decomposition-based routines and consider heteroskedasticity-robust or cluster-robust covariance estimators when their assumptions match the data structure.
 
@@ -2176,6 +2184,8 @@ linear_pipeline = Pipeline(
 )
 ```
 
+With an intercept, retaining every one-hot column would make one column an exact sum of the others. `drop="first"` removes that exact linear dependence—the same rank-deficiency problem derived in §7.8—while treating the dropped category as the reference level.
+
 The order is `fit` preprocessing on the current training fold, `transform` that fold, fit the model, and transform the corresponding validation fold using the learned training-fold values.
 
 ## 11.9 K-fold cross-validation
@@ -2313,6 +2323,26 @@ The object being evaluated is not “a depth-3 tree” chosen in advance. It is 
 <button class="read-details-btn" data-section="2f-1">✦ Read Details</button>
 
 This explicit version keeps the mechanics visible.
+
+Before combining pipelines, grouped folds, cloning, and nesting, isolate what `GridSearchCV` does with one plain estimator:
+
+```python
+from sklearn.model_selection import GridSearchCV, KFold
+from sklearn.tree import DecisionTreeRegressor
+
+small_search = GridSearchCV(
+    estimator=DecisionTreeRegressor(random_state=42),
+    param_grid={"max_depth": [1, 2, 3, 4]},
+    scoring="neg_mean_absolute_error",
+    cv=KFold(n_splits=5, shuffle=True, random_state=42),
+    refit=True,
+)
+small_search.fit(X[numeric_features], y)
+print(small_search.best_params_)
+print(-small_search.best_score_)
+```
+
+This tries four depths, scores each through five validation folds, and refits the winning depth on all supplied development rows. The full example below keeps that same search operation but places it inside an outer evaluation loop, swaps ordinary folds for district-preserving folds, and searches a complete preprocessing-plus-model pipeline.
 
 ```python
 import numpy as np
@@ -3065,6 +3095,9 @@ def make_preprocessor():
             ),
         ]
     )
+
+    # Dropping one category prevents exact dependence among the intercept and
+    # one-hot columns; see the rank-deficiency argument in §7.8.
     return ColumnTransformer(
         transformers=[
             ("numeric", numeric_pipeline, NUMERIC_FEATURES),
@@ -3540,418 +3573,3 @@ That chain is the real subject of Chapter 2.
 10. scikit-learn. [Cross-Validation: Evaluating Estimator Performance](https://scikit-learn.org/stable/modules/cross_validation.html).
 11. scikit-learn. [Decision Trees](https://scikit-learn.org/stable/modules/tree.html).
 12. scikit-learn. [Regression Metrics](https://scikit-learn.org/stable/modules/model_evaluation.html#regression-metrics).
-<style>
-.read-details-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: rgba(34, 211, 238, 0.08);
-    border: 1px solid rgba(34, 211, 238, 0.3);
-    color: #22d3ee;
-    padding: 0.4rem 0.8rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    border-radius: 0.375rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    margin: 0.5rem 0 1rem 0;
-    font-family: inherit;
-}
-.read-details-btn:hover {
-    background: rgba(34, 211, 238, 0.2);
-    border-color: #22d3ee;
-    box-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
-}
-.comp-modal {
-    display: none;
-    position: fixed;
-    z-index: 10000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: rgba(11, 15, 25, 0.85);
-    backdrop-filter: blur(8px);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    align-items: center;
-    justify-content: center;
-}
-.comp-modal.open {
-    display: flex;
-    opacity: 1;
-}
-.comp-modal-content {
-    background-color: #151d30;
-    border: 1px solid #223150;
-    border-radius: 0.75rem;
-    width: 90%;
-    max-width: 48rem;
-    max-height: 85vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.6);
-    position: relative;
-    padding: 2.5rem 2rem 2rem 2rem;
-    transform: scale(0.95);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.comp-modal.open .comp-modal-content {
-    transform: scale(1);
-}
-.comp-modal-close {
-    position: absolute;
-    top: 0.75rem;
-    right: 1.25rem;
-    color: #cbd5e1;
-    font-size: 2rem;
-    font-weight: 300;
-    cursor: pointer;
-    transition: color 0.2s ease;
-    line-height: 1;
-}
-.comp-modal-close:hover {
-    color: #fff;
-}
-#comp-modal-body {
-    color: #cbd5e1;
-    font-size: 0.95rem;
-}
-#comp-modal-body h1, #comp-modal-body h2 {
-    color: #fff;
-    border-bottom: 1px solid #223150;
-    padding-bottom: 0.5rem;
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-}
-#comp-modal-body h3, #comp-modal-body h4 {
-    color: #fff;
-    margin-top: 1.75rem;
-    margin-bottom: 0.75rem;
-}
-#comp-modal-body p {
-    margin-bottom: 1rem;
-}
-#comp-modal-body code {
-    color: #67e8f9;
-    background: #0b0f19;
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-}
-#comp-modal-body pre {
-    background: #0b0f19;
-    border: 1px solid #223150;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    margin: 1rem 0;
-    overflow-x: auto;
-}
-#comp-modal-body pre code {
-    background: transparent;
-    padding: 0;
-    color: #e2e8f0;
-}
-#comp-modal-body table {
-    width: 100%;
-    font-size: 0.875rem;
-    border-collapse: collapse;
-    margin: 1.5rem 0;
-}
-#comp-modal-body th, #comp-modal-body td {
-    border: 1px solid #223150;
-    padding: 0.5rem 0.75rem;
-    text-align: left;
-}
-#comp-modal-body th {
-    background: #151d30;
-    color: #fff;
-    font-weight: 600;
-}
-.companion-details-area, .companion-details-area ~ * {
-    display: none;
-}
-</style>
-
-<div id="companion-modal" class="comp-modal">
-    <div class="comp-modal-content">
-        <span class="comp-modal-close">&times;</span>
-        <div id="comp-modal-body"></div>
-    </div>
-</div>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    var store = {};
-    var area = document.querySelector('.companion-details-area');
-    if (!area) return;
-    
-    var currentSection = null;
-    var currentElements = [];
-    var sibling = area.nextElementSibling;
-    
-    while (sibling) {
-        if (sibling.classList.contains('companion-detail-heading')) {
-            if (currentSection) {
-                store[currentSection] = currentElements;
-            }
-            currentSection = sibling.getAttribute('data-section');
-            currentElements = [];
-        } else {
-            if (currentSection) {
-                currentElements.push(sibling.cloneNode(true));
-            }
-        }
-        sibling = sibling.nextElementSibling;
-    }
-    if (currentSection) {
-        store[currentSection] = currentElements;
-    }
-    
-    // Wire up buttons
-    document.querySelectorAll('.read-details-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            var section = this.getAttribute('data-section');
-            var elements = store[section];
-            var modalBody = document.getElementById('comp-modal-body');
-            modalBody.innerHTML = '';
-            
-            if (elements && elements.length > 0) {
-                elements.forEach(function(el) {
-                    el.style.display = '';
-                    modalBody.appendChild(el);
-                });
-                
-                // Trigger MathJax typesetting if loaded
-                if (window.MathJax && window.MathJax.typesetPromise) {
-                    window.MathJax.typesetPromise([modalBody]);
-                }
-            } else {
-                modalBody.innerHTML = '<p>No details found for this section.</p>';
-            }
-            
-            var modal = document.getElementById('companion-modal');
-            modal.style.display = 'flex';
-            // Reflow
-            modal.offsetHeight;
-            modal.classList.add('open');
-            document.body.style.overflow = 'hidden';
-        });
-    });
-    
-    // Close modal function
-    function closeModal() {
-        var modal = document.getElementById('companion-modal');
-        modal.classList.remove('open');
-        setTimeout(function() {
-            modal.style.display = 'none';
-            document.body.style.overflow = '';
-        }, 300);
-    }
-    
-    document.querySelector('.comp-modal-close').addEventListener('click', closeModal);
-    window.addEventListener('click', function(event) {
-        var modal = document.getElementById('companion-modal');
-        if (event.target === modal) {
-            closeModal();
-        }
-    });
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            closeModal();
-        }
-    });
-});
-</script>
-
-
----
-
-# Companion Details Area {: .companion-details-area}
-## Detail 2A 1 {: .companion-detail-heading data-section="2a-1"}
-### Condition Number and Numerical Stability
-* An **ill-conditioned** problem is one where a tiny change in data causes a massive change in the fitted coefficients [cite: 15].
-* The 2-norm condition number of a matrix $X$ is the ratio of its largest to smallest singular value [cite: 15]:
-  $$\kappa_2(X) = \frac{\sigma_{\max}(X)}{\sigma_{\min}(X)}$$
-* Features with wildly different units (e.g., kW vs. km) create numerical imbalance, increasing the condition number and making optimization algorithms (like gradient descent) unstable [cite: 15].
-
-
-## Detail 2A 2 {: .companion-detail-heading data-section="2a-2"}
-### Condition Number and Numerical Stability
-* An **ill-conditioned** problem is one where a tiny change in data causes a massive change in the fitted coefficients [cite: 15].
-* The 2-norm condition number of a matrix $X$ is the ratio of its largest to smallest singular value [cite: 15]:
-  $$\kappa_2(X) = \frac{\sigma_{\max}(X)}{\sigma_{\min}(X)}$$
-* Features with wildly different units (e.g., kW vs. km) create numerical imbalance, increasing the condition number and making optimization algorithms (like gradient descent) unstable [cite: 15].
-
-
-## Detail 2A 3 {: .companion-detail-heading data-section="2a-3"}
-### Standardizing Features
-To fix numerical imbalance, we standardize features using **training data statistics** [cite: 15]:
-$$z_{ij} = \frac{x_{ij} - \mu_j}{s_j}$$
-* $\mu_j$: Mean of feature $j$ in the training set [cite: 15].
-* $s_j$: Standard deviation of feature $j$ in the training set [cite: 15].
-
-**CRITICAL RULE (Preprocessing Leakage):** You must *never* use the test set to calculate $\mu_j$ or $s_j$ [cite: 15]. The test set must be transformed using the parameters learned exclusively from the training set [cite: 15].
-
-
-## Detail 2A 6 {: .companion-detail-heading data-section="2a-6"}
-### How Scaling Affects Coefficients
-Scaling changes the numerical value of coefficients but does not change the final predictions [cite: 15]. If $\gamma_j$ are the coefficients of the scaled model, the original-unit coefficients are recovered via [cite: 15]:
-$$\beta_j = \frac{\gamma_j}{s_j}$$
-$$\beta_0 = \gamma_0 - \sum_j \frac{\gamma_j \mu_j}{s_j}$$
-
----
-
-
-## Detail 2B 2 {: .companion-detail-heading data-section="2b-2"}
-### QR Decomposition
-Factor the design matrix into $X = QR$ [cite: 15]:
-* $Q$: Orthonormal columns ($Q^TQ = I$) [cite: 15].
-* $R$: Upper-triangular matrix [cite: 15].
-* Substitute into the OLS objective to get: $R\hat{\beta} = Q^Ty$ [cite: 15]. Because $R$ is triangular, we solve for $\hat{\beta}$ using fast back-substitution instead of matrix inversion [cite: 15].
-
-
-## Detail 2B 5 {: .companion-detail-heading data-section="2b-5"}
-### Singular Value Decomposition (SVD)
-Factor the matrix into $X = U\Sigma V^T$ [cite: 15]:
-* $U, V$: Orthonormal rotation matrices [cite: 15].
-* $\Sigma$: Diagonal matrix of singular values $\sigma$ (stretching factors) [cite: 15].
-* A tiny singular value warns us that the data contains very little independent information in that specific parameter direction [cite: 15].
-
-
-## Detail 2B 6 {: .companion-detail-heading data-section="2b-6"}
-## 2. Day 7: QR, SVD, Rank, and the Pseudoinverse
-
-Explicitly calculating the normal equations $(X^TX)^{-1}X^Ty$ squares the condition number ($\kappa_2(X^TX) = \kappa_2(X)^2$), which magnifies floating-point errors [cite: 15]. We bypass this using direct matrix decompositions [cite: 15].
-
-
-## Detail 2C 4 {: .companion-detail-heading data-section="2c-4"}
-### The Classical Gaussian Model
-Assume the target is generated by a systematic component plus random Gaussian noise [cite: 15]:
-$$Y_i \mid X_i = x_i \sim \mathcal{N}(x_i^T\beta, \sigma^2)$$
-**Assumptions included here [cite: 15]:** Linearity, mean-zero independent errors, constant variance (homoskedasticity), and normal distribution [cite: 15].
-
-
-## Detail 2C 5 {: .companion-detail-heading data-section="2c-5"}
-### Maximum Likelihood Estimation (MLE)
-The Log-Likelihood of the Gaussian model is [cite: 15]:
-$$\ell(\beta, \sigma^2) = -\frac{n}{2}\log(2\pi) - \frac{n}{2}\log(\sigma^2) - \frac{1}{2\sigma^2}\sum_{i=1}^{n}(y_i - x_i^T\beta)^2$$
-Because we want to *maximize* this function with respect to $\beta$, and the last term is negative, we must *minimize* the sum of squared residuals [cite: 15]. 
-**Conclusion:** Under Gaussian noise, Maximum Likelihood exactly equals Ordinary Least Squares [cite: 15].
-
-
-## Detail 2C 10 {: .companion-detail-heading data-section="2c-10"}
-### Uncertainty and Intervals
-* **Residual Variance ($s^2$):** $s^2 = \frac{SSR}{n-k}$ (where $k$ is the number of parameters). We divide by $n-k$ because fitting $k$ parameters consumes $k$ degrees of freedom [cite: 15].
-* **Confidence Interval:** Bounds the uncertainty of the *estimated mean cost* of projects [cite: 15].
-* **Prediction Interval:** Bounds the uncertainty for *one specific new project* [cite: 15]. It is always wider than the confidence interval because it must account for irreducible individual project noise ($\sigma^2$) [cite: 15].
-
----
-
-
-## Detail 2C 11 {: .companion-detail-heading data-section="2c-11"}
-### Uncertainty and Intervals
-* **Residual Variance ($s^2$):** $s^2 = \frac{SSR}{n-k}$ (where $k$ is the number of parameters). We divide by $n-k$ because fitting $k$ parameters consumes $k$ degrees of freedom [cite: 15].
-* **Confidence Interval:** Bounds the uncertainty of the *estimated mean cost* of projects [cite: 15].
-* **Prediction Interval:** Bounds the uncertainty for *one specific new project* [cite: 15]. It is always wider than the confidence interval because it must account for irreducible individual project noise ($\sigma^2$) [cite: 15].
-
----
-
-
-## Detail 2D 2 {: .companion-detail-heading data-section="2d-2"}
-### The MSE Gradient
-The Mean Squared Error objective is $J(\beta) = \frac{1}{n} \lVert y - X\beta 
-Vert_2^2$ [cite: 15]. Its gradient is [cite: 15]:
-$$
-abla_\beta J(\beta) = \frac{2}{n} X^T(X\beta - y)$$
-
-
-## Detail 2D 3 {: .companion-detail-heading data-section="2d-3"}
-### The Update Rule
-We iteratively step in the direction opposite to the gradient [cite: 15]:
-$$\beta^{(t+1)} = \beta^{(t)} - \eta 
-abla J(\beta^{(t)})$$
-* $\eta$ (eta) is the **learning rate** (a hyperparameter) [cite: 15].
-* If $\eta$ is too small, learning is agonizingly slow [cite: 15]. If $\eta$ is too large, the algorithm will oscillate wildly and the loss will explode toward infinity [cite: 15].
-
-**Why Standardize Features Here?** Unscaled features create a long, narrow "valley" in the error surface [cite: 15]. Gradient descent will zigzag inefficiently across this valley [cite: 15]. Standardization makes the error bowl more circular, allowing the algorithm to march directly toward the minimum [cite: 15].
-
----
-
-
-## Detail 2E 3 {: .companion-detail-heading data-section="2e-3"}
-### Constant Baselines
-Before evaluating a complex model, you must prove it beats a naive baseline [cite: 15]:
-* **Squared-Error Baseline:** Predicting the training **Mean** ($\bar{y}_{train}$) minimizes MSE [cite: 15].
-* **Absolute-Error Baseline:** Predicting the training **Median** minimizes MAE [cite: 15].
-
-
-## Detail 2E 6 {: .companion-detail-heading data-section="2e-6"}
-### Overfitting vs. Underfitting
-* **Underfitting:** The model is too simple to capture the underlying pattern (high training error, high validation error) [cite: 15].
-* **Overfitting:** The model memorizes training noise instead of the signal (low training error, high validation error) [cite: 15].
-
-
-## Detail 2E 7 {: .companion-detail-heading data-section="2e-7"}
-### Bias-Variance Decomposition (Conceptual)
-Expected test error consists of [cite: 15]:
-$$	ext{Error} = 	ext{Squared Bias} + 	ext{Variance} + 	ext{Irreducible Noise}$$
-* *Bias:* Systematic miss caused by the model being too rigid [cite: 15].
-* *Variance:* Sensitivity of the model to random fluctuations in the training sample [cite: 15].
-
----
-
-
-## Detail 2F 1 {: .companion-detail-heading data-section="2f-1"}
-### The Three Roles of Data
-1. **Training:** Learn model parameters and preprocessing scales [cite: 15].
-2. **Validation:** Tune hyperparameters (e.g., tree depth) and compare algorithms [cite: 15].
-3. **Test:** Touched only once to estimate final, unbiased deployment performance [cite: 15].
-
-
-## Detail 2F 2 {: .companion-detail-heading data-section="2f-2"}
-### Types of Data Splits
-* **Random Split:** Assumes observations are completely independent exchangeable units [cite: 15].
-* **Group Split (`GroupKFold`):** Keeps related records (e.g., projects from the same district) together to test if the model generalizes to completely *new* districts [cite: 15].
-* **Temporal Split:** Trains on the past (2016-2021) and predicts the future (2022) to simulate real-world time deployment [cite: 15].
-
-
-## Detail 2F 6 {: .companion-detail-heading data-section="2f-6"}
-### Data Leakage
-Leakage destroys the validity of your evaluation. Forms include [cite: 15]:
-* **Target Leakage:** Using features created *after* the target occurs (e.g., final material bills) [cite: 15].
-* **Preprocessing Leakage:** Scaling data using statistics ($\mu, \sigma$) calculated from the test set [cite: 15].
-* **Test-Set Leakage:** Tuning the model repeatedly based on test-set scores until it looks good [cite: 15].
-
-**The Solution:** Use **Pipelines** (`sklearn.pipeline.Pipeline`). Pipelines ensure that imputation and scaling are fit *strictly* on the training folds inside the cross-validation loop [cite: 15].
-
-
-## Detail 2F 14 {: .companion-detail-heading data-section="2f-14"}
-### Nested Cross-Validation
-To prevent model-selection bias (overfitting the validation set) [cite: 15]:
-* **Inner Loop:** Searches for the best hyperparameters (e.g., tree depth) [cite: 15].
-* **Outer Loop:** Evaluates the generalized performance of the *entire selection procedure* on untouched folds [cite: 15].
-
----
-
-
-## Detail 2G 4 {: .companion-detail-heading data-section="2g-4"}
-### Robust Metrics
-* **MAE (Mean Absolute Error):** $\frac{1}{n}\sum |y_i - \hat{y}_i|$. A linear penalty, robust to extreme outliers [cite: 15].
-* **RMSE (Root Mean Squared Error):** $\sqrt{\frac{1}{n}\sum (y_i - \hat{y}_i)^2}$. Highly sensitive to large outliers [cite: 15].
-* **MedAE (Median Absolute Error):** The typical central miss. Highly robust [cite: 15].
-* **Test-Set $R^2$:** Standard $R^2$ compares model performance to the *evaluation-set mean*. Under distribution shift, always score against an explicitly trained dummy baseline instead [cite: 15].
-* **Why MAPE is dangerous:** Mean Absolute Percentage Error explodes toward infinity when the target value is close to zero, and it arbitrarily penalizes over-predictions more than under-predictions [cite: 15].
-
-
-## Detail 2G 15 {: .companion-detail-heading data-section="2g-15"}
-### Uncertainty and the Bootstrap
-* A standard $K$-fold cross-validation standard deviation is **not** a valid confidence interval because the training folds overlap and are highly dependent [cite: 15].
-* Instead, generate uncertainty intervals around MAE using the **Nonparametric Bootstrap**: resampling the held-out test predictions with replacement thousands of times to estimate the 95% interval [cite: 15].
-
----
-
-
-## Detail CAPSTONE {: .companion-detail-heading data-section="capstone"}
-## 8. Master Rosetta Stone & Formula Sheet
-

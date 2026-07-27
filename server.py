@@ -41,7 +41,7 @@ CONFIG_JSON_PATH = ROOT / "config.json"
 AUDIO_CACHE = ROOT / "site" / "static" / "audio_cache"
 ATTACHMENT_DIR = ROOT / "site" / "static" / "note_attachments"
 MAX_ATTACHMENT_BYTES = 25 * 1024 * 1024
-SERVICES = ("tutor", "grading", "papers", "tts", "sync")
+SERVICES = ("tutor", "grading", "papers", "tts", "sync", "notion")
 
 DEFAULT_CONFIG: dict[str, Any] = {
     "server": {"host": "127.0.0.1", "port": 9001},
@@ -82,6 +82,13 @@ DEFAULT_CONFIG: dict[str, Any] = {
             "endpoint": "${KP_SYNC_ENDPOINT}",
             "api_key": "${KP_SYNC_API_KEY}",
             "timeout_seconds": 3,
+        },
+        "notion": {
+            "enabled": True,
+            "api_key": "${NOTION_API_KEY}",
+            "database_id": "${NOTION_DATABASE_ID}",
+            "endpoint": "https://api.notion.com/v1/pages",
+            "timeout_seconds": 10,
         },
     },
 }
@@ -813,6 +820,184 @@ def paper_from_crossref(query: str, timeout: float) -> dict[str, Any]:
     }
 
 
+def html_to_notion_blocks(html: str) -> list[dict[str, Any]]:
+    blocks = []
+    if not html:
+        return blocks
+
+    from html.parser import HTMLParser
+
+    class NotionHTMLParser(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.blocks = []
+            self.current_tag = None
+            self.current_text = []
+
+        def handle_starttag(self, tag, attrs):
+            attr_dict = dict(attrs)
+            if tag == "img" and "src" in attr_dict:
+                src = attr_dict["src"]
+                if src.startswith("data:image/"):
+                    try:
+                        header, data_b64 = src.split(",", 1)
+                        ext = header.split(";")[0].split("/")[1] or "png"
+                        img_bytes = base64.b64decode(data_b64)
+                        filename = f"img_{uuid.uuid4().hex}.{ext}"
+                        (ATTACHMENT_DIR / filename).write_bytes(img_bytes)
+                        src = f"http://127.0.0.1:9001/site/static/note_attachments/{filename}"
+                    except Exception:
+                        pass
+                if src.startswith("http"):
+                    self.blocks.append({
+                        "object": "block",
+                        "type": "image",
+                        "image": {"type": "external", "external": {"url": src}}
+                    })
+            self.current_tag = tag
+
+        def handle_data(self, data):
+            text = data.strip()
+            if text:
+                self.current_text.append(text)
+
+        def handle_endtag(self, tag):
+            text = " ".join(self.current_text).strip()
+            self.current_text = []
+            if not text:
+                return
+            if tag in ("p", "div"):
+                self.blocks.append({
+                    "object": "block",
+                    "type": "paragraph",
+                    "paragraph": {"rich_text": [{"type": "text", "text": {"content": text[:2000]}}]}
+                })
+            elif tag == "li":
+                self.blocks.append({
+                    "object": "block",
+                    "type": "bulleted_list_item",
+                    "bulleted_list_item": {"rich_text": [{"type": "text", "text": {"content": text[:2000]}}]}
+                })
+            elif tag in ("h1", "h2"):
+                self.blocks.append({
+                    "object": "block",
+                    "type": "heading_2",
+                    "heading_2": {"rich_text": [{"type": "text", "text": {"content": text[:2000]}}]}
+                })
+            elif tag == "h3":
+                self.blocks.append({
+                    "object": "block",
+                    "type": "heading_3",
+                    "heading_3": {"rich_text": [{"type": "text", "text": {"content": text[:2000]}}]}
+                })
+            elif tag == "blockquote":
+                self.blocks.append({
+                    "object": "block",
+                    "type": "quote",
+                    "quote": {"rich_text": [{"type": "text", "text": {"content": text[:2000]}}]}
+                })
+            elif tag == "pre":
+                self.blocks.append({
+                    "object": "block",
+                    "type": "code",
+                    "code": {"language": "plain text", "rich_text": [{"type": "text", "text": {"content": text[:2000]}}]}
+                })
+
+    parser = NotionHTMLParser()
+    try:
+        parser.feed(html)
+        blocks = parser.blocks
+    except Exception:
+        clean_text = re.sub(r"<[^>]+>", " ", html).strip()
+        if clean_text:
+            blocks.append({
+                "object": "block",
+                "type": "paragraph",
+                "paragraph": {"rich_text": [{"type": "text", "text": {"content": clean_text[:2000]}}]}
+            })
+
+    return blocks
+
+
+def push_to_notion(title: str, selection_text: str, comment: str, chapter_slug: str) -> dict[str, Any]:
+    cfg = service_config("notion")
+    api_key = str(cfg.get("api_key") or "").strip()
+    database_id = str(cfg.get("database_id") or "").strip()
+    if not api_key or not database_id or api_key.startswith("${") or database_id.startswith("${"):
+        return {"ok": False, "reason": "notion_not_configured", "message": "Notion API Key or Database ID is not configured."}
+
+    endpoint = str(cfg.get("endpoint") or "https://api.notion.com/v1/pages")
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Notion-Version": "2022-06-28",
+        "Content-Type": "application/json",
+    }
+
+    clean_id = database_id.replace("-", "")
+
+    # Title is the selected text in bold
+    title_text = (selection_text or title or comment or "Inline Note")[:200]
+    title_text = re.sub(r"<[^>]+>", " ", title_text).strip()
+
+    children = []
+    if selection_text:
+        children.append({
+            "object": "block",
+            "type": "heading_3",
+            "heading_3": {
+                "rich_text": [{"type": "text", "text": {"content": selection_text[:2000]}}]
+            }
+        })
+    if comment:
+        parsed_blocks = html_to_notion_blocks(comment)
+        if parsed_blocks:
+            children.extend(parsed_blocks)
+        else:
+            clean_comment = re.sub(r"<[^>]+>", " ", comment).strip()
+            if clean_comment:
+                children.append({
+                    "object": "block",
+                    "type": "paragraph",
+                    "paragraph": {
+                        "rich_text": [{"type": "text", "text": {"content": clean_comment[:2000]}}]
+                    }
+                })
+
+    # Payload 1: Parent is a Notion Page
+    payload_page = {
+        "parent": {"page_id": clean_id},
+        "properties": {
+            "title": [{"text": {"content": title_text}}]
+        },
+        "children": children
+    }
+
+    # Payload 2: Parent is a Notion Database
+    payload_db = {
+        "parent": {"database_id": clean_id},
+        "properties": {
+            "Name": {"title": [{"text": {"content": title_text}}]},
+            "Chapter": {"rich_text": [{"text": {"content": chapter_slug}}]}
+        },
+        "children": children
+    }
+
+    last_error = None
+    for payload in (payload_page, payload_db):
+        try:
+            req = urllib.request.Request(endpoint, data=json.dumps(payload).encode("utf-8"), headers=headers, method="POST")
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                res_data = json.loads(resp.read().decode("utf-8"))
+            return {"ok": True, "id": res_data.get("id"), "url": res_data.get("url")}
+        except urllib.error.HTTPError as err:
+            err_body = err.read().decode("utf-8", errors="ignore")
+            last_error = f"Notion API ({err.code}): {err_body}"
+            if payload is payload_page:
+                continue
+
+    return {"ok": False, "error": last_error}
+
+
 def collect_sync_payload() -> dict[str, Any]:
     return {
         "notes": [dict(row) for row in db_rows("SELECT * FROM notes")],
@@ -896,7 +1081,7 @@ class Handler(SimpleHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         if parsed.path.startswith("/api/"):
             return self.handle_api_get(parsed)
-        if parsed.path.startswith("/vendor/") or parsed.path.startswith("/site/static/"):
+        if parsed.path.startswith("/vendor/") or parsed.path.startswith("/site/static/") or parsed.path.startswith("/SRC/calculus_videos/"):
             return self.serve_project_file(parsed.path.lstrip("/"), include_body=True)
         if parsed.path == "/":
             self.path = "/chapter0.html"
@@ -904,7 +1089,7 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_HEAD(self) -> None:
         parsed = urllib.parse.urlparse(self.path)
-        if parsed.path.startswith("/vendor/") or parsed.path.startswith("/site/static/"):
+        if parsed.path.startswith("/vendor/") or parsed.path.startswith("/site/static/") or parsed.path.startswith("/SRC/calculus_videos/"):
             return self.serve_project_file(parsed.path.lstrip("/"), include_body=False)
         return super().do_HEAD()
 
@@ -945,16 +1130,28 @@ class Handler(SimpleHTTPRequestHandler):
             json_response(self, config_file_views())
             return
         if parsed.path == "/api/notes":
-            rows = db_rows(
-                """
-                SELECT id, chapter_slug, section_id, title, created_at, updated_at,
-                       substr(replace(replace(body, '<', ' <'), '>', '> '), 1, 180) AS preview
-                FROM notes
-                WHERE chapter_slug = ? AND section_id = ?
-                ORDER BY updated_at DESC, id DESC
-                """,
-                (params.get("chapter_slug", [""])[0], params.get("section_id", [""])[0]),
-            )
+            chapter = params.get("chapter_slug", [""])[0]
+            section = params.get("section_id", [""])[0]
+            if chapter and not section:
+                rows = db_rows(
+                    """
+                    SELECT id, chapter_slug, section_id, title, body, created_at, updated_at
+                    FROM notes
+                    WHERE chapter_slug = ? OR chapter_slug LIKE ?
+                    ORDER BY id DESC
+                    """,
+                    (chapter, f"%{chapter}%"),
+                )
+            else:
+                rows = db_rows(
+                    """
+                    SELECT id, chapter_slug, section_id, title, body, created_at, updated_at
+                    FROM notes
+                    WHERE (chapter_slug = ? OR ? = '') AND (section_id = ? OR ? = '')
+                    ORDER BY id DESC
+                    """,
+                    (chapter, chapter, section, section),
+                )
             json_response(self, {"notes": [dict(row) for row in rows]})
             return
         note_attachments_match = re.fullmatch(r"/api/notes/(\d+)/attachments", parsed.path)
@@ -1289,6 +1486,31 @@ class Handler(SimpleHTTPRequestHandler):
                 json_response(self, {"ok": True, "message": remote.get("message") or f"Sync {direction} complete."})
             except Exception as exc:
                 json_response(self, {"error": str(exc), "reason": "provider_error"}, 502)
+            return
+        if parsed.path == "/api/notion/comment":
+            data = read_json(self)
+            title = str(data.get("title") or "Inline Comment")
+            selection_text = str(data.get("selection_text") or "")
+            comment = str(data.get("comment") or "")
+            chapter_slug = str(data.get("chapter_slug") or "study_guide")
+
+            # 1. Save to local SQLite
+            with sqlite3.connect(DB_PATH) as conn:
+                conn.execute(
+                    """
+                    INSERT INTO notes(chapter_slug, section_id, title, body, created_at, updated_at)
+                    VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))
+                    """,
+                    (chapter_slug, "inline_highlight", title, f"Highlight: {selection_text}\nComment: {comment}")
+                )
+
+            # 2. Push to Notion
+            try:
+                notion_res = push_to_notion(title, selection_text, comment, chapter_slug)
+            except Exception as exc:
+                notion_res = {"ok": False, "error": str(exc)}
+
+            json_response(self, {"ok": True, "local_saved": True, "notion": notion_res})
             return
         json_response(self, {"error": "not found"}, 404)
 

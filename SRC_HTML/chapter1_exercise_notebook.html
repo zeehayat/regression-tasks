@@ -1,0 +1,2676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 0.5 — Regression Readiness Workout</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Offline Vendored Quill WYSIWYG Editor -->
+    <link rel="stylesheet" href="../vendor/quill/quill.snow.css">
+    <script src="../vendor/quill/quill.min.js"></script>
+    <style>
+        :root {
+            --bg: #FAF7F0;
+            --panel: #F1EEE6;
+            --border: #D8D1C5;
+            --text: #252622;
+            --text-muted: #686B63;
+            --accent: #3F6652;
+            --terracotta: #A45F45;
+            --code: #ECE8DF;
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; overflow-x: hidden; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Atkinson Hyperlegible", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-size: 1.0625rem;
+            line-height: 1.75;
+            -webkit-font-smoothing: antialiased;
+        }
+        code, pre, .mono {
+            font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+        }
+        #content {
+            width: auto;
+            max-width: none;
+            margin: 0 0 0 300px;
+            padding: 3.5rem 2.75rem;
+        }
+        .chapter-sidebar {
+            position: fixed;
+            z-index: 20;
+            inset: 0 auto 0 0;
+            width: 280px;
+            overflow-y: auto;
+            padding: 1.25rem 1rem 1.5rem;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(241, 238, 230, 0.92)),
+                var(--panel);
+            border-right: 1px solid var(--border);
+            box-shadow: 12px 0 32px rgba(37, 38, 34, 0.04);
+        }
+        .sidebar-brand {
+            display: grid;
+            gap: 0.2rem;
+            padding: 0.75rem 0.85rem 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.9rem;
+            background: rgba(255, 255, 255, 0.45);
+            border: 1px solid rgba(216, 209, 197, 0.8);
+        }
+        .sidebar-brand__eyebrow {
+            color: var(--terracotta);
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .sidebar-brand__title {
+            color: var(--text);
+            font-size: 1.05rem;
+            font-weight: 800;
+            line-height: 1.25;
+        }
+        .sidebar-brand__subtitle {
+            color: var(--text-muted);
+            font-size: 0.86rem;
+            line-height: 1.45;
+        }
+        .sidebar-section {
+            padding: 0.9rem 0 0;
+        }
+        .sidebar-section + .sidebar-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(216, 209, 197, 0.9);
+        }
+        .sidebar-section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            margin: 0 0 0.75rem;
+            color: var(--accent);
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .sidebar-section-title::after {
+            content: "";
+            flex: 1 1 auto;
+            height: 1px;
+            background: rgba(63, 102, 82, 0.18);
+        }
+        nav.chapters {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.45rem;
+            width: auto;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+        }
+        .chapter-sidebar nav.chapters a {
+            display: block;
+            width: 100%;
+            padding: 0.65rem 0.8rem;
+            border-radius: 0.85rem;
+            border: 1px solid transparent;
+            background: rgba(255, 255, 255, 0.55);
+            color: var(--text-muted);
+            text-decoration: none;
+            font-family: "Atkinson Hyperlegible", sans-serif;
+            font-size: 0.93rem;
+            font-weight: 700;
+            line-height: 1.35;
+            letter-spacing: 0.01em;
+            transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+        }
+        .chapter-sidebar nav.chapters a:hover {
+            color: var(--accent);
+            background: rgba(255, 255, 255, 0.78);
+            border-color: rgba(63, 102, 82, 0.25);
+            transform: translateX(2px);
+        }
+        .chapter-sidebar nav.chapters a.active {
+            color: var(--accent);
+            background: rgba(63, 102, 82, 0.12);
+            border-color: rgba(63, 102, 82, 0.35);
+            box-shadow: inset 3px 0 0 var(--accent);
+        }
+        .chapter-sidebar nav.chapters a:focus-visible {
+            outline: 2px solid var(--terracotta);
+            outline-offset: 2px;
+        }
+        @media (max-width: 1100px) {
+            #content { margin: 0 0 0 260px; padding: 2.5rem 1.5rem; }
+            .chapter-sidebar { width: 240px; }
+        }
+        @media (max-width: 760px) {
+            #content { margin: 0; padding: 1.5rem 1rem; }
+            .chapter-sidebar {
+                position: static;
+                width: auto;
+                max-height: none;
+                overflow: visible;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                padding: 1rem;
+                box-shadow: none;
+            }
+        }
+        .markdown-body h1 { font-family: "Atkinson Hyperlegible", "Inter", sans-serif; font-size: 2.6rem; font-weight: 800; color: var(--accent); margin: 0.5rem 0 1.5rem; line-height: 1.2; }
+        .markdown-body h2 { font-family: "Atkinson Hyperlegible", "Inter", sans-serif; font-size: 1.85rem; font-weight: 700; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin: 2.5rem 0 1rem; line-height: 1.3; }
+        .markdown-body h3 { font-family: "Atkinson Hyperlegible", "Inter", sans-serif; font-size: 1.45rem; font-weight: 600; color: var(--accent); margin: 2rem 0 0.75rem; line-height: 1.35; }
+        .markdown-body h4 { font-family: "Atkinson Hyperlegible", "Inter", sans-serif; font-size: 1.2rem; font-weight: 600; color: var(--accent); margin: 1.5rem 0 0.5rem; line-height: 1.4; }
+        .markdown-body p { color: var(--text); font-size: 1.0625rem; line-height: 1.75; margin: 0 0 1.25rem; }
+        .markdown-body ul, .markdown-body ol { color: var(--text); font-size: 1.0625rem; line-height: 1.75; margin: 0 0 1.25rem; padding-left: 1.5rem; }
+        .markdown-body li { margin-bottom: 0.35rem; }
+        .markdown-body blockquote {
+            border-left: 4px solid var(--terracotta);
+            padding: 0.85rem 1.25rem;
+            font-style: italic;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            background: var(--panel);
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 1.25rem 0;
+        }
+        .markdown-body a { color: var(--accent); text-decoration: underline; }
+        .markdown-body a:hover { color: #67e8f9; }
+        .markdown-body :not(pre) > code {
+            font-size: 0.925em;
+            color: var(--text);
+            background: var(--code);
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.25rem;
+        }
+        .markdown-body pre {
+            background: var(--code);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            margin: 1.25rem 0;
+            overflow-x: auto;
+            font-size: 0.925rem;
+            line-height: 1.65;
+        }
+        .markdown-body pre code {
+            background: transparent;
+            padding: 0;
+            color: var(--text);
+            font-size: 0.925rem;
+        }
+        .markdown-body table { width: 100%; font-size: 0.975rem; border-collapse: collapse; margin: 1.5rem 0; }
+        .markdown-body th, .markdown-body td { border: 1px solid var(--border); padding: 0.6rem 0.85rem; text-align: left; }
+        .markdown-body th { background: var(--panel); color: var(--accent); font-weight: 600; font-size: 1rem; }
+        .markdown-body td { color: var(--text); font-size: 0.975rem; }
+        .markdown-body hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+        /* Mermaid diagram panel: readable offline as labeled source; mermaid.js
+           (if vendored) replaces the <pre> contents with a rendered <svg>. */
+        .diagram-panel {
+            background: var(--code);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+        .diagram-panel__label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: rgba(34, 211, 238, 0.08);
+            padding: 0.4rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .diagram-panel .mermaid {
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+        }
+        .diagram-panel pre.mermaid-source {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+            padding: 1rem;
+            color: var(--text);
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+        }
+
+        .platform-shell {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            width: min(25rem, calc(100vw - 2rem));
+            max-height: calc(100vh - 2rem);
+            display: flex;
+            flex-direction: column;
+            background: rgba(12, 18, 30, 0.96);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            z-index: 50;
+        }
+        .platform-shell.collapsed { width: auto; }
+        .platform-shell.collapsed .platform-body { display: none; }
+        .platform-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.9);
+        }
+        .platform-title { font-size: 1.05rem; font-weight: 700; color: #fff; }
+        .platform-section { font-size: 0.85rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .platform-body { overflow-y: auto; padding: 1rem; }
+        .platform-group { border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem; }
+        .platform-group:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+        .platform-row { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; }
+        .platform-label { display: block; margin-bottom: 0.4rem; font-size: 0.85rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.05em; }
+        .platform-button {
+            border: 1px solid rgba(34, 211, 238, 0.45);
+            background: rgba(34, 211, 238, 0.08);
+            color: var(--accent);
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.8rem;
+            font-size: 0.875rem;
+            font-weight: 650;
+            cursor: pointer;
+        }
+        .platform-button:hover:not(:disabled) { background: rgba(34, 211, 238, 0.14); }
+        .platform-button:disabled {
+            cursor: not-allowed;
+            color: #94a3b8;
+            border-color: #334155;
+            background: rgba(148, 163, 184, 0.08);
+        }
+        .platform-textarea {
+            width: 100%;
+            min-height: 5rem;
+            resize: vertical;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.65rem 0.75rem;
+            font: inherit;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .platform-message {
+            margin-top: 0.5rem;
+            color: #fbbf24;
+            font-size: 0.875rem;
+        }
+        .platform-output {
+            margin-top: 0.65rem;
+            white-space: pre-wrap;
+            color: var(--text-muted);
+            font-size: 0.925rem;
+            line-height: 1.6;
+        }
+        .platform-history {
+            max-height: 14rem;
+            overflow: auto;
+            display: grid;
+            gap: 0.55rem;
+            margin: 0.65rem 0;
+        }
+        .platform-turn {
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            padding: 0.55rem 0.7rem;
+            background: rgba(21, 29, 48, 0.55);
+            color: var(--text-muted);
+            font-size: 0.925rem;
+            line-height: 1.5;
+        }
+        .platform-turn strong { color: #fff; }
+        .paper-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1.25rem 0;
+            background: rgba(21, 29, 48, 0.55);
+        }
+        .paper-card h4 { margin: 0 0 0.4rem; font-size: 1.15rem; }
+        .paper-card p { margin: 0.4rem 0; font-size: 0.975rem; line-height: 1.6; }
+        .paper-card .paper-meta { color: #93c5fd; font-size: 0.875rem; }
+        .paper-card .paper-status { color: #fbbf24; font-size: 0.875rem; }
+        .settings-grid {
+            display: grid;
+            gap: 1rem;
+        }
+        .settings-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: rgba(21, 29, 48, 0.55);
+            padding: 1rem;
+        }
+        .settings-card h2 {
+            margin-top: 0;
+        }
+        .settings-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .settings-field {
+            display: grid;
+            gap: 0.25rem;
+        }
+        .settings-field.full {
+            grid-column: 1 / -1;
+        }
+        .settings-field label,
+        .settings-check {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .settings-field input,
+        .settings-field select {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.5rem;
+            font: inherit;
+        }
+        .settings-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .settings-status {
+            color: #fbbf24;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        .settings-file-viewer {
+            margin-top: 1rem;
+            display: grid;
+            gap: 1rem;
+        }
+        .settings-file-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: rgba(21, 29, 48, 0.55);
+            padding: 1rem;
+        }
+        .settings-file-card h2 {
+            margin: 0 0 0.35rem;
+        }
+        .settings-file-card pre {
+            max-height: 26rem;
+            overflow: auto;
+            margin: 0.75rem 0 0;
+        }
+        .settings-file-meta {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .notes-list {
+            display: grid;
+            gap: 0.35rem;
+            margin-top: 0.55rem;
+        }
+        .note-link {
+            display: block;
+            width: 100%;
+            text-align: left;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: rgba(21, 29, 48, 0.5);
+            color: var(--accent);
+            padding: 0.45rem 0.55rem;
+            cursor: pointer;
+            font: inherit;
+        }
+        .note-link:hover { border-color: rgba(34, 211, 238, 0.5); }
+        .note-link small {
+            display: block;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.68);
+            z-index: 100;
+        }
+        .modal-backdrop.open { display: flex; }
+        .note-modal {
+            width: min(58rem, 100%);
+            max-height: min(46rem, calc(100vh - 2rem));
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: #0b0f19;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
+            overflow: hidden;
+        }
+        .note-modal-header,
+        .note-modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.9);
+        }
+        .note-modal-footer {
+            border-top: 1px solid var(--border);
+            border-bottom: 0;
+        }
+        .note-title-input {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.55rem;
+            font: inherit;
+            font-weight: 700;
+        }
+        .note-toolbar,
+        .note-modal .ql-toolbar.ql-snow {
+            border: 0;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.45);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-picker,
+        .note-modal .ql-toolbar.ql-snow button {
+            color: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-stroke {
+            stroke: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-fill {
+            fill: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-picker-options {
+            background: #0b0f19;
+            border-color: var(--border);
+        }
+        .note-modal .ql-container.ql-snow {
+            border: 0;
+            font: inherit;
+        }
+        .note-editor {
+            min-height: 18rem;
+            flex: 1 1 auto;
+            overflow: auto;
+            color: var(--text);
+            background: #080c14;
+            outline: none;
+        }
+        .note-editor .ql-editor,
+        .note-editor[contenteditable="true"] {
+            min-height: 18rem;
+            color: var(--text);
+            font-size: 1rem;
+            line-height: 1.6;
+            padding: 1rem;
+        }
+        .note-editor .ql-editor.ql-blank::before {
+            color: #64748b;
+            font-style: normal;
+        }
+        .note-editor:empty::before {
+            content: attr(data-placeholder);
+            color: #64748b;
+        }
+        .note-attachments {
+            border-top: 1px solid var(--border);
+            background: rgba(8, 12, 20, 0.95);
+            padding: 0.75rem;
+            max-height: 11rem;
+            overflow: auto;
+        }
+        .attachment-input {
+            max-width: 22rem;
+            color: var(--text-muted);
+            font: inherit;
+        }
+        .attachment-list {
+            display: grid;
+            gap: 0.5rem;
+            margin-top: 0.65rem;
+        }
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: rgba(21, 29, 48, 0.45);
+            padding: 0.5rem;
+        }
+        .attachment-preview {
+            width: 3.5rem;
+            height: 3.5rem;
+            flex: 0 0 3.5rem;
+            display: grid;
+            place-items: center;
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text-muted);
+            overflow: hidden;
+            font-size: 0.78rem;
+        }
+        .attachment-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .attachment-meta {
+            min-width: 0;
+        }
+        .attachment-meta a {
+            display: block;
+            color: var(--accent);
+            overflow-wrap: anywhere;
+        }
+        .attachment-meta small {
+            color: var(--text-muted);
+        }
+        @media (min-width: 72.01rem) {
+            body { padding-right: 27rem; }
+        }
+        @media (max-width: 72rem) {
+            .platform-shell { position: static; width: auto; max-height: none; margin: 0 1rem 1rem; }
+            .platform-shell.collapsed .platform-body { display: none; }
+        }
+
+        /* Warm Paper overrides for the learning-tools panel. */
+        .platform-shell { background: var(--panel) !important; border-color: var(--border) !important; color: var(--text) !important; font-size: 1rem; }
+        .platform-header, .platform-turn, .paper-card { background: var(--panel) !important; border-color: var(--border) !important; }
+        .platform-title, .platform-label, .platform-turn strong, .platform-output, .platform-textarea,
+        .platform-history, .paper-card h4, .paper-card p { color: var(--text) !important; }
+        .platform-section, .platform-message, .platform-status, .paper-card .paper-status { color: var(--terracotta) !important; }
+        .platform-textarea { background: var(--code) !important; border-color: var(--border) !important; }
+        .platform-button { color: var(--accent) !important; border-color: var(--accent) !important; background: rgba(63, 102, 82, .08) !important; }
+        .platform-button:hover:not(:disabled) { background: rgba(63, 102, 82, .16) !important; }
+        .platform-button:disabled { color: var(--text-muted) !important; border-color: var(--border) !important; background: var(--paper) !important; }
+    </style>
+</head>
+<body>
+    <div id="content">
+
+    <aside class="chapter-sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-brand__eyebrow">Regression Study Guide</div>
+            <div class="sidebar-brand__title">Navigation</div>
+            <div class="sidebar-brand__subtitle">Jump between chapters, companion guides, and study aids.</div>
+        </div>
+        <section class="sidebar-section">
+            <div class="sidebar-section-title">Book Chapters</div>
+            <nav class="chapters">
+                            <a href="chapter0.html" class="">Ch. 0</a>
+            <a href="level_0_orientation.html" class="">Level 0 Orientation</a>
+            <a href="calculus_derivatives_micro_videos.html" class="">🎥 Calculus Micro-Videos</a>
+            <a href="day_0e_masterclass_video.html" class="">🎬 Day 0E Masterclass Video</a>
+            <a href="chapter1_read_first.html" class="">Read this before jumping into Chapter 1</a>
+            <a href="chapter1_exercise_notebook.html" class="active">Chapter 1 exercise notebook</a>
+            <a href="chapter1.html" class="">Ch. 1</a>
+            <a href="chapter2_concept_help.html" class="">Chapter 2 concept help (open only when stuck)</a>
+            <a href="chapter2.html" class="">Ch. 2</a>
+            <a href="chapter3_concept_help.html" class="">Chapter 3 concept help (open only when stuck)</a>
+            <a href="chapter3.html" class="">Ch. 3</a>
+            <a href="chapter4_concept_help.html" class="">Chapter 4 concept help (open only when stuck)</a>
+            <a href="chapter4.html" class="">Ch. 4</a>
+            <a href="chapter4_5_interlude.html" class="">Ch. 4.5 Interlude</a>
+            <a href="chapter5_concept_help.html" class="">Chapter 5 concept help (open only when stuck)</a>
+            <a href="chapter5.html" class="">Ch. 5</a>
+            <a href="chapter6_concept_help.html" class="">Chapter 6 concept help (open only when stuck)</a>
+            <a href="chapter6.html" class="">Ch. 6</a>
+            <a href="calculus_video_series.html" class="">Calculus video lessons</a>
+            <a href="settings.html" class="">Settings</a>
+            </nav>
+        </section>
+        <section class="sidebar-section">
+            <div class="sidebar-section-title">Companion Guides</div>
+            <nav class="chapters">
+                            <a href="chapter0_companion.html" class="">Ch. 0 Companion</a>
+            <a href="chapter1_companion.html" class="">Ch. 1 Companion</a>
+            <a href="chapter2_companion.html" class="">Ch. 2 Companion</a>
+            <a href="chapter3_companion.html" class="">Ch. 3 Companion</a>
+            <a href="chapter4_companion.html" class="">Ch. 4 Companion</a>
+            <a href="chapter5_companion.html" class="">Ch. 5 Companion</a>
+            <a href="chapter6_companion.html" class="">Ch. 6 Companion</a>
+            </nav>
+        </section>
+    </aside>
+    
+        <article class="markdown-body">
+<h1 id="chapter-05-regression-readiness-workout">Chapter 0.5 — Regression Readiness Workout</h1>
+<h2 id="a-one-evening-bridge-into-chapter-1-with-180-exercises">A one-evening bridge into Chapter 1, with 180+ exercises</h2>
+<blockquote>
+<p><strong>Promise.</strong> This workbook teaches only the mathematics, graph reading, and numerical habits that Chapter 1 assumes. It is designed for active work: read a small idea, do several short repetitions, check your understanding, and then use the idea in regression.</p>
+</blockquote>
+<h3 id="separate-explanation-pages">Separate explanation pages</h3>
+<p>If you want the teaching text separately from the drills, read <a href="Chapter_0_5_Regression_Readiness_Explanations.md">Chapter 0.5 — Regression Readiness Explanations</a> first, then return here for practice. The explanations are also available as a matching PDF.</p>
+<p>The running context is the same as Chapter 1: fictional microhydro power (MHP) projects in Khyber Pakhtunkhwa (KP). Costs are measured in <strong>million PKR</strong>, distances in <strong>kilometres</strong>, capacity in <strong>kilowatts</strong>, and terrain difficulty on an index from 1 to 5.</p>
+<p>This is a bridge, not a new statistics course. You will practise:</p>
+<ol>
+<li>graphs, coordinates, straight lines, residuals, and contours;</li>
+<li>algebra needed to expand and rearrange OLS equations;</li>
+<li>vectors, distance, dot products, perpendicularity, and projection;</li>
+<li>matrices, transpose, multiplication, column space, rank, and systems;</li>
+<li>derivatives, partial derivatives, gradients, Hessians, and minima;</li>
+<li>floating-point comparison and a simple held-out evaluation; and</li>
+<li>one cumulative readiness challenge.</li>
+</ol>
+<p>You do <strong>not</strong> need probability distributions, hypothesis tests, QR decomposition, SVD, regularisation, gradient descent, or causal diagrams yet.</p>
+<hr />
+<h2 id="how-to-use-this-tonight">How to use this tonight</h2>
+<p>There are more exercises than you need for a single evening. That is deliberate: repetition is available wherever you feel weak.</p>
+<p>Use three marks:</p>
+<ul>
+<li><strong>Core</strong> — do this tonight;</li>
+<li><strong>Repeat</strong> — do this if the idea is not automatic;</li>
+<li><strong>Stretch</strong> — save it if time is short.</li>
+</ul>
+<p>Suggested elapsed-time route:</p>
+<table>
+<thead>
+<tr>
+<th>Block</th>
+<th>Work</th>
+<th style="text-align: right;">Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Setup and diagnostic</td>
+<td style="text-align: right;">15 min</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Graphs and straight lines</td>
+<td style="text-align: right;">55 min</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Algebra</td>
+<td style="text-align: right;">65 min</td>
+</tr>
+<tr>
+<td>Break</td>
+<td>Move, drink water, no screen</td>
+<td style="text-align: right;">10 min</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Vector geometry</td>
+<td style="text-align: right;">60 min</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Matrices and rank</td>
+<td style="text-align: right;">70 min</td>
+</tr>
+<tr>
+<td>Break</td>
+<td>Food and rest</td>
+<td style="text-align: right;">20 min</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Calculus for minimisation</td>
+<td style="text-align: right;">80 min</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Numerical computing and held-out data</td>
+<td style="text-align: right;">45 min</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Cumulative challenge and exit check</td>
+<td style="text-align: right;">50 min</td>
+</tr>
+</tbody>
+</table>
+<p>That is about 7 hours including breaks. If you have less time, complete only exercises marked <strong>Core</strong>, then do the final exit check. Accuracy matters more than racing through every item.</p>
+<h3 id="the-attempt-rule">The attempt rule</h3>
+<p>For every exercise:</p>
+<ol>
+<li>write an answer before looking at the key;</li>
+<li>if wrong, write one sentence explaining the error;</li>
+<li>redo it without copying;</li>
+<li>revisit it after 30–60 minutes.</li>
+</ol>
+<p>Use a calculator or Python only when the exercise explicitly says so. The point of the short arithmetic drills is to make the notation feel ordinary.</p>
+<h3 id="minimal-setup">Minimal setup</h3>
+<pre><code class="language-bash">python -m venv .venv
+source .venv/bin/activate
+python -m pip install numpy matplotlib
+</code></pre>
+<p>Create <code>chapter_0_5_work.py</code> and begin it with:</p>
+<pre><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+</code></pre>
+<hr />
+<h1 id="block-0-fifteen-minute-diagnostic">Block 0 — Fifteen-Minute Diagnostic</h1>
+<p>Do these without notes. Do not worry if several are unfamiliar; the results tell you where to spend repetitions.</p>
+<ol>
+<li><strong>[Core D1]</strong> On a graph, which axis is horizontal?</li>
+<li><strong>[Core D2]</strong> In the point $(4,9)$, what are the $x$- and $y$-coordinates?</li>
+<li><strong>[Core D3]</strong> Evaluate $3 + 2(5-1)$.</li>
+<li><strong>[Core D4]</strong> Expand $2(x+3)$.</li>
+<li><strong>[Core D5]</strong> Expand $(a-b)^2$.</li>
+<li><strong>[Core D6]</strong> Solve $3x+2=14$.</li>
+<li><strong>[Core D7]</strong> Find the length of the vector $(3,4)$.</li>
+<li><strong>[Core D8]</strong> Calculate $(1,2)\cdot(3,4)$.</li>
+<li><strong>[Core D9]</strong> What does a zero dot product say about two nonzero vectors?</li>
+<li><strong>[Core D10]</strong> If $X$ has shape $(8,3)$ and $\beta$ has shape $(3,)$, what is the shape of $X\beta$?</li>
+<li><strong>[Core D11]</strong> What does matrix rank count informally?</li>
+<li><strong>[Core D12]</strong> Differentiate $x^2$.</li>
+<li><strong>[Core D13]</strong> If $f'(4)=0$, must $x=4$ be a minimum? Explain in one clause.</li>
+<li><strong>[Core D14]</strong> Why can <code>0.1 + 0.2 == 0.3</code> be false in Python?</li>
+<li><strong>[Core D15]</strong> Why should a model be evaluated on observations not used to fit it?</li>
+</ol>
+<p>Score one point per sound answer.</p>
+<ul>
+<li>13–15: use the Core exercises and move quickly.</li>
+<li>9–12: do Core plus Repeat exercises in weak blocks.</li>
+<li>0–8: do every Core and Repeat exercise; postpone Stretch exercises.</li>
+</ul>
+<hr />
+<h1 id="block-1-graphs-coordinates-lines-residuals-and-contours">Block 1 — Graphs, Coordinates, Lines, Residuals, and Contours</h1>
+<h2 id="11-axes-coordinates-scales-and-units">1.1 Axes, coordinates, scales, and units</h2>
+<p>A two-dimensional graph uses:</p>
+<ul>
+<li>the horizontal <strong>$x$-axis</strong> for an input such as road distance;</li>
+<li>the vertical <strong>$y$-axis</strong> for an outcome such as project cost;</li>
+<li>an ordered pair $(x,y)$ to locate a point; and</li>
+<li>a scale and unit on each axis.</li>
+</ul>
+<p>If one project has road distance 3 km and cost 22 million PKR, its point is $(3,22)$. The coordinate order matters.</p>
+<p>The <strong>origin</strong> is $(0,0)$. A point can be observed even when the axes do not begin at zero. Always inspect the tick labels before judging a visual difference: a truncated axis can make a small difference look dramatic.</p>
+<h3 id="exercises-coordinate-literacy">Exercises: coordinate literacy</h3>
+<ol>
+<li><strong>[Core G1]</strong> For $(7,31)$, state the horizontal and vertical coordinates.</li>
+<li><strong>[Core G2]</strong> Write the point for a project 12 km from a road costing 48 million PKR.</li>
+<li><strong>[Core G3]</strong> What point is the origin?</li>
+<li><strong>[Core G4]</strong> Which point is farther right: $(2,50)$ or $(9,20)$?</li>
+<li><strong>[Core G5]</strong> Which point is higher: $(8,25)$ or $(3,40)$?</li>
+<li><strong>[Repeat G6]</strong> Plot by hand: $(0,8)$, $(1,10)$, $(2,12)$, $(3,14)$.</li>
+<li><strong>[Repeat G7]</strong> If the $x$-axis changes from kilometres to metres, what happens to the coordinate 2 km?</li>
+<li><strong>[Repeat G8]</strong> A cost axis starts at 95 rather than 0. Explain one visual danger.</li>
+<li><strong>[Stretch G9]</strong> Two charts show the same costs. One spans 0–100; the other spans 80–100. Which makes differences appear larger, and why?</li>
+</ol>
+<h2 id="12-scatter-plots-and-visible-relationships">1.2 Scatter plots and visible relationships</h2>
+<p>A <strong>scatter plot</strong> places one point per observation.</p>
+<ul>
+<li>An upward cloud suggests a positive relationship.</li>
+<li>A downward cloud suggests a negative relationship.</li>
+<li>A shapeless cloud suggests no clear visible relationship.</li>
+<li>A curve suggests the relationship may not be well described by one straight line.</li>
+</ul>
+<p>A visible relationship is not automatically causal. Road distance and cost may rise together because remote projects also face difficult terrain.</p>
+<h3 id="exercises-reading-a-point-cloud">Exercises: reading a point cloud</h3>
+<ol start="10">
+<li><strong>[Core G10]</strong> Costs rise as road distance rises. Is the visible relationship positive or negative?</li>
+<li><strong>[Core G11]</strong> Capacity rises while cost falls. Is the visible relationship positive or negative?</li>
+<li><strong>[Core G12]</strong> Points form a nearly horizontal cloud. What relationship is visible?</li>
+<li><strong>[Core G13]</strong> Points form a U-shape. Why is one straight line incomplete?</li>
+<li><strong>[Repeat G14]</strong> Give one reason an extreme point deserves inspection rather than automatic deletion.</li>
+<li><strong>[Repeat G15]</strong> State why an upward scatter plot does not prove that increasing road distance causes higher cost.</li>
+<li><strong>[Stretch G16]</strong> Imagine two terrain groups, each with an upward trend, but the combined data slope downward. Name this phenomenon.</li>
+</ol>
+<h2 id="13-straight-lines-slope-and-intercept">1.3 Straight lines: slope and intercept</h2>
+<p>A line is</p>
+<p>$$
+\hat y=b_0+b_1x.
+$$</p>
+<p>Here:</p>
+<ul>
+<li>$\hat y$ (“y-hat”) is the predicted outcome;</li>
+<li>$b_0$ is the intercept, the predicted outcome at $x=0$;</li>
+<li>$b_1$ is the slope, the predicted change in $\hat y$ for a one-unit increase in $x$.</li>
+</ul>
+<p>Slope can also be read from two points:</p>
+<p>$$
+\text{slope}=\frac{\text{change in }y}{\text{change in }x}
+=\frac{y_2-y_1}{x_2-x_1}.
+$$</p>
+<p>For $\hat y=8+4x$, the intercept is 8 million PKR and the slope is 4 million PKR per km.</p>
+<h3 id="worked-example">Worked example</h3>
+<p>For the points $(2,14)$ and $(5,26)$:</p>
+<p>$$
+b_1=\frac{26-14}{5-2}=\frac{12}{3}=4.
+$$</p>
+<p>Using $(2,14)$:</p>
+<p>$$
+14=b_0+4(2)\quad\Rightarrow\quad b_0=6.
+$$</p>
+<p>The line is $\hat y=6+4x$.</p>
+<h3 id="exercises-lines">Exercises: lines</h3>
+<ol start="17">
+<li><strong>[Core G17]</strong> In $\hat y=10+3x$, identify the intercept and slope with units if $x$ is km and $y$ is million PKR.</li>
+<li><strong>[Core G18]</strong> Predict at $x=0$, $x=2$, and $x=5$ for $\hat y=10+3x$.</li>
+<li><strong>[Core G19]</strong> Find the slope through $(1,7)$ and $(4,16)$.</li>
+<li><strong>[Core G20]</strong> Find the line through $(0,5)$ and $(3,11)$.</li>
+<li><strong>[Core G21]</strong> A line falls by 8 units when $x$ rises by 4. Find its slope.</li>
+<li><strong>[Repeat G22]</strong> Find the slope through $(2,20)$ and $(6,12)$.</li>
+<li><strong>[Repeat G23]</strong> A line has slope 5 and passes through $(2,17)$. Find its intercept.</li>
+<li><strong>[Repeat G24]</strong> Does $\hat y=4x$ include an intercept? What prediction does it force at $x=0$?</li>
+<li><strong>[Repeat G25]</strong> Convert the slope 4 million PKR per km into million PKR per metre.</li>
+<li><strong>[Stretch G26]</strong> Two points have the same $x$ but different $y$. Why is the ordinary slope formula undefined?</li>
+</ol>
+<h2 id="14-observations-fitted-values-and-residuals">1.4 Observations, fitted values, and residuals</h2>
+<p>An observed value is $y_i$. A fitted or predicted value is $\hat y_i$. The residual is</p>
+<p>$$
+e_i=y_i-\hat y_i.
+$$</p>
+<p>On a graph, the residual is the <strong>vertical signed distance</strong> from the fitted line to the observed point.</p>
+<ul>
+<li>$e_i&gt;0$: the point is above the line; the model underpredicted.</li>
+<li>$e_i&lt;0$: the point is below the line; the model overpredicted.</li>
+<li>$e_i=0$: the point is on the line.</li>
+</ul>
+<p>For a cost of 25 and prediction of 21, the residual is $25-21=4$ million PKR.</p>
+<h3 id="exercises-residuals">Exercises: residuals</h3>
+<ol start="27">
+<li><strong>[Core G27]</strong> Observed cost is 31 and predicted cost is 28. Find and interpret the residual.</li>
+<li><strong>[Core G28]</strong> Observed cost is 20 and predicted cost is 26. Find and interpret the residual.</li>
+<li><strong>[Core G29]</strong> Calculate predictions and residuals for $x=(0,1,2)$, $y=(7,11,14)$, and $\hat y=6+4x$.</li>
+<li><strong>[Core G30]</strong> Which has the larger absolute error: residual $-7$ or residual $5$?</li>
+<li><strong>[Repeat G31]</strong> A point lies 3 units below a fitted line. What is its residual?</li>
+<li><strong>[Repeat G32]</strong> If every residual is positive, what systematic problem does the line have on these observations?</li>
+<li><strong>[Repeat G33]</strong> Why is a horizontal distance not the OLS residual used in Chapter 1?</li>
+<li><strong>[Stretch G34]</strong> Sketch two different lines through the same scatter plot. Mark the residuals for one observation under both lines.</li>
+</ol>
+<h2 id="15-contour-lines">1.5 Contour lines</h2>
+<p>Imagine the squared-error value depends on two adjustable parameters, $b_0$ and $b_1$. A <strong>contour line</strong> joins parameter pairs with the same error, just as a map contour joins places with the same elevation.</p>
+<p>In an OLS contour plot:</p>
+<ul>
+<li>the horizontal and vertical axes are parameters, not observations;</li>
+<li>each loop is one equal-error level;</li>
+<li>moving toward smaller nested loops usually moves toward lower error; and</li>
+<li>the centre of elliptical loops is the minimum.</li>
+</ul>
+<p>A long, narrow valley means many parameter pairs give similar error. A perfectly flat direction signals non-uniqueness.</p>
+<h3 id="exercises-contours-and-graph-synthesis">Exercises: contours and graph synthesis</h3>
+<ol start="35">
+<li><strong>[Core G35]</strong> What quantity stays constant along one error contour?</li>
+<li><strong>[Core G36]</strong> In a contour plot with axes $b_0$ and $b_1$, does one dot represent a project or a parameter pair?</li>
+<li><strong>[Core G37]</strong> Where is the minimum in a set of nested elliptical contours?</li>
+<li><strong>[Repeat G38]</strong> What does a long, narrow contour valley suggest?</li>
+<li><strong>[Repeat G39]</strong> Explain the difference between a scatter plot point $(x_i,y_i)$ and an error-surface point $(b_0,b_1)$.</li>
+<li><strong>[Stretch G40]</strong> In one sentence, connect a fitted line in data space to one point in parameter space.</li>
+</ol>
+<h3 id="code-lab-g">Code lab G</h3>
+<p>Type, run, and then change the slope from 4 to 2 before rerunning.</p>
+<pre><code class="language-python">x = np.array([0.0, 1.0, 2.0, 3.0])
+y = np.array([7.0, 11.0, 14.0, 19.0])
+b0, b1 = 6.0, 4.0
+y_hat = b0 + b1 * x
+residuals = y - y_hat
+
+plt.scatter(x, y, label=&quot;observed&quot;)
+plt.plot(x, y_hat, label=&quot;fitted&quot;)
+for xi, yi, yhi in zip(x, y, y_hat):
+    plt.vlines(xi, yhi, yi, colors=&quot;tab:red&quot;)
+plt.xlabel(&quot;Road distance (km)&quot;)
+plt.ylabel(&quot;Cost (million PKR)&quot;)
+plt.legend()
+plt.show()
+
+print(&quot;predictions:&quot;, y_hat)
+print(&quot;residuals:&quot;, residuals)
+</code></pre>
+<ol start="41">
+<li><strong>[Core G41]</strong> Before running, predict the four fitted values.</li>
+<li><strong>[Core G42]</strong> Confirm that each red segment has magnitude $|e_i|$.</li>
+<li><strong>[Repeat G43]</strong> With slope 2, which observations are underpredicted?</li>
+<li><strong>[Stretch G44]</strong> Add a horizontal line at zero to a separate residual plot.</li>
+</ol>
+<h3 id="block-1-mastery-check">Block 1 mastery check</h3>
+<p>Without notes, explain:</p>
+<ol>
+<li>what slope, intercept, and residual mean;</li>
+<li>why graph axes and units must be read before the visual pattern;</li>
+<li>why association in a scatter plot is not an intervention effect; and</li>
+<li>what a contour line represents.</li>
+</ol>
+<p>If any explanation takes more than two sentences, do G17–G40 again tomorrow.</p>
+<hr />
+<h1 id="block-2-algebra-for-regression-equations">Block 2 — Algebra for Regression Equations</h1>
+<h2 id="21-signs-fractions-order-of-operations-and-powers">2.1 Signs, fractions, order of operations, and powers</h2>
+<p>Use the order:</p>
+<ol>
+<li>brackets;</li>
+<li>powers;</li>
+<li>multiplication and division;</li>
+<li>addition and subtraction.</li>
+</ol>
+<p>Remember:</p>
+<p>$$
+-(-a)=a,\qquad a^2=a\cdot a,\qquad \sqrt{a^2}=|a|.
+$$</p>
+<p>The square of a negative number is positive: $(-3)^2=9$. But $-3^2=-(3^2)=-9$ unless brackets make the negative part of the base.</p>
+<h3 id="exercises-arithmetic-fluency">Exercises: arithmetic fluency</h3>
+<ol>
+<li><strong>[Core A1]</strong> Evaluate $5-8$.</li>
+<li><strong>[Core A2]</strong> Evaluate $-4-(-7)$.</li>
+<li><strong>[Core A3]</strong> Evaluate $3+2(5-1)$.</li>
+<li><strong>[Core A4]</strong> Evaluate $(3+2)^2-4$.</li>
+<li><strong>[Core A5]</strong> Evaluate $(-3)^2$ and $-3^2$.</li>
+<li><strong>[Core A6]</strong> Simplify $12/18$.</li>
+<li><strong>[Repeat A7]</strong> Evaluate $2-{3-[4-6]}$.</li>
+<li><strong>[Repeat A8]</strong> Evaluate $|{-5}|+\sqrt{16}$.</li>
+<li><strong>[Repeat A9]</strong> Evaluate $(10-4)^2/3$.</li>
+<li><strong>[Stretch A10]</strong> If $a=-2$, evaluate $3a^2-4a+1$.</li>
+</ol>
+<h2 id="22-distributing-and-collecting-like-terms">2.2 Distributing and collecting like terms</h2>
+<p>The distributive law is</p>
+<p>$$
+a(b+c)=ab+ac.
+$$</p>
+<p>It works with subtraction:</p>
+<p>$$
+a(b-c)=ab-ac.
+$$</p>
+<p>Only like terms combine. For example, $3x+2x=5x$, but $3x+2$ cannot be reduced.</p>
+<h3 id="exercises-distribution">Exercises: distribution</h3>
+<ol start="11">
+<li><strong>[Core A11]</strong> Expand $3(x+4)$.</li>
+<li><strong>[Core A12]</strong> Expand $5(2x-3)$.</li>
+<li><strong>[Core A13]</strong> Expand $-2(x-6)$.</li>
+<li><strong>[Core A14]</strong> Simplify $3x+5x-2$.</li>
+<li><strong>[Core A15]</strong> Simplify $4(x+2)+3x$.</li>
+<li><strong>[Repeat A16]</strong> Simplify $2(3x-1)-4(x+5)$.</li>
+<li><strong>[Repeat A17]</strong> Simplify $a(b+c)-ab$.</li>
+<li><strong>[Repeat A18]</strong> Expand $-3(2a-b+4)$.</li>
+<li><strong>[Stretch A19]</strong> Simplify $2(x-y)-3(y-x)$.</li>
+</ol>
+<h2 id="23-expanding-squares">2.3 Expanding squares</h2>
+<p>These patterns matter because OLS squares errors:</p>
+<p>$$
+(a-b)^2=a^2-2ab+b^2,
+$$</p>
+<p>$$
+(a+b)^2=a^2+2ab+b^2.
+$$</p>
+<p>The middle term is essential. $(a-b)^2$ is <strong>not</strong> $a^2-b^2$.</p>
+<p>For one residual:</p>
+<p>$$
+(y-bx)^2=y^2-2ybx+b^2x^2.
+$$</p>
+<h3 id="exercises-squared-expressions">Exercises: squared expressions</h3>
+<ol start="20">
+<li><strong>[Core A20]</strong> Expand $(x-3)^2$.</li>
+<li><strong>[Core A21]</strong> Expand $(x+5)^2$.</li>
+<li><strong>[Core A22]</strong> Expand $(y-bx)^2$.</li>
+<li><strong>[Core A23]</strong> Expand $(7-2b)^2$.</li>
+<li><strong>[Core A24]</strong> Check A23 by substituting $b=1$ into both forms.</li>
+<li><strong>[Repeat A25]</strong> Expand $(a-3c)^2$.</li>
+<li><strong>[Repeat A26]</strong> Expand $(2x+4)^2$.</li>
+<li><strong>[Repeat A27]</strong> Explain the error in $(a-b)^2=a^2-b^2$.</li>
+<li><strong>[Stretch A28]</strong> Expand and simplify $(y-b_0-b_1x)^2$.</li>
+</ol>
+<h2 id="24-rearranging-and-isolating-an-unknown">2.4 Rearranging and isolating an unknown</h2>
+<p>An equation is a balance. Perform the same operation on both sides.</p>
+<p>Example:</p>
+<p>$$
+3x+5=20
+$$</p>
+<p>Subtract 5:</p>
+<p>$$
+3x=15.
+$$</p>
+<p>Divide by 3:</p>
+<p>$$
+x=5.
+$$</p>
+<p>“Moving a term across” is shorthand, not magic: its sign changes because you add or subtract it on both sides.</p>
+<h3 id="exercises-solve-and-rearrange">Exercises: solve and rearrange</h3>
+<ol start="29">
+<li><strong>[Core A29]</strong> Solve $x+7=12$.</li>
+<li><strong>[Core A30]</strong> Solve $4x=28$.</li>
+<li><strong>[Core A31]</strong> Solve $3x-5=16$.</li>
+<li><strong>[Core A32]</strong> Solve $5-2x=11$.</li>
+<li><strong>[Core A33]</strong> Solve $ax=c$ for $x$, assuming $a\ne0$.</li>
+<li><strong>[Core A34]</strong> Rearrange $y=b_0+b_1x$ to isolate $b_0$.</li>
+<li><strong>[Repeat A35]</strong> Rearrange $y=b_0+b_1x$ to isolate $x$, assuming $b_1\ne0$.</li>
+<li><strong>[Repeat A36]</strong> Solve $2(x+3)=14$.</li>
+<li><strong>[Repeat A37]</strong> Solve $3x/4=9$.</li>
+<li><strong>[Stretch A38]</strong> Solve $(x-2)/5=(x+6)/9$.</li>
+</ol>
+<h2 id="25-simultaneous-equations">2.5 Simultaneous equations</h2>
+<p>Two unknowns require two independent equations. Use substitution or elimination.</p>
+<p>Example:</p>
+<p>$$
+b_0+b_1=5,\qquad b_0+2b_1=8.
+$$</p>
+<p>Subtract the first equation from the second:</p>
+<p>$$
+b_1=3.
+$$</p>
+<p>Substitute back: $b_0+3=5$, so $b_0=2$.</p>
+<h3 id="exercises-systems">Exercises: systems</h3>
+<ol start="39">
+<li><strong>[Core A39]</strong> Solve $a+b=9$ and $a-b=3$.</li>
+<li><strong>[Core A40]</strong> Solve $b_0+b_1=7$ and $b_0+3b_1=15$.</li>
+<li><strong>[Core A41]</strong> Solve $2x+y=11$ and $x+y=7$.</li>
+<li><strong>[Repeat A42]</strong> Solve $3a+2b=12$ and $a+2b=8$.</li>
+<li><strong>[Repeat A43]</strong> Show that $x+y=4$ and $2x+2y=8$ do not determine one unique pair.</li>
+<li><strong>[Stretch A44]</strong> Interpret A43 geometrically as two equations describing lines.</li>
+</ol>
+<h2 id="26-summations-and-ols-style-algebra">2.6 Summations and OLS-style algebra</h2>
+<p>The sigma symbol means repeated addition:</p>
+<p>$$
+\sum_{i=1}^{n}a_i=a_1+a_2+\cdots+a_n.
+$$</p>
+<p>Useful rules are:</p>
+<p>$$
+\sum_i(a_i+b_i)=\sum_i a_i+\sum_i b_i,
+$$</p>
+<p>$$
+\sum_i ca_i=c\sum_i a_i,
+$$</p>
+<p>where $c$ does not change with $i$.</p>
+<p>For the no-intercept loss</p>
+<p>$$
+S(b)=\sum_{i=1}^{n}(y_i-bx_i)^2,
+$$</p>
+<p>expansion gives</p>
+<p>$$
+S(b)=\sum_i y_i^2-2b\sum_i x_i y_i+b^2\sum_i x_i^2.
+$$</p>
+<h3 id="exercises-sigma-fluency">Exercises: sigma fluency</h3>
+<ol start="45">
+<li><strong>[Core A45]</strong> Expand $\sum_{i=1}^{3}x_i$ without sigma notation.</li>
+<li><strong>[Core A46]</strong> For $x=(2,4,6)$, calculate $\sum_i x_i$ and $\sum_i x_i^2$.</li>
+<li><strong>[Core A47]</strong> For $x=(1,2)$ and $y=(3,5)$, calculate $\sum_i x_i y_i$.</li>
+<li><strong>[Core A48]</strong> Expand $\sum_i(y_i-bx_i)^2$ using the pattern above.</li>
+<li><strong>[Repeat A49]</strong> Why may $b$ move outside $\sum_i bx_i$?</li>
+<li><strong>[Repeat A50]</strong> Why may $x_i$ not generally move outside $\sum_i x_i y_i$?</li>
+<li><strong>[Repeat A51]</strong> For $x=(1,2)$, $y=(2,5)$, write $S(b)$ as a quadratic in $b$.</li>
+<li><strong>[Stretch A52]</strong> Evaluate the A51 quadratic at $b=2$ and verify it by calculating residuals directly.</li>
+</ol>
+<h3 id="code-lab-a">Code lab A</h3>
+<pre><code class="language-python">x = np.array([1.0, 2.0])
+y = np.array([2.0, 5.0])
+
+for b in [0.0, 1.0, 2.0, 3.0]:
+    direct = np.sum((y - b * x) ** 2)
+    expanded = (
+        np.sum(y ** 2)
+        - 2 * b * np.sum(x * y)
+        + b ** 2 * np.sum(x ** 2)
+    )
+    print(b, direct, expanded)
+    assert np.isclose(direct, expanded)
+</code></pre>
+<ol start="53">
+<li><strong>[Core A53]</strong> Predict the output for <code>b=2.0</code> before running.</li>
+<li><strong>[Repeat A54]</strong> Add <code>b=2.4</code>. Which tested value has the smallest loss?</li>
+<li><strong>[Stretch A55]</strong> Explain why numerical agreement supports the algebra but is not a proof for every possible dataset.</li>
+</ol>
+<h3 id="block-2-mastery-check">Block 2 mastery check</h3>
+<p>On blank paper:</p>
+<ol>
+<li>expand $(y-bx)^2$;</li>
+<li>solve $4-2x=10$;</li>
+<li>solve $a+b=8$ and $a+3b=14$; and</li>
+<li>translate $\sum_{i=1}^{3}(y_i-\hat y_i)^2$ into ordinary addition.</li>
+</ol>
+<p>Do not continue until all four are correct.</p>
+<hr />
+<h1 id="block-3-vectors-length-angles-and-projection">Block 3 — Vectors, Length, Angles, and Projection</h1>
+<h2 id="31-a-vector-is-a-list-and-an-arrow">3.1 A vector is a list and an arrow</h2>
+<p>A vector such as</p>
+<p>$$
+v=\begin{bmatrix}3\\4\end{bmatrix}
+$$</p>
+<p>can mean:</p>
+<ul>
+<li>an ordered list of two numbers;</li>
+<li>an arrow from the origin to $(3,4)$; or</li>
+<li>a direction and magnitude.</li>
+</ul>
+<p>Vector addition and scalar multiplication are componentwise:</p>
+<p>$$
+\begin{bmatrix}a\\b\end{bmatrix}
++
+\begin{bmatrix}c\\d\end{bmatrix}
+=
+\begin{bmatrix}a+c\\b+d\end{bmatrix},
+\qquad
+k\begin{bmatrix}a\\b\end{bmatrix}
+=
+\begin{bmatrix}ka\\kb\end{bmatrix}.
+$$</p>
+<h3 id="exercises-vector-operations">Exercises: vector operations</h3>
+<ol>
+<li><strong>[Core V1]</strong> Add $(2,3)+(4,-1)$.</li>
+<li><strong>[Core V2]</strong> Subtract $(5,2)-(1,7)$.</li>
+<li><strong>[Core V3]</strong> Calculate $3(2,-4)$.</li>
+<li><strong>[Core V4]</strong> Find $2u-v$ for $u=(1,3)$ and $v=(4,2)$.</li>
+<li><strong>[Repeat V5]</strong> Draw $(3,1)$ and $2(3,1)$ from the origin. What stays the same?</li>
+<li><strong>[Repeat V6]</strong> Draw $v=(2,4)$ and $-v$. What changes?</li>
+<li><strong>[Stretch V7]</strong> Find $a$ and $b$ if $a(1,0)+b(0,1)=(7,-2)$.</li>
+</ol>
+<h2 id="32-length-distance-and-pythagoras">3.2 Length, distance, and Pythagoras</h2>
+<p>The Euclidean length or norm of</p>
+<p>$$
+v=(v_1,v_2)
+$$</p>
+<p>is</p>
+<p>$$
+\|v\|=\sqrt{v_1^2+v_2^2}.
+$$</p>
+<p>In more dimensions:</p>
+<p>$$
+\|v\|=\sqrt{\sum_i v_i^2}.
+$$</p>
+<p>The distance between $a$ and $b$ is $|a-b|$. Squared length is especially important:</p>
+<p>$$
+\|v\|^2=v^Tv=\sum_i v_i^2.
+$$</p>
+<p>OLS minimises the squared residual-vector length.</p>
+<h3 id="exercises-norms-and-distances">Exercises: norms and distances</h3>
+<ol start="8">
+<li><strong>[Core V8]</strong> Find $|(3,4)|$.</li>
+<li><strong>[Core V9]</strong> Find $|(5,12)|$.</li>
+<li><strong>[Core V10]</strong> Find $|(1,2,2)|$.</li>
+<li><strong>[Core V11]</strong> Find the distance between $(1,2)$ and $(4,6)$.</li>
+<li><strong>[Core V12]</strong> If residuals are $(3,-4)$, find SSR and residual-vector length.</li>
+<li><strong>[Repeat V13]</strong> Compare $|(6,8)|$ with $|2(3,4)|$.</li>
+<li><strong>[Repeat V14]</strong> Is $|(-3,-4)|$ negative? Explain.</li>
+<li><strong>[Repeat V15]</strong> Find all values of $a$ for which $|(a,0)|=7$.</li>
+<li><strong>[Stretch V16]</strong> Verify $|v|^2=v\cdot v$ for $v=(2,-3,6)$.</li>
+</ol>
+<h2 id="33-the-dot-product-as-arithmetic-and-geometry">3.3 The dot product as arithmetic and geometry</h2>
+<p>The dot product is</p>
+<p>$$
+u\cdot v=u^Tv=\sum_i u_i v_i.
+$$</p>
+<p>It also obeys</p>
+<p>$$
+u\cdot v=\|u\|\|v\|\cos\theta,
+$$</p>
+<p>where $\theta$ is the angle between nonzero vectors.</p>
+<p>Therefore:</p>
+<ul>
+<li>$u\cdot v&gt;0$: acute angle, broadly similar direction;</li>
+<li>$u\cdot v&lt;0$: obtuse angle, broadly opposing direction;</li>
+<li>$u\cdot v=0$: right angle; the vectors are <strong>orthogonal</strong>.</li>
+</ul>
+<h3 id="exercises-dot-products-and-angles">Exercises: dot products and angles</h3>
+<ol start="17">
+<li><strong>[Core V17]</strong> Calculate $(1,2)\cdot(3,4)$.</li>
+<li><strong>[Core V18]</strong> Calculate $(2,-1)\cdot(3,6)$.</li>
+<li><strong>[Core V19]</strong> Show that $(1,2)$ and $(2,-1)$ are perpendicular.</li>
+<li><strong>[Core V20]</strong> Is the angle between $(1,0)$ and $(1,1)$ acute, right, or obtuse?</li>
+<li><strong>[Core V21]</strong> Is the angle between $(1,0)$ and $(-2,1)$ acute, right, or obtuse?</li>
+<li><strong>[Repeat V22]</strong> Find $a$ so that $(3,a)\cdot(2,-1)=0$.</li>
+<li><strong>[Repeat V23]</strong> Give a nonzero vector perpendicular to $(4,7)$.</li>
+<li><strong>[Repeat V24]</strong> Explain why a zero dot product cannot by itself define an angle if one vector is the zero vector.</li>
+<li><strong>[Stretch V25]</strong> Find $\cos\theta$ for $u=(1,1)$ and $v=(1,0)$.</li>
+</ol>
+<h2 id="34-projection-onto-a-line">3.4 Projection onto a line</h2>
+<p>The projection of $y$ onto a nonzero vector $x$ is</p>
+<p>$$
+\operatorname{proj}_x(y)
+=
+\frac{x^Ty}{x^Tx}x.
+$$</p>
+<p>The scalar</p>
+<p>$$
+\hat b=\frac{x^Ty}{x^Tx}
+$$</p>
+<p>tells how much of direction $x$ is needed. The projected vector is $\hat y=x\hat b$. The residual is $e=y-\hat y$, and it is perpendicular to $x$:</p>
+<p>$$
+x^Te=0.
+$$</p>
+<h3 id="worked-example_1">Worked example</h3>
+<p>Let $x=(1,1)$ and $y=(3,1)$. Then</p>
+<p>$$
+\hat b=\frac{(1)(3)+(1)(1)}{1^2+1^2}=\frac{4}{2}=2.
+$$</p>
+<p>So $\hat y=(2,2)$ and $e=(1,-1)$. Check:</p>
+<p>$$
+x^Te=(1)(1)+(1)(-1)=0.
+$$</p>
+<h3 id="exercises-projection">Exercises: projection</h3>
+<ol start="26">
+<li><strong>[Core V26]</strong> Project $y=(4,2)$ onto $x=(1,0)$.</li>
+<li><strong>[Core V27]</strong> Project $y=(3,1)$ onto $x=(1,1)$.</li>
+<li><strong>[Core V28]</strong> For V27, calculate the residual and verify orthogonality.</li>
+<li><strong>[Core V29]</strong> Project $y=(2,5)$ onto $x=(0,1)$.</li>
+<li><strong>[Repeat V30]</strong> Project $y=(5,1)$ onto $x=(1,2)$.</li>
+<li><strong>[Repeat V31]</strong> For V30, verify that $y=\hat y+e$.</li>
+<li><strong>[Repeat V32]</strong> Why is projection called the closest point on the line?</li>
+<li><strong>[Stretch V33]</strong> If $x$ is multiplied by 10, show that the projected vector does not change.</li>
+</ol>
+<h2 id="35-the-pythagorean-reason-projection-minimises-error">3.5 The Pythagorean reason projection minimises error</h2>
+<p>Let $\hat y$ be the projection of $y$ onto a line. Any other point $q$ on the line differs from $\hat y$ by a vector lying along the line. The residual $y-\hat y$ is perpendicular to that difference. Therefore:</p>
+<p>$$
+\|y-q\|^2
+=
+\|y-\hat y\|^2+\|\hat y-q\|^2.
+$$</p>
+<p>The second term cannot be negative. Thus no other $q$ is closer than $\hat y$.</p>
+<h3 id="exercises-geometric-reasoning">Exercises: geometric reasoning</h3>
+<ol start="34">
+<li><strong>[Core V34]</strong> In the Pythagorean identity above, which term is zero only when $q=\hat y$?</li>
+<li><strong>[Core V35]</strong> Why can adding $|\hat y-q|^2$ never reduce the distance?</li>
+<li><strong>[Core V36]</strong> Translate “the residual is orthogonal to the fitted direction” into a dot-product equation.</li>
+<li><strong>[Repeat V37]</strong> Use $y=(3,1)$, $\hat y=(2,2)$, and $q=(1,1)$ to verify the identity numerically.</li>
+<li><strong>[Repeat V38]</strong> Explain in ordinary language why perpendicularity identifies the nearest point.</li>
+<li><strong>[Stretch V39]</strong> Draw the right triangle formed by $y$, $\hat y$, and another attainable $q$.</li>
+</ol>
+<h3 id="code-lab-v">Code lab V</h3>
+<pre><code class="language-python">x = np.array([1.0, 2.0, 3.0])
+y = np.array([2.0, 2.0, 5.0])
+
+b_hat = (x @ y) / (x @ x)
+y_hat = x * b_hat
+e = y - y_hat
+
+print(&quot;b_hat:&quot;, b_hat)
+print(&quot;y_hat:&quot;, y_hat)
+print(&quot;residual:&quot;, e)
+print(&quot;orthogonality:&quot;, x @ e)
+assert np.isclose(x @ e, 0.0)
+</code></pre>
+<ol start="40">
+<li><strong>[Core V40]</strong> Compute <code>b_hat</code> by hand.</li>
+<li><strong>[Core V41]</strong> Why is <code>np.isclose</code> used rather than <code>==</code>?</li>
+<li><strong>[Repeat V42]</strong> Replace <code>y</code> with <code>2*x</code>. Predict the residual before running.</li>
+<li><strong>[Stretch V43]</strong> Test three other values of <code>b</code> and confirm none has smaller SSR.</li>
+</ol>
+<hr />
+<h1 id="block-4-matrices-column-space-rank-and-linear-systems">Block 4 — Matrices, Column Space, Rank, and Linear Systems</h1>
+<h2 id="41-matrix-shape-and-transpose">4.1 Matrix shape and transpose</h2>
+<p>A matrix is a rectangular table. If $X$ has $n$ rows and $p$ columns, its shape is $n\times p$.</p>
+<p>In regression:</p>
+<ul>
+<li>rows are observations;</li>
+<li>columns are features;</li>
+<li>$y$ contains one target per row;</li>
+<li>$\beta$ contains one coefficient per design column.</li>
+</ul>
+<p>The transpose $X^T$ swaps rows and columns. If $X$ is $n\times p$, then $X^T$ is $p\times n$.</p>
+<h3 id="exercises-shapes-and-transpose">Exercises: shapes and transpose</h3>
+<ol>
+<li><strong>[Core M1]</strong> State the shape of a matrix with 8 observations and 3 features.</li>
+<li><strong>[Core M2]</strong> If $X$ is $8\times3$, what is the shape of $X^T$?</li>
+<li><strong>[Core M3]</strong> Transpose $\begin{bmatrix}1&amp;2&amp;3\4&amp;5&amp;6\end{bmatrix}$.</li>
+<li><strong>[Core M4]</strong> If $\beta$ has one coefficient for each of 4 design columns, what is its shape as a one-dimensional NumPy array?</li>
+<li><strong>[Repeat M5]</strong> Explain the difference between NumPy shapes <code>(3,)</code>, <code>(3, 1)</code>, and <code>(1, 3)</code>.</li>
+<li><strong>[Repeat M6]</strong> If one intercept column is added to 5 features, how many design columns are there?</li>
+<li><strong>[Stretch M7]</strong> Why must the order of feature columns at prediction match the order used during fitting?</li>
+</ol>
+<h2 id="42-matrixvector-multiplication">4.2 Matrix–vector multiplication</h2>
+<p>For</p>
+<p>$$
+X=
+\begin{bmatrix}
+x_{11}&amp;x_{12}\\
+x_{21}&amp;x_{22}\\
+x_{31}&amp;x_{32}
+\end{bmatrix},
+\qquad
+\beta=
+\begin{bmatrix}
+\beta_1\\
+\beta_2
+\end{bmatrix},
+$$</p>
+<p>the product is</p>
+<p>$$
+X\beta=
+\begin{bmatrix}
+x_{11}\beta_1+x_{12}\beta_2\\
+x_{21}\beta_1+x_{22}\beta_2\\
+x_{31}\beta_1+x_{32}\beta_2
+\end{bmatrix}.
+$$</p>
+<p>Each output is a row–coefficient dot product. Inner dimensions must match:</p>
+<p>$$
+(n\times p)(p\times1)=(n\times1).
+$$</p>
+<h3 id="exercises-products-and-predictions">Exercises: products and predictions</h3>
+<ol start="8">
+<li><strong>[Core M8]</strong> Calculate<br />
+$<br />
+\begin{bmatrix}1&amp;2\3&amp;4\end{bmatrix}<br />
+\begin{bmatrix}5\6\end{bmatrix}.<br />
+$</li>
+<li><strong>[Core M9]</strong> Calculate predictions for<br />
+$<br />
+X=\begin{bmatrix}1&amp;0\1&amp;2\1&amp;5\end{bmatrix}<br />
+$<br />
+and<br />
+$<br />
+\beta=(10,3)^T.<br />
+$</li>
+<li><strong>[Core M10]</strong> In M9, what role does the first column play?</li>
+<li><strong>[Core M11]</strong> Can a $4\times3$ matrix multiply a length-4 coefficient vector on the right? Why?</li>
+<li><strong>[Repeat M12]</strong> State the output shape of $(12\times4)(4\times1)$.</li>
+<li><strong>[Repeat M13]</strong> Expand the second row of<br />
+$<br />
+\begin{bmatrix}1&amp;2&amp;3\1&amp;4&amp;5\end{bmatrix}\beta<br />
+$<br />
+term by term.</li>
+<li><strong>[Repeat M14]</strong> Write a plain Python loop that computes each row dot product.</li>
+<li><strong>[Stretch M15]</strong> Explain why elementwise multiplication <code>X * beta</code> is not the same object as <code>X @ beta</code>.</li>
+</ol>
+<h2 id="43-matrixmatrix-multiplication">4.3 Matrix–matrix multiplication</h2>
+<p>If $A$ is $m\times n$ and $B$ is $n\times p$, then $AB$ is $m\times p$. Entry $(i,j)$ is row $i$ of $A$ dotted with column $j$ of $B$.</p>
+<h3 id="exercises-matrix-products">Exercises: matrix products</h3>
+<ol start="16">
+<li><strong>[Core M16]</strong> State whether $(3\times2)(2\times4)$ is valid and give the output shape.</li>
+<li><strong>[Core M17]</strong> State whether $(3\times2)(3\times4)$ is valid.</li>
+<li><strong>[Core M18]</strong> Calculate<br />
+$<br />
+\begin{bmatrix}1&amp;2\0&amp;1\end{bmatrix}<br />
+\begin{bmatrix}3&amp;1\4&amp;2\end{bmatrix}.<br />
+$</li>
+<li><strong>[Repeat M19]</strong> Show with a small example that generally $AB\ne BA$.</li>
+<li><strong>[Repeat M20]</strong> If $X$ is $n\times p$, state the shapes of $X^TX$ and $X^Ty$.</li>
+<li><strong>[Stretch M21]</strong> Why is $X^TX$ always square?</li>
+</ol>
+<h2 id="44-linear-combinations-span-and-column-space">4.4 Linear combinations, span, and column space</h2>
+<p>Multiplying $X\beta$ forms a linear combination of the columns of $X$:</p>
+<p>$$
+X\beta=\beta_1X_{\cdot1}+\cdots+\beta_pX_{\cdot p}.
+$$</p>
+<p>The <strong>span</strong> of some vectors is every vector obtainable from their linear combinations. The <strong>column space</strong> of $X$, written $\mathcal C(X)$, is the span of its columns.</p>
+<p>Every fitted vector $\hat y=X\hat\beta$ lies in $\mathcal C(X)$. OLS selects the point in that space closest to $y$.</p>
+<h3 id="exercises-span-and-column-space">Exercises: span and column space</h3>
+<ol start="22">
+<li><strong>[Core M22]</strong> Write $X\beta$ as a combination of the columns when<br />
+$<br />
+X=[c_1\ c_2]<br />
+$<br />
+and $\beta=(3,-2)^T$.</li>
+<li><strong>[Core M23]</strong> Is $(5,0)$ in the span of $(1,0)$? If so, give the multiplier.</li>
+<li><strong>[Core M24]</strong> Is $(2,3)$ in the span of $(1,0)$?</li>
+<li><strong>[Core M25]</strong> Show that $(5,7)$ is in the span of $(1,0)$ and $(0,1)$.</li>
+<li><strong>[Repeat M26]</strong> Describe the span of one nonzero vector in $\mathbb R^2$.</li>
+<li><strong>[Repeat M27]</strong> Describe the span of two nonparallel vectors in $\mathbb R^2$.</li>
+<li><strong>[Repeat M28]</strong> Why must $\hat y=X\hat\beta$ belong to the column space?</li>
+<li><strong>[Stretch M29]</strong> With an intercept and one feature for three observations, which two vectors span the attainable predictions?</li>
+</ol>
+<h2 id="45-independence-and-rank">4.5 Independence and rank</h2>
+<p>Columns are linearly independent when no column can be constructed exactly from the others. Matrix <strong>rank</strong> counts independent directions.</p>
+<p>For a design matrix with $p$ columns:</p>
+<ul>
+<li>full column rank means $\operatorname{rank}(X)=p$;</li>
+<li>rank deficiency means $\operatorname{rank}(X)&lt;p$;</li>
+<li>full column rank makes $X^TX$ invertible and the OLS coefficient vector unique.</li>
+</ul>
+<p>Example of dependence:</p>
+<p>$$
+X=
+\begin{bmatrix}
+1&amp;2\\
+2&amp;4\\
+3&amp;6
+\end{bmatrix}.
+$$</p>
+<p>The second column is twice the first, so the rank is 1, not 2.</p>
+<h3 id="exercises-independence-and-rank">Exercises: independence and rank</h3>
+<ol start="30">
+<li><strong>[Core M30]</strong> Find the rank of<br />
+$<br />
+\begin{bmatrix}1&amp;0\0&amp;1\end{bmatrix}.<br />
+$</li>
+<li><strong>[Core M31]</strong> Find the rank of<br />
+$<br />
+\begin{bmatrix}1&amp;2\2&amp;4\end{bmatrix}.<br />
+$</li>
+<li><strong>[Core M32]</strong> Is a column of metres independent of the same distance column in kilometres?</li>
+<li><strong>[Core M33]</strong> A design has 3 columns and rank 2. Is the coefficient vector unique?</li>
+<li><strong>[Core M34]</strong> Can an $n\times p$ matrix have rank greater than $\min(n,p)$?</li>
+<li><strong>[Repeat M35]</strong> Give a $3\times2$ full-column-rank matrix.</li>
+<li><strong>[Repeat M36]</strong> Make M35 rank deficient by changing only its second column.</li>
+<li><strong>[Repeat M37]</strong> Explain why a numerical solver can return one answer even when coefficients are not uniquely identified.</li>
+<li><strong>[Stretch M38]</strong> Explain why duplicate information harms coefficient interpretation even when predictions remain possible.</li>
+</ol>
+<h2 id="46-linear-systems-and-inverses">4.6 Linear systems and inverses</h2>
+<p>A system can be written</p>
+<p>$$
+A\beta=c.
+$$</p>
+<p>If square $A$ has an inverse,</p>
+<p>$$
+A^{-1}A=I,
+$$</p>
+<p>then</p>
+<p>$$
+\beta=A^{-1}c.
+$$</p>
+<p>An inverse “undoes” a linear transformation. Not every square matrix has one. A matrix with dependent columns is singular and not invertible.</p>
+<p>Chapter 1 derives</p>
+<p>$$
+(X^TX)\hat\beta=X^Ty.
+$$</p>
+<p>These are the normal equations. Although the symbolic solution is</p>
+<p>$$
+\hat\beta=(X^TX)^{-1}X^Ty,
+$$</p>
+<p>application code should use a least-squares solver, not explicitly compute the inverse.</p>
+<h3 id="exercises-systems-and-normal-equations">Exercises: systems and normal equations</h3>
+<ol start="39">
+<li><strong>[Core M39]</strong> Solve<br />
+$<br />
+\begin{bmatrix}1&amp;0\0&amp;2\end{bmatrix}<br />
+\begin{bmatrix}a\b\end{bmatrix}<br />
+=<br />
+\begin{bmatrix}5\8\end{bmatrix}.<br />
+$</li>
+<li><strong>[Core M40]</strong> What does $I\beta$ equal?</li>
+<li><strong>[Core M41]</strong> Why does dependent-column matrix $X$ make $X^TX$ non-invertible?</li>
+<li><strong>[Core M42]</strong> State the normal equations.</li>
+<li><strong>[Repeat M43]</strong> For<br />
+$<br />
+X=\begin{bmatrix}1\2\3\end{bmatrix}<br />
+$<br />
+and $y=(2,2,5)^T$, calculate $X^TX$ and $X^Ty$.</li>
+<li><strong>[Repeat M44]</strong> Solve the one-parameter normal equation from M43.</li>
+<li><strong>[Stretch M45]</strong> Distinguish the mathematical closed form from the numerically preferred implementation.</li>
+</ol>
+<h2 id="47-ols-geometry-with-several-columns">4.7 OLS geometry with several columns</h2>
+<p>The fitted vector is the projection of $y$ onto $\mathcal C(X)$. The residual</p>
+<p>$$
+e=y-X\hat\beta
+$$</p>
+<p>is perpendicular to <strong>every design column</strong>:</p>
+<p>$$
+X^Te=0.
+$$</p>
+<p>When the design includes a column of ones, one row of this equation says</p>
+<p>$$
+\sum_i e_i=0.
+$$</p>
+<h3 id="exercises-multi-column-geometry">Exercises: multi-column geometry</h3>
+<ol start="46">
+<li><strong>[Core M46]</strong> If $X$ has 3 columns, how many orthogonality conditions are in $X^Te=0$?</li>
+<li><strong>[Core M47]</strong> Explain why $X^Te=0$ implies each design column has zero dot product with the residual.</li>
+<li><strong>[Core M48]</strong> What special residual property follows from an intercept column?</li>
+<li><strong>[Repeat M49]</strong> If $e=(1,-2,1)$, verify it is perpendicular to the intercept vector $(1,1,1)$.</li>
+<li><strong>[Repeat M50]</strong> Let<br />
+$<br />
+X=\begin{bmatrix}1&amp;0\1&amp;1\1&amp;2\end{bmatrix}<br />
+$<br />
+and $e=(1,-2,1)^T$. Verify $X^Te=0$.</li>
+<li><strong>[Stretch M51]</strong> Explain why satisfying $X^Te=0$ locates the least-squares projection when the objective is convex.</li>
+</ol>
+<h3 id="code-lab-m">Code lab M</h3>
+<pre><code class="language-python">X = np.array([
+    [1.0, 0.0],
+    [1.0, 1.0],
+    [1.0, 2.0],
+    [1.0, 3.0],
+])
+y = np.array([7.0, 11.0, 14.0, 19.0])
+
+beta_hat, _, rank, singular_values = np.linalg.lstsq(X, y, rcond=None)
+y_hat = X @ beta_hat
+e = y - y_hat
+
+print(&quot;shape X:&quot;, X.shape)
+print(&quot;beta:&quot;, beta_hat)
+print(&quot;rank:&quot;, rank)
+print(&quot;X.T @ e:&quot;, X.T @ e)
+assert rank == X.shape[1]
+assert np.allclose(X.T @ e, 0.0, atol=1e-10)
+</code></pre>
+<ol start="52">
+<li><strong>[Core M52]</strong> Predict the shapes of <code>beta_hat</code>, <code>y_hat</code>, and <code>X.T @ e</code>.</li>
+<li><strong>[Core M53]</strong> Explain both assertions in words.</li>
+<li><strong>[Repeat M54]</strong> Add a third column <code>2 * X[:, 1]</code>. Predict the new rank.</li>
+<li><strong>[Stretch M55]</strong> Run the deficient design and explain why the two slope-like coefficients should not be interpreted separately.</li>
+</ol>
+<hr />
+<h1 id="block-5-calculus-for-finding-the-ols-minimum">Block 5 — Calculus for Finding the OLS Minimum</h1>
+<h2 id="51-a-derivative-is-local-slope">5.1 A derivative is local slope</h2>
+<p>For a function $f(x)$, the derivative</p>
+<p>$$
+f'(x)=\frac{df}{dx}
+$$</p>
+<p>describes the instantaneous rate of change.</p>
+<ul>
+<li>$f'(x)&gt;0$: the function rises locally as $x$ increases.</li>
+<li>$f'(x)&lt;0$: the function falls locally.</li>
+<li>$f'(x)=0$: the graph is locally flat; this is a stationary point.</li>
+</ul>
+<p>Useful rules:</p>
+<p>$$
+\frac{d}{dx}c=0,\qquad
+\frac{d}{dx}x^k=kx^{k-1},
+$$</p>
+<p>$$
+\frac{d}{dx}[af(x)]=af'(x),\qquad
+\frac{d}{dx}[f(x)+g(x)]=f'(x)+g'(x).
+$$</p>
+<h3 id="exercises-derivative-rules">Exercises: derivative rules</h3>
+<ol>
+<li><strong>[Core C1]</strong> Differentiate $7$.</li>
+<li><strong>[Core C2]</strong> Differentiate $x$.</li>
+<li><strong>[Core C3]</strong> Differentiate $x^2$.</li>
+<li><strong>[Core C4]</strong> Differentiate $x^3$.</li>
+<li><strong>[Core C5]</strong> Differentiate $5x^2$.</li>
+<li><strong>[Core C6]</strong> Differentiate $3x^2+4x-8$.</li>
+<li><strong>[Repeat C7]</strong> Differentiate $2x^4-3x^2+6$.</li>
+<li><strong>[Repeat C8]</strong> Evaluate the derivative of $x^2$ at $x=-3$ and interpret the sign.</li>
+<li><strong>[Stretch C9]</strong> Find where $f(x)=x^2-6x+5$ is stationary.</li>
+</ol>
+<h2 id="52-chain-rule-for-squared-error">5.2 Chain rule for squared error</h2>
+<p>If</p>
+<p>$$
+L(b)=[g(b)]^2,
+$$</p>
+<p>the chain rule gives</p>
+<p>$$
+\frac{dL}{db}=2g(b)g'(b).
+$$</p>
+<p>For one squared residual:</p>
+<p>$$
+L(b)=(y-bx)^2,
+$$</p>
+<p>so</p>
+<p>$$
+\frac{dL}{db}=2(y-bx)(-x)=-2x(y-bx).
+$$</p>
+<p>The negative sign comes from differentiating $y-bx$ with respect to $b$.</p>
+<h3 id="exercises-chain-rule">Exercises: chain rule</h3>
+<ol start="10">
+<li><strong>[Core C10]</strong> Differentiate $(b-3)^2$.</li>
+<li><strong>[Core C11]</strong> Differentiate $(7-2b)^2$.</li>
+<li><strong>[Core C12]</strong> Differentiate $(y-bx)^2$ with respect to $b$.</li>
+<li><strong>[Core C13]</strong> In C12, which symbols are constants with respect to $b$?</li>
+<li><strong>[Repeat C14]</strong> Differentiate $(a+3b)^2$ with respect to $b$.</li>
+<li><strong>[Repeat C15]</strong> Differentiate $(y-b_0-b_1x)^2$ with respect to $b_0$.</li>
+<li><strong>[Repeat C16]</strong> Differentiate the same expression with respect to $b_1$.</li>
+<li><strong>[Stretch C17]</strong> Expand $(7-2b)^2$ first and confirm that ordinary power-rule differentiation matches C11.</li>
+</ol>
+<h2 id="53-from-derivative-zero-to-a-minimum">5.3 From derivative zero to a minimum</h2>
+<p>A stationary point is a candidate, not automatically a minimum. The second derivative helps:</p>
+<ul>
+<li>$f''(x)&gt;0$: curves upward; local minimum;</li>
+<li>$f''(x)&lt;0$: curves downward; local maximum;</li>
+<li>$f''(x)=0$: inconclusive.</li>
+</ul>
+<p>For $f(x)=(x-3)^2$:</p>
+<p>$$
+f'(x)=2(x-3),\qquad f''(x)=2&gt;0.
+$$</p>
+<p>Thus $x=3$ is the minimum.</p>
+<h3 id="exercises-stationary-points">Exercises: stationary points</h3>
+<ol start="18">
+<li><strong>[Core C18]</strong> Find and classify the stationary point of $f(x)=x^2-4x+7$.</li>
+<li><strong>[Core C19]</strong> Find and classify the stationary point of $f(x)=-x^2+6x$.</li>
+<li><strong>[Core C20]</strong> Does $f'(x)=0$ alone prove a minimum? Give a counterexample.</li>
+<li><strong>[Repeat C21]</strong> Find the minimum of $3(b-5)^2+2$.</li>
+<li><strong>[Repeat C22]</strong> Complete the square or use derivatives to minimise $b^2+8b+20$.</li>
+<li><strong>[Stretch C23]</strong> For $f(x)=x^3$, explain why $f'(0)=0$ but $x=0$ is not a minimum.</li>
+</ol>
+<h2 id="54-deriving-no-intercept-ols">5.4 Deriving no-intercept OLS</h2>
+<p>The loss is</p>
+<p>$$
+S(b)=\sum_i(y_i-bx_i)^2.
+$$</p>
+<p>Differentiate:</p>
+<p>$$
+\frac{dS}{db}
+=
+-2\sum_i x_i(y_i-bx_i).
+$$</p>
+<p>Set it to zero:</p>
+<p>$$
+\sum_i x_i y_i-b\sum_i x_i^2=0.
+$$</p>
+<p>Therefore:</p>
+<p>$$
+\hat b=\frac{\sum_i x_i y_i}{\sum_i x_i^2},
+$$</p>
+<p>provided $\sum_i x_i^2&gt;0$.</p>
+<h3 id="exercises-scalar-ols">Exercises: scalar OLS</h3>
+<ol start="24">
+<li><strong>[Core C24]</strong> Use the formula for $x=(1,2)$ and $y=(2,5)$.</li>
+<li><strong>[Core C25]</strong> Calculate the fitted values and residuals for C24.</li>
+<li><strong>[Core C26]</strong> Verify $\sum_i x_i e_i=0$ for C24.</li>
+<li><strong>[Core C27]</strong> What data condition makes $\sum_i x_i^2=0$?</li>
+<li><strong>[Repeat C28]</strong> Fit no-intercept OLS for $x=(1,2,3)$ and $y=(2,4,6)$.</li>
+<li><strong>[Repeat C29]</strong> Fit it for $x=(1,2,3)$ and $y=(1,1,1)$.</li>
+<li><strong>[Repeat C30]</strong> Differentiate the expanded loss from A51 and solve for its minimum.</li>
+<li><strong>[Stretch C31]</strong> Explain why the no-intercept line need not have residuals summing to zero.</li>
+</ol>
+<h2 id="55-partial-derivatives-and-gradients">5.5 Partial derivatives and gradients</h2>
+<p>When a function has several inputs, a partial derivative changes one input while holding the others fixed.</p>
+<p>For</p>
+<p>$$
+f(a,b)=a^2+3ab+2b^2,
+$$</p>
+<p>$$
+\frac{\partial f}{\partial a}=2a+3b,
+\qquad
+\frac{\partial f}{\partial b}=3a+4b.
+$$</p>
+<p>The gradient collects the partial derivatives:</p>
+<p>$$
+\nabla f=
+\begin{bmatrix}
+\partial f/\partial a\\
+\partial f/\partial b
+\end{bmatrix}.
+$$</p>
+<p>It points in the direction of steepest local increase. At an unconstrained smooth minimum, $\nabla f=0$.</p>
+<h3 id="exercises-partials-and-gradients">Exercises: partials and gradients</h3>
+<ol start="32">
+<li><strong>[Core C32]</strong> For $f(a,b)=a^2+b^2$, find both partial derivatives.</li>
+<li><strong>[Core C33]</strong> Find $\nabla f$ for $f(a,b)=a^2+3ab+2b^2$.</li>
+<li><strong>[Core C34]</strong> Evaluate the C33 gradient at $(a,b)=(1,2)$.</li>
+<li><strong>[Core C35]</strong> Find the stationary point of $f(a,b)=(a-2)^2+(b+1)^2$.</li>
+<li><strong>[Repeat C36]</strong> Find the gradient of $f(a,b)=4a^2-2ab+b^2$.</li>
+<li><strong>[Repeat C37]</strong> Explain why a zero gradient is the multivariable analogue of a horizontal tangent.</li>
+<li><strong>[Stretch C38]</strong> Solve $\nabla f=0$ for $f(a,b)=a^2+ab+b^2-3a$.</li>
+</ol>
+<h2 id="56-the-ols-gradient-and-normal-equations">5.6 The OLS gradient and normal equations</h2>
+<p>The matrix loss is</p>
+<p>$$
+S(\beta)=(y-X\beta)^T(y-X\beta).
+$$</p>
+<p>Its gradient is</p>
+<p>$$
+\nabla_\beta S=-2X^T(y-X\beta).
+$$</p>
+<p>At a stationary point:</p>
+<p>$$
+-2X^T(y-X\hat\beta)=0.
+$$</p>
+<p>Rearranging gives:</p>
+<p>$$
+X^TX\hat\beta=X^Ty.
+$$</p>
+<p>Notice that the calculus result and the geometry result are the same: $X^Te=0$.</p>
+<h3 id="exercises-connect-calculus-and-geometry">Exercises: connect calculus and geometry</h3>
+<ol start="39">
+<li><strong>[Core C39]</strong> Substitute $e=y-X\hat\beta$ into the zero-gradient equation.</li>
+<li><strong>[Core C40]</strong> Rearrange $X^T(y-X\hat\beta)=0$ into the normal equations.</li>
+<li><strong>[Core C41]</strong> Translate $X^T(y-X\hat\beta)=0$ geometrically.</li>
+<li><strong>[Repeat C42]</strong> What are the shapes of the gradient and $\beta$?</li>
+<li><strong>[Repeat C43]</strong> Why is the gradient zero at the OLS solution?</li>
+<li><strong>[Stretch C44]</strong> Explain why the same condition appears from two different routes—projection and differentiation.</li>
+</ol>
+<h2 id="57-hessians-and-convexity">5.7 Hessians and convexity</h2>
+<p>The Hessian collects second partial derivatives. For OLS:</p>
+<p>$$
+H=2X^TX.
+$$</p>
+<p>For any vector $z$:</p>
+<p>$$
+z^THz=2z^TX^TXz=2\|Xz\|^2\ge0.
+$$</p>
+<p>Therefore the OLS loss is convex: there are no deceptive local minima.</p>
+<ul>
+<li>If $X$ has full column rank, $|Xz|^2&gt;0$ for every nonzero $z$; the loss is strictly convex and the minimiser is unique.</li>
+<li>If $X$ is rank deficient, some nonzero $z$ has $Xz=0$; the loss has a flat direction and coefficients are not unique.</li>
+</ul>
+<h3 id="exercises-curvature-and-uniqueness">Exercises: curvature and uniqueness</h3>
+<ol start="45">
+<li><strong>[Core C45]</strong> State the OLS Hessian.</li>
+<li><strong>[Core C46]</strong> Why is $|Xz|^2$ never negative?</li>
+<li><strong>[Core C47]</strong> What condition makes the OLS minimiser unique?</li>
+<li><strong>[Core C48]</strong> What shape does a positive second derivative suggest in one dimension?</li>
+<li><strong>[Repeat C49]</strong> Connect a rank-deficient design to a flat contour direction.</li>
+<li><strong>[Repeat C50]</strong> Distinguish convex from strictly convex in terms of uniqueness here.</li>
+<li><strong>[Stretch C51]</strong> For<br />
+$<br />
+X=\begin{bmatrix}1&amp;0\0&amp;1\end{bmatrix},<br />
+$<br />
+calculate $2X^TX$.</li>
+</ol>
+<h2 id="58-finite-difference-checking">5.8 Finite-difference checking</h2>
+<p>A central finite difference estimates a derivative:</p>
+<p>$$
+f'(x)\approx\frac{f(x+h)-f(x-h)}{2h}.
+$$</p>
+<p>For a gradient, nudge one parameter at a time. Finite differences are a check, not a replacement for understanding. If $h$ is too large, the approximation is crude; if it is extremely tiny, floating-point cancellation can dominate.</p>
+<h3 id="exercises-derivative-checks">Exercises: derivative checks</h3>
+<ol start="52">
+<li><strong>[Core C52]</strong> Use $h=0.01$ to approximate the derivative of $f(x)=x^2$ at $x=3$.</li>
+<li><strong>[Core C53]</strong> Compare C52 with the exact derivative.</li>
+<li><strong>[Repeat C54]</strong> Predict what happens if $h=1$.</li>
+<li><strong>[Repeat C55]</strong> Why is “make $h$ as tiny as possible” not a perfect rule?</li>
+<li><strong>[Stretch C56]</strong> Write a Python function that finite-difference checks one component of the OLS gradient.</li>
+</ol>
+<h3 id="code-lab-c">Code lab C</h3>
+<pre><code class="language-python">X = np.array([
+    [1.0, 0.0],
+    [1.0, 1.0],
+    [1.0, 2.0],
+])
+y = np.array([1.0, 2.0, 2.0])
+beta = np.array([0.5, 0.8])
+
+def ssr(beta_value):
+    e = y - X @ beta_value
+    return e @ e
+
+analytic = -2.0 * X.T @ (y - X @ beta)
+numeric = np.zeros_like(beta)
+h = 1e-6
+
+for j in range(beta.size):
+    step = np.zeros_like(beta)
+    step[j] = h
+    numeric[j] = (ssr(beta + step) - ssr(beta - step)) / (2 * h)
+
+print(&quot;analytic:&quot;, analytic)
+print(&quot;numeric:&quot;, numeric)
+assert np.allclose(analytic, numeric, rtol=1e-6, atol=1e-8)
+</code></pre>
+<ol start="57">
+<li><strong>[Core C57]</strong> Explain what <code>step[j] = h</code> accomplishes.</li>
+<li><strong>[Core C58]</strong> Explain why the numerator uses two loss evaluations.</li>
+<li><strong>[Repeat C59]</strong> Change <code>h</code> to <code>1e-2</code> and compare.</li>
+<li><strong>[Stretch C60]</strong> Fit <code>beta_hat</code>, calculate the analytic gradient there, and explain the result.</li>
+</ol>
+<hr />
+<h1 id="block-6-floating-point-discipline-and-held-out-evaluation">Block 6 — Floating-Point Discipline and Held-Out Evaluation</h1>
+<h2 id="61-why-decimal-arithmetic-is-approximate">6.1 Why decimal arithmetic is approximate</h2>
+<p>Computers store most real-valued calculations in finite binary form. Many ordinary decimals cannot be represented exactly. Thus:</p>
+<pre><code class="language-python">0.1 + 0.2 == 0.3
+</code></pre>
+<p>may be <code>False</code>. This is not random; it is a representation limitation.</p>
+<p>Use:</p>
+<pre><code class="language-python">np.isclose(a, b)
+np.allclose(array_a, array_b)
+</code></pre>
+<p>Important arguments:</p>
+<ul>
+<li><code>atol</code>: absolute tolerance, useful near zero;</li>
+<li><code>rtol</code>: relative tolerance, useful when magnitudes vary.</li>
+</ul>
+<p>Conceptually, closeness is judged by a rule like:</p>
+<p>$$
+|a-b|\le \text{atol}+\text{rtol}|b|.
+$$</p>
+<h3 id="exercises-numerical-comparison">Exercises: numerical comparison</h3>
+<ol>
+<li><strong>[Core N1]</strong> Why is exact <code>==</code> risky for calculated floats?</li>
+<li><strong>[Core N2]</strong> Which function compares two scalar floats approximately?</li>
+<li><strong>[Core N3]</strong> Which function compares arrays approximately?</li>
+<li><strong>[Core N4]</strong> Which tolerance is especially important when the expected value is zero?</li>
+<li><strong>[Repeat N5]</strong> Would exact equality be reasonable for two integer row counts? Why?</li>
+<li><strong>[Repeat N6]</strong> Why should tolerances not be made so wide that every result passes?</li>
+<li><strong>[Repeat N7]</strong> Interpret <code>np.allclose(X.T @ e, 0, atol=1e-10)</code>.</li>
+<li><strong>[Stretch N8]</strong> Compare <code>0.1 + 0.2</code> and <code>0.3</code> with <code>repr</code> in Python.</li>
+</ol>
+<h2 id="62-stable-least-squares-solving-and-rank-decisions">6.2 Stable least-squares solving and rank decisions</h2>
+<p>The closed form is valuable mathematics:</p>
+<p>$$
+\hat\beta=(X^TX)^{-1}X^Ty.
+$$</p>
+<p>But application code should use:</p>
+<pre><code class="language-python">beta_hat, residual_sums, rank, singular_values = np.linalg.lstsq(
+    X, y, rcond=None
+)
+</code></pre>
+<p>Why:</p>
+<ul>
+<li>explicit inversion adds avoidable numerical error and work;</li>
+<li><code>lstsq</code> is designed for the least-squares problem;</li>
+<li>it returns rank information;</li>
+<li>nearly dependent columns require a numerical threshold, not only symbolic reasoning.</li>
+</ul>
+<p>Full numerical conditioning belongs in Chapter 2. For now, inspect the reported rank and avoid interpreting coefficients from a rank-deficient design.</p>
+<h3 id="exercises-solver-literacy">Exercises: solver literacy</h3>
+<ol start="9">
+<li><strong>[Core N9]</strong> Which NumPy function should Chapter 1 application code use to fit OLS?</li>
+<li><strong>[Core N10]</strong> What rank is required for a design with 4 columns to have full column rank?</li>
+<li><strong>[Core N11]</strong> If <code>rank == 3</code> for 4 columns, what should happen before interpreting coefficients?</li>
+<li><strong>[Core N12]</strong> Does <code>lstsq</code> returning numbers prove each coefficient is meaningful?</li>
+<li><strong>[Repeat N13]</strong> Give two reasons not to explicitly calculate the inverse in application code.</li>
+<li><strong>[Repeat N14]</strong> What do very small singular values warn about informally?</li>
+<li><strong>[Stretch N15]</strong> Create a nearly duplicate column and compare its singular values with an exactly duplicate column.</li>
+</ol>
+<h2 id="63-training-and-held-out-data">6.3 Training and held-out data</h2>
+<p>If you fit and evaluate on the same observations, the evaluation rewards the model for data it already saw. A <strong>held-out set</strong> provides a small test of performance on unseen observations.</p>
+<p>For this bridge:</p>
+<ol>
+<li>shuffle row indices with a fixed random seed;</li>
+<li>assign, for example, 75% to training and 25% to held-out data;</li>
+<li>fit all coefficients using training data only;</li>
+<li>calculate predictions and metrics separately on both sets; and</li>
+<li>never move held-out rows back into training because their result is disappointing.</li>
+</ol>
+<p>For very small or structured data, one random split is unstable. Chapter 2 develops validation, test separation, and more careful evaluation. Tonight’s goal is only to prevent direct training-data reuse.</p>
+<h3 id="exercises-split-discipline">Exercises: split discipline</h3>
+<ol start="16">
+<li><strong>[Core N16]</strong> Which rows may influence fitted coefficients?</li>
+<li><strong>[Core N17]</strong> Which rows estimate performance on unseen data?</li>
+<li><strong>[Core N18]</strong> Why set a random seed?</li>
+<li><strong>[Core N19]</strong> Name one danger of a single split on a tiny dataset.</li>
+<li><strong>[Core N20]</strong> Why is repeatedly checking the held-out result and changing the model a form of leakage?</li>
+<li><strong>[Repeat N21]</strong> With 20 rows and a 75/25 split, how many rows are in each set?</li>
+<li><strong>[Repeat N22]</strong> Should scaling values such as means be computed before or after splitting? On which set should they be learned?</li>
+<li><strong>[Repeat N23]</strong> A rare remote district appears only in the held-out set. What limitation should be reported?</li>
+<li><strong>[Stretch N24]</strong> Explain why chronological data may require a time-respecting split rather than random shuffling.</li>
+</ol>
+<h2 id="64-metrics-from-definitions">6.4 Metrics from definitions</h2>
+<p>For $m$ evaluation observations:</p>
+<p>$$
+\operatorname{MSE}=\frac{1}{m}\sum_i e_i^2,
+$$</p>
+<p>$$
+\operatorname{RMSE}=\sqrt{\operatorname{MSE}},
+$$</p>
+<p>$$
+\operatorname{MAE}=\frac{1}{m}\sum_i|e_i|.
+$$</p>
+<p>RMSE and MAE have the same unit as $y$. RMSE reacts more strongly to large errors because errors are squared.</p>
+<h3 id="exercises-held-out-metrics">Exercises: held-out metrics</h3>
+<ol start="25">
+<li><strong>[Core N25]</strong> For residuals $(2,-1,3)$, calculate MSE, RMSE, and MAE.</li>
+<li><strong>[Core N26]</strong> Which metric is more sensitive to one very large residual: RMSE or MAE?</li>
+<li><strong>[Core N27]</strong> If cost is million PKR, what are the units of MSE and RMSE?</li>
+<li><strong>[Core N28]</strong> Training RMSE is 1.2 and held-out RMSE is 8.9. What does the gap suggest?</li>
+<li><strong>[Repeat N29]</strong> Can a low held-out RMSE establish causation? Why?</li>
+<li><strong>[Repeat N30]</strong> Why should training and held-out metrics use the same formula?</li>
+<li><strong>[Stretch N31]</strong> Construct two residual sets with the same MAE but different RMSE.</li>
+</ol>
+<h3 id="code-lab-n-a-clean-held-out-split">Code lab N: a clean held-out split</h3>
+<pre><code class="language-python">rng = np.random.default_rng(42)
+
+X_features = np.array([
+    [2.0, 40.0],
+    [4.0, 45.0],
+    [5.0, 50.0],
+    [7.0, 55.0],
+    [9.0, 62.0],
+    [11.0, 70.0],
+    [13.0, 76.0],
+    [15.0, 85.0],
+    [17.0, 92.0],
+    [20.0, 100.0],
+    [22.0, 110.0],
+    [25.0, 120.0],
+])
+y = np.array([18.0, 21.0, 24.0, 28.0, 31.0, 36.0,
+              39.0, 44.0, 49.0, 55.0, 59.0, 67.0])
+
+indices = rng.permutation(len(y))
+cut = int(0.75 * len(y))
+train_idx = indices[:cut]
+held_idx = indices[cut:]
+
+X_train_raw = X_features[train_idx]
+X_held_raw = X_features[held_idx]
+y_train = y[train_idx]
+y_held = y[held_idx]
+
+X_train = np.column_stack([np.ones(len(train_idx)), X_train_raw])
+X_held = np.column_stack([np.ones(len(held_idx)), X_held_raw])
+
+beta_hat, _, rank, _ = np.linalg.lstsq(X_train, y_train, rcond=None)
+if rank &lt; X_train.shape[1]:
+    raise ValueError(&quot;Training design is rank deficient&quot;)
+
+def metrics(y_true, y_pred):
+    e = y_true - y_pred
+    return {
+        &quot;rmse&quot;: float(np.sqrt(np.mean(e ** 2))),
+        &quot;mae&quot;: float(np.mean(np.abs(e))),
+    }
+
+print(&quot;training:&quot;, metrics(y_train, X_train @ beta_hat))
+print(&quot;held-out:&quot;, metrics(y_held, X_held @ beta_hat))
+</code></pre>
+<ol start="32">
+<li><strong>[Core N32]</strong> How many training and held-out rows are created?</li>
+<li><strong>[Core N33]</strong> Identify the only line that learns coefficients.</li>
+<li><strong>[Core N34]</strong> Confirm that held-out targets do not influence <code>beta_hat</code>.</li>
+<li><strong>[Repeat N35]</strong> Run twice and explain why the split repeats.</li>
+<li><strong>[Repeat N36]</strong> Change the seed and explain why the metrics change.</li>
+<li><strong>[Stretch N37]</strong> Add a check that both design matrices have the same number of columns.</li>
+</ol>
+<hr />
+<h1 id="block-7-cumulative-regression-readiness-challenge">Block 7 — Cumulative Regression Readiness Challenge</h1>
+<p>Do this section without the answer key. It deliberately combines every block.</p>
+<h2 id="dataset">Dataset</h2>
+<p>Eight fictional projects have one feature, road distance $x$ in km, and cost $y$ in million PKR:</p>
+<table>
+<thead>
+<tr>
+<th>Project</th>
+<th style="text-align: right;">$x$</th>
+<th style="text-align: right;">$y$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">11</td>
+</tr>
+<tr>
+<td>B</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">13</td>
+</tr>
+<tr>
+<td>C</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">16</td>
+</tr>
+<tr>
+<td>D</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">18</td>
+</tr>
+<tr>
+<td>E</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">23</td>
+</tr>
+<tr>
+<td>F</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">25</td>
+</tr>
+<tr>
+<td>G</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">29</td>
+</tr>
+<tr>
+<td>H</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">32</td>
+</tr>
+</tbody>
+</table>
+<p>Use A–F as training data and G–H as held-out data. This fixed split is for arithmetic practice, not a general recommendation.</p>
+<h2 id="part-1-see-and-describe">Part 1 — See and describe</h2>
+<ol>
+<li><strong>[Core X1]</strong> Label suitable axes, units, and scales for a scatter plot.</li>
+<li><strong>[Core X2]</strong> Plot the eight points by hand or with Matplotlib.</li>
+<li><strong>[Core X3]</strong> Describe the visible direction and whether one line seems plausible.</li>
+<li><strong>[Core X4]</strong> Explain why the graph does not prove that moving a site farther from a road would cause its cost to rise.</li>
+</ol>
+<h2 id="part-2-build-the-training-design">Part 2 — Build the training design</h2>
+<ol start="5">
+<li><strong>[Core X5]</strong> Write the $6\times2$ training design matrix with an intercept.</li>
+<li><strong>[Core X6]</strong> State the shapes of $X_{\text{train}}$, $y_{\text{train}}$, and $\beta$.</li>
+<li><strong>[Core X7]</strong> Explain what each design column means.</li>
+<li><strong>[Core X8]</strong> Determine whether the design has full column rank and explain without software.</li>
+</ol>
+<h2 id="part-3-fit-from-centred-scalar-formulas">Part 3 — Fit from centred scalar formulas</h2>
+<p>For one feature with an intercept:</p>
+<p>$$
+\hat b_1=
+\frac{\sum_i(x_i-\bar x)(y_i-\bar y)}
+{\sum_i(x_i-\bar x)^2},
+\qquad
+\hat b_0=\bar y-\hat b_1\bar x.
+$$</p>
+<ol start="9">
+<li><strong>[Core X9]</strong> Calculate training $\bar x$ and $\bar y$.</li>
+<li><strong>[Core X10]</strong> Make columns for $x_i-\bar x$, $y_i-\bar y$, their product, and $(x_i-\bar x)^2$.</li>
+<li><strong>[Core X11]</strong> Calculate $\hat b_1$ and $\hat b_0$.</li>
+<li><strong>[Core X12]</strong> Interpret both coefficients with units and appropriate caution.</li>
+</ol>
+<h2 id="part-4-predictions-residuals-and-geometry">Part 4 — Predictions, residuals, and geometry</h2>
+<ol start="13">
+<li><strong>[Core X13]</strong> Calculate all six training fitted values and residuals.</li>
+<li><strong>[Core X14]</strong> Verify that the training residuals sum to approximately zero.</li>
+<li><strong>[Core X15]</strong> Verify that $\sum_i x_i e_i$ is approximately zero.</li>
+<li><strong>[Core X16]</strong> Explain what X14 and X15 mean as dot products.</li>
+<li><strong>[Core X17]</strong> Calculate training RMSE and MAE.</li>
+</ol>
+<h2 id="part-5-held-out-evaluation">Part 5 — Held-out evaluation</h2>
+<ol start="18">
+<li><strong>[Core X18]</strong> Predict projects G and H without refitting.</li>
+<li><strong>[Core X19]</strong> Calculate held-out residuals, RMSE, and MAE.</li>
+<li><strong>[Core X20]</strong> Compare training and held-out results without claiming that two held-out projects are definitive evidence.</li>
+</ol>
+<h2 id="part-6-code-proof-and-deliberate-break">Part 6 — Code proof and deliberate break</h2>
+<ol start="21">
+<li><strong>[Core X21]</strong> Verify your coefficients using <code>np.linalg.lstsq</code>.</li>
+<li><strong>[Core X22]</strong> Verify <code>X_train.T @ residuals</code> with <code>np.allclose</code>.</li>
+<li><strong>[Core X23]</strong> Add a third design column equal to <code>1000 * road_distance</code>.</li>
+<li><strong>[Core X24]</strong> inspect the new rank and explain the failure.</li>
+<li><strong>[Repeat X25]</strong> Fit the deficient matrix anyway. Compare predictions with the full-rank model and explain why individual distance coefficients are not interpretable.</li>
+<li><strong>[Stretch X26]</strong> Draw or compute an error contour grid for $b_0$ and $b_1$.</li>
+</ol>
+<h2 id="part-7-one-page-memo">Part 7 — One-page memo</h2>
+<ol start="27">
+<li><strong>[Core X27]</strong> Write a memo of no more than 150 words containing:</li>
+</ol>
+<ul>
+<li>the prediction question;</li>
+<li>units and training/held-out split;</li>
+<li>the fitted equation;</li>
+<li>training and held-out RMSE/MAE;</li>
+<li>one limitation of the tiny synthetic dataset;</li>
+<li>a clear statement that association is not causation; and</li>
+<li>one justified next step.</li>
+</ul>
+<hr />
+<h1 id="final-exit-check">Final Exit Check</h1>
+<p>Answer aloud without notes. You are ready to start Chapter 1 when you can answer at least 16 of 18 clearly.</p>
+<ol>
+<li>What are the axes and one point in a scatter plot?</li>
+<li>What do slope and intercept mean, including units?</li>
+<li>What is a residual, and what does its sign mean?</li>
+<li>What does a contour join?</li>
+<li>Expand $(a-b)^2$.</li>
+<li>Solve a two-equation, two-unknown system.</li>
+<li>What are the arithmetic and geometric meanings of the dot product?</li>
+<li>What is a vector norm?</li>
+<li>What makes two vectors orthogonal?</li>
+<li>What does projection have to do with minimum distance?</li>
+<li>What does $X\beta$ mean row-wise and column-wise?</li>
+<li>What is the column space?</li>
+<li>What does full column rank mean?</li>
+<li>What are the normal equations?</li>
+<li>What does a derivative measure?</li>
+<li>Why is a zero gradient not the whole uniqueness argument?</li>
+<li>Why use <code>allclose</code> and <code>lstsq</code>?</li>
+<li>Why evaluate on held-out observations?</li>
+</ol>
+<p>If you miss:</p>
+<ul>
+<li>1–4: repeat Block 1;</li>
+<li>5–6: repeat Block 2;</li>
+<li>7–10: repeat Block 3;</li>
+<li>11–14: repeat Block 4;</li>
+<li>15–16: repeat Block 5;</li>
+<li>17–18: repeat Block 6.</li>
+</ul>
+<hr />
+<h1 id="concise-answer-key">Concise Answer Key</h1>
+<p>Attempt first. A concise answer is provided so you can check quickly; where an explanation is requested, your wording may differ if the reasoning is sound.</p>
+<h2 id="diagnostic">Diagnostic</h2>
+<p>D1 horizontal. D2 $x=4,y=9$. D3 11. D4 $2x+6$. D5 $a^2-2ab+b^2$. D6 $x=4$. D7 5. D8 11. D9 perpendicular/orthogonal. D10 <code>(8,)</code>. D11 independent directions. D12 $2x$. D13 no; it can be a maximum or neither. D14 finite binary representation. D15 to estimate performance on unseen observations.</p>
+<h2 id="block-1">Block 1</h2>
+<ul>
+<li>G1: 7 horizontal, 31 vertical. G2 $(12,48)$. G3 $(0,0)$. G4 $(9,20)$. G5 $(3,40)$. G7 2000 m. G8 truncated scale exaggerates differences. G9 80–100.</li>
+<li>G10 positive. G11 negative. G12 little/no visible relationship. G13 direction changes across $x$. G14 it may be genuine, informative, or a data error requiring investigation. G15 association may reflect other variables. G16 Simpson’s paradox.</li>
+<li>G17 intercept 10 million PKR; slope 3 million PKR/km. G18 10, 16, 25. G19 3. G20 $\hat y=5+2x$. G21 $-2$. G22 $-2$. G23 7. G24 no; forces 0. G25 0.004 million PKR/m. G26 division by $x_2-x_1=0$.</li>
+<li>G27 $3$, underprediction. G28 $-6$, overprediction. G29 predictions $(6,10,14)$; residuals $(1,1,0)$. G30 $-7$. G31 $-3$. G32 systematic underprediction. G33 OLS defines error in the outcome coordinate.</li>
+<li>G35 error/loss. G36 parameter pair. G37 centre/smallest loop. G38 weak identification or highly correlated parameters. G39 one is an observation; the other selects an entire fitted line. G40 each parameter-space point defines one fitted line. G41 $(6,10,14,18)$. G43 all except possibly the first are underpredicted; with slope 2, predictions are $(6,8,10,12)$ and all observed values exceed them.</li>
+</ul>
+<h2 id="block-2">Block 2</h2>
+<ul>
+<li>A1 $-3$. A2 3. A3 11. A4 21. A5 9 and $-9$. A6 $2/3$. A7 7. A8 9. A9 12. A10 21.</li>
+<li>A11 $3x+12$. A12 $10x-15$. A13 $-2x+12$. A14 $8x-2$. A15 $7x+8$. A16 $2x-22$. A17 $ac$. A18 $-6a+3b-12$. A19 $5x-5y$.</li>
+<li>A20 $x^2-6x+9$. A21 $x^2+10x+25$. A22 $y^2-2ybx+b^2x^2$. A23 $49-28b+4b^2$. A24 both give 25. A25 $a^2-6ac+9c^2$. A26 $4x^2+16x+16$. A27 missing cross-term; subtraction does not distribute through squaring. A28 $y^2+b_0^2+b_1^2x^2-2yb_0-2yb_1x+2b_0b_1x$.</li>
+<li>A29 5. A30 7. A31 7. A32 $-3$. A33 $c/a$. A34 $b_0=y-b_1x$. A35 $x=(y-b_0)/b_1$. A36 4. A37 12. A38 7.</li>
+<li>A39 $a=6,b=3$. A40 $b_0=3,b_1=4$. A41 $x=4,y=3$. A42 $a=2,b=3$. A43 infinitely many pairs on the same line. A44 identical lines.</li>
+<li>A45 $x_1+x_2+x_3$. A46 12 and 56. A47 13. A48 $\sum_i y_i^2-2b\sum_i x_iy_i+b^2\sum_i x_i^2$. A49 $b$ is constant across $i$. A50 $x_i$ varies with $i$. A51 $S(b)=29-24b+5b^2$. A52 at $b=2$, loss 1; residuals $(0,1)$. A53 <code>1.0 1.0</code>. A54 $b=2.4$ has loss 0.2, the smallest of those tested.</li>
+</ul>
+<h2 id="block-3">Block 3</h2>
+<ul>
+<li>V1 $(6,2)$. V2 $(4,-5)$. V3 $(6,-12)$. V4 $(-2,4)$. V5 direction; length doubles. V6 direction reverses, length stays. V7 $a=7,b=-2$.</li>
+<li>V8 5. V9 13. V10 3. V11 5. V12 SSR 25, length 5. V13 both 10. V14 no; norms are nonnegative. V15 $a=\pm7$. V16 both equal 49.</li>
+<li>V17 11. V18 0. V19 dot product $2-2=0$. V20 acute. V21 obtuse. V22 $a=6$. V23 e.g. $(7,-4)$. V24 the angle formula divides by zero norm. V25 $1/\sqrt2$.</li>
+<li>V26 $\hat y=(4,0)$. V27 $\hat y=(2,2)$. V28 $e=(1,-1)$ and dot product 0. V29 $(0,5)$. V30 multiplier $7/5$; $\hat y=(7/5,14/5)$. V31 $e=(18/5,-9/5)$ and sums correctly. V32 all alternative points add a nonnegative perpendicular squared distance. V33 scaling cancels between numerator, denominator, and vector.</li>
+<li>V34 $|\hat y-q|^2$. V35 squared norms are nonnegative. V36 $x^Te=0$. V37 left side 4; right side $2+2=4$. V40 $21/14=1.5$. V42 zero vector.</li>
+</ul>
+<h2 id="block-4">Block 4</h2>
+<ul>
+<li>M1 $8\times3$. M2 $3\times8$. M3 $\begin{bmatrix}1&amp;4\2&amp;5\3&amp;6\end{bmatrix}$. M4 <code>(4,)</code>. M5 vector, column matrix, row matrix. M6 6. M7 coefficient meaning depends on position.</li>
+<li>M8 $(17,39)^T$. M9 $(10,16,25)^T$. M10 intercept. M11 no; inner dimensions 3 and 4 disagree. M12 $12\times1$. M13 $\beta_1+4\beta_2+5\beta_3$. M15 elementwise result retains/broadcasts matrix dimensions rather than producing row dot products.</li>
+<li>M16 valid, $3\times4$. M17 invalid. M18 $\begin{bmatrix}11&amp;5\4&amp;2\end{bmatrix}$. M20 $p\times p$ and $p\times1$. M21 the same $p$ appears as rows and columns.</li>
+<li>M22 $3c_1-2c_2$. M23 yes, multiplier 5. M24 no. M25 $5(1,0)+7(0,1)$. M26 a line through the origin. M27 all of $\mathbb R^2$. M28 it is literally a column linear combination. M29 the ones vector and feature vector.</li>
+<li>M30 2. M31 1. M32 no; one is exactly 1000 times the other. M33 no. M34 no. M35 e.g. $\begin{bmatrix}1&amp;0\0&amp;1\1&amp;1\end{bmatrix}$. M36 make column 2 twice column 1. M37 a solver can choose one member of infinitely many minimisers. M38 coefficient allocation across duplicate directions is arbitrary/unstable.</li>
+<li>M39 $a=5,b=4$. M40 $\beta$. M41 dependence provides a nonzero direction mapped to zero. M42 $X^TX\hat\beta=X^Ty$. M43 14 and 21. M44 $\hat b=1.5$. M45 derive with the inverse; compute with a least-squares solver.</li>
+<li>M46 3. M47 each entry of the product is a column–residual dot product. M48 residuals sum to zero. M49 $1-2+1=0$. M50 both dot products are zero. M52 <code>(2,)</code>, <code>(4,)</code>, <code>(2,)</code>. M53 full rank and residual orthogonality. M54 rank remains 2, not 3.</li>
+</ul>
+<h2 id="block-5">Block 5</h2>
+<ul>
+<li>C1 0. C2 1. C3 $2x$. C4 $3x^2$. C5 $10x$. C6 $6x+4$. C7 $8x^3-6x$. C8 $-6$, locally decreasing as $x$ increases. C9 $x=3$.</li>
+<li>C10 $2(b-3)$. C11 $-4(7-2b)=8b-28$. C12 $-2x(y-bx)$. C13 $x$ and $y$. C14 $6(a+3b)$. C15 $-2(y-b_0-b_1x)$. C16 $-2x(y-b_0-b_1x)$.</li>
+<li>C18 $x=2$, minimum; $f''=2$. C19 $x=3$, maximum; $f''=-2$. C20 no; $-x^2$ at zero. C21 $b=5$, minimum value 2. C22 $b=-4$, minimum 4. C23 the function continues increasing through zero.</li>
+<li>C24 $12/5=2.4$. C25 $(2.4,4.8)$ and $(-0.4,0.2)$. C26 $-0.4+0.4=0$. C27 every $x_i=0$. C28 2 with zero residuals. C29 $6/14=3/7$. C30 derivative $10b-24=0$, so $b=2.4$. C31 without a ones column, orthogonality is to $x$, not necessarily to ones.</li>
+<li>C32 $2a,2b$. C33 $(2a+3b,3a+4b)^T$. C34 $(8,11)^T$. C35 $(2,-1)$. C36 $(8a-2b,-2a+2b)^T$. C38 $(2,-1)$.</li>
+<li>C39 $X^Te=0$. C40 expand to $X^Ty-X^TX\hat\beta=0$ and rearrange. C41 residual perpendicular to every design column. C42 same shape, one entry per coefficient. C43 no local first-order change reduces the loss. C44 both describe the same closest point.</li>
+<li>C45 $2X^TX$. C46 it is a sum of squares. C47 full column rank. C48 upward bowl. C49 a nonzero parameter direction does not change predictions/loss. C50 strict convexity guarantees one minimiser; ordinary convexity may have several. C51 $2I$.</li>
+<li>C52 $[(3.01)^2-(2.99)^2]/0.02=6$. C53 exact derivative is 6. C54 still 6 for this quadratic with central difference. C55 cancellation/rounding eventually dominates. C57 nudges only component $j$. C58 it estimates symmetric change around the current value. C60 gradient is numerically zero.</li>
+</ul>
+<h2 id="block-6">Block 6</h2>
+<ul>
+<li>N1 finite binary approximation. N2 <code>np.isclose</code>. N3 <code>np.allclose</code>. N4 <code>atol</code>. N5 yes; exact counts are integers. N6 loose tests can hide real mistakes. N7 every design-column/residual dot product is within the chosen tolerance of zero.</li>
+<li>N9 <code>np.linalg.lstsq</code>. N10 4. N11 reject/flag rank deficiency before coefficient interpretation. N12 no. N13 greater numerical error and unnecessary work; solver also provides diagnostics. N14 near dependence/poor conditioning.</li>
+<li>N16 training rows. N17 held-out rows. N18 reproducibility. N19 result varies greatly with which few rows are selected. N20 the held-out set begins guiding choices and is no longer unseen. N21 15 and 5. N22 after splitting; learn transformations from training only. N23 the result may be dominated by a group the model never saw. N24 future rows must not inform a model evaluated on the past.</li>
+<li>N25 MSE $14/3\approx4.667$, RMSE $\approx2.160$, MAE 2. N26 RMSE. N27 squared million PKR for MSE; million PKR for RMSE. N28 possible overfitting, shift, outliers, or unstable tiny split; investigate. N29 no; predictive performance does not identify interventions. N31 e.g. $(0,2)$ and $(1,1)$ both have MAE 1, with RMSE $\sqrt2$ and 1.</li>
+<li>N32 9 and 3. N33 the <code>np.linalg.lstsq</code> line. N34 only <code>X_train</code> and <code>y_train</code> enter it. N35 the fixed seed reproduces the permutation. N36 different observations are assigned to each set.</li>
+</ul>
+<h2 id="cumulative-challenge">Cumulative challenge</h2>
+<p>Use software to confirm arithmetic after attempting it by hand.</p>
+<ul>
+<li>X5:<br />
+$<br />
+X=<br />
+\begin{bmatrix}<br />
+1&amp;1\1&amp;2\1&amp;3\1&amp;4\1&amp;6\1&amp;7<br />
+\end{bmatrix}.<br />
+$<br />
+X6: $(6,2)$, $(6,)$, <code>(2,)</code>. X8 full rank because the distance column is not a constant multiple of ones.</li>
+<li>X9: $\bar x=23/6\approx3.8333$ and $\bar y=106/6\approx17.6667$.</li>
+<li>X10 numerator $\sum(x_i-\bar x)(y_i-\bar y)=191/3\approx63.6667$; denominator $\sum(x_i-\bar x)^2=161/6\approx26.8333$.</li>
+<li>X11 $\hat b_1=382/161\approx2.3727$ and $\hat b_0=60/7\approx8.5714$.</li>
+<li>X12 predicted cost at zero distance is about 8.57 million PKR; each additional km is associated with about 2.37 million PKR higher predicted cost in these training data. This is not a causal effect.</li>
+<li>X13 fitted values are approximately $(10.944,13.317,15.689,18.062,22.807,25.180)$; residuals $(0.056,-0.317,0.311,-0.062,0.193,-0.180)$.</li>
+<li>X14 and X15 are zero apart from rounding. They express orthogonality to the ones and distance columns.</li>
+<li>X17 training RMSE $\approx0.213$ and MAE $\approx0.186$ million PKR.</li>
+<li>X18 predictions for G and H are approximately 27.553 and 32.298.</li>
+<li>X19 held-out residuals are approximately $1.447$ and $-0.298$; RMSE $\approx1.045$ and MAE $\approx0.873$ million PKR.</li>
+<li>X20 the held-out errors are larger, but two observations cannot establish stable generalisation performance.</li>
+<li>X24 rank is 2 for 3 columns because metres are 1000 times kilometres.</li>
+</ul>
+<hr />
+<h1 id="what-to-carry-into-chapter-1">What to Carry Into Chapter 1</h1>
+<p>Keep these six sentences beside you:</p>
+<ol>
+<li>A graph is meaningless until I read both axes, scales, and units.</li>
+<li>A residual is observed minus predicted, and OLS minimises their squared length.</li>
+<li>$X\beta$ is both one row-wise prediction per observation and a linear combination of design columns.</li>
+<li>OLS projects $y$ onto the column space, so $X^Te=0$.</li>
+<li>Differentiating the squared-error objective produces the same normal equations as the geometry.</li>
+<li>A computed coefficient is not automatically unique, stable, causal, or useful on unseen data.</li>
+</ol>
+<p>You are now prepared to read Chapter 1 in two passes: first for meaning and computation, then for geometry and derivation.</p>
+        </article>
+    </div>
+
+
+
+    <!-- MathJax is loaded synchronously after the chapter markup.  At this
+         point every equation is already in the DOM, so startup reliably
+         typesets the initial page as well as later modal content. -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] },
+            startup: { typeset: false }
+        };
+    </script>
+    <script id="MathJax-script" src="../vendor/mathjax/tex-svg-full.js"></script>
+    <script>
+        window.MathJax.startup.promise
+            .then(function () { return window.MathJax.typesetPromise(); })
+            .catch(function (error) { console.error('MathJax typesetting failed:', error); });
+    </script>
+
+    <!-- Diagrams: local vendor copy preferred, CDN used only as a fallback when online.
+         If neither loads (fully offline, no vendor file), the labeled diagram-source
+         panels above remain readable as plain text. -->
+    <script>
+        (function loadMermaid() {
+            function init(mermaid) {
+                mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+                document.querySelectorAll('.diagram-panel').forEach(function (panel) {
+                    var sourceEl = panel.querySelector('.mermaid-source');
+                    if (!sourceEl) return;
+                    var container = document.createElement('div');
+                    container.className = 'mermaid';
+                    container.textContent = sourceEl.textContent;
+                    panel.replaceChild(container, sourceEl);
+                });
+                mermaid.run();
+            }
+
+            var local = document.createElement('script');
+            local.src = '../vendor/mermaid.min.js';
+            local.onload = function () { init(window.mermaid); };
+            local.onerror = function () {
+                var cdn = document.createElement('script');
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+                cdn.onload = function () { init(window.mermaid); };
+                document.head.appendChild(cdn);
+            };
+            document.head.appendChild(local);
+        })();
+    </script>
+
+    <!-- Right-Click Custom Context Menu -->
+    <div id="custom-context-menu" style="display:none; position:fixed; z-index:9999999; background:#0f1524; border:1px solid #223150; border-radius:14px; padding:6px; width:220px; box-shadow:0 20px 40px rgba(0,0,0,0.8); font-family:sans-serif;">
+        <button id="ctx-add-note" style="width:100%; text-align:left; background:transparent; border:none; color:#22d3ee; padding:9px 12px; font-size:12px; font-weight:700; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:8px;" onmouseover="this.style.background='rgba(34,211,238,0.15)'" onmouseout="this.style.background='transparent'">
+            <span>🖊️ Add Note / Notion</span>
+        </button>
+        <div style="height:1px; background:#223150; margin:4px 0;"></div>
+        <button id="ctx-copy" style="width:100%; text-align:left; background:transparent; border:none; color:#cbd5e1; padding:9px 12px; font-size:12px; font-weight:600; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='transparent'">
+            <span>📋 Copy Selected Text</span>
+        </button>
+    </div>
+
+    <!-- MS Word Minimized Comments Sidebar Toggle & Drawer -->
+    <button id="word-comments-toggle" style="display:none; position:fixed; top:20px; right:20px; z-index:999980; background:#151d30; color:#eab308; border:1px solid #eab308; border-radius:9999px; padding:8px 16px; font-size:12px; font-weight:700; cursor:pointer; box-shadow:0 10px 25px rgba(0,0,0,0.5); align-items:center; gap:6px;">
+        <span>💬 Comments</span>
+        <span id="word-comments-badge" style="background:#eab308; color:#000000; font-size:10px; padding:1px 6px; border-radius:9999px; font-weight:800;">0</span>
+    </button>
+
+    <div id="word-comments-drawer" style="display:none; position:fixed; top:0; right:0; bottom:0; width:340px; max-width:85vw; z-index:999999; background:#0f1524; border-left:1px solid #223150; box-shadow:-10px 0 30px rgba(0,0,0,0.7); padding:20px; overflow-y:auto; font-family:sans-serif;">
+        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #223150; padding-bottom:12px; margin-bottom:16px;">
+            <span style="font-size:13px; font-weight:800; color:#eab308; display:flex; align-items:center; gap:6px;">💬 CHAPTER COMMENTS</span>
+            <button id="word-comments-drawer-close" style="background:transparent; border:none; color:#cbd5e1; font-size:18px; cursor:pointer;">✕</button>
+        </div>
+        <div id="word-comments-list">
+            <!-- Dynamically loaded chapter notes -->
+        </div>
+    </div>
+
+    <!-- Floating Selection Trigger Button -->
+    <button id="inline-comment-trigger" style="display:none; position:fixed; z-index:999999; background:#151d30; color:#22d3ee; border:1px solid rgba(34,211,238,0.5); border-radius:9999px; padding:7px 16px; font-size:12px; font-weight:700; box-shadow:0 10px 25px rgba(0,0,0,0.6); cursor:pointer; align-items:center; gap:6px;">
+        <span>🖊️ Comment / Sync Notion</span>
+    </button>
+
+    <!-- Persistent Bottom-Right Note Button -->
+    <button id="persistent-note-btn" style="position:fixed; bottom:24px; right:24px; z-index:999990; background:#151d30; color:#22d3ee; border:1px solid #223150; border-radius:9999px; padding:11px 20px; font-size:13px; font-weight:700; box-shadow:0 10px 30px rgba(0,0,0,0.7); cursor:pointer; display:flex; align-items:center; gap:8px; transition:all 0.2s ease;">
+        <span>🖊️ Add Note / Notion</span>
+        <span id="selection-badge" style="display:none; background:#0284c7; color:#ffffff; font-size:10px; padding:2px 7px; border-radius:9999px; text-transform:uppercase; font-weight:800; letter-spacing:0.05em;">Text Selected</span>
+    </button>
+
+    <!-- Note Card Modal with Offline Quill WYSIWYG Editor -->
+    <div id="inline-comment-box" style="display:none; position:fixed; z-index:999999; top:50%; left:50%; transform:translate(-50%, -50%); background:#0f1524; border:1px solid #223150; border-radius:20px; padding:24px; width:680px; max-width:92vw; max-height:88vh; overflow-y:auto; box-shadow:0 25px 60px rgba(0,0,0,0.85); font-family:sans-serif; text-align:left;">
+        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #223150; padding-bottom:14px; margin-bottom:16px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:14px; font-weight:800; color:#22d3ee; display:flex; align-items:center; gap:6px;">🖊️ INLINE NOTE & NOTION SYNC</span>
+                <span style="font-size:10px; background:rgba(34,211,238,0.15); color:#22d3ee; border:1px solid rgba(34,211,238,0.3); padding:2px 8px; border-radius:9999px; font-weight:700;">QUILL RICH TEXT</span>
+            </div>
+            <button id="inline-comment-close" style="background:transparent; border:none; color:#cbd5e1; font-size:18px; cursor:pointer; padding:4px 8px; border-radius:6px;">✕</button>
+        </div>
+        
+        <div style="background:#151d30; border:1px solid #223150; padding:12px 14px; border-radius:12px; margin-bottom:16px;">
+            <span style="font-size:10px; text-transform:uppercase; font-weight:700; color:#22d3ee; display:block; margin-bottom:4px;">Note Title (Selected Text)</span>
+            <h4 id="inline-quote-text" style="font-size:14px; font-weight:700; color:#ffffff; margin:0; line-height:1.4;">
+                <!-- Highlighted text formatted as title -->
+            </h4>
+        </div>
+
+        <div style="margin-bottom:18px;">
+            <label style="font-size:11px; text-transform:uppercase; font-weight:700; color:#94a3b8; display:block; margin-bottom:6px;">Your Thoughts & Rich Notes</label>
+            
+            <!-- Quill Editor Container -->
+            <div id="quill-editor-wrapper" style="background:#0b0f19; border:1px solid #223150; border-radius:12px; overflow:hidden;">
+                <div id="quill-editor" style="height:220px; font-size:14px; color:#ffffff; border:none;"></div>
+            </div>
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+            <span id="inline-comment-status" style="font-size:12px; color:#fbbf24; font-weight:600;"></span>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <button id="inline-comment-cancel" style="background:transparent; color:#94a3b8; border:1px solid #223150; padding:8px 16px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer;">Cancel</button>
+                <button id="inline-comment-submit" style="background:linear-gradient(135deg, #0284c7, #0891b2); color:#ffffff; border:none; padding:9px 20px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; box-shadow:0 4px 15px rgba(8,145,178,0.4);">
+                    Save Note & Sync Notion
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Maximizable Day 0E Video Masterclass Modal -->
+    <div id="day0e-video-modal" style="display:none; position:fixed; z-index:9999999; top:50%; left:50%; transform:translate(-50%, -50%); background:#0f1524; border:1px solid #223150; border-radius:20px; width:96vw; max-width:1400px; height:94vh; box-shadow:0 30px 80px rgba(0,0,0,0.9); font-family:sans-serif; overflow:hidden; transition:all 0.25s cubic-bezier(0.16, 1, 0.3, 1);">
+        <!-- Modal Header -->
+        <div id="day0e-modal-header" style="display:flex; align-items:center; justify-content:space-between; background:#151d30; border-bottom:1px solid #223150; padding:12px 20px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span style="font-size:14px; font-weight:800; color:#f472b6; display:flex; align-items:center; gap:6px;">🎬 DAY 0E MASTERCLASS VIDEO</span>
+                <span style="font-size:10px; background:rgba(236,72,153,0.18); color:#f472b6; border:1px solid rgba(236,72,153,0.4); padding:2px 8px; border-radius:9999px; font-weight:700;">FEMALE VOICE & INTERACTIVE EXERCISES</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <button id="day0e-modal-maximize" style="background:#223150; border:1px solid rgba(255,255,255,0.1); color:#cbd5e1; font-size:12px; font-weight:700; padding:6px 14px; border-radius:8px; cursor:pointer;" onclick="toggleDay0EMaximize()">
+                    <span id="max-icon">🗖 Maximize</span>
+                </button>
+                <button id="day0e-modal-close" style="background:transparent; border:none; color:#cbd5e1; font-size:20px; cursor:pointer; padding:4px 8px; border-radius:6px;" onclick="closeDay0EVideoModal()">✕</button>
+            </div>
+        </div>
+
+        <!-- Modal Body Iframe -->
+        <div style="width:100%; height:calc(100% - 54px); background:#0b0f19;">
+            <iframe id="day0e-modal-iframe" src="" style="width:100%; height:100%; border:none;" title="Day 0E Masterclass Video" allow="fullscreen"></iframe>
+        </div>
+    </div>
+
+    <script>
+        var isDay0EMaximized = false;
+
+        function openDay0EVideoModal() {
+            var modal = document.getElementById('day0e-video-modal');
+            var iframe = document.getElementById('day0e-modal-iframe');
+            if (iframe && (!iframe.src || iframe.src.indexOf('day_0e_masterclass_video') === -1)) {
+                iframe.src = 'day_0e_masterclass_video.html';
+            }
+            if (modal) modal.style.display = 'block';
+        }
+
+        function closeDay0EVideoModal() {
+            var modal = document.getElementById('day0e-video-modal');
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            if (modal) modal.style.display = 'none';
+        }
+
+        function toggleDay0EMaximize() {
+            var modal = document.getElementById('day0e-video-modal');
+            var maxBtn = document.getElementById('max-icon');
+            if (!modal) return;
+            isDay0EMaximized = !isDay0EMaximized;
+            if (isDay0EMaximized) {
+                modal.style.width = '100vw';
+                modal.style.height = '100vh';
+                modal.style.maxWidth = 'none';
+                modal.style.top = '0';
+                modal.style.left = '0';
+                modal.style.transform = 'none';
+                modal.style.borderRadius = '0';
+                if (maxBtn) maxBtn.textContent = '🗗 Restore';
+            } else {
+                modal.style.width = '96vw';
+                modal.style.height = '94vh';
+                modal.style.maxWidth = '1400px';
+                modal.style.top = '50%';
+                modal.style.left = '50%';
+                modal.style.transform = 'translate(-50%, -50%)';
+                modal.style.borderRadius = '20px';
+                if (maxBtn) maxBtn.textContent = '🗖 Maximize';
+            }
+        }
+
+        window.openDay0EVideoModal = openDay0EVideoModal;
+        window.closeDay0EVideoModal = closeDay0EVideoModal;
+        window.toggleDay0EMaximize = toggleDay0EMaximize;
+
+        document.addEventListener('keydown', function(e) {
+            var modal = document.getElementById('day0e-video-modal');
+            if (!modal || modal.style.display === 'none') return;
+            if (e.key === 'Escape') closeDay0EVideoModal();
+            if (e.key === 'f' || e.key === 'F') toggleDay0EMaximize();
+        });
+
+        (function() {
+            var currentSelectedText = '';
+            var quillEditor = null;
+
+            function initQuillInstance() {
+                if (quillEditor) return;
+                var el = document.getElementById('quill-editor');
+                if (el && typeof Quill !== 'undefined') {
+                    quillEditor = new Quill('#quill-editor', {
+                        theme: 'snow',
+                        placeholder: 'Write down your notes, bullet points, key takeaways, or drop images here...',
+                        modules: {
+                            toolbar: [
+                                [{ 'header': [2, 3, false] }],
+                                ['bold', 'italic', 'underline', 'strike'],
+                                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                ['blockquote', 'code-block'],
+                                ['image', 'link'],
+                                ['clean']
+                            ]
+                        }
+                    });
+                }
+            }
+
+            function getSelectionText() {
+                var sel = window.getSelection();
+                return sel ? sel.toString().trim() : '';
+            }
+
+            function updateSelectionState() {
+                var text = getSelectionText();
+                var trigger = document.getElementById('inline-comment-trigger');
+                var badge = document.getElementById('selection-badge');
+                var fab = document.getElementById('persistent-note-btn');
+
+                if (text.length >= 1) {
+                    currentSelectedText = text;
+                    if (badge) badge.style.display = 'inline-block';
+                    if (fab) {
+                        fab.style.borderColor = 'rgba(34,211,238,0.8)';
+                        fab.style.boxShadow = '0 0 20px rgba(34,211,238,0.4)';
+                    }
+                    try {
+                        var sel = window.getSelection();
+                        var range = sel ? sel.getRangeAt(0) : null;
+                        var rect = range ? range.getBoundingClientRect() : null;
+                        if (rect && rect.width > 0 && trigger) {
+                            trigger.style.top = Math.max(10, rect.top - 45) + 'px';
+                            trigger.style.left = Math.max(10, Math.min(window.innerWidth - 220, rect.left + (rect.width / 2) - 80)) + 'px';
+                            trigger.style.display = 'flex';
+                        }
+                    } catch(e) {}
+                } else {
+                    if (badge) badge.style.display = 'none';
+                    if (fab) {
+                        fab.style.borderColor = '#223150';
+                        fab.style.boxShadow = '0 10px 30px rgba(0,0,0,0.7)';
+                    }
+                }
+            }
+
+            document.addEventListener('mouseup', function() { setTimeout(updateSelectionState, 50); });
+            document.addEventListener('keyup', function() { setTimeout(updateSelectionState, 50); });
+
+            document.addEventListener('contextmenu', function(e) {
+                var ctxMenu = document.getElementById('custom-context-menu');
+                var text = getSelectionText();
+                if (text) currentSelectedText = text;
+                if (ctxMenu) {
+                    e.preventDefault();
+                    ctxMenu.style.top = Math.min(window.innerHeight - 120, e.clientY) + 'px';
+                    ctxMenu.style.left = Math.min(window.innerWidth - 230, e.clientX) + 'px';
+                    ctxMenu.style.display = 'block';
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                var ctxMenu = document.getElementById('custom-context-menu');
+                if (ctxMenu && !ctxMenu.contains(e.target)) ctxMenu.style.display = 'none';
+            });
+
+            function openNoteModal(e) {
+                if (e && e.stopPropagation) e.stopPropagation();
+                var box = document.getElementById('inline-comment-box');
+                var quote = document.getElementById('inline-quote-text');
+                var status = document.getElementById('inline-comment-status');
+                var trigger = document.getElementById('inline-comment-trigger');
+                var ctxMenu = document.getElementById('custom-context-menu');
+
+                if (trigger) trigger.style.display = 'none';
+                if (ctxMenu) ctxMenu.style.display = 'none';
+                if (quote) quote.textContent = currentSelectedText || 'General Chapter Note';
+                if (status) status.textContent = '';
+                if (box) {
+                    box.style.display = 'block';
+                    initQuillInstance();
+                    if (quillEditor) quillEditor.focus();
+                }
+            }
+
+            window.openNoteModal = openNoteModal;
+
+            var triggerBtn = document.getElementById('inline-comment-trigger');
+            var fabBtn = document.getElementById('persistent-note-btn');
+            var ctxBtn = document.getElementById('ctx-add-note');
+            var ctxCopy = document.getElementById('ctx-copy');
+            var closeBtn = document.getElementById('inline-comment-close');
+            var cancelBtn = document.getElementById('inline-comment-cancel');
+            var submitBtn = document.getElementById('inline-comment-submit');
+
+            if (triggerBtn) triggerBtn.onclick = openNoteModal;
+            if (fabBtn) fabBtn.onclick = openNoteModal;
+            if (ctxBtn) ctxBtn.onclick = openNoteModal;
+            if (ctxCopy) ctxCopy.onclick = function() {
+                var ctxMenu = document.getElementById('custom-context-menu');
+                if (ctxMenu) ctxMenu.style.display = 'none';
+                if (currentSelectedText) navigator.clipboard.writeText(currentSelectedText);
+            };
+            if (closeBtn) closeBtn.onclick = function() {
+                var box = document.getElementById('inline-comment-box');
+                if (box) box.style.display = 'none';
+            };
+            if (cancelBtn) cancelBtn.onclick = function() {
+                var box = document.getElementById('inline-comment-box');
+                if (box) box.style.display = 'none';
+            };
+
+            if (submitBtn) submitBtn.onclick = async function() {
+                var status = document.getElementById('inline-comment-status');
+                var htmlComment = quillEditor ? quillEditor.root.innerHTML : '';
+                var textComment = quillEditor ? quillEditor.getText().trim() : '';
+
+                if (!textComment && !currentSelectedText && (!htmlComment || htmlComment === '<p><br></p>')) return;
+                if (status) status.textContent = 'Saving note & syncing to Notion...';
+
+                try {
+                    var resp = await fetch('/api/notion/comment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            title: currentSelectedText || (textComment ? textComment.slice(0, 60) : "Study Note"),
+                            selection_text: currentSelectedText,
+                            comment: htmlComment,
+                            chapter_slug: window.location.pathname.split('/').pop() || 'chapter'
+                        })
+                    });
+                    var res = await resp.json();
+                    if (res.ok) {
+                        if (status) {
+                            status.style.color = '#34d399';
+                            status.textContent = (res.notion && res.notion.ok) ? 'Pushed to Notion & Local DB!' : 'Saved to Local Database!';
+                        }
+                        setTimeout(function() {
+                            var box = document.getElementById('inline-comment-box');
+                            if (box) box.style.display = 'none';
+                            if (quillEditor) quillEditor.setContents([]);
+                            loadSavedChapterNotes();
+                        }, 1200);
+                    }
+                } catch (err) {
+                    if (status) {
+                        status.style.color = '#fbbf24';
+                        status.textContent = 'Saved to Local Session!';
+                    }
+                    setTimeout(function() {
+                        var box = document.getElementById('inline-comment-box');
+                        if (box) box.style.display = 'none';
+                    }, 1200);
+                }
+            };
+
+            async function loadSavedChapterNotes() {
+                try {
+                    var slug = window.location.pathname.split('/').pop() || 'chapter';
+                    var resp = await fetch('/api/notes?chapter_slug=' + encodeURIComponent(slug));
+                    var data = await resp.json();
+                    var notes = data.notes || [];
+
+                    var toggleBtn = document.getElementById('word-comments-toggle');
+                    var badge = document.getElementById('word-comments-badge');
+                    var list = document.getElementById('word-comments-list');
+
+                    if (badge) badge.textContent = notes.length;
+                    if (toggleBtn) toggleBtn.style.display = notes.length > 0 ? 'inline-flex' : 'none';
+
+                    if (list) {
+                        if (notes.length === 0) {
+                            list.innerHTML = '<div style="color:#94a3b8; font-size:12px; text-align:center; padding:20px;">No comments yet. Highlight text and right-click to add a note!</div>';
+                        } else {
+                            list.innerHTML = notes.map(function(n) {
+                                var title = n.title || 'Note';
+                                var body = n.body ? n.body : '';
+                                return '<div style="background:#151d30; border:1px solid #223150; border-radius:12px; padding:14px; margin-bottom:12px;">' +
+                                    '<div style="font-size:10px; font-weight:800; color:#eab308; text-transform:uppercase; margin-bottom:4px;">💬 Comment</div>' +
+                                    '<h4 style="font-size:13px; font-weight:700; color:#ffffff; margin:0 0 6px 0; line-height:1.4;">' + escapeHtml(title) + '</h4>' +
+                                    (body ? '<p style="font-size:12px; color:#cbd5e1; margin:0; line-height:1.5;">' + escapeHtml(body) + '</p>' : '') +
+                                    '<div style="font-size:10px; color:#64748b; margin-top:8px; display:flex; justify-content:space-between; align-items:center;">' +
+                                        '<span>' + (n.created_at || '') + '</span>' +
+                                        '<span style="color:#34d399; font-weight:700;">Notion Synced</span>' +
+                                    '</div>' +
+                                '</div>';
+                            }).join('');
+                        }
+                    }
+
+                    notes.forEach(function(note) {
+                        if (!note.title || note.title === 'Study Note' || note.title.length < 3) return;
+                        highlightTextSnippet(note.title, note);
+                    });
+                } catch(e) {}
+            }
+
+            function highlightTextSnippet(searchText, note) {
+                try {
+                    var body = document.querySelector('.markdown-body') || document.body;
+                    if (!body) return;
+                    var walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, null, false);
+                    var node;
+                    while (node = walker.nextNode()) {
+                        if (node.parentElement && node.parentElement.closest('.word-comment-highlight, script, style, textarea, button')) continue;
+                        var idx = node.nodeValue ? node.nodeValue.toLowerCase().indexOf(searchText.toLowerCase().slice(0, 30)) : -1;
+                        if (idx !== -1) {
+                            var matchedText = node.nodeValue.substr(idx, searchText.length);
+                            var mark = document.createElement('mark');
+                            mark.className = 'word-comment-highlight';
+                            mark.style.cssText = 'background:rgba(234,179,8,0.25); border-bottom:2px solid #eab308; border-radius:4px; padding:1px 4px; color:inherit; cursor:pointer;';
+                            mark.innerHTML = escapeHtml(matchedText) + '<span style="display:inline-flex; align-items:center; justify-content:center; background:#eab308; color:#000; font-size:10px; font-weight:800; border-radius:9999px; width:16px; height:16px; margin-left:4px; vertical-align:middle;" title="MS Word Comment">💬</span>';
+                            mark.addEventListener('click', function(e) {
+                                e.stopPropagation();
+                                var drawer = document.getElementById('word-comments-drawer');
+                                if (drawer) drawer.style.display = 'block';
+                            });
+                            var parent = node.parentNode;
+                            var after = node.splitText(idx);
+                            after.nodeValue = after.nodeValue.substr(searchText.length);
+                            parent.insertBefore(mark, after);
+                            break;
+                        }
+                    }
+                } catch(err) {}
+            }
+
+            function escapeHtml(val) {
+                return String(val || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+
+            var wordToggle = document.getElementById('word-comments-toggle');
+            var wordClose = document.getElementById('word-comments-drawer-close');
+
+            if (wordToggle) wordToggle.onclick = function() {
+                var drawer = document.getElementById('word-comments-drawer');
+                if (drawer) drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
+            };
+
+            if (wordClose) wordClose.onclick = function() {
+                var drawer = document.getElementById('word-comments-drawer');
+                if (drawer) drawer.style.display = 'none';
+            };
+
+            window.addEventListener('load', loadSavedChapterNotes);
+        })();
+    </script>
+</body>
+</html>

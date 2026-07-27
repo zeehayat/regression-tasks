@@ -270,9 +270,9 @@ centred = X - means
 
 #### Step-by-Step Shape Alignment Check:
 1. Shape of $X$: `(3, 2)`
-2. Shape of `means`: `(2,)` $ightarrow$ Right-aligned: `(1, 2)`
+2. Shape of `means`: `(2,)` $\rightarrow$ Right-aligned: `(1, 2)`
 3. Compare trailing dimension: $2 == 2$ (Match!)
-4. Compare leading dimension: $3$ vs $1$. The dimension of size $1$ stretches from $1 ightarrow 3$.
+4. Compare leading dimension: $3$ vs $1$. The dimension of size $1$ stretches from $1 \rightarrow 3$.
 5. Final broadcasted subtraction subtracts `16.7` from Column 0 and `283.3` from Column 1 for all rows.
 
 ---
@@ -306,9 +306,9 @@ print(manual, loop_total, dot_total)
 
 ---
 
-### 3.6 Matrix Prediction ($Xoldsymbol{eta}$)
+### 3.6 Matrix Prediction ($X\boldsymbol{\beta}$)
 
-When we multiply a design matrix $X$ of shape $(N 	imes P)$ by a parameter vector $oldsymbol{eta}$ of shape $(P,)$ using the `@` operator, NumPy performs a dot product between **each row of $X$** and the weight vector $oldsymbol{eta}$.
+When we multiply a design matrix $X$ of shape $(N \times P)$ by a parameter vector $\boldsymbol{\beta}$ of shape $(P,)$ using the `@` operator, NumPy performs a dot product between **each row of $X$** and the weight vector $\boldsymbol{\beta}$.
 
 ```python
 X = np.array([
@@ -326,7 +326,7 @@ print(predictions)
 ```
 
 #### Matrix Dimension Rule:
-$$(N 	imes P) 	imes (P 	imes 1) \longrightarrow (N 	imes 1)$$
+$$(N \times P) \times (P \times 1) \longrightarrow (N \times 1)$$
 The inner dimensions ($P$) must match exactly, and the resulting prediction vector has length $N$ (one predicted output per observation row).
 
 ---
@@ -341,12 +341,12 @@ A linear relationship between an input variable $x$ and an output variable $y$ i
 
 $$y = m x + c$$
 
-* $m$: **Slope** — The change in $y$ given a $1$-unit increase in $x$ ($rac{\Delta y}{\Delta x}$).
+* $m$: **Slope** — The change in $y$ given a $1$-unit increase in $x$ ($\frac{\Delta y}{\Delta x}$).
 * $c$: **Intercept** — The value of $y$ when $x = 0$.
 
 In multiple regression, we extend this equation to $P$ features:
 
-$$\hat{y} = eta_0 + eta_1 x_1 + eta_2 x_2 + \dots + eta_p x_p$$
+$$\hat{y} = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p$$
 
 ---
 
@@ -363,7 +363,7 @@ $$\sum_{i=1}^{n} x_i$$
 #### Translating Summation to Python Code
 Consider the **Sum of Squared Residuals (SSR)** formula:
 
-$$	ext{SSR} = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$
+$$\text{SSR} = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$
 
 Where $y_i$ is the actual target value, and $\hat{y}_i$ is the predicted target value.
 
@@ -392,15 +392,14 @@ When evaluating prediction errors $e_i = y_i - \hat{y}_i$:
 1. **Cancellation Problem:** Unsquared errors can be positive or negative. A model with errors $+10$ and $-10$ would sum to zero error ($\sum e_i = 0$), falsely appearing perfect.
 2. **Squaring Eliminates Signs:** $(+10)^2 = 100$ and $(-10)^2 = 100$, ensuring all deviations contribute positively to total loss.
 3. **Non-Linear Penalty for Large Outliers:** Squaring penalizes large errors much more severely than small ones:
-   * Error = $2 \implies 	ext{Penalty} = 2^2 = 4$
-   * Error = $10 \implies 	ext{Penalty} = 10^2 = 100$ (a 5x increase in error results in a 25x increase in penalty).
+   * Error = $2 \implies \text{Penalty} = 2^2 = 4$
+   * Error = $10 \implies \text{Penalty} = 10^2 = 100$ (a 5x increase in error results in a 25x increase in penalty).
 
 ---
 
 ### 4.4 Critical Distinction: Sum of Squares vs. Square of Sum
 
-$$\sum_{i=1}^{n} x_i^2 
-eq \left( \sum_{i=1}^{n} x_i ight)^2$$
+$$\sum_{i=1}^{n} x_i^2 \neq \left( \sum_{i=1}^{n} x_i \right)^2$$
 
 Let $x = [2.0, -3.0, 5.0]$:
 
@@ -408,7 +407,7 @@ Let $x = [2.0, -3.0, 5.0]$:
 $$\sum x_i^2 = (2.0)^2 + (-3.0)^2 + (5.0)^2 = 4.0 + 9.0 + 25.0 = 38.0$$
 
 #### 2. Square of Sum ($(\sum x_i)^2$):
-$$\left( \sum x_i ight)^2 = (2.0 + (-3.0) + 5.0)^2 = (4.0)^2 = 16.0$$
+$$\left( \sum x_i \right)^2 = (2.0 + (-3.0) + 5.0)^2 = (4.0)^2 = 16.0$$
 
 ```python
 x = np.array([2.0, -3.0, 5.0])
@@ -423,11 +422,11 @@ square_of_sum  = np.sum(x) ** 2  # Output: 16.0
 
 ## 5. Day 0D — First-Principles Statistics
 
-### 5.1 Sample Mean ($ar{x}$)
+### 5.1 Sample Mean ($\bar{x}$)
 
 The mean represents the arithmetic average (or balancing point) of a distribution.
 
-$$ar{x} = rac{1}{n} \sum_{i=1}^{n} x_i$$
+$$\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i$$
 
 ```python
 costs = np.array([12.0, 30.0, 8.0, 45.0, 15.0])
@@ -440,10 +439,10 @@ mean_manual = np.sum(costs) / len(costs)  # Output: 22.0
 
 **Variance** measures the average squared distance of data points from their mean:
 
-$$\sigma^2 = rac{1}{n} \sum_{i=1}^{n} (x_i - ar{x})^2$$
+$$\sigma^2 = \frac{1}{n} \sum_{i=1}^{n} (x_i - \bar{x})^2$$
 
-> **Why can't we just average raw deviations $(x_i - ar{x})$?**
-> The sum of raw deviations around the mean is **always zero** ($\sum_{i=1}^n (x_i - ar{x}) = 0$) because positive and negative deviations cancel out.
+> **Why can't we just average raw deviations $(x_i - \bar{x})$?**
+> The sum of raw deviations around the mean is **always zero** ($\sum_{i=1}^n (x_i - \bar{x}) = 0$) because positive and negative deviations cancel out.
 
 **Standard Deviation** ($\sigma$) takes the square root of variance to return the spread metric to the original units of the dataset:
 
@@ -465,11 +464,11 @@ print(variance_manual, std_manual)
 
 ---
 
-### 5.3 Covariance ($	ext{cov}(x, y)$)
+### 5.3 Covariance ($\text{cov}(x, y)$)
 
 Covariance measures whether two continuous variables tend to deviate from their respective means in the same direction at the same time.
 
-$$	ext{cov}(x, y) = rac{1}{n} \sum_{i=1}^{n} (x_i - ar{x})(y_i - ar{y})$$
+$$\text{cov}(x, y) = \frac{1}{n} \sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})$$
 
 ```python
 cable_km = np.array([12.0, 30.0, 5.0, 40.0, 15.0])
@@ -491,7 +490,7 @@ cov_manual = np.sum(x_dev * y_dev) / len(costs)
 
 Because covariance depends on the units of measurement, it cannot be used to compare strength across different features. **Pearson Correlation** ($r$) normalizes covariance by dividing it by the product of the standard deviations of both variables:
 
-$$r = rac{	ext{cov}(x, y)}{\sigma_x \sigma_y}$$
+$$r = \frac{\text{cov}(x, y)}{\sigma_x \sigma_y}$$
 
 ```python
 r_manual = cov_manual / (costs.std() * cable_km.std())
@@ -529,7 +528,7 @@ Calculating $r$ requires dividing by $\sigma_x$. Division by zero produces `NaN`
 
 A **derivative** measures the instantaneous rate of change (the slope of the tangent line) of a function $f(x)$ at a specific point $x$.
 
-$$rac{dy}{dx} = f'(x) = \lim_{h 	o 0} rac{f(x+h) - f(x)}{h}$$
+$$\frac{dy}{dx} = f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}$$
 
 #### Code Proof: Finite Difference Approximation
 We can approximate derivatives numerically by choosing an extremely small step size $h$ (e.g., $h = 10^{-6}$).
@@ -551,27 +550,25 @@ print(numerical_slope(f, x_val))
 ### 6.2 Essential Analytical Derivative Rules
 
 1. **Power Rule:**
-   $$rac{d}{dx} [x^n] = n x^{n-1}$$
-   * Example: $rac{d}{dx} [x^2] = 2x$
+   $$\frac{d}{dx} [x^n] = n x^{n-1}$$
+   * Example: $\frac{d}{dx} [x^2] = 2x$
 2. **Constant Multiple Rule:**
-   $$rac{d}{dx} [c \cdot f(x)] = c \cdot rac{d}{dx}[f(x)]$$
+   $$\frac{d}{dx} [c \cdot f(x)] = c \cdot \frac{d}{dx}[f(x)]$$
 3. **Sum Rule:**
-   $$rac{d}{dx} [f(x) + g(x)] = rac{d}{dx}[f(x)] + rac{d}{dx}[g(x)]$$
+   $$\frac{d}{dx} [f(x) + g(x)] = \frac{d}{dx}[f(x)] + \frac{d}{dx}[g(x)]$$
 
 #### Combined Example:
 For $y = 3x^2 + 5x$:
 
-$$rac{dy}{dx} = rac{d}{dx}[3x^2] + rac{d}{dx}[5x] = 3(2x) + 5(1) = 6x + 5$$
+$$\frac{dy}{dx} = \frac{d}{dx}[3x^2] + \frac{d}{dx}[5x] = 3(2x) + 5(1) = 6x + 5$$
 
 ---
 
-### 6.3 Partial Derivatives ($\partial$) and the Gradient ($
-abla$)
+### 6.3 Partial Derivatives ($\partial$) and the Gradient ($\nabla$)
 
 When an error function depends on multiple parameters—such as slope $m$ and intercept $c$—a **partial derivative** measures how the output changes when we adjust *one parameter* while keeping all others constant. We use the symbol $\partial$ (curly "d") instead of $d$.
 
-$$	ext{Gradient } 
-abla E(m, c) = egin{bmatrix} rac{\partial E}{\partial m} \ rac{\partial E}{\partial c} \end{bmatrix}$$
+$$\text{Gradient } \nabla E(m, c) = \begin{bmatrix} \frac{\partial E}{\partial m} \\ \frac{\partial E}{\partial c} \end{bmatrix}$$
 
 ```python
 def error(m, c):
@@ -596,10 +593,9 @@ print(partial_wrt_c(m, c))  # Output: -13.9999
 
 **Gradient Descent** is an iterative optimization algorithm that minimizes a loss function by taking steps in the direction opposite to the gradient.
 
-$$	heta_{	ext{new}} = 	heta_{	ext{old}} - lpha 
-abla E(	heta)$$
+$$\theta_{\text{new}} = \theta_{\text{old}} - \alpha \nabla E(\theta)$$
 
-Where $lpha$ is the **learning rate** (step size hyperparameter).
+Where $\alpha$ is the **learning rate** (step size hyperparameter).
 
 ```python
 m, c = 0.0, 0.0          # Initial bad guess
@@ -617,8 +613,8 @@ print(f"Optimized parameters: m = {m:.3f}, c = {c:.3f}")
 # Output: m and c settle into values where m*2 + c ≈ 10.0
 ```
 
-#### What happens if the learning rate $lpha$ is too large?
-If $lpha$ is set too high (e.g., $lpha = 5.0$), parameter updates will overshoot the minimum, causing error to explode toward infinity.
+#### What happens if the learning rate $\alpha$ is too large?
+If $\alpha$ is set too high (e.g., $\alpha = 5.0$), parameter updates will overshoot the minimum, causing error to explode toward infinity.
 
 ---
 
@@ -737,17 +733,17 @@ except ValueError as e:
 
 ## 8. Master Rosetta Stone & Traceback Cheat Sheet
 
-### 8.1 Mathematical Symbol $ightarrow$ Python Loop $ightarrow$ NumPy Expression
+### 8.1 Mathematical Symbol $\rightarrow$ Python Loop $\rightarrow$ NumPy Expression
 
 | Mathematical Concept | LaTeX Symbol | Raw Python Loop Expression | Vectorized NumPy Expression |
 | :--- | :--- | :--- | :--- |
 | Vector Dot Product | $\sum_{i=1}^{p} a_i b_i$ | `sum(a[i] * b[i] for i in range(p))` | `a @ b` |
-| Sample Mean | $ar{x} = rac{1}{n} \sum x_i$ | `sum(x) / len(x)` | `x.mean()` |
-| Mean Centering | $x_i - ar{x}$ | `[val - mean_x for val in x]` | `x - x.mean()` |
+| Sample Mean | $\bar{x} = \frac{1}{n} \sum x_i$ | `sum(x) / len(x)` | `x.mean()` |
+| Mean Centering | $x_i - \bar{x}$ | `[val - mean_x for val in x]` | `x - x.mean()` |
 | Sum of Squared Errors | $\sum (y_i - \hat{y}_i)^2$ | `sum((y[i] - y_hat[i])**2 for i in range(n))` | `np.sum((y - y_hat)**2)` |
-| Population Variance | $rac{1}{n}\sum (x_i - ar{x})^2$ | `sum((x[i] - mean_x)**2 for i in range(n)) / n` | `x.var()` |
-| Covariance | $rac{1}{n}\sum (x_i - ar{x})(y_i - ar{y})$ | `sum((x[i]-mx)*(y[i]-my) for i in range(n)) / n` | `np.cov(x, y, ddof=0)[0,1]` |
-| Derivative Limit | $\lim_{h 	o 0} rac{f(x+h) - f(x)}{h}$ | `(f(x + h) - f(x)) / h` | Numerical finite difference |
+| Population Variance | $\frac{1}{n}\sum (x_i - \bar{x})^2$ | `sum((x[i] - mean_x)**2 for i in range(n)) / n` | `x.var()` |
+| Covariance | $\frac{1}{n}\sum (x_i - \bar{x})(y_i - \bar{y})$ | `sum((x[i]-mx)*(y[i]-my) for i in range(n)) / n` | `np.cov(x, y, ddof=0)[0,1]` |
+| Derivative Limit | $\lim_{h \to 0} \frac{f(x+h) - f(x)}{h}$ | `(f(x + h) - f(x)) / h` | Numerical finite difference |
 
 ---
 
@@ -755,7 +751,7 @@ except ValueError as e:
 
 #### 1. Shape Mismatch Error (`ValueError`)
 ```text
-ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0, 
+ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0,
 with gufunc signature (n?,k),(k?,m?)->(n?,m?) (size 3 is different from 2)
 ```
 * **Translation:** You attempted matrix multiplication (`@`) between two arrays whose inner dimensions do not match.

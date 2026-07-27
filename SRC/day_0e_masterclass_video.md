@@ -1,0 +1,581 @@
+# 🎬 YouTube-Style Video Player: Day 0E Masterclass
+
+<style>
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: #000000 !important;
+    overflow: hidden !important;
+}
+
+/* YouTube-Style Video Player Container - Full Viewport */
+.yt-player-container {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background: #000000 !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    font-family: 'YouTube Noto', Roboto, Arial, sans-serif;
+    color: #ffffff;
+}
+
+/* Full Screen Video Screen Viewport */
+.yt-video-screen {
+    position: relative;
+    flex: 1 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: radial-gradient(circle at center, #111827 0%, #000000 100%);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Video Stage Inner Render Card */
+.yt-stage-content {
+    width: 90%;
+    max-width: 850px;
+    text-align: center;
+    padding: 24px;
+}
+
+.yt-stage-content h2 {
+    color: #38bdf8 !important;
+    font-size: 2rem !important;
+    font-weight: 800 !important;
+    margin: 0 0 12px 0 !important;
+}
+
+.yt-stage-content p {
+    color: #f3f4f6 !important;
+    font-size: 1.25rem !important;
+    line-height: 1.6 !important;
+    margin: 0 0 16px 0 !important;
+}
+
+/* YOUTUBE-STYLE CLOSED CAPTIONS OVERLAY (ON TOP OF VIDEO) */
+.yt-cc-overlay {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.82);
+    color: #ffffff;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-align: center;
+    max-width: 85%;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+    pointer-events: none;
+    z-index: 10;
+    transition: opacity 0.2s ease;
+}
+
+.yt-cc-overlay span.highlight-word {
+    color: #22d3ee;
+    border-bottom: 2px solid #22d3ee;
+}
+
+/* YOUTUBE-STYLE CONTROL BAR */
+.yt-control-bar {
+    background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.7));
+    padding: 12px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.yt-progress-line {
+    width: 100%;
+    height: 5px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 9999px;
+    cursor: pointer;
+    position: relative;
+    transition: height 0.15s ease;
+}
+
+.yt-progress-line:hover {
+    height: 8px;
+}
+
+.yt-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: #ff0000;
+    border-radius: 9999px;
+    position: relative;
+}
+
+.yt-progress-handle {
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 12px;
+    background: #ff0000;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.yt-progress-line:hover .yt-progress-handle {
+    opacity: 1;
+}
+
+.yt-controls-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.yt-controls-left, .yt-controls-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.yt-btn {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: background 0.15s ease;
+}
+
+.yt-btn:hover {
+    background: rgba(255,255,255,0.15);
+}
+
+.yt-btn-cc {
+    border: 1px solid rgba(255,255,255,0.4);
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+.yt-btn-cc.active {
+    background: #ffffff;
+    color: #000000;
+    font-weight: 900;
+}
+
+.yt-time-display {
+    font-size: 13px;
+    color: #d1d5db;
+    font-family: monospace;
+}
+</style>
+
+<div class="yt-player-container" id="yt-player">
+    <!-- 16:9 VIDEO SCREEN -->
+    <div class="yt-video-screen" id="yt-video-screen">
+        <!-- Rendered Video Content -->
+        <div class="yt-stage-content" id="yt-stage">
+            <!-- Dynamic Slide/Scene Content -->
+        </div>
+
+        <!-- ON-SCREEN CLOSED CAPTIONS OVERLAY (LIKE YOUTUBE) -->
+        <div class="yt-cc-overlay" id="yt-cc-box">
+            Press Play to start YouTube-style Video Presentation with Closed Captions.
+        </div>
+    </div>
+
+    <!-- YOUTUBE CONTROL BAR -->
+    <div class="yt-control-bar">
+        <!-- Clickable Progress Line -->
+        <div class="yt-progress-line" id="yt-progress-bar">
+            <div class="yt-progress-fill" id="yt-progress-fill">
+                <div class="yt-progress-handle"></div>
+            </div>
+        </div>
+
+        <!-- Controls Row -->
+        <div class="yt-controls-row">
+            <div class="yt-controls-left">
+                <button class="yt-btn" id="yt-play-btn">▶</button>
+                <button class="yt-btn" id="yt-stop-btn">⏹</button>
+                <span class="yt-time-display" id="yt-time">0:00 / 38:30</span>
+                <select id="yt-voice-select" style="background:#1f2937; color:#fff; border:1px solid #374151; border-radius:4px; padding:4px 8px; font-size:11px; max-width:200px;"></select>
+            </div>
+
+            <div class="yt-controls-right">
+                <!-- Closed Captions Toggle Button [CC] -->
+                <button class="yt-btn yt-btn-cc active" id="yt-cc-btn">CC</button>
+                
+                <!-- Speed Selector -->
+                <select id="yt-speed-select" style="background:#1f2937; color:#fff; border:1px solid #374151; border-radius:4px; padding:4px 8px; font-size:11px;">
+                    <option value="0.75">0.75x</option>
+                    <option value="0.85" selected>0.85x (Recommended)</option>
+                    <option value="1.0">1.0x (Normal)</option>
+                    <option value="1.25">1.25x</option>
+                </select>
+
+                <!-- Fullscreen Button -->
+                <button class="yt-btn" id="yt-fullscreen-btn">⛶</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    var scenes = [
+        {
+            id: "S1.01",
+            title: "Cold Open",
+            duration: 35,
+            stage: `<h2 style="color:#ffffff;">"take the derivative of the squared error with respect to the slope"</h2><p style="color:#ec4899; font-size: 2.2rem; font-weight:800;">derivative</p>`,
+            cc: "That sentence is going to appear in Chapter One of this book, and right now it might read like a foreign language. By the end of this video, it will read like an instruction."
+        },
+        {
+            id: "S1.02",
+            title: "The One-Sentence Thesis",
+            duration: 35,
+            stage: `<h2 style="font-size: 2.2rem; color:#fff;">A derivative is the slope of a curve at <span style="border-bottom: 4px solid #ec4899; color:#ec4899;">one exact point</span>.</h2>`,
+            cc: "Here is the whole idea, and everything else in this video is a consequence of it. A derivative is the slope of a curve at one exact point. That is it."
+        },
+        {
+            id: "S1.03",
+            title: "Straight Line: Constant Slope",
+            duration: 70,
+            stage: `<h2 style="color:#38bdf8;">MHP Cost Model: cost = 1.1 × cable_km + 2</h2><p style="color:#ec4899; font-size:1.8rem; font-weight:800;">Slope m = 1.1 (Same Everywhere!)</p>`,
+            cc: "Start with something you already understand. Here is a straight-line model of project cost. Every extra kilometre of cable adds 1.1 million rupees. The slope is 1.1 everywhere."
+        },
+        {
+            id: "S1.04",
+            title: "Curved Function y = x²",
+            duration: 70,
+            stage: `<h2 style="color:#ef4444;">Curved Function y = x²</h2><p>Slope at x=0 → 0 | Slope at x=1.5 → 3 | Slope at x=3 → 6</p><p style="color:#ef4444; font-size:2rem; font-weight:900;">Slope changes at every point!</p>`,
+            cc: "Now a curve. Near zero the curve is nearly flat. Out at three it is climbing steeply. So asking what is the slope of this curve is a badly formed question. The right question is: what is the slope at this specific point."
+        },
+        {
+            id: "S1.05",
+            title: "The Secant Line",
+            duration: 70,
+            stage: `<h2 style="color:#38bdf8;">Fixed Point A = (3, 9) | Moving Point B = (3+h, (3+h)²)</h2><p style="color:#ec4899; font-size:1.8rem; font-weight:800;">h = 1.0 → Secant Slope = 7.0</p>`,
+            cc: "Here is the trick. I cannot measure slope at a single point, so I cheat. I keep point A fixed at x equals three and put a second point B a distance h away. With h equal to one, the slope is seven."
+        },
+        {
+            id: "S1.06",
+            title: "Sliding B Toward A (Tangent Line)",
+            duration: 80,
+            stage: `<h2 style="color:#ec4899;">h → 0 : Secant Settles into Tangent Line</h2><p style="font-size:2.4rem; color:#ec4899; font-weight:900;">Tangent Slope at x=3 is 6.0</p>`,
+            cc: "Watch the line. As B slides toward A, the secant swings around and the slope falls: 7, 6.5, 6.25, 6.1. When B merges into A, the line touches at one point. That tangent slope is 6."
+        },
+        {
+            id: "S1.07",
+            title: "Why It Was Always Going to Be 6 + h",
+            duration: 90,
+            stage: `<h2 style="color:#38bdf8;">Algebraic Proof: ((3+h)² - 9)/h = 6 + h</h2><p style="color:#22d3ee; font-size:1.8rem; font-weight:800;">As h → 0: 6 + h → 6.0</p>`,
+            cc: "Expand the square: 9 plus 6 h plus h squared minus 9. The 9s cancel. Divide by h and you get 6 plus h. As h vanishes, the slope is 6. There is no mystery left."
+        },
+        {
+            id: "S1.08",
+            title: "The Limit Definition Formula",
+            duration: 70,
+            stage: `<h2 style="font-size: 2.2rem; color:#22d3ee;">\\(\\frac{dy}{dx} = \\lim_{h \\to 0} \\frac{f(x+h) - f(x)}{h}\\)</h2><p>Rise over Run as step size h → 0</p>`,
+            cc: "Let us decode this once: f of x plus h minus f of x is rise. h is run. Limit as h goes to zero means shrink the gap to nothing. dy/dx is the derivative answer."
+        },
+        {
+            id: "S1.09",
+            title: "Python Code Convergence",
+            duration: 100,
+            stage: `<h2 style="color:#34d399;">p1_01_secant_table.py</h2><p style="font-family:monospace; color:#34d399; font-size:1.4rem;">h=1.0 → 7.0 | h=0.1 → 6.1 | h=1e-6 → 6.000001</p>`,
+            cc: "Here is the code in Python. As h gets smaller, the output steps down: 7, 6.1, 6.01, 6.0001, 6.000001. Python confirms our claim."
+        },
+        {
+            id: "S1.10",
+            title: "BREAK IT: Floating Point Noise",
+            duration: 90,
+            stage: `<h2 style="color:#ef4444;">BREAK IT: h = 1e-16 Collapse</h2><p style="color:#ef4444; font-size:2.2rem; font-weight:900;">Printed Slope = 0.0</p>`,
+            cc: "Now let us break it. Push h to 1e-16. The estimate collapses to zero! 3 plus 1e-16 rounds to 3.0 in float64, so numerator becomes zero. The arithmetic ran out of room."
+        },
+        {
+            id: "S1.11",
+            title: "Practical Rule: h ≈ 1e-6",
+            duration: 45,
+            stage: `<h2 style="color:#22d3ee;">Engineering Sweet Spot: h ≈ 1e-6</h2><p>Used in gradient_check.py and Chapter 1 Day 5 Matrix Calculus!</p>`,
+            cc: "The engineering rule to memorize: use h around 1e-6. Too big loses precision; too small gets drowned in floating point noise."
+        },
+        {
+            id: "S1.12",
+            title: "EXERCISE 1 [core]",
+            duration: 30,
+            stage: `<h2 style="color:#ec4899;">EXERCISE 1: Write numerical_slope(f, x, h)</h2><p>Find h for f(x) = x³ at x = 2.0 (True slope = 12.0)</p>`,
+            cc: "Your turn. Pause the video here. Write numerical slope from scratch and test f(x) = x cubed at x = 2."
+        },
+        {
+            id: "S1.13",
+            title: "Exercise 1 Solution Walkthrough",
+            duration: 100,
+            stage: `<h2 style="color:#34d399;">Exercise 1 Solution Passed</h2><p style="color:#34d399; font-size:1.6rem;">Optimal h ≈ 1e-6 → 12.000000</p>`,
+            cc: "Define numerical slope as rise over run. Loop over candidate h values. The optimal h sits right around 1e-6, exactly as predicted."
+        },
+        {
+            id: "S1.14",
+            title: "The Power Rule Shortcut",
+            duration: 110,
+            stage: `<h2 style="color:#38bdf8;">Power Rule: d/dx [ xⁿ ] = n · xⁿ⁻¹</h2><p>x² → 2x | x³ → 3x² | x⁴ → 4x³</p>`,
+            cc: "Instead of limits every time, use the Power Rule: bring the exponent to the front and decrease the power by 1. The derivative of x cubed is 3 x squared."
+        },
+        {
+            id: "S1.15",
+            title: "Constant & Sum Rules",
+            duration: 70,
+            stage: `<h2 style="color:#22d3ee;">y = 3x² + 5x → dy/dx = 6x + 5</h2><p>Constant multipliers stay; standalone numbers become 0.</p>`,
+            cc: "Scaling a function scales its slope. Summing terms sums their derivatives. So 3 x squared plus 5 x differentiates to 6 x plus 5."
+        },
+        {
+            id: "S1.16",
+            title: "Code Proof: 17.0 Two Ways",
+            duration: 80,
+            stage: `<h2 style="color:#34d399;">p1_03_rule_check.py</h2><p style="color:#34d399; font-size:1.6rem;">By Rule: 17.0 | By Numeric: 17.000000</p>`,
+            cc: "By rule: 17. By finite difference: 17. Two independent roads, same destination."
+        },
+        {
+            id: "S1.17",
+            title: "EXERCISE 2 & Solution Walkthrough",
+            duration: 150,
+            stage: `<h2 style="color:#34d399;">Exercise 2 Passed</h2><p>1. 224.0 | 2. 88.0 | 3. 10.0 | 4. -2.0 | 5. 0.0</p>`,
+            cc: "28 x cubed. 5 x to the fourth plus 4 x. 10. x minus 4. And 0 for constant 6, because a constant does not change."
+        },
+        {
+            id: "S1.18",
+            title: "The Chain Rule: Peeling the Onion",
+            duration: 120,
+            stage: `<h2 style="color:#ec4899;">Chain Rule: d/dm f(g(m)) = f'(g(m)) · g'(m)</h2><p>Differentiate outside layer, then multiply by inside derivative.</p>`,
+            cc: "The most important rule in ML: differentiate the outer layer leaving the inside untouched, then multiply by the derivative of the inside layer."
+        },
+        {
+            id: "S1.19",
+            title: "Chain Rule on Squared Error",
+            duration: 130,
+            stage: `<h2 style="color:#ec4899;">E(m) = (y - mx - c)² → dE/dm = -2x(y - mx - c)</h2><p>Matches term-by-term expansion in Chapter 0 §0E.5a!</p>`,
+            cc: "For squared error (y - m x - c) squared: outer derivative is 2(y - m x - c), inner derivative wrt m is -x. Product is -2 x (y - m x - c)."
+        },
+        {
+            id: "S1.20",
+            title: "Code Proof: -28.0 Three Ways",
+            duration: 90,
+            stage: `<h2 style="color:#34d399;">p1_04_chain_squared_error.py</h2><p style="color:#34d399; font-size:1.8rem;">dE/dm = -28.0 (Chain Rule, Expansion, Numeric)</p>`,
+            cc: "Plug in x=2, y=10, c=1, m=1. Result is -28. Code confirms it three ways. -28 means loss decreases as m grows, so turn m UP!"
+        },
+        {
+            id: "S1.21",
+            title: "BREAK IT: Dropped Inner Derivative",
+            duration: 100,
+            stage: `<h2 style="color:#ef4444;">BREAK IT: Dropped (-x) Factor</h2><p style="color:#ef4444; font-size:1.8rem;">Wrong: +14.0 vs Correct: -28.0 (No Error Raised!)</p>`,
+            cc: "Forget the inner derivative -x and you get +14 instead of -28. Wrong magnitude and wrong sign. And Python raises zero errors! That is why we check numerically."
+        },
+        {
+            id: "S1.22",
+            title: "EXERCISE 3 & Solution Walkthrough",
+            duration: 170,
+            stage: `<h2 style="color:#34d399;">Exercise 3 Passed</h2><p>1. 768.0 | 2. -54.0 | 3. 40.0 | 4. -48.0</p>`,
+            cc: "12 (3x+1) cubed. -6 (5-2x) squared. 4x (x squared + 1). And -48 for problem four."
+        },
+        {
+            id: "S1.23",
+            title: "The Second Derivative & Curvature",
+            duration: 140,
+            stage: `<h2 style="color:#38bdf8;">E(m) = 81 - 36m + 4m² → E''(m) = 8.0</h2><p style="color:#ec4899; font-weight:800;">E'' > 0 → Constant Upward Bending Bowl!</p>`,
+            cc: "The second derivative is the rate at which slope changes. For squared error, E'' = 8, a positive constant. Positive means it bends upward as a bowl."
+        },
+        {
+            id: "S1.24",
+            title: "Why 'Bowl' is the Whole Ballgame",
+            duration: 120,
+            stage: `<h2 style="color:#34d399;">Convex Bowl: E'' > 0 Everywhere</h2><p style="color:#34d399; font-size:1.8rem; font-weight:800;">Exactly 1 Global Minimum! No Local Traps!</p>`,
+            cc: "Roll a ball into a bowl: it always lands at the single lowest point. Linear regression squared error is always a bowl. Least squares has exactly one answer."
+        },
+        {
+            id: "S1.25",
+            title: "Part 1 Exit Check & Handoff",
+            duration: 150,
+            stage: `<h2 style="color:#22d3ee;">Part 1 Mastered! Ready for Part 2</h2><p>Part 2: Partial Derivatives, Gradients & OLS Normal Equations</p>`,
+            cc: "That is Part One. Verify the 5 exit check questions. Part Two adds the second dial."
+        }
+    ];
+
+    var currentIdx = 0;
+    var isPlaying = false;
+    var isCCActive = true;
+    var totalSeconds = 2310; // ~38.5 mins total
+    var curSeconds = 0;
+
+    var stageEl = document.getElementById('yt-stage');
+    var ccBox = document.getElementById('yt-cc-box');
+    var playBtn = document.getElementById('yt-play-btn');
+    var stopBtn = document.getElementById('yt-stop-btn');
+    var ccBtn = document.getElementById('yt-cc-btn');
+    var timeEl = document.getElementById('yt-time');
+    var progressFill = document.getElementById('yt-progress-fill');
+    var progressBar = document.getElementById('yt-progress-bar');
+    var voiceSelect = document.getElementById('yt-voice-select');
+    var speedSelect = document.getElementById('yt-speed-select');
+    var fullscreenBtn = document.getElementById('yt-fullscreen-btn');
+
+    function formatTime(s) {
+        var m = Math.floor(s / 60);
+        var sec = Math.floor(s % 60);
+        return m + ':' + (sec < 10 ? '0' : '') + sec;
+    }
+
+    function populateVoices() {
+        if (!('speechSynthesis' in window) || !voiceSelect) return;
+        var voices = window.speechSynthesis.getVoices();
+        voiceSelect.innerHTML = '';
+        voices.forEach(function(v, i) {
+            var opt = document.createElement('option');
+            opt.value = i;
+            opt.textContent = v.name + ' (' + v.lang + ')';
+            if (/female|zira|samantha|victoria|google uk english female|google us english female/i.test(v.name)) {
+                opt.selected = true;
+            }
+            voiceSelect.appendChild(opt);
+        });
+    }
+
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = populateVoices;
+        populateVoices();
+    }
+
+    function renderScene(idx) {
+        if (idx < 0) idx = 0;
+        if (idx >= scenes.length) idx = scenes.length - 1;
+        currentIdx = idx;
+
+        var sc = scenes[currentIdx];
+        stageEl.innerHTML = sc.stage;
+        if (ccBox) ccBox.textContent = sc.cc;
+
+        if (window.MathJax) {
+            window.MathJax.typesetPromise([stageEl]).catch(function(){});
+        }
+
+        // Calculate progress percentage
+        var accumSec = 0;
+        for (var i = 0; i < idx; i++) accumSec += scenes[i].duration;
+        curSeconds = accumSec;
+        var pct = (curSeconds / totalSeconds) * 100;
+        progressFill.style.width = pct + '%';
+        timeEl.textContent = formatTime(curSeconds) + ' / 38:30';
+    }
+
+    function speakText(text, callback) {
+        if (ccBox) {
+            ccBox.textContent = text;
+            ccBox.style.display = isCCActive ? 'block' : 'none';
+        }
+        if (!('speechSynthesis' in window)) {
+            if (callback) callback();
+            return;
+        }
+        window.speechSynthesis.cancel();
+        var utt = new SpeechSynthesisUtterance(text);
+        utt.rate = parseFloat(speedSelect.value || 0.85);
+
+        var voices = window.speechSynthesis.getVoices();
+        if (voiceSelect && voiceSelect.value && voices[voiceSelect.value]) {
+            utt.voice = voices[voiceSelect.value];
+        }
+
+        utt.onend = function() { if (callback) callback(); };
+        window.speechSynthesis.speak(utt);
+    }
+
+    function playNextScene() {
+        if (!isPlaying) return;
+        renderScene(currentIdx);
+        speakText(scenes[currentIdx].cc, function() {
+            if (!isPlaying) return;
+            if (currentIdx < scenes.length - 1) {
+                currentIdx++;
+                setTimeout(playNextScene, 800);
+            } else {
+                isPlaying = false;
+                playBtn.textContent = '▶';
+            }
+        });
+    }
+
+    playBtn?.addEventListener('click', function() {
+        if (isPlaying) {
+            isPlaying = false;
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            playBtn.textContent = '▶';
+        } else {
+            isPlaying = true;
+            playBtn.textContent = '⏸';
+            playNextScene();
+        }
+    });
+
+    stopBtn?.addEventListener('click', function() {
+        isPlaying = false;
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        playBtn.textContent = '▶';
+        renderScene(0);
+    });
+
+    ccBtn?.addEventListener('click', function() {
+        isCCActive = !isCCActive;
+        ccBtn.classList.toggle('active', isCCActive);
+        if (ccBox) ccBox.style.display = isCCActive ? 'block' : 'none';
+    });
+
+    progressBar?.addEventListener('click', function(e) {
+        var rect = progressBar.getBoundingClientRect();
+        var clickX = e.clientX - rect.left;
+        var pct = clickX / rect.width;
+        var targetSec = pct * totalSeconds;
+        
+        var accum = 0;
+        for (var i = 0; i < scenes.length; i++) {
+            accum += scenes[i].duration;
+            if (targetSec <= accum) {
+                renderScene(i);
+                if (isPlaying) speakText(scenes[i].cc);
+                break;
+            }
+        }
+    });
+
+    fullscreenBtn?.addEventListener('click', function() {
+        if (window.parent && window.parent.toggleDay0EMaximize) {
+            window.parent.toggleDay0EMaximize();
+        }
+        var doc = window.parent ? window.parent.document : document;
+        var elem = doc.documentElement || document.documentElement;
+        if (doc.fullscreenElement || doc.webkitFullscreenElement) {
+            if (doc.exitFullscreen) doc.exitFullscreen();
+            else if (doc.webkitExitFullscreen) doc.webkitExitFullscreen();
+        } else {
+            if (elem.requestFullscreen) elem.requestFullscreen();
+            else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+        }
+    });
+
+    renderScene(0);
+})();
+</script>

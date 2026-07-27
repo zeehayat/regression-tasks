@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chapter 0.5 — Regression Readiness Explanations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Offline Vendored Quill WYSIWYG Editor -->
+    <link rel="stylesheet" href="../vendor/quill/quill.snow.css">
+    <script src="../vendor/quill/quill.min.js"></script>
+    <style>
+        :root {
+            --bg: #FAF7F0;
+            --panel: #F1EEE6;
+            --border: #D8D1C5;
+            --text: #252622;
+            --text-muted: #686B63;
+            --accent: #3F6652;
+            --terracotta: #A45F45;
+            --code: #ECE8DF;
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; overflow-x: hidden; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Atkinson Hyperlegible", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-size: 1.0625rem;
+            line-height: 1.75;
+            -webkit-font-smoothing: antialiased;
+        }
+        code, pre, .mono {
+            font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+        }
+        #content {
+            width: auto;
+            max-width: none;
+            margin: 0 0 0 300px;
+            padding: 3.5rem 2.75rem;
+        }
+        .chapter-sidebar {
+            position: fixed;
+            z-index: 20;
+            inset: 0 auto 0 0;
+            width: 280px;
+            overflow-y: auto;
+            padding: 1.25rem 1rem 1.5rem;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(241, 238, 230, 0.92)),
+                var(--panel);
+            border-right: 1px solid var(--border);
+            box-shadow: 12px 0 32px rgba(37, 38, 34, 0.04);
+        }
+        .sidebar-brand {
+            display: grid;
+            gap: 0.2rem;
+            padding: 0.75rem 0.85rem 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.9rem;
+            background: rgba(255, 255, 255, 0.45);
+            border: 1px solid rgba(216, 209, 197, 0.8);
+        }
+        .sidebar-brand__eyebrow {
+            color: var(--terracotta);
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .sidebar-brand__title {
+            color: var(--text);
+            font-size: 1.05rem;
+            font-weight: 800;
+            line-height: 1.25;
+        }
+        .sidebar-brand__subtitle {
+            color: var(--text-muted);
+            font-size: 0.86rem;
+            line-height: 1.45;
+        }
+        .sidebar-section {
+            padding: 0.9rem 0 0;
+        }
+        .sidebar-section + .sidebar-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(216, 209, 197, 0.9);
+        }
+        .sidebar-section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            margin: 0 0 0.75rem;
+            color: var(--accent);
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .sidebar-section-title::after {
+            content: "";
+            flex: 1 1 auto;
+            height: 1px;
+            background: rgba(63, 102, 82, 0.18);
+        }
+        nav.chapters {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.45rem;
+            width: auto;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+        }
+        .chapter-sidebar nav.chapters a {
+            display: block;
+            width: 100%;
+            padding: 0.65rem 0.8rem;
+            border-radius: 0.85rem;
+            border: 1px solid transparent;
+            background: rgba(255, 255, 255, 0.55);
+            color: var(--text-muted);
+            text-decoration: none;
+            font-family: "Atkinson Hyperlegible", sans-serif;
+            font-size: 0.93rem;
+            font-weight: 700;
+            line-height: 1.35;
+            letter-spacing: 0.01em;
+            transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+        }
+        .chapter-sidebar nav.chapters a:hover {
+            color: var(--accent);
+            background: rgba(255, 255, 255, 0.78);
+            border-color: rgba(63, 102, 82, 0.25);
+            transform: translateX(2px);
+        }
+        .chapter-sidebar nav.chapters a.active {
+            color: var(--accent);
+            background: rgba(63, 102, 82, 0.12);
+            border-color: rgba(63, 102, 82, 0.35);
+            box-shadow: inset 3px 0 0 var(--accent);
+        }
+        .chapter-sidebar nav.chapters a:focus-visible {
+            outline: 2px solid var(--terracotta);
+            outline-offset: 2px;
+        }
+        @media (max-width: 1100px) {
+            #content { margin: 0 0 0 260px; padding: 2.5rem 1.5rem; }
+            .chapter-sidebar { width: 240px; }
+        }
+        @media (max-width: 760px) {
+            #content { margin: 0; padding: 1.5rem 1rem; }
+            .chapter-sidebar {
+                position: static;
+                width: auto;
+                max-height: none;
+                overflow: visible;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                padding: 1rem;
+                box-shadow: none;
+            }
+        }
+        .markdown-body h1 { font-family: "Atkinson Hyperlegible", "Inter", sans-serif; font-size: 2.6rem; font-weight: 800; color: var(--accent); margin: 0.5rem 0 1.5rem; line-height: 1.2; }
+        .markdown-body h2 { font-family: "Atkinson Hyperlegible", "Inter", sans-serif; font-size: 1.85rem; font-weight: 700; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin: 2.5rem 0 1rem; line-height: 1.3; }
+        .markdown-body h3 { font-family: "Atkinson Hyperlegible", "Inter", sans-serif; font-size: 1.45rem; font-weight: 600; color: var(--accent); margin: 2rem 0 0.75rem; line-height: 1.35; }
+        .markdown-body h4 { font-family: "Atkinson Hyperlegible", "Inter", sans-serif; font-size: 1.2rem; font-weight: 600; color: var(--accent); margin: 1.5rem 0 0.5rem; line-height: 1.4; }
+        .markdown-body p { color: var(--text); font-size: 1.0625rem; line-height: 1.75; margin: 0 0 1.25rem; }
+        .markdown-body ul, .markdown-body ol { color: var(--text); font-size: 1.0625rem; line-height: 1.75; margin: 0 0 1.25rem; padding-left: 1.5rem; }
+        .markdown-body li { margin-bottom: 0.35rem; }
+        .markdown-body blockquote {
+            border-left: 4px solid var(--terracotta);
+            padding: 0.85rem 1.25rem;
+            font-style: italic;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            background: var(--panel);
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 1.25rem 0;
+        }
+        .markdown-body a { color: var(--accent); text-decoration: underline; }
+        .markdown-body a:hover { color: #67e8f9; }
+        .markdown-body :not(pre) > code {
+            font-size: 0.925em;
+            color: var(--text);
+            background: var(--code);
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.25rem;
+        }
+        .markdown-body pre {
+            background: var(--code);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            margin: 1.25rem 0;
+            overflow-x: auto;
+            font-size: 0.925rem;
+            line-height: 1.65;
+        }
+        .markdown-body pre code {
+            background: transparent;
+            padding: 0;
+            color: var(--text);
+            font-size: 0.925rem;
+        }
+        .markdown-body table { width: 100%; font-size: 0.975rem; border-collapse: collapse; margin: 1.5rem 0; }
+        .markdown-body th, .markdown-body td { border: 1px solid var(--border); padding: 0.6rem 0.85rem; text-align: left; }
+        .markdown-body th { background: var(--panel); color: var(--accent); font-weight: 600; font-size: 1rem; }
+        .markdown-body td { color: var(--text); font-size: 0.975rem; }
+        .markdown-body hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+        /* Mermaid diagram panel: readable offline as labeled source; mermaid.js
+           (if vendored) replaces the <pre> contents with a rendered <svg>. */
+        .diagram-panel {
+            background: var(--code);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+        .diagram-panel__label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: rgba(34, 211, 238, 0.08);
+            padding: 0.4rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .diagram-panel .mermaid {
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+        }
+        .diagram-panel pre.mermaid-source {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+            padding: 1rem;
+            color: var(--text);
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+        }
+
+        .platform-shell {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            width: min(25rem, calc(100vw - 2rem));
+            max-height: calc(100vh - 2rem);
+            display: flex;
+            flex-direction: column;
+            background: rgba(12, 18, 30, 0.96);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            z-index: 50;
+        }
+        .platform-shell.collapsed { width: auto; }
+        .platform-shell.collapsed .platform-body { display: none; }
+        .platform-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.9);
+        }
+        .platform-title { font-size: 1.05rem; font-weight: 700; color: #fff; }
+        .platform-section { font-size: 0.85rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .platform-body { overflow-y: auto; padding: 1rem; }
+        .platform-group { border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem; }
+        .platform-group:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+        .platform-row { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; }
+        .platform-label { display: block; margin-bottom: 0.4rem; font-size: 0.85rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.05em; }
+        .platform-button {
+            border: 1px solid rgba(34, 211, 238, 0.45);
+            background: rgba(34, 211, 238, 0.08);
+            color: var(--accent);
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.8rem;
+            font-size: 0.875rem;
+            font-weight: 650;
+            cursor: pointer;
+        }
+        .platform-button:hover:not(:disabled) { background: rgba(34, 211, 238, 0.14); }
+        .platform-button:disabled {
+            cursor: not-allowed;
+            color: #94a3b8;
+            border-color: #334155;
+            background: rgba(148, 163, 184, 0.08);
+        }
+        .platform-textarea {
+            width: 100%;
+            min-height: 5rem;
+            resize: vertical;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.65rem 0.75rem;
+            font: inherit;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .platform-message {
+            margin-top: 0.5rem;
+            color: #fbbf24;
+            font-size: 0.875rem;
+        }
+        .platform-output {
+            margin-top: 0.65rem;
+            white-space: pre-wrap;
+            color: var(--text-muted);
+            font-size: 0.925rem;
+            line-height: 1.6;
+        }
+        .platform-history {
+            max-height: 14rem;
+            overflow: auto;
+            display: grid;
+            gap: 0.55rem;
+            margin: 0.65rem 0;
+        }
+        .platform-turn {
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            padding: 0.55rem 0.7rem;
+            background: rgba(21, 29, 48, 0.55);
+            color: var(--text-muted);
+            font-size: 0.925rem;
+            line-height: 1.5;
+        }
+        .platform-turn strong { color: #fff; }
+        .paper-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1.25rem 0;
+            background: rgba(21, 29, 48, 0.55);
+        }
+        .paper-card h4 { margin: 0 0 0.4rem; font-size: 1.15rem; }
+        .paper-card p { margin: 0.4rem 0; font-size: 0.975rem; line-height: 1.6; }
+        .paper-card .paper-meta { color: #93c5fd; font-size: 0.875rem; }
+        .paper-card .paper-status { color: #fbbf24; font-size: 0.875rem; }
+        .settings-grid {
+            display: grid;
+            gap: 1rem;
+        }
+        .settings-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: rgba(21, 29, 48, 0.55);
+            padding: 1rem;
+        }
+        .settings-card h2 {
+            margin-top: 0;
+        }
+        .settings-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .settings-field {
+            display: grid;
+            gap: 0.25rem;
+        }
+        .settings-field.full {
+            grid-column: 1 / -1;
+        }
+        .settings-field label,
+        .settings-check {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .settings-field input,
+        .settings-field select {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.5rem;
+            font: inherit;
+        }
+        .settings-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .settings-status {
+            color: #fbbf24;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        .settings-file-viewer {
+            margin-top: 1rem;
+            display: grid;
+            gap: 1rem;
+        }
+        .settings-file-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: rgba(21, 29, 48, 0.55);
+            padding: 1rem;
+        }
+        .settings-file-card h2 {
+            margin: 0 0 0.35rem;
+        }
+        .settings-file-card pre {
+            max-height: 26rem;
+            overflow: auto;
+            margin: 0.75rem 0 0;
+        }
+        .settings-file-meta {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .notes-list {
+            display: grid;
+            gap: 0.35rem;
+            margin-top: 0.55rem;
+        }
+        .note-link {
+            display: block;
+            width: 100%;
+            text-align: left;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: rgba(21, 29, 48, 0.5);
+            color: var(--accent);
+            padding: 0.45rem 0.55rem;
+            cursor: pointer;
+            font: inherit;
+        }
+        .note-link:hover { border-color: rgba(34, 211, 238, 0.5); }
+        .note-link small {
+            display: block;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.68);
+            z-index: 100;
+        }
+        .modal-backdrop.open { display: flex; }
+        .note-modal {
+            width: min(58rem, 100%);
+            max-height: min(46rem, calc(100vh - 2rem));
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: #0b0f19;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
+            overflow: hidden;
+        }
+        .note-modal-header,
+        .note-modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.9);
+        }
+        .note-modal-footer {
+            border-top: 1px solid var(--border);
+            border-bottom: 0;
+        }
+        .note-title-input {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.55rem;
+            font: inherit;
+            font-weight: 700;
+        }
+        .note-toolbar,
+        .note-modal .ql-toolbar.ql-snow {
+            border: 0;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.45);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-picker,
+        .note-modal .ql-toolbar.ql-snow button {
+            color: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-stroke {
+            stroke: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-fill {
+            fill: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-picker-options {
+            background: #0b0f19;
+            border-color: var(--border);
+        }
+        .note-modal .ql-container.ql-snow {
+            border: 0;
+            font: inherit;
+        }
+        .note-editor {
+            min-height: 18rem;
+            flex: 1 1 auto;
+            overflow: auto;
+            color: var(--text);
+            background: #080c14;
+            outline: none;
+        }
+        .note-editor .ql-editor,
+        .note-editor[contenteditable="true"] {
+            min-height: 18rem;
+            color: var(--text);
+            font-size: 1rem;
+            line-height: 1.6;
+            padding: 1rem;
+        }
+        .note-editor .ql-editor.ql-blank::before {
+            color: #64748b;
+            font-style: normal;
+        }
+        .note-editor:empty::before {
+            content: attr(data-placeholder);
+            color: #64748b;
+        }
+        .note-attachments {
+            border-top: 1px solid var(--border);
+            background: rgba(8, 12, 20, 0.95);
+            padding: 0.75rem;
+            max-height: 11rem;
+            overflow: auto;
+        }
+        .attachment-input {
+            max-width: 22rem;
+            color: var(--text-muted);
+            font: inherit;
+        }
+        .attachment-list {
+            display: grid;
+            gap: 0.5rem;
+            margin-top: 0.65rem;
+        }
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: rgba(21, 29, 48, 0.45);
+            padding: 0.5rem;
+        }
+        .attachment-preview {
+            width: 3.5rem;
+            height: 3.5rem;
+            flex: 0 0 3.5rem;
+            display: grid;
+            place-items: center;
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text-muted);
+            overflow: hidden;
+            font-size: 0.78rem;
+        }
+        .attachment-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .attachment-meta {
+            min-width: 0;
+        }
+        .attachment-meta a {
+            display: block;
+            color: var(--accent);
+            overflow-wrap: anywhere;
+        }
+        .attachment-meta small {
+            color: var(--text-muted);
+        }
+        @media (min-width: 72.01rem) {
+            body { padding-right: 27rem; }
+        }
+        @media (max-width: 72rem) {
+            .platform-shell { position: static; width: auto; max-height: none; margin: 0 1rem 1rem; }
+            .platform-shell.collapsed .platform-body { display: none; }
+        }
+
+        /* Warm Paper overrides for the learning-tools panel. */
+        .platform-shell { background: var(--panel) !important; border-color: var(--border) !important; color: var(--text) !important; font-size: 1rem; }
+        .platform-header, .platform-turn, .paper-card { background: var(--panel) !important; border-color: var(--border) !important; }
+        .platform-title, .platform-label, .platform-turn strong, .platform-output, .platform-textarea,
+        .platform-history, .paper-card h4, .paper-card p { color: var(--text) !important; }
+        .platform-section, .platform-message, .platform-status, .paper-card .paper-status { color: var(--terracotta) !important; }
+        .platform-textarea { background: var(--code) !important; border-color: var(--border) !important; }
+        .platform-button { color: var(--accent) !important; border-color: var(--accent) !important; background: rgba(63, 102, 82, .08) !important; }
+        .platform-button:hover:not(:disabled) { background: rgba(63, 102, 82, .16) !important; }
+        .platform-button:disabled { color: var(--text-muted) !important; border-color: var(--border) !important; background: var(--paper) !important; }
+    </style>
+</head>
+<body>
+    <div id="content">
+
+    <aside class="chapter-sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-brand__eyebrow">Regression Study Guide</div>
+            <div class="sidebar-brand__title">Navigation</div>
+            <div class="sidebar-brand__subtitle">Jump between chapters, companion guides, and study aids.</div>
+        </div>
+        <section class="sidebar-section">
+            <div class="sidebar-section-title">Book Chapters</div>
+            <nav class="chapters">
+                            <a href="chapter0.html" class="">Ch. 0</a>
+            <a href="level_0_orientation.html" class="">Level 0 Orientation</a>
+            <a href="calculus_derivatives_micro_videos.html" class="">🎥 Calculus Micro-Videos</a>
+            <a href="day_0e_masterclass_video.html" class="">🎬 Day 0E Masterclass Video</a>
+            <a href="chapter1_read_first.html" class="active">Read this before jumping into Chapter 1</a>
+            <a href="chapter1_exercise_notebook.html" class="">Chapter 1 exercise notebook</a>
+            <a href="chapter1.html" class="">Ch. 1</a>
+            <a href="chapter2_concept_help.html" class="">Chapter 2 concept help (open only when stuck)</a>
+            <a href="chapter2.html" class="">Ch. 2</a>
+            <a href="chapter3_concept_help.html" class="">Chapter 3 concept help (open only when stuck)</a>
+            <a href="chapter3.html" class="">Ch. 3</a>
+            <a href="chapter4_concept_help.html" class="">Chapter 4 concept help (open only when stuck)</a>
+            <a href="chapter4.html" class="">Ch. 4</a>
+            <a href="chapter4_5_interlude.html" class="">Ch. 4.5 Interlude</a>
+            <a href="chapter5_concept_help.html" class="">Chapter 5 concept help (open only when stuck)</a>
+            <a href="chapter5.html" class="">Ch. 5</a>
+            <a href="chapter6_concept_help.html" class="">Chapter 6 concept help (open only when stuck)</a>
+            <a href="chapter6.html" class="">Ch. 6</a>
+            <a href="calculus_video_series.html" class="">Calculus video lessons</a>
+            <a href="settings.html" class="">Settings</a>
+            </nav>
+        </section>
+        <section class="sidebar-section">
+            <div class="sidebar-section-title">Companion Guides</div>
+            <nav class="chapters">
+                            <a href="chapter0_companion.html" class="">Ch. 0 Companion</a>
+            <a href="chapter1_companion.html" class="">Ch. 1 Companion</a>
+            <a href="chapter2_companion.html" class="">Ch. 2 Companion</a>
+            <a href="chapter3_companion.html" class="">Ch. 3 Companion</a>
+            <a href="chapter4_companion.html" class="">Ch. 4 Companion</a>
+            <a href="chapter5_companion.html" class="">Ch. 5 Companion</a>
+            <a href="chapter6_companion.html" class="">Ch. 6 Companion</a>
+            </nav>
+        </section>
+    </aside>
+    
+        <article class="markdown-body">
+<h1 id="chapter-05-regression-readiness-explanations">Chapter 0.5 — Regression Readiness Explanations</h1>
+<h2 id="the-companion-reading-pages-for-the-exercise-workbook">The companion reading pages for the exercise workbook</h2>
+<p>This document contains the explanatory teaching pages that sit beside <strong>Chapter 0.5 — Regression Readiness Workout</strong>. Read one section, then complete the matching exercises in the workbook. The labels below point to the relevant exercise families.</p>
+<p>The aim is not to make you memorise formulas. It is to make every formula say something ordinary:</p>
+<blockquote>
+<p>What objects are present? What operation is being performed? What does the result mean for a prediction?</p>
+</blockquote>
+<hr />
+<h2 id="1-graphs-seeing-data-before-calculating">1. Graphs: seeing data before calculating</h2>
+<p>A graph is a map with a coordinate system. The horizontal axis is usually called the $x$-axis and the vertical axis the $y$-axis. A point $(x,y)$ records two numbers in that order: move $x$ units horizontally, then $y$ units vertically.</p>
+<p>For an MHP project, a point might be $(12,48)$: 12 km from an all-weather road and a cost of 48 million PKR. The axes must state units. A chart showing “12” without saying whether it means kilometres or metres is not yet an interpretable chart.</p>
+<p>The origin $(0,0)$ is useful as a reference, but an axis does not have to begin there. A chart that begins its cost axis at 80 million PKR and ends at 100 million PKR can make a small difference look enormous. Before interpreting a pattern, read the labels, tick spacing, scale, and units.</p>
+<h3 id="scatter-plots">Scatter plots</h3>
+<p>A scatter plot places one point per observation. An upward cloud means that larger values of the input tend to accompany larger values of the outcome. A downward cloud means they tend to accompany smaller values. A shapeless cloud contains no obvious straight-line pattern. A curve warns that one straight line may be too simple.</p>
+<p>These are descriptions of association. They are not automatically causal claims. Remote sites may have longer road distances and more difficult terrain. If both features rise together with cost, road distance can be associated with cost even when terrain is the more important practical factor.</p>
+<p>Simpson’s paradox is the particularly important warning in Chapter 1: a pattern within each group can reverse when groups are combined. Always ask which groups were pooled and whether group membership is related to both the input and the outcome.</p>
+<h3 id="straight-lines">Straight lines</h3>
+<p>A fitted line has the form</p>
+<p>$$
+\hat y=b_0+b_1x.
+$$</p>
+<p>The hat means “predicted,” not observed. The intercept $b_0$ is the prediction at $x=0$. The slope $b_1$ is the predicted change for a one-unit increase in $x$.</p>
+<p>If cost is measured in million PKR and distance in km, then $b_1$ has units of million PKR per km. If distance is changed to metres, the numerical coefficient changes by a factor of 1,000, but the predicted costs do not change when the conversion is done correctly.</p>
+<p>The slope through two points is rise over run:</p>
+<p>$$
+b_1=\frac{y_2-y_1}{x_2-x_1}.
+$$</p>
+<p>This is a visual idea and an algebraic operation at the same time.</p>
+<h3 id="residuals">Residuals</h3>
+<p>For observation $i$, the residual is</p>
+<p>$$
+e_i=y_i-\hat y_i.
+$$</p>
+<p>Observed minus predicted is the safest order to remember. A positive residual means the model underpredicted. A negative residual means it overpredicted. On a scatter plot, the residual is the signed vertical distance from the fitted line to the point.</p>
+<p>OLS will choose the line that makes the total squared residual distance as small as possible. That choice is about prediction error in the observed outcome direction; it is not about minimising horizontal distance.</p>
+<h3 id="contours">Contours</h3>
+<p>When the adjustable parameters are $b_0$ and $b_1$, the sum of squared residuals is a surface over parameter space. A contour is a line joining parameter pairs with equal loss. Nested contours around a centre indicate lower loss toward the centre. A long, thin valley means several parameter combinations give similar predictions. A perfectly flat direction indicates that some coefficients are not uniquely identified.</p>
+<p><strong>Read next:</strong> workbook G1–G44.</p>
+<hr />
+<h2 id="2-algebra-making-the-ols-derivation-readable">2. Algebra: making the OLS derivation readable</h2>
+<p>Algebra is the language used to move from a verbal objective (“make squared errors small”) to a computable coefficient. Most OLS mistakes are sign, bracket, or shape mistakes rather than deep statistical mistakes.</p>
+<h3 id="order-signs-and-squares">Order, signs, and squares</h3>
+<p>Use brackets first, then powers, multiplication/division, and finally addition/subtraction. Brackets matter especially with negative numbers:</p>
+<p>$$
+(-3)^2=9,\qquad -3^2=-9.
+$$</p>
+<p>The square of a residual is nonnegative. That is why a large positive and a large negative error both count as large mistakes after squaring.</p>
+<h3 id="distributing-and-expanding">Distributing and expanding</h3>
+<p>The distributive law is</p>
+<p>$$
+a(b+c)=ab+ac.
+$$</p>
+<p>The square identity used constantly in regression is</p>
+<p>$$
+(a-b)^2=a^2-2ab+b^2.
+$$</p>
+<p>The middle term is not optional. For a no-intercept line, one residual is $y-bx$, so:</p>
+<p>$$
+(y-bx)^2=y^2-2ybx+b^2x^2.
+$$</p>
+<p>Summing over observations gives:</p>
+<p>$$
+\sum_i(y_i-bx_i)^2
+=\sum_i y_i^2-2b\sum_i x_iy_i+b^2\sum_i x_i^2.
+$$</p>
+<p>The quantities involving the data can be calculated once. The remaining expression is a quadratic in $b$.</p>
+<h3 id="rearranging-equations">Rearranging equations</h3>
+<p>An equation is a balance. Whatever operation is applied to one side must be applied to the other. “Moving a term across” is shorthand for adding or subtracting it on both sides, which changes its sign.</p>
+<p>For example:</p>
+<p>$$
+3x+5=20
+\Rightarrow 3x=15
+\Rightarrow x=5.
+$$</p>
+<p>The same discipline applies to the normal equations. Starting with</p>
+<p>$$
+X^T(y-X\hat\beta)=0,
+$$</p>
+<p>distribute $X^T$:</p>
+<p>$$
+X^Ty-X^TX\hat\beta=0,
+$$</p>
+<p>then move one term:</p>
+<p>$$
+X^TX\hat\beta=X^Ty.
+$$</p>
+<h3 id="simultaneous-equations">Simultaneous equations</h3>
+<p>Two unknowns require two independent equations. Substitution or elimination removes one unknown. If the equations are identical, there are infinitely many solutions; if they contradict one another, there is no solution. This is the small-system version of matrix rank.</p>
+<p><strong>Read next:</strong> workbook A1–A55.</p>
+<hr />
+<h2 id="3-vectors-and-geometry-why-projection-is-ols">3. Vectors and geometry: why projection is OLS</h2>
+<p>A vector is both a list of numbers and an arrow. The list interpretation supports calculation; the arrow interpretation supplies intuition.</p>
+<p>For vectors $u$ and $v$, addition is component by component. Multiplication by a scalar stretches, shrinks, or reverses an arrow. The Euclidean length is</p>
+<p>$$
+\|v\|=\sqrt{v_1^2+\cdots+v_p^2}.
+$$</p>
+<p>The squared length is</p>
+<p>$$
+\|v\|^2=v^Tv=\sum_jv_j^2.
+$$</p>
+<p>That last expression is exactly the form used for a sum of squared residuals.</p>
+<h3 id="dot-products">Dot products</h3>
+<p>The dot product is first a weighted sum:</p>
+<p>$$
+u\cdot v=u^Tv=\sum_j u_jv_j.
+$$</p>
+<p>It is also an angle measurement:</p>
+<p>$$
+u\cdot v=\|u\|\|v\|\cos\theta.
+$$</p>
+<p>For nonzero vectors, a zero dot product means a right angle. We call the vectors orthogonal. A positive dot product indicates a generally similar direction; a negative one indicates a generally opposing direction.</p>
+<h3 id="projection-onto-a-line">Projection onto a line</h3>
+<p>Suppose the only predictions you can make are multiples of a nonzero vector $x$. Every attainable prediction has the form $xb$. The projection of $y$ onto that line is obtained by choosing</p>
+<p>$$
+\hat b=\frac{x^Ty}{x^Tx},\qquad \hat y=x\hat b.
+$$</p>
+<p>The residual is $e=y-\hat y$. The crucial property is</p>
+<p>$$
+x^Te=0.
+$$</p>
+<p>The residual is perpendicular to the line of attainable predictions.</p>
+<p>Why does that mean “closest”? Take another attainable point $q$ on the line. The three vectors form a right triangle, so:</p>
+<p>$$
+\|y-q\|^2=\|y-\hat y\|^2+\|\hat y-q\|^2.
+$$</p>
+<p>The second term is nonnegative. Any other point is therefore at least as far away, with equality only at the projection.</p>
+<h3 id="several-columns">Several columns</h3>
+<p>With a design matrix $X$, the attainable predictions are all linear combinations of its columns. Their set is the column space $\mathcal C(X)$. OLS projects $y$ onto this space. The residual is perpendicular to every column:</p>
+<p>$$
+X^Te=0.
+$$</p>
+<p>If one column is the vector of ones, one of these orthogonality statements says the residuals sum to zero.</p>
+<p><strong>Read next:</strong> workbook V1–V43 and M46–M51.</p>
+<hr />
+<h2 id="4-matrices-the-bookkeeping-of-many-predictions">4. Matrices: the bookkeeping of many predictions</h2>
+<p>A matrix is a rectangular table. In a regression design matrix, rows represent observations and columns represent features or the intercept. If there are $n$ observations and $p$ design columns, $X$ has shape $n\times p$.</p>
+<h3 id="shapes-are-meaning">Shapes are meaning</h3>
+<p>NumPy distinguishes <code>(p,)</code>, <code>(p, 1)</code>, and <code>(1, p)</code>. They may contain related numbers but participate in different broadcasting and multiplication rules. Check shapes before interpreting a result.</p>
+<p>The transpose $X^T$ swaps rows and columns. Thus an $n\times p$ design becomes $p\times n$.</p>
+<h3 id="matrixvector-multiplication">Matrix–vector multiplication</h3>
+<p>If $X$ is $n\times p$ and $\beta$ is length $p$, then:</p>
+<p>$$
+X\beta
+$$</p>
+<p>is a length-$n$ vector of predictions. Row by row, each prediction is the dot product of one observation’s feature values with the coefficient vector. Column by column, the same product is a linear combination of the design columns.</p>
+<p>The <code>@</code> operator means matrix multiplication in NumPy. The <code>*</code> operator means elementwise multiplication with broadcasting. They are different operations.</p>
+<h3 id="column-space-and-rank">Column space and rank</h3>
+<p>The column space is every vector that can be built by combining the columns. Rank counts the independent directions among those columns. Full column rank means no design column is an exact linear combination of the others.</p>
+<p>If a distance column is recorded once in kilometres and once in metres, one column is exactly 1,000 times the other. The matrix can still produce predictions, but the two coefficients cannot be interpreted separately: many coefficient pairs produce the same combined contribution.</p>
+<p>Full column rank gives a unique coefficient vector and makes $X^TX$ invertible. Rank deficiency creates a flat direction in parameter space.</p>
+<h3 id="normal-equations-and-solvers">Normal equations and solvers</h3>
+<p>The OLS normal equations are</p>
+<p>$$
+X^TX\hat\beta=X^Ty.
+$$</p>
+<p>The symbolic closed form is $(X^TX)^{-1}X^Ty$ when full column rank holds. In application code, use <code>np.linalg.lstsq</code>. It avoids explicitly forming an inverse and reports the estimated rank and singular values.</p>
+<p><strong>Read next:</strong> workbook M1–M55.</p>
+<hr />
+<h2 id="5-calculus-why-the-loss-has-a-minimum">5. Calculus: why the loss has a minimum</h2>
+<p>A derivative is a local slope. A positive derivative means the function rises as its input increases; a negative derivative means it falls. A stationary point has derivative zero, but that alone does not tell us whether the point is a minimum, maximum, or flat turning point.</p>
+<p>The power rule is</p>
+<p>$$
+\frac{d}{dx}x^k=kx^{k-1}.
+$$</p>
+<p>Constants differentiate to zero. Derivatives distribute over sums and constant multiples.</p>
+<h3 id="squared-error-and-the-chain-rule">Squared error and the chain rule</h3>
+<p>For one residual loss:</p>
+<p>$$
+L(b)=(y-bx)^2.
+$$</p>
+<p>The inner expression is $y-bx$ and its derivative with respect to $b$ is $-x$. The chain rule therefore gives:</p>
+<p>$$
+\frac{dL}{db}=-2x(y-bx).
+$$</p>
+<p>Summing over observations and setting the derivative to zero gives:</p>
+<p>$$
+\hat b=\frac{\sum_i x_iy_i}{\sum_i x_i^2},
+$$</p>
+<p>provided the denominator is not zero.</p>
+<h3 id="partial-derivatives-and-gradients">Partial derivatives and gradients</h3>
+<p>With several parameters, a partial derivative changes one parameter while holding the others fixed. The gradient stacks all partial derivatives into one vector:</p>
+<p>$$
+\nabla f=
+\begin{bmatrix}
+\partial f/\partial\beta_1\\
+\vdots\\
+\partial f/\partial\beta_p
+\end{bmatrix}.
+$$</p>
+<p>At a smooth unconstrained minimum, the gradient is zero. For matrix OLS:</p>
+<p>$$
+S(\beta)=(y-X\beta)^T(y-X\beta),
+$$</p>
+<p>$$
+\nabla_\beta S=-2X^T(y-X\beta).
+$$</p>
+<p>Setting this to zero reproduces the normal equations. Calculus and geometry are describing the same fitted point from different angles.</p>
+<h3 id="hessian-and-convexity">Hessian and convexity</h3>
+<p>The Hessian is the matrix of second derivatives. For OLS:</p>
+<p>$$
+H=2X^TX.
+$$</p>
+<p>For any vector $z$:</p>
+<p>$$
+z^THz=2\|Xz\|^2\ge0.
+$$</p>
+<p>So the loss is convex: it has no misleading local minima. Full column rank makes it strictly convex and gives one unique minimiser. Rank deficiency leaves a flat direction, so several coefficient vectors can minimise the loss equally well.</p>
+<p>Finite differences provide a numerical check of a symbolic gradient. They are evidence that the implementation matches the formula, not a substitute for deriving or understanding it.</p>
+<p><strong>Read next:</strong> workbook C1–C60.</p>
+<hr />
+<h2 id="6-numerical-discipline-and-held-out-evaluation">6. Numerical discipline and held-out evaluation</h2>
+<h3 id="floating-point-comparison">Floating-point comparison</h3>
+<p>Most decimal fractions are not represented exactly in binary floating-point. Tiny discrepancies such as <code>0.1 + 0.2</code> differing from <code>0.3</code> are expected. Use <code>np.isclose</code> for scalars and <code>np.allclose</code> for arrays. A tolerance should reflect the scale and purpose of the calculation: too strict can reject harmless rounding, while too loose can conceal a real bug.</p>
+<h3 id="rank-and-stable-computation">Rank and stable computation</h3>
+<p>The mathematical inverse formula is useful for deriving OLS, but direct inversion is not the preferred numerical implementation. <code>np.linalg.lstsq(X, y, rcond=None)</code> solves the least-squares problem and returns rank information. If the reported rank is lower than the number of design columns, pause before interpreting coefficients.</p>
+<h3 id="training-versus-held-out-observations">Training versus held-out observations</h3>
+<p>Training data determine the coefficients. Held-out data are not used to fit the coefficients; they provide a small check of performance on observations the model did not see.</p>
+<p>The clean sequence is:</p>
+<ol>
+<li>split indices with a documented random seed;</li>
+<li>build training and held-out arrays;</li>
+<li>fit using training arrays only;</li>
+<li>calculate predictions and metrics separately; and</li>
+<li>report how small, unusual, or unrepresentative the split may be.</li>
+</ol>
+<p>If the held-out result is repeatedly inspected and used to make model choices, it gradually stops being genuinely held out. That is leakage. Chapter 2 develops more careful train/validation/test practice.</p>
+<h3 id="metrics">Metrics</h3>
+<p>For residuals $e_i$ over $m$ evaluation observations:</p>
+<p>$$
+\operatorname{MSE}=\frac1m\sum_i e_i^2,
+\qquad
+\operatorname{RMSE}=\sqrt{\operatorname{MSE}},
+\qquad
+\operatorname{MAE}=\frac1m\sum_i|e_i|.
+$$</p>
+<p>RMSE and MAE have the same units as the outcome. RMSE reacts more strongly to an unusually large error because it squares before averaging. A low held-out error supports a predictive statement; it does not establish a causal effect.</p>
+<p><strong>Read next:</strong> workbook N1–N37.</p>
+<hr />
+<h2 id="7-how-the-ideas-join-in-ols">7. How the ideas join in OLS</h2>
+<p>The full chain is now short enough to say aloud:</p>
+<ol>
+<li>A dataset gives observations, features, and a target with units.</li>
+<li>A design matrix $X$ arranges the features and, when requested, a column of ones for the intercept.</li>
+<li>A coefficient vector $\beta$ produces predictions $X\beta$.</li>
+<li>The residual vector is $e=y-X\beta$.</li>
+<li>Squared residual length is $e^Te$.</li>
+<li>OLS chooses the attainable prediction with the smallest squared length.</li>
+<li>Geometry says the residual is perpendicular to every design column: $X^Te=0$.</li>
+<li>Calculus says the gradient is zero: $-2X^Te=0$.</li>
+<li>Both routes produce $X^TX\hat\beta=X^Ty$.</li>
+<li>Rank, numerical tolerances, and held-out evaluation determine whether the answer is unique, computed reliably, and useful beyond the rows used to fit it.</li>
+</ol>
+<p>This is the mental bridge into Chapter 1. The formulas are not separate tricks; they are the same projection problem written in graph, algebraic, geometric, matrix, and calculus languages.</p>
+<h2 id="reading-order">Reading order</h2>
+<p>Read sections 1–2 before Chapter 1 Days 1–3, sections 3–4 before Day 4, section 5 before Day 5, and section 6 before the capstone. Use the exercise workbook’s <strong>Core</strong> labels as the minimum route and <strong>Repeat</strong> labels whenever an explanation does not yet feel automatic.</p>
+        </article>
+    </div>
+
+
+
+    <!-- MathJax is loaded synchronously after the chapter markup.  At this
+         point every equation is already in the DOM, so startup reliably
+         typesets the initial page as well as later modal content. -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] },
+            startup: { typeset: false }
+        };
+    </script>
+    <script id="MathJax-script" src="../vendor/mathjax/tex-svg-full.js"></script>
+    <script>
+        window.MathJax.startup.promise
+            .then(function () { return window.MathJax.typesetPromise(); })
+            .catch(function (error) { console.error('MathJax typesetting failed:', error); });
+    </script>
+
+    <!-- Diagrams: local vendor copy preferred, CDN used only as a fallback when online.
+         If neither loads (fully offline, no vendor file), the labeled diagram-source
+         panels above remain readable as plain text. -->
+    <script>
+        (function loadMermaid() {
+            function init(mermaid) {
+                mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+                document.querySelectorAll('.diagram-panel').forEach(function (panel) {
+                    var sourceEl = panel.querySelector('.mermaid-source');
+                    if (!sourceEl) return;
+                    var container = document.createElement('div');
+                    container.className = 'mermaid';
+                    container.textContent = sourceEl.textContent;
+                    panel.replaceChild(container, sourceEl);
+                });
+                mermaid.run();
+            }
+
+            var local = document.createElement('script');
+            local.src = '../vendor/mermaid.min.js';
+            local.onload = function () { init(window.mermaid); };
+            local.onerror = function () {
+                var cdn = document.createElement('script');
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+                cdn.onload = function () { init(window.mermaid); };
+                document.head.appendChild(cdn);
+            };
+            document.head.appendChild(local);
+        })();
+    </script>
+
+    <!-- Right-Click Custom Context Menu -->
+    <div id="custom-context-menu" style="display:none; position:fixed; z-index:9999999; background:#0f1524; border:1px solid #223150; border-radius:14px; padding:6px; width:220px; box-shadow:0 20px 40px rgba(0,0,0,0.8); font-family:sans-serif;">
+        <button id="ctx-add-note" style="width:100%; text-align:left; background:transparent; border:none; color:#22d3ee; padding:9px 12px; font-size:12px; font-weight:700; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:8px;" onmouseover="this.style.background='rgba(34,211,238,0.15)'" onmouseout="this.style.background='transparent'">
+            <span>🖊️ Add Note / Notion</span>
+        </button>
+        <div style="height:1px; background:#223150; margin:4px 0;"></div>
+        <button id="ctx-copy" style="width:100%; text-align:left; background:transparent; border:none; color:#cbd5e1; padding:9px 12px; font-size:12px; font-weight:600; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='transparent'">
+            <span>📋 Copy Selected Text</span>
+        </button>
+    </div>
+
+    <!-- MS Word Minimized Comments Sidebar Toggle & Drawer -->
+    <button id="word-comments-toggle" style="display:none; position:fixed; top:20px; right:20px; z-index:999980; background:#151d30; color:#eab308; border:1px solid #eab308; border-radius:9999px; padding:8px 16px; font-size:12px; font-weight:700; cursor:pointer; box-shadow:0 10px 25px rgba(0,0,0,0.5); align-items:center; gap:6px;">
+        <span>💬 Comments</span>
+        <span id="word-comments-badge" style="background:#eab308; color:#000000; font-size:10px; padding:1px 6px; border-radius:9999px; font-weight:800;">0</span>
+    </button>
+
+    <div id="word-comments-drawer" style="display:none; position:fixed; top:0; right:0; bottom:0; width:340px; max-width:85vw; z-index:999999; background:#0f1524; border-left:1px solid #223150; box-shadow:-10px 0 30px rgba(0,0,0,0.7); padding:20px; overflow-y:auto; font-family:sans-serif;">
+        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #223150; padding-bottom:12px; margin-bottom:16px;">
+            <span style="font-size:13px; font-weight:800; color:#eab308; display:flex; align-items:center; gap:6px;">💬 CHAPTER COMMENTS</span>
+            <button id="word-comments-drawer-close" style="background:transparent; border:none; color:#cbd5e1; font-size:18px; cursor:pointer;">✕</button>
+        </div>
+        <div id="word-comments-list">
+            <!-- Dynamically loaded chapter notes -->
+        </div>
+    </div>
+
+    <!-- Floating Selection Trigger Button -->
+    <button id="inline-comment-trigger" style="display:none; position:fixed; z-index:999999; background:#151d30; color:#22d3ee; border:1px solid rgba(34,211,238,0.5); border-radius:9999px; padding:7px 16px; font-size:12px; font-weight:700; box-shadow:0 10px 25px rgba(0,0,0,0.6); cursor:pointer; align-items:center; gap:6px;">
+        <span>🖊️ Comment / Sync Notion</span>
+    </button>
+
+    <!-- Persistent Bottom-Right Note Button -->
+    <button id="persistent-note-btn" style="position:fixed; bottom:24px; right:24px; z-index:999990; background:#151d30; color:#22d3ee; border:1px solid #223150; border-radius:9999px; padding:11px 20px; font-size:13px; font-weight:700; box-shadow:0 10px 30px rgba(0,0,0,0.7); cursor:pointer; display:flex; align-items:center; gap:8px; transition:all 0.2s ease;">
+        <span>🖊️ Add Note / Notion</span>
+        <span id="selection-badge" style="display:none; background:#0284c7; color:#ffffff; font-size:10px; padding:2px 7px; border-radius:9999px; text-transform:uppercase; font-weight:800; letter-spacing:0.05em;">Text Selected</span>
+    </button>
+
+    <!-- Note Card Modal with Offline Quill WYSIWYG Editor -->
+    <div id="inline-comment-box" style="display:none; position:fixed; z-index:999999; top:50%; left:50%; transform:translate(-50%, -50%); background:#0f1524; border:1px solid #223150; border-radius:20px; padding:24px; width:680px; max-width:92vw; max-height:88vh; overflow-y:auto; box-shadow:0 25px 60px rgba(0,0,0,0.85); font-family:sans-serif; text-align:left;">
+        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #223150; padding-bottom:14px; margin-bottom:16px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:14px; font-weight:800; color:#22d3ee; display:flex; align-items:center; gap:6px;">🖊️ INLINE NOTE & NOTION SYNC</span>
+                <span style="font-size:10px; background:rgba(34,211,238,0.15); color:#22d3ee; border:1px solid rgba(34,211,238,0.3); padding:2px 8px; border-radius:9999px; font-weight:700;">QUILL RICH TEXT</span>
+            </div>
+            <button id="inline-comment-close" style="background:transparent; border:none; color:#cbd5e1; font-size:18px; cursor:pointer; padding:4px 8px; border-radius:6px;">✕</button>
+        </div>
+        
+        <div style="background:#151d30; border:1px solid #223150; padding:12px 14px; border-radius:12px; margin-bottom:16px;">
+            <span style="font-size:10px; text-transform:uppercase; font-weight:700; color:#22d3ee; display:block; margin-bottom:4px;">Note Title (Selected Text)</span>
+            <h4 id="inline-quote-text" style="font-size:14px; font-weight:700; color:#ffffff; margin:0; line-height:1.4;">
+                <!-- Highlighted text formatted as title -->
+            </h4>
+        </div>
+
+        <div style="margin-bottom:18px;">
+            <label style="font-size:11px; text-transform:uppercase; font-weight:700; color:#94a3b8; display:block; margin-bottom:6px;">Your Thoughts & Rich Notes</label>
+            
+            <!-- Quill Editor Container -->
+            <div id="quill-editor-wrapper" style="background:#0b0f19; border:1px solid #223150; border-radius:12px; overflow:hidden;">
+                <div id="quill-editor" style="height:220px; font-size:14px; color:#ffffff; border:none;"></div>
+            </div>
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+            <span id="inline-comment-status" style="font-size:12px; color:#fbbf24; font-weight:600;"></span>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <button id="inline-comment-cancel" style="background:transparent; color:#94a3b8; border:1px solid #223150; padding:8px 16px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer;">Cancel</button>
+                <button id="inline-comment-submit" style="background:linear-gradient(135deg, #0284c7, #0891b2); color:#ffffff; border:none; padding:9px 20px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; box-shadow:0 4px 15px rgba(8,145,178,0.4);">
+                    Save Note & Sync Notion
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Maximizable Day 0E Video Masterclass Modal -->
+    <div id="day0e-video-modal" style="display:none; position:fixed; z-index:9999999; top:50%; left:50%; transform:translate(-50%, -50%); background:#0f1524; border:1px solid #223150; border-radius:20px; width:96vw; max-width:1400px; height:94vh; box-shadow:0 30px 80px rgba(0,0,0,0.9); font-family:sans-serif; overflow:hidden; transition:all 0.25s cubic-bezier(0.16, 1, 0.3, 1);">
+        <!-- Modal Header -->
+        <div id="day0e-modal-header" style="display:flex; align-items:center; justify-content:space-between; background:#151d30; border-bottom:1px solid #223150; padding:12px 20px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span style="font-size:14px; font-weight:800; color:#f472b6; display:flex; align-items:center; gap:6px;">🎬 DAY 0E MASTERCLASS VIDEO</span>
+                <span style="font-size:10px; background:rgba(236,72,153,0.18); color:#f472b6; border:1px solid rgba(236,72,153,0.4); padding:2px 8px; border-radius:9999px; font-weight:700;">FEMALE VOICE & INTERACTIVE EXERCISES</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <button id="day0e-modal-maximize" style="background:#223150; border:1px solid rgba(255,255,255,0.1); color:#cbd5e1; font-size:12px; font-weight:700; padding:6px 14px; border-radius:8px; cursor:pointer;" onclick="toggleDay0EMaximize()">
+                    <span id="max-icon">🗖 Maximize</span>
+                </button>
+                <button id="day0e-modal-close" style="background:transparent; border:none; color:#cbd5e1; font-size:20px; cursor:pointer; padding:4px 8px; border-radius:6px;" onclick="closeDay0EVideoModal()">✕</button>
+            </div>
+        </div>
+
+        <!-- Modal Body Iframe -->
+        <div style="width:100%; height:calc(100% - 54px); background:#0b0f19;">
+            <iframe id="day0e-modal-iframe" src="" style="width:100%; height:100%; border:none;" title="Day 0E Masterclass Video" allow="fullscreen"></iframe>
+        </div>
+    </div>
+
+    <script>
+        var isDay0EMaximized = false;
+
+        function openDay0EVideoModal() {
+            var modal = document.getElementById('day0e-video-modal');
+            var iframe = document.getElementById('day0e-modal-iframe');
+            if (iframe && (!iframe.src || iframe.src.indexOf('day_0e_masterclass_video') === -1)) {
+                iframe.src = 'day_0e_masterclass_video.html';
+            }
+            if (modal) modal.style.display = 'block';
+        }
+
+        function closeDay0EVideoModal() {
+            var modal = document.getElementById('day0e-video-modal');
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            if (modal) modal.style.display = 'none';
+        }
+
+        function toggleDay0EMaximize() {
+            var modal = document.getElementById('day0e-video-modal');
+            var maxBtn = document.getElementById('max-icon');
+            if (!modal) return;
+            isDay0EMaximized = !isDay0EMaximized;
+            if (isDay0EMaximized) {
+                modal.style.width = '100vw';
+                modal.style.height = '100vh';
+                modal.style.maxWidth = 'none';
+                modal.style.top = '0';
+                modal.style.left = '0';
+                modal.style.transform = 'none';
+                modal.style.borderRadius = '0';
+                if (maxBtn) maxBtn.textContent = '🗗 Restore';
+            } else {
+                modal.style.width = '96vw';
+                modal.style.height = '94vh';
+                modal.style.maxWidth = '1400px';
+                modal.style.top = '50%';
+                modal.style.left = '50%';
+                modal.style.transform = 'translate(-50%, -50%)';
+                modal.style.borderRadius = '20px';
+                if (maxBtn) maxBtn.textContent = '🗖 Maximize';
+            }
+        }
+
+        window.openDay0EVideoModal = openDay0EVideoModal;
+        window.closeDay0EVideoModal = closeDay0EVideoModal;
+        window.toggleDay0EMaximize = toggleDay0EMaximize;
+
+        document.addEventListener('keydown', function(e) {
+            var modal = document.getElementById('day0e-video-modal');
+            if (!modal || modal.style.display === 'none') return;
+            if (e.key === 'Escape') closeDay0EVideoModal();
+            if (e.key === 'f' || e.key === 'F') toggleDay0EMaximize();
+        });
+
+        (function() {
+            var currentSelectedText = '';
+            var quillEditor = null;
+
+            function initQuillInstance() {
+                if (quillEditor) return;
+                var el = document.getElementById('quill-editor');
+                if (el && typeof Quill !== 'undefined') {
+                    quillEditor = new Quill('#quill-editor', {
+                        theme: 'snow',
+                        placeholder: 'Write down your notes, bullet points, key takeaways, or drop images here...',
+                        modules: {
+                            toolbar: [
+                                [{ 'header': [2, 3, false] }],
+                                ['bold', 'italic', 'underline', 'strike'],
+                                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                ['blockquote', 'code-block'],
+                                ['image', 'link'],
+                                ['clean']
+                            ]
+                        }
+                    });
+                }
+            }
+
+            function getSelectionText() {
+                var sel = window.getSelection();
+                return sel ? sel.toString().trim() : '';
+            }
+
+            function updateSelectionState() {
+                var text = getSelectionText();
+                var trigger = document.getElementById('inline-comment-trigger');
+                var badge = document.getElementById('selection-badge');
+                var fab = document.getElementById('persistent-note-btn');
+
+                if (text.length >= 1) {
+                    currentSelectedText = text;
+                    if (badge) badge.style.display = 'inline-block';
+                    if (fab) {
+                        fab.style.borderColor = 'rgba(34,211,238,0.8)';
+                        fab.style.boxShadow = '0 0 20px rgba(34,211,238,0.4)';
+                    }
+                    try {
+                        var sel = window.getSelection();
+                        var range = sel ? sel.getRangeAt(0) : null;
+                        var rect = range ? range.getBoundingClientRect() : null;
+                        if (rect && rect.width > 0 && trigger) {
+                            trigger.style.top = Math.max(10, rect.top - 45) + 'px';
+                            trigger.style.left = Math.max(10, Math.min(window.innerWidth - 220, rect.left + (rect.width / 2) - 80)) + 'px';
+                            trigger.style.display = 'flex';
+                        }
+                    } catch(e) {}
+                } else {
+                    if (badge) badge.style.display = 'none';
+                    if (fab) {
+                        fab.style.borderColor = '#223150';
+                        fab.style.boxShadow = '0 10px 30px rgba(0,0,0,0.7)';
+                    }
+                }
+            }
+
+            document.addEventListener('mouseup', function() { setTimeout(updateSelectionState, 50); });
+            document.addEventListener('keyup', function() { setTimeout(updateSelectionState, 50); });
+
+            document.addEventListener('contextmenu', function(e) {
+                var ctxMenu = document.getElementById('custom-context-menu');
+                var text = getSelectionText();
+                if (text) currentSelectedText = text;
+                if (ctxMenu) {
+                    e.preventDefault();
+                    ctxMenu.style.top = Math.min(window.innerHeight - 120, e.clientY) + 'px';
+                    ctxMenu.style.left = Math.min(window.innerWidth - 230, e.clientX) + 'px';
+                    ctxMenu.style.display = 'block';
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                var ctxMenu = document.getElementById('custom-context-menu');
+                if (ctxMenu && !ctxMenu.contains(e.target)) ctxMenu.style.display = 'none';
+            });
+
+            function openNoteModal(e) {
+                if (e && e.stopPropagation) e.stopPropagation();
+                var box = document.getElementById('inline-comment-box');
+                var quote = document.getElementById('inline-quote-text');
+                var status = document.getElementById('inline-comment-status');
+                var trigger = document.getElementById('inline-comment-trigger');
+                var ctxMenu = document.getElementById('custom-context-menu');
+
+                if (trigger) trigger.style.display = 'none';
+                if (ctxMenu) ctxMenu.style.display = 'none';
+                if (quote) quote.textContent = currentSelectedText || 'General Chapter Note';
+                if (status) status.textContent = '';
+                if (box) {
+                    box.style.display = 'block';
+                    initQuillInstance();
+                    if (quillEditor) quillEditor.focus();
+                }
+            }
+
+            window.openNoteModal = openNoteModal;
+
+            var triggerBtn = document.getElementById('inline-comment-trigger');
+            var fabBtn = document.getElementById('persistent-note-btn');
+            var ctxBtn = document.getElementById('ctx-add-note');
+            var ctxCopy = document.getElementById('ctx-copy');
+            var closeBtn = document.getElementById('inline-comment-close');
+            var cancelBtn = document.getElementById('inline-comment-cancel');
+            var submitBtn = document.getElementById('inline-comment-submit');
+
+            if (triggerBtn) triggerBtn.onclick = openNoteModal;
+            if (fabBtn) fabBtn.onclick = openNoteModal;
+            if (ctxBtn) ctxBtn.onclick = openNoteModal;
+            if (ctxCopy) ctxCopy.onclick = function() {
+                var ctxMenu = document.getElementById('custom-context-menu');
+                if (ctxMenu) ctxMenu.style.display = 'none';
+                if (currentSelectedText) navigator.clipboard.writeText(currentSelectedText);
+            };
+            if (closeBtn) closeBtn.onclick = function() {
+                var box = document.getElementById('inline-comment-box');
+                if (box) box.style.display = 'none';
+            };
+            if (cancelBtn) cancelBtn.onclick = function() {
+                var box = document.getElementById('inline-comment-box');
+                if (box) box.style.display = 'none';
+            };
+
+            if (submitBtn) submitBtn.onclick = async function() {
+                var status = document.getElementById('inline-comment-status');
+                var htmlComment = quillEditor ? quillEditor.root.innerHTML : '';
+                var textComment = quillEditor ? quillEditor.getText().trim() : '';
+
+                if (!textComment && !currentSelectedText && (!htmlComment || htmlComment === '<p><br></p>')) return;
+                if (status) status.textContent = 'Saving note & syncing to Notion...';
+
+                try {
+                    var resp = await fetch('/api/notion/comment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            title: currentSelectedText || (textComment ? textComment.slice(0, 60) : "Study Note"),
+                            selection_text: currentSelectedText,
+                            comment: htmlComment,
+                            chapter_slug: window.location.pathname.split('/').pop() || 'chapter'
+                        })
+                    });
+                    var res = await resp.json();
+                    if (res.ok) {
+                        if (status) {
+                            status.style.color = '#34d399';
+                            status.textContent = (res.notion && res.notion.ok) ? 'Pushed to Notion & Local DB!' : 'Saved to Local Database!';
+                        }
+                        setTimeout(function() {
+                            var box = document.getElementById('inline-comment-box');
+                            if (box) box.style.display = 'none';
+                            if (quillEditor) quillEditor.setContents([]);
+                            loadSavedChapterNotes();
+                        }, 1200);
+                    }
+                } catch (err) {
+                    if (status) {
+                        status.style.color = '#fbbf24';
+                        status.textContent = 'Saved to Local Session!';
+                    }
+                    setTimeout(function() {
+                        var box = document.getElementById('inline-comment-box');
+                        if (box) box.style.display = 'none';
+                    }, 1200);
+                }
+            };
+
+            async function loadSavedChapterNotes() {
+                try {
+                    var slug = window.location.pathname.split('/').pop() || 'chapter';
+                    var resp = await fetch('/api/notes?chapter_slug=' + encodeURIComponent(slug));
+                    var data = await resp.json();
+                    var notes = data.notes || [];
+
+                    var toggleBtn = document.getElementById('word-comments-toggle');
+                    var badge = document.getElementById('word-comments-badge');
+                    var list = document.getElementById('word-comments-list');
+
+                    if (badge) badge.textContent = notes.length;
+                    if (toggleBtn) toggleBtn.style.display = notes.length > 0 ? 'inline-flex' : 'none';
+
+                    if (list) {
+                        if (notes.length === 0) {
+                            list.innerHTML = '<div style="color:#94a3b8; font-size:12px; text-align:center; padding:20px;">No comments yet. Highlight text and right-click to add a note!</div>';
+                        } else {
+                            list.innerHTML = notes.map(function(n) {
+                                var title = n.title || 'Note';
+                                var body = n.body ? n.body : '';
+                                return '<div style="background:#151d30; border:1px solid #223150; border-radius:12px; padding:14px; margin-bottom:12px;">' +
+                                    '<div style="font-size:10px; font-weight:800; color:#eab308; text-transform:uppercase; margin-bottom:4px;">💬 Comment</div>' +
+                                    '<h4 style="font-size:13px; font-weight:700; color:#ffffff; margin:0 0 6px 0; line-height:1.4;">' + escapeHtml(title) + '</h4>' +
+                                    (body ? '<p style="font-size:12px; color:#cbd5e1; margin:0; line-height:1.5;">' + escapeHtml(body) + '</p>' : '') +
+                                    '<div style="font-size:10px; color:#64748b; margin-top:8px; display:flex; justify-content:space-between; align-items:center;">' +
+                                        '<span>' + (n.created_at || '') + '</span>' +
+                                        '<span style="color:#34d399; font-weight:700;">Notion Synced</span>' +
+                                    '</div>' +
+                                '</div>';
+                            }).join('');
+                        }
+                    }
+
+                    notes.forEach(function(note) {
+                        if (!note.title || note.title === 'Study Note' || note.title.length < 3) return;
+                        highlightTextSnippet(note.title, note);
+                    });
+                } catch(e) {}
+            }
+
+            function highlightTextSnippet(searchText, note) {
+                try {
+                    var body = document.querySelector('.markdown-body') || document.body;
+                    if (!body) return;
+                    var walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, null, false);
+                    var node;
+                    while (node = walker.nextNode()) {
+                        if (node.parentElement && node.parentElement.closest('.word-comment-highlight, script, style, textarea, button')) continue;
+                        var idx = node.nodeValue ? node.nodeValue.toLowerCase().indexOf(searchText.toLowerCase().slice(0, 30)) : -1;
+                        if (idx !== -1) {
+                            var matchedText = node.nodeValue.substr(idx, searchText.length);
+                            var mark = document.createElement('mark');
+                            mark.className = 'word-comment-highlight';
+                            mark.style.cssText = 'background:rgba(234,179,8,0.25); border-bottom:2px solid #eab308; border-radius:4px; padding:1px 4px; color:inherit; cursor:pointer;';
+                            mark.innerHTML = escapeHtml(matchedText) + '<span style="display:inline-flex; align-items:center; justify-content:center; background:#eab308; color:#000; font-size:10px; font-weight:800; border-radius:9999px; width:16px; height:16px; margin-left:4px; vertical-align:middle;" title="MS Word Comment">💬</span>';
+                            mark.addEventListener('click', function(e) {
+                                e.stopPropagation();
+                                var drawer = document.getElementById('word-comments-drawer');
+                                if (drawer) drawer.style.display = 'block';
+                            });
+                            var parent = node.parentNode;
+                            var after = node.splitText(idx);
+                            after.nodeValue = after.nodeValue.substr(searchText.length);
+                            parent.insertBefore(mark, after);
+                            break;
+                        }
+                    }
+                } catch(err) {}
+            }
+
+            function escapeHtml(val) {
+                return String(val || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+
+            var wordToggle = document.getElementById('word-comments-toggle');
+            var wordClose = document.getElementById('word-comments-drawer-close');
+
+            if (wordToggle) wordToggle.onclick = function() {
+                var drawer = document.getElementById('word-comments-drawer');
+                if (drawer) drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
+            };
+
+            if (wordClose) wordClose.onclick = function() {
+                var drawer = document.getElementById('word-comments-drawer');
+                if (drawer) drawer.style.display = 'none';
+            };
+
+            window.addEventListener('load', loadSavedChapterNotes);
+        })();
+    </script>
+</body>
+</html>

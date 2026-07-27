@@ -43,6 +43,12 @@ This revision therefore makes time-to-event analysis the chapter's spine. It ret
 
 The result is narrower in topic and deeper in competence. That is what a research apprenticeship requires.
 
+## Mastery boundary: build versus read and recognise
+
+This is deliberately a large chapter, so it has two depths. Sections marked by executable builds and exit-check requirements are **build it yourself** material: event contracts, risk sets, Kaplan–Meier/Nelson–Aalen, the educational Cox fit, time-varying/landmark data, cumulative incidence, censoring-aware metrics, and the locked study. Advanced extensions—Fine–Gray modelling, full multi-state transition systems, frailty/Bayesian survival models, and specialised forest software—are **read and recognise** on a first pass. For those extensions, mastery means identifying the estimand, inputs, assumptions, and failure modes, not reproducing production software from scratch. Any exercise asking you to implement one is an optional stretch task unless a worked template is supplied.
+
+Do not interpret “read and recognise” as unimportant. It is an honest boundary between concepts this chapter proves computationally and methods it equips you to discuss, choose, and study next.
+
 ## Prerequisite checkpoint
 
 Before starting, retrieve these ideas from Chapters 2–4 without notes:
@@ -197,6 +203,8 @@ def make_mhp_survival_data(n=1200, seed=5050):
     all_times = np.column_stack([overrun_time, cancel_time, censor_time])
     first_type = np.argmin(all_times, axis=1)  # 0 overrun, 1 cancel, 2 censor
     observed_time = all_times[np.arange(n), first_type]
+    # np.select is vectorised if/elif/else: choose 1 for overrun, 2 for
+    # cancellation, and default to 0 for censoring, row by row.
     event_type = np.select(
         [first_type == 0, first_type == 1],
         [1, 2],
@@ -662,7 +670,16 @@ $$
 U=\sum_j(d_{1j}-e_{1j}).
 $$
 
-With the appropriate hypergeometric variance $V$, $U^2/V$ is compared with a $\chi^2_1$ reference distribution.
+Why “hypergeometric”? Conditional on $d_j$ pooled events occurring at time $t_j$, the null model treats those events like $d_j$ draws without replacement from a risk set containing $n_{1j}$ group-1 members among $n_j$ total members. Therefore
+
+$$
+V_j
+=d_j\frac{n_{1j}}{n_j}
+\left(1-\frac{n_{1j}}{n_j}\right)
+\frac{n_j-d_j}{n_j-1},
+$$
+
+where the final factor is the finite-population correction. Add the event-time variances, $V=\sum_jV_j$. Then $U^2/V$ is compared with a $\chi^2_1$ reference distribution. This derivation assumes the usual pooled risk-set conditioning; tie conventions and weighting variants can change details.
 
 The log-rank test is most sensitive to a roughly proportional separation across time. Crossing survival curves can produce a small statistic even when groups differ meaningfully at particular horizons. A test of equality also does not measure effect size or establish causality.
 
@@ -873,6 +890,10 @@ class CoxPHFromScratch:
         if event.sum() == 0:
             raise ValueError("at least one event is required")
 
+        # L-BFGS-B is a quasi-Newton optimiser: it uses the supplied gradient
+        # and a compact history of recent steps to approximate inverse
+        # curvature, avoiding storage of a full p-by-p Hessian. "B" means it
+        # can also enforce bounds, although this fit supplies none.
         result = minimize(
             fun=lambda b: self._objective(b, X, time, event),
             x0=np.zeros(X.shape[1]),
@@ -908,6 +929,8 @@ class CoxPHFromScratch:
     def predict_survival(self, X, horizons):
         X = np.asarray(X, dtype=float)
         horizons = np.asarray(horizons, dtype=float)
+        # searchsorted finds each horizon's insertion point in sorted event
+        # times; side="right" includes an event occurring exactly at horizon.
         positions = np.searchsorted(self.event_times_, horizons, side="right") - 1
         baseline = np.where(
             positions >= 0,
@@ -979,7 +1002,15 @@ Penalisation controls variance; it does not repair an ill-defined time origin, d
 
 ## 32.10 Inference, clustering, and strata
 
-The inverse observed information gives a model-based covariance approximation. But projects within a district may share procurement rules, inspectors, or shocks. Options answer different questions:
+The inverse observed information gives a model-based covariance approximation. To see the sandwich construction, let $I(\hat\beta)$ be the observed information—the curvature or “bread”—and let $u_g(\hat\beta)$ be the sum of score contributions for cluster $g$. Independent clusters may have arbitrary dependence within them, so the empirical score variance or “meat” is $\sum_g u_gu_g^T$. The cluster-robust covariance is
+
+$$
+I(\hat\beta)^{-1}
+\left(\sum_{g=1}^{G}u_g(\hat\beta)u_g(\hat\beta)^T\right)
+I(\hat\beta)^{-1}.
+$$
+
+The estimating equation—and therefore $\hat\beta$—does not change; only its estimated sampling covariance changes. Small numbers of clusters require corrections or design-specific methods because the large-$G$ approximation can be poor. Projects within a district may share procurement rules, inspectors, or shocks. Options answer different questions:
 
 - a **cluster-robust sandwich covariance** changes standard errors while leaving coefficients unchanged;
 - a **shared frailty** adds latent group heterogeneity and changes the model;
@@ -2202,8 +2233,11 @@ def cif_from_cause_specific_models(model1, model2, X, horizons):
     """Combine cause-specific Breslow hazards with piecewise-exponential jumps."""
     X = np.asarray(X, dtype=float)
     horizons = np.sort(np.asarray(horizons, dtype=float))
+    # union1d creates one sorted, duplicate-free event-time grid.
     event_times = np.union1d(model1.event_times_, model2.event_times_)
 
+    # zip pairs each event time with its hazard increment; dict makes the
+    # increment retrievable by time, and .get(t, 0) below handles absent jumps.
     increment1 = dict(zip(model1.event_times_, model1.baseline_increments_))
     increment2 = dict(zip(model2.event_times_, model2.baseline_increments_))
     relative1 = np.exp(model1.predict_log_partial_hazard(X))
@@ -2302,6 +2336,8 @@ class HistoricalCIF:
 def make_candidates():
     candidates = {"historical_cif": lambda: HistoricalCIF()}
     for l2 in [0.1, 1.0, 10.0]:
+        # Default-argument capture freezes the current loop value. Without
+        # penalty=l2, every lambda would look up the final l2 only when called.
         candidates[f"cox_raw_l2_{l2:g}"] = (
             lambda penalty=l2: CauseSpecificCoxSystem(penalty, engineered=False)
         )
@@ -2361,6 +2397,8 @@ def expanding_year_scores(development, candidates):
 def calibration_table(frame, probability, horizon=36.0, bins=8):
     work = frame[["follow_up_months", "event_type"]].copy()
     work["probability"] = probability
+    # qcut forms quantile bins with roughly equal row counts; duplicate edges
+    # are dropped when repeated probability values prevent distinct cutoffs.
     work["bin"] = pd.qcut(probability, q=bins, duplicates="drop")
     rows = []
     for label, part in work.groupby("bin", observed=True):

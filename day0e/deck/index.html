@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Day 0E Masterclass Slide Deck — Calculus for Machine Learning</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/black.min.css" id="theme">
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        .reveal { font-family: 'Inter', -apple-system, sans-serif; background: #0b0f19; color: #f1f5f9; }
+        .reveal h1, .reveal h2, .reveal h3 { color: #38bdf8; font-weight: 800; text-transform: none; }
+        .reveal pre code { background: #151d30; color: #38bdf8; padding: 16px; border-radius: 12px; font-size: 0.9em; }
+        .formula-box { background: #151d30; border: 1px solid #223150; border-left: 5px solid #22d3ee; padding: 20px; border-radius: 12px; margin: 20px 0; }
+        .trap-box { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-left: 5px solid #ef4444; padding: 20px; border-radius: 12px; margin: 20px 0; color: #fca5a5; }
+        .badge { background: rgba(236, 72, 153, 0.18); color: #f472b6; border: 1px solid rgba(236, 72, 153, 0.4); padding: 4px 12px; border-radius: 9999px; font-size: 0.6em; font-weight: 800; display: inline-block; margin-bottom: 12px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; }
+    </style>
+</head>
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- TITLE SLIDE -->
+            <section>
+                <span class="badge">DAY 0E COMPANION SLIDE DECK</span>
+                <h1>Calculus for Machine Learning</h1>
+                <h3>From First Principles to Matrix Derivatives</h3>
+                <p><small>KP Regression Book • Day 0E Masterclass • Female Voice Audio Sync</small></p>
+            </section>
+
+            <!-- MASTER FORMULA SHEET SLIDE 1 -->
+            <section>
+                <h2>📜 Master Formula Sheet — Part 1</h2>
+                <div class="formula-box" style="font-size: 0.8em; text-align: left;">
+                    <p><strong>Power Rule:</strong> \(\frac{d}{dx}[x^n] = n x^{n-1}\)</p>
+                    <p><strong>Chain Rule:</strong> \(\frac{d}{dx}f(g(x)) = f'(g(x)) \cdot g'(x)\)</p>
+                    <p><strong>Log Derivative:</strong> \(\frac{d}{dx}\ln(x) = \frac{1}{x}\)</p>
+                    <p><strong>Sigmoid Derivative:</strong> \(\sigma'(x) = \sigma(x)(1 - \sigma(x))\)</p>
+                </div>
+            </section>
+
+            <!-- MASTER FORMULA SHEET SLIDE 2 -->
+            <section>
+                <h2>📜 Master Formula Sheet — Part 2 (Matrix Derivatives)</h2>
+                <div class="formula-box" style="font-size: 0.8em; text-align: left;">
+                    <p><strong>Linear Form:</strong> \(\nabla_\beta (a^\top \beta) = a\)</p>
+                    <p><strong>Quadratic Form:</strong> \(\nabla_\beta (\beta^\top A \beta) = 2A\beta \quad (\text{symmetric } A)\)</p>
+                    <p><strong>OLS Residual Gradient:</strong> \(\nabla_\beta \lVert y - X\beta \rVert^2 = -2X^\top(y - X\beta)\)</p>
+                    <p><strong>OLS Closed Form:</strong> \(\hat{\beta} = (X^\top X)^{-1} X^\top y\)</p>
+                </div>
+            </section>
+
+            <!-- NOTATION TABLE -->
+            <section>
+                <h2>🔤 Notation Lock & Glossary</h2>
+                <table style="font-size: 0.65em; width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #223150; color: #22d3ee;">
+                            <th>Symbol</th>
+                            <th>Meaning in KP Book</th>
+                            <th>Literature Alias</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>\(m, c\)</td><td>Slope & Intercept</td><td>\(w, b\) / \(\theta_1, \theta_0\)</td></tr>
+                        <tr><td>\(\beta\)</td><td>Weight Vector</td><td>\(\mathbf{w}\) / \(\boldsymbol{\theta}\)</td></tr>
+                        <tr><td>\(E\)</td><td>Objective Error / Loss</td><td>\(J(\theta)\) / \(L(w)\)</td></tr>
+                        <tr><td>\(\hat{y}\)</td><td>Model Prediction</td><td>\(h_\theta(x)\)</td></tr>
+                        <tr><td>\(n\)</td><td>Sample Count</td><td>\(N\) / \(m\)</td></tr>
+                        <tr><td>\(\nabla\)</td><td>Gradient Vector</td><td>\(\text{grad}(E)\)</td></tr>
+                        <tr><td>\(H\)</td><td>Hessian Matrix</td><td>\(\nabla^2 E\)</td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- COMMON ERROR DECODER -->
+            <section>
+                <h2>🐛 Common-Error Decoder</h2>
+                <div class="trap-box" style="font-size: 0.75em; text-align: left;">
+                    <p><strong>Symptom: <code>nan</code> in gradient</strong> &rarr; Likely Cause: Division by zero in numerical derivative or log(0). &rarr; Fix: Add \(\epsilon = 10^{-8}\) or use central difference.</p>
+                    <p><strong>Symptom: <code>inf</code> or Loss exploding</strong> &rarr; Likely Cause: Learning rate \(\alpha\) too large (overshooting curvature). &rarr; Fix: Reduce \(\alpha\) by 10x.</p>
+                    <p><strong>Symptom: Flat Loss (No Learning)</strong> &rarr; Likely Cause: Sigmoid saturation (vanishing gradient). &rarr; Fix: Use ReLU or normalize features.</p>
+                    <p><strong>Symptom: Gradient-Check Mismatch (&gt; 1e-4)</strong> &rarr; Likely Cause: Dropped inner chain-rule factor. &rarr; Fix: Re-derive chain rule term-by-term.</p>
+                </div>
+            </section>
+
+            <!-- SEGMENT 1 SLIDE -->
+            <section>
+                <span class="badge">SEGMENT 1</span>
+                <h2>What a Slope Is, and Why a Curve Doesn't Have One</h2>
+                <p>On a straight line \(y = mx + c\), slope is constant everywhere. On a curve like \(y = x^2\), steepness changes at every single point.</p>
+                <div class="formula-box">
+                    \[\text{Derivative for } f(x) = x^2: \quad \frac{df}{dx} = 2x\]
+                    \[\text{At } x=0 \implies 0, \quad \text{At } x=3 \implies 6, \quad \text{At } x=-3 \implies -6\]
+                </div>
+            </section>
+
+            <!-- SEGMENT 14 OLS DERIVATION SLIDE -->
+            <section>
+                <span class="badge">SEGMENT 14 — CHAPTER 1 BRIDGE</span>
+                <h2>Deriving OLS Normal Equations</h2>
+                <p>Objective: \(E(\beta) = (y - X\beta)^\top (y - X\beta)\)</p>
+                <div class="formula-box" style="font-size: 0.8em;">
+                    <p>1. Expand: \(E(\beta) = y^\top y - 2\beta^\top X^\top y + \beta^\top X^\top X \beta\)</p>
+                    <p>2. Differentiate wrt \(\beta\): \(\nabla_\beta E = -2X^\top y + 2X^\top X \beta\)</p>
+                    <p>3. Set to zero: \(2X^\top X \beta = 2X^\top y \implies \mathbf{\hat{\beta} = (X^\top X)^{-1} X^\top y}\)</p>
+                </div>
+            </section>
+
+            <!-- SEGMENT 16 GRADIENT DESCENT SLIDE -->
+            <section>
+                <span class="badge">SEGMENT 16</span>
+                <h2>Gradient Descent Built by Hand</h2>
+                <div class="formula-box">
+                    \[w_{\text{new}} = w_{\text{old}} - \alpha \cdot \frac{\partial L}{\partial w}\]
+                </div>
+                <div class="grid-2" style="font-size: 0.75em;">
+                    <div>
+                        <h4 style="color:#34d399;">Stable Run (\(\alpha = 0.01\))</h4>
+                        <p>Loss shrinks monotonically: \(564.0 \to 0.2028\)</p>
+                    </div>
+                    <div>
+                        <h4 style="color:#ef4444;">Exploding Breakage (\(\alpha = 5.0\))</h4>
+                        <p>Loss explodes: \(564.0 \to 3.38 \times 10^{47}\)</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SEGMENT 24 EXIT CHECK & CAPSTONE SLIDE -->
+            <section>
+                <span class="badge">SEGMENT 24</span>
+                <h2>Day 0E Exit Check & Capstone</h2>
+                <div class="formula-box" style="font-size: 0.75em; text-align: left;">
+                    <p>✅ Compute mean, variance, covariance, and correlation from summation formulas.</p>
+                    <p>✅ Differentiate squared error term-by-term and verify against finite differences.</p>
+                    <p>✅ Implement <code>gradient_check.py</code> and confirm relative error &lt; 1e-7.</p>
+                    <p>✅ Solve closed-form OLS normal equations \(\hat{\beta} = (X^\top X)^{-1}X^\top y\).</p>
+                    <p>✅ Read Python tracebacks bottom-up and debug numerical instability.</p>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script>
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            center: true,
+            hash: true,
+            transition: 'slide'
+        });
+    </script>
+</body>
+</html>

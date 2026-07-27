@@ -273,9 +273,36 @@ new_concept_modal = """        async function openConceptModal(file, id) {
             }
         }"""
 
-# Apply replacements to change routing logic from fetch-based to DOM-based
-compiled_html = compiled_html.replace(old_navigate, new_navigate)
-compiled_html = compiled_html.replace(old_concept_modal, new_concept_modal)
+# Apply replacements to change routing logic from fetch-based to DOM-based.
+# The template has changed slightly over time, so replace complete function
+# regions instead of depending on an exact copy of every whitespace/comment
+# character in the old implementation.
+compiled_html, navigate_replacements = re.subn(
+    r"        async function navigate\(\) \{.*?(?=        // Intercept link clicks)",
+    new_navigate + "\n\n",
+    compiled_html,
+    count=1,
+    flags=re.DOTALL,
+)
+compiled_html, modal_replacements = re.subn(
+    r"        async function openConceptModal\(file, id\) \{.*?(?=        // Show/hide modal helpers)",
+    new_concept_modal + "\n\n",
+    compiled_html,
+    count=1,
+    flags=re.DOTALL,
+)
+if navigate_replacements != 1 or modal_replacements != 1:
+    raise RuntimeError("Could not locate the router/modal functions in HTML BOOK/index.html")
+
+# Use the vendored MathJax bundle so equations also render offline.  Loading it
+# synchronously removes the race where navigate() ran before typesetPromise was
+# available and left literal $$...$$ delimiters on screen.
+compiled_html = re.sub(
+    r'<script[^>]*id=["\']MathJax-script["\'][^>]*></script>',
+    '<script id="MathJax-script" src="vendor/mathjax/tex-svg-full.js"></script>',
+    compiled_html,
+    count=1,
+)
 
 # 4b. Fix SRC chapter links: the template (HTML BOOK/index.html) is one
 # directory below the repo root, so its SRC links are "../SRC_HTML/...".

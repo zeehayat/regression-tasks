@@ -70,3 +70,11 @@ services:
 
     # Free hosted options for the endpoint behind this REST contract include
     # Supabase Edge Functions or Firebase/Cloud Functions free-tier projects.
+
+  notion:
+    enabled: true
+    api_key: ${NOTION_API_KEY}
+    database_id: ${NOTION_DATABASE_ID}
+    endpoint: https://api.notion.com/v1/pages
+    timeout_seconds: 10
+

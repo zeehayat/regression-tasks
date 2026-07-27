@@ -124,3 +124,23 @@ y_pred = model.predict(X_test)
 print(f"Mean Absolute Error: {mean_absolute_error(y_test, y_pred):.2f}")
 print(f"R² Score: {r2_score(y_test, y_pred):.4f}")
 ```
+
+---
+
+## Build the Beginner-Edition Book
+
+Compile the standalone web chapters:
+
+```bash
+python3 compile_src.py
+```
+
+Build the A4 PDF containing every maintained chapter and its companion guide:
+
+```bash
+python3 compile_pdf.py
+```
+
+The PDF is written to `KP_Regression_Book_Beginner_Edition.pdf`. Use
+`python3 compile_pdf.py --html-only` to rebuild only the intermediate
+print-ready HTML in `book_build/`.

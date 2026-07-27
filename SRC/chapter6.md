@@ -22,7 +22,7 @@ Before beginning, you should be able to explain, without relying on software out
 - a confidence interval and why it is not a probability that a fixed parameter lies in one realised interval;
 - correlation versus causation;
 - train, validation, test, temporal split, leakage, calibration, and decision threshold;
-- linear and logistic regression, regularisation, interactions, splines, and a fitted propensity-like probability;
+- linear and logistic regression, regularisation, interactions, splines, and how a fitted logistic probability is produced and evaluated;
 - bootstrap resampling and why the resampling unit matters;
 - survival, hazard, censoring, competing risks, and a target prediction horizon;
 - the difference between association, prediction, decision utility, and intervention effect; and
@@ -81,6 +81,13 @@ flowchart TD
 ```
 
 The ordering matters. Selecting an estimator before defining the causal question is like choosing a measuring instrument before deciding what quantity exists.
+
+## Mastery boundary for the final chapter
+
+- **Build it yourself:** Days 39–43 and 47–48 derive estimands and estimators, execute code, diagnose failures, and culminate in a registered analysis.
+- **Read and recognise:** Days 44–46 survey longitudinal, quasi-experimental, and heterogeneous-effect frameworks. On a first pass, mastery means specifying the design and estimand, tracing assumptions, interpreting diagnostics, and implementing only the supplied subgroup-score example—not independently fitting production g-formula, MSM, RD, DiD, IV, synthetic-control, DR-learner, or causal-forest systems.
+
+Stretch implementations in Days 44–46 require a methods text, current software documentation, and usually expert review. They are explicitly optional and are not prerequisites for the final capstone.
 
 ---
 
@@ -964,7 +971,7 @@ The robustness is about two statistical nuisance functions inside an already ide
 Define the estimated score
 
 $$
-\hat\phi_i=hat m_1(X_i)-\hat m_0(X_i)
+\hat\phi_i=\hat m_1(X_i)-\hat m_0(X_i)
 +\frac{A_i\{Y_i-\hat m_1(X_i)\}}{\hat e(X_i)}
 -\frac{(1-A_i)\{Y_i-\hat m_0(X_i)\}}{1-\hat e(X_i)}.
 $$
@@ -1054,9 +1061,25 @@ For clustered data, replace the individual-level variance or bootstrap with a me
 
 ## 43.6 Targeted maximum likelihood and double machine learning
 
-Targeted maximum likelihood estimation begins with outcome and treatment-mechanism estimates, then updates the outcome estimate along a fluctuation submodel targeted to the causal parameter. It can respect outcome bounds and yields an influence-curve-based estimator.
+Targeted maximum likelihood estimation (TMLE) begins with initial outcome estimates $\hat m_1(X)$ and $\hat m_0(X)$ plus a propensity estimate $\hat e(X)$. For a binary outcome, a common update is:
 
-Double/debiased machine learning uses orthogonal scores and sample splitting so that small nuisance-model errors have reduced first-order impact on the target parameter. AIPW for an ATE is a canonical example of this logic.
+1. clip initial probabilities away from 0 and 1;
+2. construct the **clever covariate** $H(A,X)=A/\hat e(X)-(1-A)/(1-\hat e(X))$;
+3. fit a one-parameter logistic fluctuation of the observed-outcome prediction, using $\operatorname{logit}\hat m_A(X)$ as an offset and $H$ as the covariate;
+4. use the fitted fluctuation coefficient to update both counterfactual predictions; and
+5. average updated $\hat m_1^*(X)-\hat m_0^*(X)$.
+
+The targeting step chooses the update so the empirical influence-curve equation for the requested estimand is approximately solved. It can keep binary-outcome predictions inside $[0,1]`; it does not validate the causal assumptions or rescue lack of overlap.
+
+Double/debiased machine learning (DML) is a broader recipe:
+
+1. write a score whose expectation identifies the target parameter;
+2. choose nuisance functions needed by that score;
+3. estimate nuisances on training folds and evaluate the score on held-out folds;
+4. choose an **orthogonal** score whose first derivative with respect to small nuisance errors is zero at the truth; and
+5. solve or average the cross-fitted score and estimate uncertainty at the independent sampling-unit level.
+
+Orthogonality reduces the *first-order* effect of nuisance-estimation error; cross-fitting prevents each observation from being used to both train its nuisance prediction and evaluate its score. Neither says arbitrary machine learners are safe. The AIPW score implemented above is a canonical DML score for an ATE, so you have already executed the central mechanics even though no library branded “DML” was called.
 
 These are frameworks, not magic brands. State the score, nuisance functions, folds, tuning, truncation, variance method, and target parameter.
 
@@ -1131,6 +1154,8 @@ You are ready for Day 44 when you can:
 - design a sensitivity analysis whose parameters have substantive meaning.
 
 # Day 44 — Target Trials and Time-Varying Treatment
+
+> **Mode: read and recognise.** Complete the protocol table, time-zero diagnosis, and strategy comparison. The g-formula, marginal structural model, and clone–censor–weight sections are design templates, not from-scratch software training.
 
 ## 44.1 Why observational studies need an imaginary protocol
 <button class="read-details-btn" data-section="6f-1">✦ Read Details</button>
@@ -1321,6 +1346,8 @@ You are ready for Day 45 when you can:
 
 # Day 45 — Quasi-Experimental Designs
 
+> **Mode: read and recognise.** Derive the small two-period DiD and binary-instrument contrasts and audit each design's assumptions. Production estimators for staggered DiD, robust RD, synthetic control, and serially correlated panels require dedicated follow-up study.
+
 Quasi-experimental designs exploit assignment mechanisms or discontinuities that can be more credible than adjustment for all measured confounders. Each identifies a particular effect for a particular population. The design, not the estimator's sophistication, carries the causal argument.
 
 ## 45.1 Difference-in-differences
@@ -1463,6 +1490,8 @@ You are ready for Day 46 when you can:
 ---
 
 # Day 46 — Heterogeneous Effects and Policy Learning
+
+> **Mode: guided build plus survey.** Build the supplied pre-specified subgroup analysis. Meta-learners and causal forests are recognition-level extensions unless you deliberately undertake the optional software lab in §46.12.
 
 Average effects can hide meaningful variation. Yet subgroup exploration is one of the easiest places to manufacture findings. Research-level heterogeneity analysis begins with an estimand and validation plan, not a colourful tree.
 
@@ -1609,7 +1638,9 @@ Read Athey and Imbens (2016) on recursive partitioning for heterogeneous causal 
 
 ## 46.12 Build, break, and reflect
 
-**Build.** Register terrain and contractor experience as two effect modifiers. Fit a simple interaction model, a DR-learner, and a causal forest. Evaluate them on held-out folds using policy value and calibration groups.
+**Build.** Register terrain and contractor experience as two effect modifiers. Extend the supplied AIPW-score analysis to report both modifiers separately, their pre-specified interaction contrasts, group counts, overlap summaries, and confidence intervals on held-out folds.
+
+**Optional software lab—not required for chapter mastery.** After consulting the current official installation and API documentation for one dedicated package such as EconML or R `grf`, compare one DR-learner or causal forest with the simple registered interaction baseline. Record the exact package version and use the package's documented inference assumptions. Do not install a causal library merely to complete the required exercise.
 
 **Break.** Search 100 random subgroups and report the smallest p-value. Then repeat on a new sample. Quantify the discovery's instability.
 
@@ -2771,4 +2802,3 @@ A causal claim is worthless if the exact data, pipeline, hyperparameters, and co
 | RD Estimator | $\lim_{r\downarrow c}E(Y\mid R=r) - \lim_{r\uparrow c}E(Y\mid R=r)$ | Local effect at assignment threshold [cite: 24] |
 | CATE | $E\{Y(1)-Y(0)\mid X=x\}$ | Conditional effect for a specific profile [cite: 24] |
 | Corrected CV Variance | $\sqrt{(\frac{1}{r}+q)s_d^2}$ | Penalizes variance for overlapping folds [cite: 24] |
-

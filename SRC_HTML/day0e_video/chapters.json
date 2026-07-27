@@ -1,0 +1,146 @@
+[
+  {
+    "id": "01",
+    "title": "What a slope is, and why a curve does not have one",
+    "start": 0,
+    "end": 240
+  },
+  {
+    "id": "02",
+    "title": "The limit definition, derived not asserted",
+    "start": 240,
+    "end": 480
+  },
+  {
+    "id": "03",
+    "title": "The rules you will actually use",
+    "start": 480,
+    "end": 720
+  },
+  {
+    "id": "04",
+    "title": "Product, quotient, and chain rules",
+    "start": 720,
+    "end": 960
+  },
+  {
+    "id": "05",
+    "title": "Exponential and logarithm",
+    "start": 960,
+    "end": 1200
+  },
+  {
+    "id": "06",
+    "title": "Sigmoid, tanh, and ReLU",
+    "start": 1200,
+    "end": 1440
+  },
+  {
+    "id": "07",
+    "title": "Second derivatives, curvature, and convexity",
+    "start": 1440,
+    "end": 1680
+  },
+  {
+    "id": "08",
+    "title": "Taylor expansion",
+    "start": 1680,
+    "end": 1920
+  },
+  {
+    "id": "09",
+    "title": "Partial derivatives",
+    "start": 1920,
+    "end": 2160
+  },
+  {
+    "id": "10",
+    "title": "The gradient and directional derivatives",
+    "start": 2160,
+    "end": 2400
+  },
+  {
+    "id": "11",
+    "title": "Jacobian and Hessian",
+    "start": 2400,
+    "end": 2640
+  },
+  {
+    "id": "12",
+    "title": "Multivariable chain rule and backpropagation",
+    "start": 2640,
+    "end": 2880
+  },
+  {
+    "id": "13",
+    "title": "Differentiating with respect to a vector",
+    "start": 2880,
+    "end": 3120
+  },
+  {
+    "id": "14",
+    "title": "Derive the OLS normal equations",
+    "start": 3120,
+    "end": 3360
+  },
+  {
+    "id": "15",
+    "title": "Critical points and the first-order condition",
+    "start": 3360,
+    "end": 3600
+  },
+  {
+    "id": "16",
+    "title": "Gradient descent, built by hand",
+    "start": 3600,
+    "end": 3840
+  },
+  {
+    "id": "17",
+    "title": "Batch, stochastic, and mini-batch variants",
+    "start": 3840,
+    "end": 4080
+  },
+  {
+    "id": "18",
+    "title": "Constrained optimisation and Lagrange multipliers",
+    "start": 4080,
+    "end": 4320
+  },
+  {
+    "id": "19",
+    "title": "Finite differences and gradient checking",
+    "start": 4320,
+    "end": 4560
+  },
+  {
+    "id": "20",
+    "title": "Symbolic differentiation with SymPy",
+    "start": 4560,
+    "end": 4800
+  },
+  {
+    "id": "21",
+    "title": "A tiny autodiff engine from scratch",
+    "start": 4800,
+    "end": 5040
+  },
+  {
+    "id": "22",
+    "title": "Integrals as accumulated area",
+    "start": 5040,
+    "end": 5280
+  },
+  {
+    "id": "23",
+    "title": "Reading a traceback",
+    "start": 5280,
+    "end": 5520
+  },
+  {
+    "id": "24",
+    "title": "Rubber duck and the Day 0E exit check",
+    "start": 5520,
+    "end": 5760
+  }
+]

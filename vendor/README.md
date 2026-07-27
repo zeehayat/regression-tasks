@@ -7,10 +7,10 @@ plain text, and math ($...$) is shown as raw LaTeX, with no JS required.
 To additionally get live-rendered mermaid diagrams, typeset math, and the
 Quill note editor while fully offline, drop these files in this directory:
 
-- `vendor/mermaid.min.js` — from https://www.jsdelivr.com/package/npm/mermaid
-  (dist/mermaid.min.js)
-- `vendor/mathjax/tex-mml-svg.js` — pinned MathJax 3.2.2 SVG bundle from
-  https://www.jsdelivr.com/package/npm/mathjax (es5/tex-mml-svg.js). The SVG
+- `vendor/mermaid.min.js` — pinned Mermaid 10.9.1 bundle from
+  https://www.jsdelivr.com/package/npm/mermaid (dist/mermaid.min.js)
+- `vendor/mathjax/tex-svg-full.js` — pinned MathJax 3.2.2 full TeX/SVG bundle from
+  https://www.jsdelivr.com/package/npm/mathjax (es5/tex-svg-full.js). The SVG
   output is self-contained and does not require a separate webfont directory.
 - `vendor/quill/quill.js` — from https://www.jsdelivr.com/package/npm/quill
   (dist/quill.js)

@@ -1,0 +1,79 @@
+WEBVTT - Day 0E Masterclass: Calculus for Machine Learning Captions
+
+00:00.000 --> 00:05.000
+Welcome to the Day 0E Masterclass on Calculus for Machine Learning.
+
+00:05.000 --> 00:12.000
+In this long-form masterclass, we cover everything required for regression and deep learning from zero.
+
+00:12.000 --> 04:30.000
+Segment 1: On a straight line y equals m x plus c, the slope is constant. But on a curve like y equals x squared, slope changes at every point.
+
+04:30.000 --> 09:00.000
+Segment 2: The derivative is defined as the limit of average slope as step size h shrinks to zero.
+
+09:00.000 --> 13:30.000
+Segment 3: The power rule states that the derivative of x to the power of n is n times x to the power of n minus 1.
+
+13:30.000 --> 18:00.000
+Segment 4: The chain rule allows us to peel composite functions from the outside in.
+
+18:00.000 --> 22:00.000
+Segment 5: The derivative of exponential e to the x is e to the x, and natural log derivative is 1 over x.
+
+22:00.000 --> 27:00.000
+Segment 6: Activation functions like Sigmoid, tanh, and ReLU drive neural network learning.
+
+27:00.000 --> 32:00.000
+Segment 7: Second derivatives measure curvature. Positive second derivatives guarantee convexity and a single global minimum.
+
+32:00.000 --> 36:00.000
+Segment 8: Taylor expansions approximate smooth functions locally using polynomials.
+
+36:00.000 --> 41:00.000
+Segment 9: Partial derivatives hold all other variables constant while measuring slope along one axis.
+
+41:00.000 --> 46:00.000
+Segment 10: The gradient vector points in the direction of steepest ascent, so gradient descent steps in the negative gradient direction.
+
+46:00.000 --> 51:00.000
+Segment 11: The Jacobian contains first partials for vector outputs, while the Hessian contains second partial derivatives.
+
+51:00.000 --> 56:00.000
+Segment 12: Multivariable chain rule multiplies Jacobian matrices across layers in backpropagation.
+
+56:00.000 --> 61:00.000
+Segment 13: Vector derivatives allow us to differentiate matrix objective functions like Ridge penalty.
+
+61:00.000 --> 67:00.000
+Segment 14: Deriving the OLS normal equations beta hat equals X transpose X inverse X transpose y.
+
+67:00.000 --> 72:00.000
+Segment 15: Critical points occur where the gradient equals zero.
+
+72:00.000 --> 78:00.000
+Segment 16: Building gradient descent by hand and observing learning rate divergence when step size is too large.
+
+78:00.000 --> 82:00.000
+Segment 17: Variants of gradient descent include Batch, Stochastic, Mini-batch, and Momentum.
+
+82:00.000 --> 87:00.000
+Segment 18: Constrained optimization and Lagrange multipliers explain the geometry of Ridge and Lasso penalties.
+
+87:00.000 --> 92:00.000
+Segment 19: Central finite differences and the gradient check recipe ensure our analytic gradients are bug-free.
+
+92:00.000 --> 96:00.000
+Segment 20: Symbolic differentiation with SymPy confirms hand derivations.
+
+96:00.000 --> 102:00.000
+Segment 21: Building a reverse-mode automatic differentiation engine from scratch with a Value class and backward pass.
+
+102:00.000 --> 106:00.000
+Segment 22: Integration represents accumulated area under probability densities and expectation integrals.
+
+106:00.000 --> 111:00.000
+Segment 23: Reading Python tracebacks calmly from the bottom line up and debugging numerical instability.
+
+111:00.000 --> 117:00.000
+Segment 24: Rubber duck debugging, exit check verification, and the final Day 0E calculus capstone.

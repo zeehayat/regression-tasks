@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Derivatives and Differential Calculus for Machine Learning</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Offline Vendored Quill WYSIWYG Editor -->
+    <link rel="stylesheet" href="../vendor/quill/quill.snow.css">
+    <script src="../vendor/quill/quill.min.js"></script>
+    <style>
+        :root {
+            --bg: #FAF7F0;
+            --panel: #F1EEE6;
+            --border: #D8D1C5;
+            --text: #252622;
+            --text-muted: #686B63;
+            --accent: #3F6652;
+            --terracotta: #A45F45;
+            --code: #ECE8DF;
+        }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; overflow-x: hidden; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Atkinson Hyperlegible", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-size: 1.0625rem;
+            line-height: 1.75;
+            -webkit-font-smoothing: antialiased;
+        }
+        code, pre, .mono {
+            font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+        }
+        #content {
+            width: auto;
+            max-width: none;
+            margin: 0 0 0 300px;
+            padding: 3.5rem 2.75rem;
+        }
+        .chapter-sidebar {
+            position: fixed;
+            z-index: 20;
+            inset: 0 auto 0 0;
+            width: 280px;
+            overflow-y: auto;
+            padding: 1.25rem 1rem 1.5rem;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(241, 238, 230, 0.92)),
+                var(--panel);
+            border-right: 1px solid var(--border);
+            box-shadow: 12px 0 32px rgba(37, 38, 34, 0.04);
+        }
+        .sidebar-brand {
+            display: grid;
+            gap: 0.2rem;
+            padding: 0.75rem 0.85rem 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.9rem;
+            background: rgba(255, 255, 255, 0.45);
+            border: 1px solid rgba(216, 209, 197, 0.8);
+        }
+        .sidebar-brand__eyebrow {
+            color: var(--terracotta);
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .sidebar-brand__title {
+            color: var(--text);
+            font-size: 1.05rem;
+            font-weight: 800;
+            line-height: 1.25;
+        }
+        .sidebar-brand__subtitle {
+            color: var(--text-muted);
+            font-size: 0.86rem;
+            line-height: 1.45;
+        }
+        .sidebar-section {
+            padding: 0.9rem 0 0;
+        }
+        .sidebar-section + .sidebar-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(216, 209, 197, 0.9);
+        }
+        .sidebar-section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            margin: 0 0 0.75rem;
+            color: var(--accent);
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .sidebar-section-title::after {
+            content: "";
+            flex: 1 1 auto;
+            height: 1px;
+            background: rgba(63, 102, 82, 0.18);
+        }
+        nav.chapters {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.45rem;
+            width: auto;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
+        }
+        .chapter-sidebar nav.chapters a {
+            display: block;
+            width: 100%;
+            padding: 0.65rem 0.8rem;
+            border-radius: 0.85rem;
+            border: 1px solid transparent;
+            background: rgba(255, 255, 255, 0.55);
+            color: var(--text-muted);
+            text-decoration: none;
+            font-family: "Atkinson Hyperlegible", sans-serif;
+            font-size: 0.93rem;
+            font-weight: 700;
+            line-height: 1.35;
+            letter-spacing: 0.01em;
+            transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+        }
+        .chapter-sidebar nav.chapters a:hover {
+            color: var(--accent);
+            background: rgba(255, 255, 255, 0.78);
+            border-color: rgba(63, 102, 82, 0.25);
+            transform: translateX(2px);
+        }
+        .chapter-sidebar nav.chapters a.active {
+            color: var(--accent);
+            background: rgba(63, 102, 82, 0.12);
+            border-color: rgba(63, 102, 82, 0.35);
+            box-shadow: inset 3px 0 0 var(--accent);
+        }
+        .chapter-sidebar nav.chapters a:focus-visible {
+            outline: 2px solid var(--terracotta);
+            outline-offset: 2px;
+        }
+        @media (max-width: 1100px) {
+            #content { margin: 0 0 0 260px; padding: 2.5rem 1.5rem; }
+            .chapter-sidebar { width: 240px; }
+        }
+        @media (max-width: 760px) {
+            #content { margin: 0; padding: 1.5rem 1rem; }
+            .chapter-sidebar {
+                position: static;
+                width: auto;
+                max-height: none;
+                overflow: visible;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                padding: 1rem;
+                box-shadow: none;
+            }
+        }
+        .markdown-body h1 { font-family: "Atkinson Hyperlegible", "Inter", sans-serif; font-size: 2.6rem; font-weight: 800; color: var(--accent); margin: 0.5rem 0 1.5rem; line-height: 1.2; }
+        .markdown-body h2 { font-family: "Atkinson Hyperlegible", "Inter", sans-serif; font-size: 1.85rem; font-weight: 700; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin: 2.5rem 0 1rem; line-height: 1.3; }
+        .markdown-body h3 { font-family: "Atkinson Hyperlegible", "Inter", sans-serif; font-size: 1.45rem; font-weight: 600; color: var(--accent); margin: 2rem 0 0.75rem; line-height: 1.35; }
+        .markdown-body h4 { font-family: "Atkinson Hyperlegible", "Inter", sans-serif; font-size: 1.2rem; font-weight: 600; color: var(--accent); margin: 1.5rem 0 0.5rem; line-height: 1.4; }
+        .markdown-body p { color: var(--text); font-size: 1.0625rem; line-height: 1.75; margin: 0 0 1.25rem; }
+        .markdown-body ul, .markdown-body ol { color: var(--text); font-size: 1.0625rem; line-height: 1.75; margin: 0 0 1.25rem; padding-left: 1.5rem; }
+        .markdown-body li { margin-bottom: 0.35rem; }
+        .markdown-body blockquote {
+            border-left: 4px solid var(--terracotta);
+            padding: 0.85rem 1.25rem;
+            font-style: italic;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            background: var(--panel);
+            border-radius: 0 0.5rem 0.5rem 0;
+            margin: 1.25rem 0;
+        }
+        .markdown-body a { color: var(--accent); text-decoration: underline; }
+        .markdown-body a:hover { color: #67e8f9; }
+        .markdown-body :not(pre) > code {
+            font-size: 0.925em;
+            color: var(--text);
+            background: var(--code);
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.25rem;
+        }
+        .markdown-body pre {
+            background: var(--code);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            margin: 1.25rem 0;
+            overflow-x: auto;
+            font-size: 0.925rem;
+            line-height: 1.65;
+        }
+        .markdown-body pre code {
+            background: transparent;
+            padding: 0;
+            color: var(--text);
+            font-size: 0.925rem;
+        }
+        .markdown-body table { width: 100%; font-size: 0.975rem; border-collapse: collapse; margin: 1.5rem 0; }
+        .markdown-body th, .markdown-body td { border: 1px solid var(--border); padding: 0.6rem 0.85rem; text-align: left; }
+        .markdown-body th { background: var(--panel); color: var(--accent); font-weight: 600; font-size: 1rem; }
+        .markdown-body td { color: var(--text); font-size: 0.975rem; }
+        .markdown-body hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+        /* Mermaid diagram panel: readable offline as labeled source; mermaid.js
+           (if vendored) replaces the <pre> contents with a rendered <svg>. */
+        .diagram-panel {
+            background: var(--code);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+        .diagram-panel__label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: rgba(34, 211, 238, 0.08);
+            padding: 0.4rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .diagram-panel .mermaid {
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+        }
+        .diagram-panel pre.mermaid-source {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+            padding: 1rem;
+            color: var(--text);
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+        }
+
+        .platform-shell {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            width: min(25rem, calc(100vw - 2rem));
+            max-height: calc(100vh - 2rem);
+            display: flex;
+            flex-direction: column;
+            background: rgba(12, 18, 30, 0.96);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+            overflow: hidden;
+            z-index: 50;
+        }
+        .platform-shell.collapsed { width: auto; }
+        .platform-shell.collapsed .platform-body { display: none; }
+        .platform-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem 0.9rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.9);
+        }
+        .platform-title { font-size: 1.05rem; font-weight: 700; color: #fff; }
+        .platform-section { font-size: 0.85rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .platform-body { overflow-y: auto; padding: 1rem; }
+        .platform-group { border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem; }
+        .platform-group:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+        .platform-row { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; }
+        .platform-label { display: block; margin-bottom: 0.4rem; font-size: 0.85rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.05em; }
+        .platform-button {
+            border: 1px solid rgba(34, 211, 238, 0.45);
+            background: rgba(34, 211, 238, 0.08);
+            color: var(--accent);
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.8rem;
+            font-size: 0.875rem;
+            font-weight: 650;
+            cursor: pointer;
+        }
+        .platform-button:hover:not(:disabled) { background: rgba(34, 211, 238, 0.14); }
+        .platform-button:disabled {
+            cursor: not-allowed;
+            color: #94a3b8;
+            border-color: #334155;
+            background: rgba(148, 163, 184, 0.08);
+        }
+        .platform-textarea {
+            width: 100%;
+            min-height: 5rem;
+            resize: vertical;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.65rem 0.75rem;
+            font: inherit;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .platform-message {
+            margin-top: 0.5rem;
+            color: #fbbf24;
+            font-size: 0.875rem;
+        }
+        .platform-output {
+            margin-top: 0.65rem;
+            white-space: pre-wrap;
+            color: var(--text-muted);
+            font-size: 0.925rem;
+            line-height: 1.6;
+        }
+        .platform-history {
+            max-height: 14rem;
+            overflow: auto;
+            display: grid;
+            gap: 0.55rem;
+            margin: 0.65rem 0;
+        }
+        .platform-turn {
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            padding: 0.55rem 0.7rem;
+            background: rgba(21, 29, 48, 0.55);
+            color: var(--text-muted);
+            font-size: 0.925rem;
+            line-height: 1.5;
+        }
+        .platform-turn strong { color: #fff; }
+        .paper-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1.25rem 0;
+            background: rgba(21, 29, 48, 0.55);
+        }
+        .paper-card h4 { margin: 0 0 0.4rem; font-size: 1.15rem; }
+        .paper-card p { margin: 0.4rem 0; font-size: 0.975rem; line-height: 1.6; }
+        .paper-card .paper-meta { color: #93c5fd; font-size: 0.875rem; }
+        .paper-card .paper-status { color: #fbbf24; font-size: 0.875rem; }
+        .settings-grid {
+            display: grid;
+            gap: 1rem;
+        }
+        .settings-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: rgba(21, 29, 48, 0.55);
+            padding: 1rem;
+        }
+        .settings-card h2 {
+            margin-top: 0;
+        }
+        .settings-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .settings-field {
+            display: grid;
+            gap: 0.25rem;
+        }
+        .settings-field.full {
+            grid-column: 1 / -1;
+        }
+        .settings-field label,
+        .settings-check {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .settings-field input,
+        .settings-field select {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.5rem;
+            font: inherit;
+        }
+        .settings-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .settings-status {
+            color: #fbbf24;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        .settings-file-viewer {
+            margin-top: 1rem;
+            display: grid;
+            gap: 1rem;
+        }
+        .settings-file-card {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: rgba(21, 29, 48, 0.55);
+            padding: 1rem;
+        }
+        .settings-file-card h2 {
+            margin: 0 0 0.35rem;
+        }
+        .settings-file-card pre {
+            max-height: 26rem;
+            overflow: auto;
+            margin: 0.75rem 0 0;
+        }
+        .settings-file-meta {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        .notes-list {
+            display: grid;
+            gap: 0.35rem;
+            margin-top: 0.55rem;
+        }
+        .note-link {
+            display: block;
+            width: 100%;
+            text-align: left;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: rgba(21, 29, 48, 0.5);
+            color: var(--accent);
+            padding: 0.45rem 0.55rem;
+            cursor: pointer;
+            font: inherit;
+        }
+        .note-link:hover { border-color: rgba(34, 211, 238, 0.5); }
+        .note-link small {
+            display: block;
+            color: var(--text-muted);
+            margin-top: 0.15rem;
+        }
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.68);
+            z-index: 100;
+        }
+        .modal-backdrop.open { display: flex; }
+        .note-modal {
+            width: min(58rem, 100%);
+            max-height: min(46rem, calc(100vh - 2rem));
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            background: #0b0f19;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
+            overflow: hidden;
+        }
+        .note-modal-header,
+        .note-modal-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.9);
+        }
+        .note-modal-footer {
+            border-top: 1px solid var(--border);
+            border-bottom: 0;
+        }
+        .note-title-input {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text);
+            padding: 0.55rem;
+            font: inherit;
+            font-weight: 700;
+        }
+        .note-toolbar,
+        .note-modal .ql-toolbar.ql-snow {
+            border: 0;
+            border-bottom: 1px solid var(--border);
+            background: rgba(21, 29, 48, 0.45);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-picker,
+        .note-modal .ql-toolbar.ql-snow button {
+            color: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-stroke {
+            stroke: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-fill {
+            fill: var(--text-muted);
+        }
+        .note-modal .ql-toolbar.ql-snow .ql-picker-options {
+            background: #0b0f19;
+            border-color: var(--border);
+        }
+        .note-modal .ql-container.ql-snow {
+            border: 0;
+            font: inherit;
+        }
+        .note-editor {
+            min-height: 18rem;
+            flex: 1 1 auto;
+            overflow: auto;
+            color: var(--text);
+            background: #080c14;
+            outline: none;
+        }
+        .note-editor .ql-editor,
+        .note-editor[contenteditable="true"] {
+            min-height: 18rem;
+            color: var(--text);
+            font-size: 1rem;
+            line-height: 1.6;
+            padding: 1rem;
+        }
+        .note-editor .ql-editor.ql-blank::before {
+            color: #64748b;
+            font-style: normal;
+        }
+        .note-editor:empty::before {
+            content: attr(data-placeholder);
+            color: #64748b;
+        }
+        .note-attachments {
+            border-top: 1px solid var(--border);
+            background: rgba(8, 12, 20, 0.95);
+            padding: 0.75rem;
+            max-height: 11rem;
+            overflow: auto;
+        }
+        .attachment-input {
+            max-width: 22rem;
+            color: var(--text-muted);
+            font: inherit;
+        }
+        .attachment-list {
+            display: grid;
+            gap: 0.5rem;
+            margin-top: 0.65rem;
+        }
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            border: 1px solid var(--border);
+            border-radius: 0.35rem;
+            background: rgba(21, 29, 48, 0.45);
+            padding: 0.5rem;
+        }
+        .attachment-preview {
+            width: 3.5rem;
+            height: 3.5rem;
+            flex: 0 0 3.5rem;
+            display: grid;
+            place-items: center;
+            border-radius: 0.35rem;
+            background: #080c14;
+            color: var(--text-muted);
+            overflow: hidden;
+            font-size: 0.78rem;
+        }
+        .attachment-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .attachment-meta {
+            min-width: 0;
+        }
+        .attachment-meta a {
+            display: block;
+            color: var(--accent);
+            overflow-wrap: anywhere;
+        }
+        .attachment-meta small {
+            color: var(--text-muted);
+        }
+        @media (min-width: 72.01rem) {
+            body { padding-right: 27rem; }
+        }
+        @media (max-width: 72rem) {
+            .platform-shell { position: static; width: auto; max-height: none; margin: 0 1rem 1rem; }
+            .platform-shell.collapsed .platform-body { display: none; }
+        }
+
+        /* Warm Paper overrides for the learning-tools panel. */
+        .platform-shell { background: var(--panel) !important; border-color: var(--border) !important; color: var(--text) !important; font-size: 1rem; }
+        .platform-header, .platform-turn, .paper-card { background: var(--panel) !important; border-color: var(--border) !important; }
+        .platform-title, .platform-label, .platform-turn strong, .platform-output, .platform-textarea,
+        .platform-history, .paper-card h4, .paper-card p { color: var(--text) !important; }
+        .platform-section, .platform-message, .platform-status, .paper-card .paper-status { color: var(--terracotta) !important; }
+        .platform-textarea { background: var(--code) !important; border-color: var(--border) !important; }
+        .platform-button { color: var(--accent) !important; border-color: var(--accent) !important; background: rgba(63, 102, 82, .08) !important; }
+        .platform-button:hover:not(:disabled) { background: rgba(63, 102, 82, .16) !important; }
+        .platform-button:disabled { color: var(--text-muted) !important; border-color: var(--border) !important; background: var(--paper) !important; }
+    </style>
+</head>
+<body>
+    <div id="content">
+
+    <aside class="chapter-sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-brand__eyebrow">Regression Study Guide</div>
+            <div class="sidebar-brand__title">Navigation</div>
+            <div class="sidebar-brand__subtitle">Jump between chapters, companion guides, and study aids.</div>
+        </div>
+        <section class="sidebar-section">
+            <div class="sidebar-section-title">Book Chapters</div>
+            <nav class="chapters">
+                            <a href="chapter0.html" class="">Ch. 0</a>
+            <a href="level_0_orientation.html" class="">Level 0 Orientation</a>
+            <a href="calculus_derivatives_micro_videos.html" class="">🎥 Calculus Micro-Videos</a>
+            <a href="day_0e_masterclass_video.html" class="">🎬 Day 0E Masterclass Video</a>
+            <a href="chapter1_read_first.html" class="">Read this before jumping into Chapter 1</a>
+            <a href="chapter1_exercise_notebook.html" class="">Chapter 1 exercise notebook</a>
+            <a href="chapter1.html" class="">Ch. 1</a>
+            <a href="chapter2_concept_help.html" class="">Chapter 2 concept help (open only when stuck)</a>
+            <a href="chapter2.html" class="">Ch. 2</a>
+            <a href="chapter3_concept_help.html" class="">Chapter 3 concept help (open only when stuck)</a>
+            <a href="chapter3.html" class="">Ch. 3</a>
+            <a href="chapter4_concept_help.html" class="">Chapter 4 concept help (open only when stuck)</a>
+            <a href="chapter4.html" class="">Ch. 4</a>
+            <a href="chapter4_5_interlude.html" class="">Ch. 4.5 Interlude</a>
+            <a href="chapter5_concept_help.html" class="">Chapter 5 concept help (open only when stuck)</a>
+            <a href="chapter5.html" class="">Ch. 5</a>
+            <a href="chapter6_concept_help.html" class="">Chapter 6 concept help (open only when stuck)</a>
+            <a href="chapter6.html" class="">Ch. 6</a>
+            <a href="calculus_video_series.html" class="active">Calculus video lessons</a>
+            <a href="settings.html" class="">Settings</a>
+            </nav>
+        </section>
+        <section class="sidebar-section">
+            <div class="sidebar-section-title">Companion Guides</div>
+            <nav class="chapters">
+                            <a href="chapter0_companion.html" class="">Ch. 0 Companion</a>
+            <a href="chapter1_companion.html" class="">Ch. 1 Companion</a>
+            <a href="chapter2_companion.html" class="">Ch. 2 Companion</a>
+            <a href="chapter3_companion.html" class="">Ch. 3 Companion</a>
+            <a href="chapter4_companion.html" class="">Ch. 4 Companion</a>
+            <a href="chapter5_companion.html" class="">Ch. 5 Companion</a>
+            <a href="chapter6_companion.html" class="">Ch. 6 Companion</a>
+            </nav>
+        </section>
+    </aside>
+    
+        <article class="markdown-body">
+<h1 id="derivatives-and-differential-calculus-for-machine-learning">Derivatives and Differential Calculus for Machine Learning</h1>
+<h2 id="beginner-micro-lessons">Beginner micro-lessons</h2>
+<p>Seven short, caption-led lessons. Pause after each slide, copy the rule, and solve the check question before continuing.</p>
+<style>
+.video-library { display:grid; gap:1.25rem; }
+.video-card { background:var(--panel); border:1px solid var(--border); border-left:5px solid var(--terracotta); border-radius:1rem; padding:1.25rem; }
+.video-card h3 { margin:.1rem 0 .45rem; color:var(--accent); }
+.video-card p { margin:.35rem 0 .8rem; }
+.video-open { border:0; border-radius:.65rem; padding:.7rem 1rem; background:var(--accent); color:#fff; font:inherit; font-weight:700; cursor:pointer; }
+.video-open:hover { background:var(--terracotta); }
+.video-modal[hidden] { display:none; }
+.video-modal { position:fixed; inset:0; z-index:100; display:grid; place-items:center; padding:1rem; background:rgba(37,38,34,.82); }
+.video-modal__panel { width:min(1100px,96vw); max-height:95vh; overflow:auto; background:var(--bg); border:1px solid var(--border); border-radius:1rem; padding:1rem; box-shadow:0 20px 70px rgba(0,0,0,.35); }
+.video-modal__head { display:flex; justify-content:space-between; align-items:center; gap:1rem; margin-bottom:.8rem; }
+.video-modal__head h2 { margin:0; border:0; padding:0; font-size:1.3rem; }
+.video-close, .video-fullscreen { border:1px solid var(--border); border-radius:.5rem; padding:.45rem .7rem; background:var(--panel); color:var(--text); cursor:pointer; font:inherit; font-weight:700; }
+.video-modal video { display:block; width:100%; max-height:78vh; background:#171b18; border-radius:.6rem; }
+</style>
+
+<div class="video-library">
+<article class="video-card"><h3>1 · Slope: the first idea behind a derivative</h3><p>Average rate of change, signs, and why curves need a local slope.</p><button class="video-open" data-video="calculus_videos/mp4/01_slope_and_rate_of_change.mp4" data-title="1 · Slope: the first idea behind a derivative">Open video</button></article>
+<article class="video-card"><h3>2 · The derivative: local sensitivity</h3><p>Limits, local slope, and the sensitivity approximation Δf ≈ f′(x)Δx.</p><button class="video-open" data-video="calculus_videos/mp4/02_derivative_as_local_sensitivity.mp4" data-title="2 · The derivative: local sensitivity">Open video</button></article>
+<article class="video-card"><h3>3 · Derivative rules</h3><p>Constants, powers, sums, and a complete polynomial example.</p><button class="video-open" data-video="calculus_videos/mp4/03_derivative_rules.mp4" data-title="3 · Derivative rules">Open video</button></article>
+<article class="video-card"><h3>4 · The chain rule</h3><p>How local sensitivities multiply through nested functions and neural networks.</p><button class="video-open" data-video="calculus_videos/mp4/04_chain_rule.mp4" data-title="4 · The chain rule">Open video</button></article>
+<article class="video-card"><h3>5 · Partial derivatives and gradients</h3><p>One sensitivity per parameter, assembled into a gradient vector.</p><button class="video-open" data-video="calculus_videos/mp4/05_partial_derivatives_and_gradients.mp4" data-title="5 · Partial derivatives and gradients">Open video</button></article>
+<article class="video-card"><h3>6 · Gradient descent</h3><p>The update rule, signs, learning rate, and a worked step.</p><button class="video-open" data-video="calculus_videos/mp4/06_gradient_descent.mp4" data-title="6 · Gradient descent">Open video</button></article>
+<article class="video-card"><h3>7 · Second derivatives and curvature</h3><p>Curvature, the Hessian, and why shape affects optimization.</p><button class="video-open" data-video="calculus_videos/mp4/07_second_derivatives_and_curvature.mp4" data-title="7 · Second derivatives and curvature">Open video</button></article>
+</div>
+
+<div class="video-modal" id="video-modal" hidden aria-hidden="true">
+  <div class="video-modal__panel" role="dialog" aria-modal="true" aria-labelledby="video-modal-title">
+    <div class="video-modal__head"><h2 id="video-modal-title">Video lesson</h2><div><button class="video-fullscreen" id="video-fullscreen" type="button">Fullscreen</button> <button class="video-close" id="video-close" type="button">Close</button></div></div>
+    <video id="video-player" controls preload="metadata"></video>
+  </div>
+</div>
+
+<script>
+(function () {
+  const modal = document.getElementById('video-modal');
+  const player = document.getElementById('video-player');
+  const title = document.getElementById('video-modal-title');
+  const close = document.getElementById('video-close');
+  const fullscreen = document.getElementById('video-fullscreen');
+  function hide() { player.pause(); player.removeAttribute('src'); player.load(); modal.hidden = true; modal.setAttribute('aria-hidden', 'true'); }
+  document.querySelectorAll('.video-open').forEach(function (button) {
+    button.addEventListener('click', function () { title.textContent = button.dataset.title; player.src = button.dataset.video; modal.hidden = false; modal.setAttribute('aria-hidden', 'false'); player.play().catch(function () {}); });
+  });
+  close.addEventListener('click', hide);
+  modal.addEventListener('click', function (event) { if (event.target === modal) hide(); });
+  fullscreen.addEventListener('click', function () { if (player.requestFullscreen) player.requestFullscreen(); else if (player.webkitEnterFullscreen) player.webkitEnterFullscreen(); });
+  document.addEventListener('keydown', function (event) { if (event.key === 'Escape' && !modal.hidden) hide(); });
+})();
+</script>
+        </article>
+    </div>
+
+
+
+    <!-- MathJax is loaded synchronously after the chapter markup.  At this
+         point every equation is already in the DOM, so startup reliably
+         typesets the initial page as well as later modal content. -->
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] },
+            startup: { typeset: false }
+        };
+    </script>
+    <script id="MathJax-script" src="../vendor/mathjax/tex-svg-full.js"></script>
+    <script>
+        window.MathJax.startup.promise
+            .then(function () { return window.MathJax.typesetPromise(); })
+            .catch(function (error) { console.error('MathJax typesetting failed:', error); });
+    </script>
+
+    <!-- Diagrams: local vendor copy preferred, CDN used only as a fallback when online.
+         If neither loads (fully offline, no vendor file), the labeled diagram-source
+         panels above remain readable as plain text. -->
+    <script>
+        (function loadMermaid() {
+            function init(mermaid) {
+                mermaid.initialize({ startOnLoad: false, theme: 'dark' });
+                document.querySelectorAll('.diagram-panel').forEach(function (panel) {
+                    var sourceEl = panel.querySelector('.mermaid-source');
+                    if (!sourceEl) return;
+                    var container = document.createElement('div');
+                    container.className = 'mermaid';
+                    container.textContent = sourceEl.textContent;
+                    panel.replaceChild(container, sourceEl);
+                });
+                mermaid.run();
+            }
+
+            var local = document.createElement('script');
+            local.src = '../vendor/mermaid.min.js';
+            local.onload = function () { init(window.mermaid); };
+            local.onerror = function () {
+                var cdn = document.createElement('script');
+                cdn.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+                cdn.onload = function () { init(window.mermaid); };
+                document.head.appendChild(cdn);
+            };
+            document.head.appendChild(local);
+        })();
+    </script>
+
+    <!-- Right-Click Custom Context Menu -->
+    <div id="custom-context-menu" style="display:none; position:fixed; z-index:9999999; background:#0f1524; border:1px solid #223150; border-radius:14px; padding:6px; width:220px; box-shadow:0 20px 40px rgba(0,0,0,0.8); font-family:sans-serif;">
+        <button id="ctx-add-note" style="width:100%; text-align:left; background:transparent; border:none; color:#22d3ee; padding:9px 12px; font-size:12px; font-weight:700; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:8px;" onmouseover="this.style.background='rgba(34,211,238,0.15)'" onmouseout="this.style.background='transparent'">
+            <span>🖊️ Add Note / Notion</span>
+        </button>
+        <div style="height:1px; background:#223150; margin:4px 0;"></div>
+        <button id="ctx-copy" style="width:100%; text-align:left; background:transparent; border:none; color:#cbd5e1; padding:9px 12px; font-size:12px; font-weight:600; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='transparent'">
+            <span>📋 Copy Selected Text</span>
+        </button>
+    </div>
+
+    <!-- MS Word Minimized Comments Sidebar Toggle & Drawer -->
+    <button id="word-comments-toggle" style="display:none; position:fixed; top:20px; right:20px; z-index:999980; background:#151d30; color:#eab308; border:1px solid #eab308; border-radius:9999px; padding:8px 16px; font-size:12px; font-weight:700; cursor:pointer; box-shadow:0 10px 25px rgba(0,0,0,0.5); align-items:center; gap:6px;">
+        <span>💬 Comments</span>
+        <span id="word-comments-badge" style="background:#eab308; color:#000000; font-size:10px; padding:1px 6px; border-radius:9999px; font-weight:800;">0</span>
+    </button>
+
+    <div id="word-comments-drawer" style="display:none; position:fixed; top:0; right:0; bottom:0; width:340px; max-width:85vw; z-index:999999; background:#0f1524; border-left:1px solid #223150; box-shadow:-10px 0 30px rgba(0,0,0,0.7); padding:20px; overflow-y:auto; font-family:sans-serif;">
+        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #223150; padding-bottom:12px; margin-bottom:16px;">
+            <span style="font-size:13px; font-weight:800; color:#eab308; display:flex; align-items:center; gap:6px;">💬 CHAPTER COMMENTS</span>
+            <button id="word-comments-drawer-close" style="background:transparent; border:none; color:#cbd5e1; font-size:18px; cursor:pointer;">✕</button>
+        </div>
+        <div id="word-comments-list">
+            <!-- Dynamically loaded chapter notes -->
+        </div>
+    </div>
+
+    <!-- Floating Selection Trigger Button -->
+    <button id="inline-comment-trigger" style="display:none; position:fixed; z-index:999999; background:#151d30; color:#22d3ee; border:1px solid rgba(34,211,238,0.5); border-radius:9999px; padding:7px 16px; font-size:12px; font-weight:700; box-shadow:0 10px 25px rgba(0,0,0,0.6); cursor:pointer; align-items:center; gap:6px;">
+        <span>🖊️ Comment / Sync Notion</span>
+    </button>
+
+    <!-- Persistent Bottom-Right Note Button -->
+    <button id="persistent-note-btn" style="position:fixed; bottom:24px; right:24px; z-index:999990; background:#151d30; color:#22d3ee; border:1px solid #223150; border-radius:9999px; padding:11px 20px; font-size:13px; font-weight:700; box-shadow:0 10px 30px rgba(0,0,0,0.7); cursor:pointer; display:flex; align-items:center; gap:8px; transition:all 0.2s ease;">
+        <span>🖊️ Add Note / Notion</span>
+        <span id="selection-badge" style="display:none; background:#0284c7; color:#ffffff; font-size:10px; padding:2px 7px; border-radius:9999px; text-transform:uppercase; font-weight:800; letter-spacing:0.05em;">Text Selected</span>
+    </button>
+
+    <!-- Note Card Modal with Offline Quill WYSIWYG Editor -->
+    <div id="inline-comment-box" style="display:none; position:fixed; z-index:999999; top:50%; left:50%; transform:translate(-50%, -50%); background:#0f1524; border:1px solid #223150; border-radius:20px; padding:24px; width:680px; max-width:92vw; max-height:88vh; overflow-y:auto; box-shadow:0 25px 60px rgba(0,0,0,0.85); font-family:sans-serif; text-align:left;">
+        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #223150; padding-bottom:14px; margin-bottom:16px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:14px; font-weight:800; color:#22d3ee; display:flex; align-items:center; gap:6px;">🖊️ INLINE NOTE & NOTION SYNC</span>
+                <span style="font-size:10px; background:rgba(34,211,238,0.15); color:#22d3ee; border:1px solid rgba(34,211,238,0.3); padding:2px 8px; border-radius:9999px; font-weight:700;">QUILL RICH TEXT</span>
+            </div>
+            <button id="inline-comment-close" style="background:transparent; border:none; color:#cbd5e1; font-size:18px; cursor:pointer; padding:4px 8px; border-radius:6px;">✕</button>
+        </div>
+        
+        <div style="background:#151d30; border:1px solid #223150; padding:12px 14px; border-radius:12px; margin-bottom:16px;">
+            <span style="font-size:10px; text-transform:uppercase; font-weight:700; color:#22d3ee; display:block; margin-bottom:4px;">Note Title (Selected Text)</span>
+            <h4 id="inline-quote-text" style="font-size:14px; font-weight:700; color:#ffffff; margin:0; line-height:1.4;">
+                <!-- Highlighted text formatted as title -->
+            </h4>
+        </div>
+
+        <div style="margin-bottom:18px;">
+            <label style="font-size:11px; text-transform:uppercase; font-weight:700; color:#94a3b8; display:block; margin-bottom:6px;">Your Thoughts & Rich Notes</label>
+            
+            <!-- Quill Editor Container -->
+            <div id="quill-editor-wrapper" style="background:#0b0f19; border:1px solid #223150; border-radius:12px; overflow:hidden;">
+                <div id="quill-editor" style="height:220px; font-size:14px; color:#ffffff; border:none;"></div>
+            </div>
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+            <span id="inline-comment-status" style="font-size:12px; color:#fbbf24; font-weight:600;"></span>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <button id="inline-comment-cancel" style="background:transparent; color:#94a3b8; border:1px solid #223150; padding:8px 16px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer;">Cancel</button>
+                <button id="inline-comment-submit" style="background:linear-gradient(135deg, #0284c7, #0891b2); color:#ffffff; border:none; padding:9px 20px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; box-shadow:0 4px 15px rgba(8,145,178,0.4);">
+                    Save Note & Sync Notion
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Maximizable Day 0E Video Masterclass Modal -->
+    <div id="day0e-video-modal" style="display:none; position:fixed; z-index:9999999; top:50%; left:50%; transform:translate(-50%, -50%); background:#0f1524; border:1px solid #223150; border-radius:20px; width:96vw; max-width:1400px; height:94vh; box-shadow:0 30px 80px rgba(0,0,0,0.9); font-family:sans-serif; overflow:hidden; transition:all 0.25s cubic-bezier(0.16, 1, 0.3, 1);">
+        <!-- Modal Header -->
+        <div id="day0e-modal-header" style="display:flex; align-items:center; justify-content:space-between; background:#151d30; border-bottom:1px solid #223150; padding:12px 20px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span style="font-size:14px; font-weight:800; color:#f472b6; display:flex; align-items:center; gap:6px;">🎬 DAY 0E MASTERCLASS VIDEO</span>
+                <span style="font-size:10px; background:rgba(236,72,153,0.18); color:#f472b6; border:1px solid rgba(236,72,153,0.4); padding:2px 8px; border-radius:9999px; font-weight:700;">FEMALE VOICE & INTERACTIVE EXERCISES</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <button id="day0e-modal-maximize" style="background:#223150; border:1px solid rgba(255,255,255,0.1); color:#cbd5e1; font-size:12px; font-weight:700; padding:6px 14px; border-radius:8px; cursor:pointer;" onclick="toggleDay0EMaximize()">
+                    <span id="max-icon">🗖 Maximize</span>
+                </button>
+                <button id="day0e-modal-close" style="background:transparent; border:none; color:#cbd5e1; font-size:20px; cursor:pointer; padding:4px 8px; border-radius:6px;" onclick="closeDay0EVideoModal()">✕</button>
+            </div>
+        </div>
+
+        <!-- Modal Body Iframe -->
+        <div style="width:100%; height:calc(100% - 54px); background:#0b0f19;">
+            <iframe id="day0e-modal-iframe" src="" style="width:100%; height:100%; border:none;" title="Day 0E Masterclass Video" allow="fullscreen"></iframe>
+        </div>
+    </div>
+
+    <script>
+        var isDay0EMaximized = false;
+
+        function openDay0EVideoModal() {
+            var modal = document.getElementById('day0e-video-modal');
+            var iframe = document.getElementById('day0e-modal-iframe');
+            if (iframe && (!iframe.src || iframe.src.indexOf('day_0e_masterclass_video') === -1)) {
+                iframe.src = 'day_0e_masterclass_video.html';
+            }
+            if (modal) modal.style.display = 'block';
+        }
+
+        function closeDay0EVideoModal() {
+            var modal = document.getElementById('day0e-video-modal');
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            if (modal) modal.style.display = 'none';
+        }
+
+        function toggleDay0EMaximize() {
+            var modal = document.getElementById('day0e-video-modal');
+            var maxBtn = document.getElementById('max-icon');
+            if (!modal) return;
+            isDay0EMaximized = !isDay0EMaximized;
+            if (isDay0EMaximized) {
+                modal.style.width = '100vw';
+                modal.style.height = '100vh';
+                modal.style.maxWidth = 'none';
+                modal.style.top = '0';
+                modal.style.left = '0';
+                modal.style.transform = 'none';
+                modal.style.borderRadius = '0';
+                if (maxBtn) maxBtn.textContent = '🗗 Restore';
+            } else {
+                modal.style.width = '96vw';
+                modal.style.height = '94vh';
+                modal.style.maxWidth = '1400px';
+                modal.style.top = '50%';
+                modal.style.left = '50%';
+                modal.style.transform = 'translate(-50%, -50%)';
+                modal.style.borderRadius = '20px';
+                if (maxBtn) maxBtn.textContent = '🗖 Maximize';
+            }
+        }
+
+        window.openDay0EVideoModal = openDay0EVideoModal;
+        window.closeDay0EVideoModal = closeDay0EVideoModal;
+        window.toggleDay0EMaximize = toggleDay0EMaximize;
+
+        document.addEventListener('keydown', function(e) {
+            var modal = document.getElementById('day0e-video-modal');
+            if (!modal || modal.style.display === 'none') return;
+            if (e.key === 'Escape') closeDay0EVideoModal();
+            if (e.key === 'f' || e.key === 'F') toggleDay0EMaximize();
+        });
+
+        (function() {
+            var currentSelectedText = '';
+            var quillEditor = null;
+
+            function initQuillInstance() {
+                if (quillEditor) return;
+                var el = document.getElementById('quill-editor');
+                if (el && typeof Quill !== 'undefined') {
+                    quillEditor = new Quill('#quill-editor', {
+                        theme: 'snow',
+                        placeholder: 'Write down your notes, bullet points, key takeaways, or drop images here...',
+                        modules: {
+                            toolbar: [
+                                [{ 'header': [2, 3, false] }],
+                                ['bold', 'italic', 'underline', 'strike'],
+                                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                ['blockquote', 'code-block'],
+                                ['image', 'link'],
+                                ['clean']
+                            ]
+                        }
+                    });
+                }
+            }
+
+            function getSelectionText() {
+                var sel = window.getSelection();
+                return sel ? sel.toString().trim() : '';
+            }
+
+            function updateSelectionState() {
+                var text = getSelectionText();
+                var trigger = document.getElementById('inline-comment-trigger');
+                var badge = document.getElementById('selection-badge');
+                var fab = document.getElementById('persistent-note-btn');
+
+                if (text.length >= 1) {
+                    currentSelectedText = text;
+                    if (badge) badge.style.display = 'inline-block';
+                    if (fab) {
+                        fab.style.borderColor = 'rgba(34,211,238,0.8)';
+                        fab.style.boxShadow = '0 0 20px rgba(34,211,238,0.4)';
+                    }
+                    try {
+                        var sel = window.getSelection();
+                        var range = sel ? sel.getRangeAt(0) : null;
+                        var rect = range ? range.getBoundingClientRect() : null;
+                        if (rect && rect.width > 0 && trigger) {
+                            trigger.style.top = Math.max(10, rect.top - 45) + 'px';
+                            trigger.style.left = Math.max(10, Math.min(window.innerWidth - 220, rect.left + (rect.width / 2) - 80)) + 'px';
+                            trigger.style.display = 'flex';
+                        }
+                    } catch(e) {}
+                } else {
+                    if (badge) badge.style.display = 'none';
+                    if (fab) {
+                        fab.style.borderColor = '#223150';
+                        fab.style.boxShadow = '0 10px 30px rgba(0,0,0,0.7)';
+                    }
+                }
+            }
+
+            document.addEventListener('mouseup', function() { setTimeout(updateSelectionState, 50); });
+            document.addEventListener('keyup', function() { setTimeout(updateSelectionState, 50); });
+
+            document.addEventListener('contextmenu', function(e) {
+                var ctxMenu = document.getElementById('custom-context-menu');
+                var text = getSelectionText();
+                if (text) currentSelectedText = text;
+                if (ctxMenu) {
+                    e.preventDefault();
+                    ctxMenu.style.top = Math.min(window.innerHeight - 120, e.clientY) + 'px';
+                    ctxMenu.style.left = Math.min(window.innerWidth - 230, e.clientX) + 'px';
+                    ctxMenu.style.display = 'block';
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                var ctxMenu = document.getElementById('custom-context-menu');
+                if (ctxMenu && !ctxMenu.contains(e.target)) ctxMenu.style.display = 'none';
+            });
+
+            function openNoteModal(e) {
+                if (e && e.stopPropagation) e.stopPropagation();
+                var box = document.getElementById('inline-comment-box');
+                var quote = document.getElementById('inline-quote-text');
+                var status = document.getElementById('inline-comment-status');
+                var trigger = document.getElementById('inline-comment-trigger');
+                var ctxMenu = document.getElementById('custom-context-menu');
+
+                if (trigger) trigger.style.display = 'none';
+                if (ctxMenu) ctxMenu.style.display = 'none';
+                if (quote) quote.textContent = currentSelectedText || 'General Chapter Note';
+                if (status) status.textContent = '';
+                if (box) {
+                    box.style.display = 'block';
+                    initQuillInstance();
+                    if (quillEditor) quillEditor.focus();
+                }
+            }
+
+            window.openNoteModal = openNoteModal;
+
+            var triggerBtn = document.getElementById('inline-comment-trigger');
+            var fabBtn = document.getElementById('persistent-note-btn');
+            var ctxBtn = document.getElementById('ctx-add-note');
+            var ctxCopy = document.getElementById('ctx-copy');
+            var closeBtn = document.getElementById('inline-comment-close');
+            var cancelBtn = document.getElementById('inline-comment-cancel');
+            var submitBtn = document.getElementById('inline-comment-submit');
+
+            if (triggerBtn) triggerBtn.onclick = openNoteModal;
+            if (fabBtn) fabBtn.onclick = openNoteModal;
+            if (ctxBtn) ctxBtn.onclick = openNoteModal;
+            if (ctxCopy) ctxCopy.onclick = function() {
+                var ctxMenu = document.getElementById('custom-context-menu');
+                if (ctxMenu) ctxMenu.style.display = 'none';
+                if (currentSelectedText) navigator.clipboard.writeText(currentSelectedText);
+            };
+            if (closeBtn) closeBtn.onclick = function() {
+                var box = document.getElementById('inline-comment-box');
+                if (box) box.style.display = 'none';
+            };
+            if (cancelBtn) cancelBtn.onclick = function() {
+                var box = document.getElementById('inline-comment-box');
+                if (box) box.style.display = 'none';
+            };
+
+            if (submitBtn) submitBtn.onclick = async function() {
+                var status = document.getElementById('inline-comment-status');
+                var htmlComment = quillEditor ? quillEditor.root.innerHTML : '';
+                var textComment = quillEditor ? quillEditor.getText().trim() : '';
+
+                if (!textComment && !currentSelectedText && (!htmlComment || htmlComment === '<p><br></p>')) return;
+                if (status) status.textContent = 'Saving note & syncing to Notion...';
+
+                try {
+                    var resp = await fetch('/api/notion/comment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            title: currentSelectedText || (textComment ? textComment.slice(0, 60) : "Study Note"),
+                            selection_text: currentSelectedText,
+                            comment: htmlComment,
+                            chapter_slug: window.location.pathname.split('/').pop() || 'chapter'
+                        })
+                    });
+                    var res = await resp.json();
+                    if (res.ok) {
+                        if (status) {
+                            status.style.color = '#34d399';
+                            status.textContent = (res.notion && res.notion.ok) ? 'Pushed to Notion & Local DB!' : 'Saved to Local Database!';
+                        }
+                        setTimeout(function() {
+                            var box = document.getElementById('inline-comment-box');
+                            if (box) box.style.display = 'none';
+                            if (quillEditor) quillEditor.setContents([]);
+                            loadSavedChapterNotes();
+                        }, 1200);
+                    }
+                } catch (err) {
+                    if (status) {
+                        status.style.color = '#fbbf24';
+                        status.textContent = 'Saved to Local Session!';
+                    }
+                    setTimeout(function() {
+                        var box = document.getElementById('inline-comment-box');
+                        if (box) box.style.display = 'none';
+                    }, 1200);
+                }
+            };
+
+            async function loadSavedChapterNotes() {
+                try {
+                    var slug = window.location.pathname.split('/').pop() || 'chapter';
+                    var resp = await fetch('/api/notes?chapter_slug=' + encodeURIComponent(slug));
+                    var data = await resp.json();
+                    var notes = data.notes || [];
+
+                    var toggleBtn = document.getElementById('word-comments-toggle');
+                    var badge = document.getElementById('word-comments-badge');
+                    var list = document.getElementById('word-comments-list');
+
+                    if (badge) badge.textContent = notes.length;
+                    if (toggleBtn) toggleBtn.style.display = notes.length > 0 ? 'inline-flex' : 'none';
+
+                    if (list) {
+                        if (notes.length === 0) {
+                            list.innerHTML = '<div style="color:#94a3b8; font-size:12px; text-align:center; padding:20px;">No comments yet. Highlight text and right-click to add a note!</div>';
+                        } else {
+                            list.innerHTML = notes.map(function(n) {
+                                var title = n.title || 'Note';
+                                var body = n.body ? n.body : '';
+                                return '<div style="background:#151d30; border:1px solid #223150; border-radius:12px; padding:14px; margin-bottom:12px;">' +
+                                    '<div style="font-size:10px; font-weight:800; color:#eab308; text-transform:uppercase; margin-bottom:4px;">💬 Comment</div>' +
+                                    '<h4 style="font-size:13px; font-weight:700; color:#ffffff; margin:0 0 6px 0; line-height:1.4;">' + escapeHtml(title) + '</h4>' +
+                                    (body ? '<p style="font-size:12px; color:#cbd5e1; margin:0; line-height:1.5;">' + escapeHtml(body) + '</p>' : '') +
+                                    '<div style="font-size:10px; color:#64748b; margin-top:8px; display:flex; justify-content:space-between; align-items:center;">' +
+                                        '<span>' + (n.created_at || '') + '</span>' +
+                                        '<span style="color:#34d399; font-weight:700;">Notion Synced</span>' +
+                                    '</div>' +
+                                '</div>';
+                            }).join('');
+                        }
+                    }
+
+                    notes.forEach(function(note) {
+                        if (!note.title || note.title === 'Study Note' || note.title.length < 3) return;
+                        highlightTextSnippet(note.title, note);
+                    });
+                } catch(e) {}
+            }
+
+            function highlightTextSnippet(searchText, note) {
+                try {
+                    var body = document.querySelector('.markdown-body') || document.body;
+                    if (!body) return;
+                    var walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, null, false);
+                    var node;
+                    while (node = walker.nextNode()) {
+                        if (node.parentElement && node.parentElement.closest('.word-comment-highlight, script, style, textarea, button')) continue;
+                        var idx = node.nodeValue ? node.nodeValue.toLowerCase().indexOf(searchText.toLowerCase().slice(0, 30)) : -1;
+                        if (idx !== -1) {
+                            var matchedText = node.nodeValue.substr(idx, searchText.length);
+                            var mark = document.createElement('mark');
+                            mark.className = 'word-comment-highlight';
+                            mark.style.cssText = 'background:rgba(234,179,8,0.25); border-bottom:2px solid #eab308; border-radius:4px; padding:1px 4px; color:inherit; cursor:pointer;';
+                            mark.innerHTML = escapeHtml(matchedText) + '<span style="display:inline-flex; align-items:center; justify-content:center; background:#eab308; color:#000; font-size:10px; font-weight:800; border-radius:9999px; width:16px; height:16px; margin-left:4px; vertical-align:middle;" title="MS Word Comment">💬</span>';
+                            mark.addEventListener('click', function(e) {
+                                e.stopPropagation();
+                                var drawer = document.getElementById('word-comments-drawer');
+                                if (drawer) drawer.style.display = 'block';
+                            });
+                            var parent = node.parentNode;
+                            var after = node.splitText(idx);
+                            after.nodeValue = after.nodeValue.substr(searchText.length);
+                            parent.insertBefore(mark, after);
+                            break;
+                        }
+                    }
+                } catch(err) {}
+            }
+
+            function escapeHtml(val) {
+                return String(val || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+
+            var wordToggle = document.getElementById('word-comments-toggle');
+            var wordClose = document.getElementById('word-comments-drawer-close');
+
+            if (wordToggle) wordToggle.onclick = function() {
+                var drawer = document.getElementById('word-comments-drawer');
+                if (drawer) drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
+            };
+
+            if (wordClose) wordClose.onclick = function() {
+                var drawer = document.getElementById('word-comments-drawer');
+                if (drawer) drawer.style.display = 'none';
+            };
+
+            window.addEventListener('load', loadSavedChapterNotes);
+        })();
+    </script>
+</body>
+</html>

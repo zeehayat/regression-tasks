@@ -1,0 +1,170 @@
+[
+  {
+    "id": 1,
+    "title": "Segment 1 — What a slope is, and why a curve doesn't have one",
+    "part": "Part I — The derivative, honestly",
+    "start_time": 0,
+    "end_time": 270
+  },
+  {
+    "id": 2,
+    "title": "Segment 2 — The limit definition, derived not asserted",
+    "part": "Part I — The derivative, honestly",
+    "start_time": 270,
+    "end_time": 540
+  },
+  {
+    "id": 3,
+    "title": "Segment 3 — The rules you'll actually use, and where they come from",
+    "part": "Part I — The derivative, honestly",
+    "start_time": 540,
+    "end_time": 810
+  },
+  {
+    "id": 4,
+    "title": "Segment 4 — Product, quotient, and chain rules",
+    "part": "Part I — The derivative, honestly",
+    "start_time": 810,
+    "end_time": 1080
+  },
+  {
+    "id": 5,
+    "title": "Segment 5 — Exponential and logarithm",
+    "part": "Part II — The functions ML actually differentiates",
+    "start_time": 1080,
+    "end_time": 1320
+  },
+  {
+    "id": 6,
+    "title": "Segment 6 — Sigmoid, tanh, ReLU & Vanishing Gradients",
+    "part": "Part II — The functions ML actually differentiates",
+    "start_time": 1320,
+    "end_time": 1620
+  },
+  {
+    "id": 7,
+    "title": "Segment 7 — Second derivatives, curvature, and convexity",
+    "part": "Part II — The functions ML actually differentiates",
+    "start_time": 1620,
+    "end_time": 1920
+  },
+  {
+    "id": 8,
+    "title": "Segment 8 — Taylor expansion",
+    "part": "Part II — The functions ML actually differentiates",
+    "start_time": 1920,
+    "end_time": 2160
+  },
+  {
+    "id": 9,
+    "title": "Segment 9 — Partial derivatives",
+    "part": "Part III — More than one dial",
+    "start_time": 2160,
+    "end_time": 2460
+  },
+  {
+    "id": 10,
+    "title": "Segment 10 — The gradient as a vector, and directional derivatives",
+    "part": "Part III — More than one dial",
+    "start_time": 2460,
+    "end_time": 2760
+  },
+  {
+    "id": 11,
+    "title": "Segment 11 — Jacobian and Hessian matrices",
+    "part": "Part III — More than one dial",
+    "start_time": 2760,
+    "end_time": 3060
+  },
+  {
+    "id": 12,
+    "title": "Segment 12 — Multivariable chain rule and backpropagation",
+    "part": "Part III — More than one dial",
+    "start_time": 3060,
+    "end_time": 3360
+  },
+  {
+    "id": 13,
+    "title": "Segment 13 — Differentiating with respect to a vector",
+    "part": "Part IV — Matrix calculus, the Chapter 1 bridge",
+    "start_time": 3360,
+    "end_time": 3660
+  },
+  {
+    "id": 14,
+    "title": "Segment 14 — Derive the OLS normal equations, start to finish",
+    "part": "Part IV — Matrix calculus, the Chapter 1 bridge",
+    "start_time": 3660,
+    "end_time": 4020
+  },
+  {
+    "id": 15,
+    "title": "Segment 15 — Critical points and the first-order condition",
+    "part": "Part V — Optimisation, which is what calculus is for",
+    "start_time": 4020,
+    "end_time": 4320
+  },
+  {
+    "id": 16,
+    "title": "Segment 16 — Gradient descent, built by hand",
+    "part": "Part V — Optimisation, which is what calculus is for",
+    "start_time": 4320,
+    "end_time": 4680
+  },
+  {
+    "id": 17,
+    "title": "Segment 17 — Variants (Batch, SGD, Mini-batch, Momentum)",
+    "part": "Part V — Optimisation, which is what calculus is for",
+    "start_time": 4680,
+    "end_time": 4920
+  },
+  {
+    "id": 18,
+    "title": "Segment 18 — Constrained optimisation and Lagrange multipliers",
+    "part": "Part V — Optimisation, which is what calculus is for",
+    "start_time": 4920,
+    "end_time": 5220
+  },
+  {
+    "id": 19,
+    "title": "Segment 19 — Finite differences & gradient_check.py",
+    "part": "Part VI — Doing calculus without doing calculus",
+    "start_time": 5220,
+    "end_time": 5520
+  },
+  {
+    "id": 20,
+    "title": "Segment 20 — Symbolic differentiation with SymPy",
+    "part": "Part VI — Doing calculus without doing calculus",
+    "start_time": 5520,
+    "end_time": 5760
+  },
+  {
+    "id": 21,
+    "title": "Segment 21 — Build a tiny autodiff engine from scratch",
+    "part": "Part VI — Doing calculus without doing calculus",
+    "start_time": 5760,
+    "end_time": 6120
+  },
+  {
+    "id": 22,
+    "title": "Segment 22 — Integrals as accumulated area",
+    "part": "Part VII — Integration, the minimum viable dose",
+    "start_time": 6120,
+    "end_time": 6360
+  },
+  {
+    "id": 23,
+    "title": "Segment 23 — Reading a traceback & calculus failures",
+    "part": "Part VIII — Surviving errors",
+    "start_time": 6360,
+    "end_time": 6660
+  },
+  {
+    "id": 24,
+    "title": "Segment 24 — The rubber duck, exit check, and capstone",
+    "part": "Part VIII — Surviving errors",
+    "start_time": 6660,
+    "end_time": 7020
+  }
+]

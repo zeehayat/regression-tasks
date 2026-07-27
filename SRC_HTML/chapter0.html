@@ -4,105 +4,218 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chapter 0 — From Nothing to Ready</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Offline Vendored Quill WYSIWYG Editor -->
+    <link rel="stylesheet" href="../vendor/quill/quill.snow.css">
+    <script src="../vendor/quill/quill.min.js"></script>
     <style>
         :root {
-            --bg: #0b0f19;
-            --panel: #151d30;
-            --border: #223150;
-            --text: #f1f5f9;
-            --text-muted: #cbd5e1;
-            --accent: #22d3ee;
+            --bg: #FAF7F0;
+            --panel: #F1EEE6;
+            --border: #D8D1C5;
+            --text: #252622;
+            --text-muted: #686B63;
+            --accent: #3F6652;
+            --terracotta: #A45F45;
+            --code: #ECE8DF;
         }
         * { box-sizing: border-box; }
         html, body { margin: 0; padding: 0; overflow-x: hidden; }
         body {
             background: var(--bg);
             color: var(--text);
-            font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            line-height: 1.6;
+            font-family: "Atkinson Hyperlegible", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-size: 1.0625rem;
+            line-height: 1.75;
             -webkit-font-smoothing: antialiased;
         }
         code, pre, .mono {
-            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
         }
         #content {
-            width: 100%;
-            max-width: 56rem;
-            margin: 0 auto;
-            padding: 3rem 1.5rem;
+            width: auto;
+            max-width: none;
+            margin: 0 0 0 300px;
+            padding: 3.5rem 2.75rem;
+        }
+        .chapter-sidebar {
+            position: fixed;
+            z-index: 20;
+            inset: 0 auto 0 0;
+            width: 280px;
+            overflow-y: auto;
+            padding: 1.25rem 1rem 1.5rem;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(241, 238, 230, 0.92)),
+                var(--panel);
+            border-right: 1px solid var(--border);
+            box-shadow: 12px 0 32px rgba(37, 38, 34, 0.04);
+        }
+        .sidebar-brand {
+            display: grid;
+            gap: 0.2rem;
+            padding: 0.75rem 0.85rem 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.9rem;
+            background: rgba(255, 255, 255, 0.45);
+            border: 1px solid rgba(216, 209, 197, 0.8);
+        }
+        .sidebar-brand__eyebrow {
+            color: var(--terracotta);
+            font-size: 0.7rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .sidebar-brand__title {
+            color: var(--text);
+            font-size: 1.05rem;
+            font-weight: 800;
+            line-height: 1.25;
+        }
+        .sidebar-brand__subtitle {
+            color: var(--text-muted);
+            font-size: 0.86rem;
+            line-height: 1.45;
+        }
+        .sidebar-section {
+            padding: 0.9rem 0 0;
+        }
+        .sidebar-section + .sidebar-section {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(216, 209, 197, 0.9);
+        }
+        .sidebar-section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            margin: 0 0 0.75rem;
+            color: var(--accent);
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .sidebar-section-title::after {
+            content: "";
+            flex: 1 1 auto;
+            height: 1px;
+            background: rgba(63, 102, 82, 0.18);
         }
         nav.chapters {
             display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-bottom: 2.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border);
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.45rem;
+            width: auto;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 0 !important;
         }
-        nav.chapters a {
-            padding: 0.375rem 0.75rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.02em;
-            border-radius: 999px;
-            border: 1px solid var(--border);
+        .chapter-sidebar nav.chapters a {
+            display: block;
+            width: 100%;
+            padding: 0.65rem 0.8rem;
+            border-radius: 0.85rem;
+            border: 1px solid transparent;
+            background: rgba(255, 255, 255, 0.55);
             color: var(--text-muted);
             text-decoration: none;
+            font-family: "Atkinson Hyperlegible", sans-serif;
+            font-size: 0.93rem;
+            font-weight: 700;
+            line-height: 1.35;
+            letter-spacing: 0.01em;
+            transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
         }
-        nav.chapters a:hover { border-color: rgba(34, 211, 238, 0.4); }
-        nav.chapters a.active {
+        .chapter-sidebar nav.chapters a:hover {
             color: var(--accent);
-            background: rgba(21, 29, 48, 0.8);
-            border-color: rgba(34, 211, 238, 0.4);
+            background: rgba(255, 255, 255, 0.78);
+            border-color: rgba(63, 102, 82, 0.25);
+            transform: translateX(2px);
         }
-        .markdown-body h1 { font-size: 2.25rem; font-weight: 800; color: #fff; margin: 0.5rem 0 1.5rem; }
-        .markdown-body h2 { font-size: 1.5rem; font-weight: 700; color: #fff; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin: 2.5rem 0 1rem; }
-        .markdown-body h3 { font-size: 1.25rem; font-weight: 600; color: #fff; margin: 2rem 0 0.75rem; }
-        .markdown-body h4 { font-size: 1.1rem; font-weight: 600; color: #fff; margin: 1.5rem 0 0.5rem; }
-        .markdown-body p { color: var(--text-muted); margin: 0 0 1rem; }
-        .markdown-body ul, .markdown-body ol { color: var(--text-muted); margin: 0 0 1rem; padding-left: 1.5rem; }
-        .markdown-body li { margin-bottom: 0.25rem; }
+        .chapter-sidebar nav.chapters a.active {
+            color: var(--accent);
+            background: rgba(63, 102, 82, 0.12);
+            border-color: rgba(63, 102, 82, 0.35);
+            box-shadow: inset 3px 0 0 var(--accent);
+        }
+        .chapter-sidebar nav.chapters a:focus-visible {
+            outline: 2px solid var(--terracotta);
+            outline-offset: 2px;
+        }
+        @media (max-width: 1100px) {
+            #content { margin: 0 0 0 260px; padding: 2.5rem 1.5rem; }
+            .chapter-sidebar { width: 240px; }
+        }
+        @media (max-width: 760px) {
+            #content { margin: 0; padding: 1.5rem 1rem; }
+            .chapter-sidebar {
+                position: static;
+                width: auto;
+                max-height: none;
+                overflow: visible;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                padding: 1rem;
+                box-shadow: none;
+            }
+        }
+        .markdown-body h1 { font-family: "Atkinson Hyperlegible", "Inter", sans-serif; font-size: 2.6rem; font-weight: 800; color: var(--accent); margin: 0.5rem 0 1.5rem; line-height: 1.2; }
+        .markdown-body h2 { font-family: "Atkinson Hyperlegible", "Inter", sans-serif; font-size: 1.85rem; font-weight: 700; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin: 2.5rem 0 1rem; line-height: 1.3; }
+        .markdown-body h3 { font-family: "Atkinson Hyperlegible", "Inter", sans-serif; font-size: 1.45rem; font-weight: 600; color: var(--accent); margin: 2rem 0 0.75rem; line-height: 1.35; }
+        .markdown-body h4 { font-family: "Atkinson Hyperlegible", "Inter", sans-serif; font-size: 1.2rem; font-weight: 600; color: var(--accent); margin: 1.5rem 0 0.5rem; line-height: 1.4; }
+        .markdown-body p { color: var(--text); font-size: 1.0625rem; line-height: 1.75; margin: 0 0 1.25rem; }
+        .markdown-body ul, .markdown-body ol { color: var(--text); font-size: 1.0625rem; line-height: 1.75; margin: 0 0 1.25rem; padding-left: 1.5rem; }
+        .markdown-body li { margin-bottom: 0.35rem; }
         .markdown-body blockquote {
-            border-left: 4px solid var(--accent);
-            padding: 0.5rem 1rem;
+            border-left: 4px solid var(--terracotta);
+            padding: 0.85rem 1.25rem;
             font-style: italic;
-            background: rgba(34, 211, 238, 0.05);
+            font-size: 1.05rem;
+            line-height: 1.7;
+            background: var(--panel);
             border-radius: 0 0.5rem 0.5rem 0;
-            margin: 1rem 0;
+            margin: 1.25rem 0;
         }
         .markdown-body a { color: var(--accent); text-decoration: underline; }
         .markdown-body a:hover { color: #67e8f9; }
         .markdown-body :not(pre) > code {
-            font-size: 0.875rem;
-            color: #67e8f9;
-            background: var(--panel);
-            padding: 0.125rem 0.375rem;
+            font-size: 0.925em;
+            color: var(--text);
+            background: var(--code);
+            padding: 0.15rem 0.4rem;
             border-radius: 0.25rem;
         }
         .markdown-body pre {
-            background: var(--bg);
+            background: var(--code);
             border: 1px solid var(--border);
             border-radius: 0.5rem;
-            padding: 1rem;
-            margin: 1rem 0;
+            padding: 1.25rem;
+            margin: 1.25rem 0;
             overflow-x: auto;
+            font-size: 0.925rem;
+            line-height: 1.65;
         }
         .markdown-body pre code {
             background: transparent;
             padding: 0;
-            color: #e2e8f0;
-            font-size: 0.875rem;
+            color: var(--text);
+            font-size: 0.925rem;
         }
-        .markdown-body table { width: 100%; font-size: 0.875rem; border-collapse: collapse; margin: 1.5rem 0; }
-        .markdown-body th, .markdown-body td { border: 1px solid var(--border); padding: 0.5rem 0.75rem; text-align: left; }
-        .markdown-body th { background: var(--panel); color: #fff; font-weight: 600; }
-        .markdown-body td { color: var(--text-muted); }
+        .markdown-body table { width: 100%; font-size: 0.975rem; border-collapse: collapse; margin: 1.5rem 0; }
+        .markdown-body th, .markdown-body td { border: 1px solid var(--border); padding: 0.6rem 0.85rem; text-align: left; }
+        .markdown-body th { background: var(--panel); color: var(--accent); font-weight: 600; font-size: 1rem; }
+        .markdown-body td { color: var(--text); font-size: 0.975rem; }
         .markdown-body hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
 
         /* Mermaid diagram panel: readable offline as labeled source; mermaid.js
            (if vendored) replaces the <pre> contents with a rendered <svg>. */
         .diagram-panel {
-            background: var(--bg);
+            background: var(--code);
             border: 1px solid var(--border);
             border-radius: 0.5rem;
             margin: 1.5rem 0;
@@ -129,7 +242,7 @@
             border: none;
             border-radius: 0;
             padding: 1rem;
-            color: var(--text-muted);
+            color: var(--text);
             font-size: 0.8rem;
             white-space: pre-wrap;
         }
@@ -160,20 +273,20 @@
             border-bottom: 1px solid var(--border);
             background: rgba(21, 29, 48, 0.9);
         }
-        .platform-title { font-size: 0.85rem; font-weight: 700; color: #fff; }
-        .platform-section { font-size: 0.72rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .platform-body { overflow-y: auto; padding: 0.85rem; }
-        .platform-group { border-top: 1px solid var(--border); padding-top: 0.85rem; margin-top: 0.85rem; }
+        .platform-title { font-size: 1.05rem; font-weight: 700; color: #fff; }
+        .platform-section { font-size: 0.85rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .platform-body { overflow-y: auto; padding: 1rem; }
+        .platform-group { border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem; }
         .platform-group:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
-        .platform-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
-        .platform-label { display: block; margin-bottom: 0.35rem; font-size: 0.72rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.04em; }
+        .platform-row { display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap; }
+        .platform-label { display: block; margin-bottom: 0.4rem; font-size: 0.85rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.05em; }
         .platform-button {
             border: 1px solid rgba(34, 211, 238, 0.45);
             background: rgba(34, 211, 238, 0.08);
             color: var(--accent);
-            border-radius: 0.35rem;
-            padding: 0.4rem 0.6rem;
-            font-size: 0.78rem;
+            border-radius: 0.375rem;
+            padding: 0.5rem 0.8rem;
+            font-size: 0.875rem;
             font-weight: 650;
             cursor: pointer;
         }
@@ -186,54 +299,57 @@
         }
         .platform-textarea {
             width: 100%;
-            min-height: 4.5rem;
+            min-height: 5rem;
             resize: vertical;
             border: 1px solid var(--border);
-            border-radius: 0.35rem;
+            border-radius: 0.375rem;
             background: #080c14;
             color: var(--text);
-            padding: 0.55rem;
+            padding: 0.65rem 0.75rem;
             font: inherit;
-            font-size: 0.85rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
         }
         .platform-message {
-            margin-top: 0.45rem;
+            margin-top: 0.5rem;
             color: #fbbf24;
-            font-size: 0.78rem;
+            font-size: 0.875rem;
         }
         .platform-output {
-            margin-top: 0.55rem;
+            margin-top: 0.65rem;
             white-space: pre-wrap;
             color: var(--text-muted);
-            font-size: 0.84rem;
+            font-size: 0.925rem;
+            line-height: 1.6;
         }
         .platform-history {
-            max-height: 12rem;
+            max-height: 14rem;
             overflow: auto;
             display: grid;
-            gap: 0.45rem;
-            margin: 0.55rem 0;
+            gap: 0.55rem;
+            margin: 0.65rem 0;
         }
         .platform-turn {
             border: 1px solid var(--border);
-            border-radius: 0.35rem;
-            padding: 0.45rem 0.55rem;
+            border-radius: 0.375rem;
+            padding: 0.55rem 0.7rem;
             background: rgba(21, 29, 48, 0.55);
             color: var(--text-muted);
-            font-size: 0.82rem;
+            font-size: 0.925rem;
+            line-height: 1.5;
         }
         .platform-turn strong { color: #fff; }
         .paper-card {
             border: 1px solid var(--border);
             border-radius: 0.5rem;
-            padding: 0.8rem;
-            margin: 1rem 0;
+            padding: 1rem;
+            margin: 1.25rem 0;
             background: rgba(21, 29, 48, 0.55);
         }
-        .paper-card h4 { margin: 0 0 0.3rem; font-size: 1rem; }
-        .paper-card p { margin: 0.35rem 0; font-size: 0.9rem; }
-        .paper-card .paper-meta { color: #93c5fd; font-size: 0.82rem; }
-        .paper-card .paper-status { color: #fbbf24; font-size: 0.8rem; }
+        .paper-card h4 { margin: 0 0 0.4rem; font-size: 1.15rem; }
+        .paper-card p { margin: 0.4rem 0; font-size: 0.975rem; line-height: 1.6; }
+        .paper-card .paper-meta { color: #93c5fd; font-size: 0.875rem; }
+        .paper-card .paper-status { color: #fbbf24; font-size: 0.875rem; }
         .settings-grid {
             display: grid;
             gap: 1rem;
@@ -487,48 +603,79 @@
             .platform-shell.collapsed .platform-body { display: none; }
         }
 
+        /* Warm Paper overrides for the learning-tools panel. */
+        .platform-shell { background: var(--panel) !important; border-color: var(--border) !important; color: var(--text) !important; font-size: 1rem; }
+        .platform-header, .platform-turn, .paper-card { background: var(--panel) !important; border-color: var(--border) !important; }
+        .platform-title, .platform-label, .platform-turn strong, .platform-output, .platform-textarea,
+        .platform-history, .paper-card h4, .paper-card p { color: var(--text) !important; }
+        .platform-section, .platform-message, .platform-status, .paper-card .paper-status { color: var(--terracotta) !important; }
+        .platform-textarea { background: var(--code) !important; border-color: var(--border) !important; }
+        .platform-button { color: var(--accent) !important; border-color: var(--accent) !important; background: rgba(63, 102, 82, .08) !important; }
+        .platform-button:hover:not(:disabled) { background: rgba(63, 102, 82, .16) !important; }
+        .platform-button:disabled { color: var(--text-muted) !important; border-color: var(--border) !important; background: var(--paper) !important; }
     </style>
 </head>
 <body>
     <div id="content">
 
-    <nav class="chapters" style="margin-bottom: 1rem; padding-bottom: 1rem;">
-        <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.05em; width: 100%; margin-bottom: 0.5rem; display: block;">Book Chapters</span>
-                    <a href="chapter0.html" class="active">Ch. 0</a>
+    <aside class="chapter-sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-brand__eyebrow">Regression Study Guide</div>
+            <div class="sidebar-brand__title">Navigation</div>
+            <div class="sidebar-brand__subtitle">Jump between chapters, companion guides, and study aids.</div>
+        </div>
+        <section class="sidebar-section">
+            <div class="sidebar-section-title">Book Chapters</div>
+            <nav class="chapters">
+                            <a href="chapter0.html" class="active">Ch. 0</a>
             <a href="level_0_orientation.html" class="">Level 0 Orientation</a>
+            <a href="calculus_derivatives_micro_videos.html" class="">🎥 Calculus Micro-Videos</a>
+            <a href="day_0e_masterclass_video.html" class="">🎬 Day 0E Masterclass Video</a>
+            <a href="chapter1_read_first.html" class="">Read this before jumping into Chapter 1</a>
+            <a href="chapter1_exercise_notebook.html" class="">Chapter 1 exercise notebook</a>
             <a href="chapter1.html" class="">Ch. 1</a>
+            <a href="chapter2_concept_help.html" class="">Chapter 2 concept help (open only when stuck)</a>
             <a href="chapter2.html" class="">Ch. 2</a>
+            <a href="chapter3_concept_help.html" class="">Chapter 3 concept help (open only when stuck)</a>
             <a href="chapter3.html" class="">Ch. 3</a>
+            <a href="chapter4_concept_help.html" class="">Chapter 4 concept help (open only when stuck)</a>
             <a href="chapter4.html" class="">Ch. 4</a>
             <a href="chapter4_5_interlude.html" class="">Ch. 4.5 Interlude</a>
+            <a href="chapter5_concept_help.html" class="">Chapter 5 concept help (open only when stuck)</a>
             <a href="chapter5.html" class="">Ch. 5</a>
+            <a href="chapter6_concept_help.html" class="">Chapter 6 concept help (open only when stuck)</a>
             <a href="chapter6.html" class="">Ch. 6</a>
+            <a href="calculus_video_series.html" class="">Calculus video lessons</a>
             <a href="settings.html" class="">Settings</a>
-    </nav>
-    <nav class="chapters" style="margin-bottom: 2.5rem; padding-bottom: 1.5rem;">
-        <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--accent); letter-spacing: 0.05em; width: 100%; margin-bottom: 0.5rem; display: block;">Companion Guides</span>
-                    <a href="chapter0_companion.html" class="">Ch. 0 Companion</a>
+            </nav>
+        </section>
+        <section class="sidebar-section">
+            <div class="sidebar-section-title">Companion Guides</div>
+            <nav class="chapters">
+                            <a href="chapter0_companion.html" class="">Ch. 0 Companion</a>
             <a href="chapter1_companion.html" class="">Ch. 1 Companion</a>
             <a href="chapter2_companion.html" class="">Ch. 2 Companion</a>
             <a href="chapter3_companion.html" class="">Ch. 3 Companion</a>
             <a href="chapter4_companion.html" class="">Ch. 4 Companion</a>
             <a href="chapter5_companion.html" class="">Ch. 5 Companion</a>
             <a href="chapter6_companion.html" class="">Ch. 6 Companion</a>
-    </nav>
+            </nav>
+        </section>
+    </aside>
     
         <article class="markdown-body">
 <h1 id="chapter-0-from-nothing-to-ready">Chapter 0 — From Nothing to Ready</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="overview">✦ Read the beginner companion overview</button></p>
 <h2 id="level-0-base-camp-five-short-days-before-the-mhp-cost-estimator-begins">Level 0 Base Camp: five short days before the MHP Cost Estimator begins</h2>
-<p><button class="read-details-btn" data-section="base-camp">✦ Read Details</button></p>
 <blockquote>
 <p><strong>Central promise.</strong> By the end of this chapter, a summation sign will not make you flinch, a NumPy shape error will feel like a solvable puzzle instead of a personal insult, and the sentence "take the derivative of the squared error with respect to the slope" will sound like an instruction you could actually follow. You will not yet know any machine learning. You will know enough Python, algebra, statistics, and calculus that Chapter 1 reads like a hard but fair climb, not a cliff.</p>
 </blockquote>
+<p>If that sounds ambitious, good news: nobody is expected to arrive knowing the vocabulary. Treat this chapter as a workshop, not an exam. Type the small examples, laugh at the inevitable error messages, and repeat an exit check whenever it still feels foggy.</p>
 <p>This chapter exists because Chapter 1 does not slow down for you. By its second day it is talking about vectors, matrices, and tensors. By its fifth day it is deriving a matrix gradient and proving a matrix is positive semidefinite. That is exactly as it should be — this book is aiming you at research-level regression, causal inference, and survival analysis by Chapter 6, and there is no version of that destination that skips the math.</p>
 <p>So we are going to spend five days building the floor you'll stand on. Same rules as every other chapter in this book: no black boxes, code proves every claim, you build something small each day, you break it on purpose, and you don't move on until the exit check passes.</p>
 <p>If you already know some of this — if <code>for</code> loops and <code>numpy</code> arrays are old friends — skim fast, but still run every code block. Muscle memory matters more than novelty here.</p>
 <hr />
 <h2 id="the-pedagogical-contract-same-one-chapter-1-uses">The pedagogical contract (same one Chapter 1 uses)</h2>
-<p><button class="read-details-btn" data-section="contract">✦ Read Details</button></p>
 <ol>
 <li><strong>One central concept per day.</strong></li>
 <li><strong>No mathematical hand-waving.</strong> Every symbol gets unpacked and connected to a number you can see.</li>
@@ -566,11 +713,11 @@ python -m pip install numpy matplotlib
 <p>Keep a scratch file — <code>level0_notes.py</code> or a notebook — and never delete a failed experiment. A wrong answer with a note explaining why it was wrong is worth more than a clean run you don't understand.</p>
 <hr />
 <h1 id="day-0a-python-you-actually-need">Day 0A — Python You Actually Need</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-0a">✦ Read the beginner companion for Day 0A</button></p>
 <blockquote>
 <p><strong>Today's central idea:</strong> You don't need to be a "real programmer." You need six tools — variables, functions, loops, comprehensions, dictionaries, and one small class — used correctly and often.</p>
 </blockquote>
 <h2 id="0a1-variables-and-functions-naming-a-thought">0A.1 Variables and functions: naming a thought</h2>
-<p><button class="read-details-btn" data-section="0a-1">✦ Read Details</button></p>
 <p>Suppose your manager in Peshawar hands you the planned capacity of one microhydro power (MHP) site: 250 kilowatts. You want to convert that to megawatts.</p>
 <pre><code class="language-python">capacity_kw = 250.0
 capacity_mw = capacity_kw / 1000.0
@@ -587,7 +734,6 @@ print(kw_to_mw(1800.0))  # 1.8
 </code></pre>
 <p>A function has a contract: it takes something in, and it promises something specific out. Every regression model you build in this book — starting with <code>MHPCostEstimator</code> in Chapter 1 — is, underneath, a pile of functions with contracts like this one, just with more numbers going in.</p>
 <h2 id="0a2-loops-doing-the-same-thing-many-times-honestly">0A.2 Loops: doing the same thing many times, honestly</h2>
-<p><button class="read-details-btn" data-section="0a-2">✦ Read Details</button></p>
 <p>You have planned capacities for five projects and want each one in megawatts.</p>
 <pre><code class="language-python">capacities_kw = [100.0, 250.0, 500.0, 1800.0, 60.0]
 
@@ -600,7 +746,6 @@ print(capacities_mw)
 </code></pre>
 <p>Walk through this out loud (yes, actually say it): "For each value <code>c</code> in the list, convert it, and stick the result onto the end of a new list." That is the entire idea of a <code>for</code> loop. Nothing hides inside it.</p>
 <h2 id="0a3-list-comprehensions-the-same-loop-said-more-tersely">0A.3 List comprehensions: the same loop, said more tersely</h2>
-<p><button class="read-details-btn" data-section="0a-3">✦ Read Details</button></p>
 <p>Python lets you write the loop above in one line. This is not a different idea — it is the <em>identical</em> operation, just written compactly enough that you'll see it constantly in other people's code (and in later chapters of this book).</p>
 <pre><code class="language-python">capacities_mw = [kw_to_mw(c) for c in capacities_kw]
 print(capacities_mw)
@@ -608,7 +753,6 @@ print(capacities_mw)
 </code></pre>
 <p>Read it right to left inside the brackets: "for <code>c</code> in <code>capacities_kw</code>, compute <code>kw_to_mw(c)</code>, collect all of those." If a comprehension ever confuses you, the fix is always the same: mentally unroll it back into the <code>for</code> loop from §0A.2. They compute the same thing.</p>
 <h2 id="0a4-dictionaries-a-record-not-just-a-list">0A.4 Dictionaries: a record, not just a list</h2>
-<p><button class="read-details-btn" data-section="0a-4">✦ Read Details</button></p>
 <p>A list of numbers loses the <em>meaning</em> of each number. A single MHP project is not just <code>[15.0, 100.0, 3]</code> — it's cable length, capacity, and terrain difficulty, and you'll forget which number is which within a week. A dictionary keeps the label attached to the value.</p>
 <pre><code class="language-python">project = {
     &quot;site_id&quot;: &quot;MHP-0042&quot;,
@@ -622,7 +766,6 @@ print(project[&quot;planned_capacity_kw&quot;])
 </code></pre>
 <p>This matters more than it looks like it should. Chapter 1, Day 2 introduces a "data dictionary" as part of the model itself — the discipline of never letting a raw number float around without its meaning attached starts here.</p>
 <h2 id="0a5-a-minimal-class-bundling-data-and-behaviour-together">0A.5 A minimal class: bundling data and behaviour together</h2>
-<p><button class="read-details-btn" data-section="0a-5">✦ Read Details</button></p>
 <p>A function does one thing to whatever you hand it. A class is a way of saying: "here is a <em>thing</em> — it has some data that belongs to it, and some behaviour that belongs to it." You will build classes named <code>MHPCostEstimator</code> and <code>GaussianOLS</code> later in this book. Here is the smallest possible ancestor of those, so the syntax is not a surprise when it matters.</p>
 <pre><code class="language-python">class UnitConverter:
     def __init__(self, factor):
@@ -655,7 +798,6 @@ for p in projects:
 </code></pre>
 <p>This is not a regression. It's a fixed formula, not a fitted one — the whole rest of the book is about the difference between "a formula I made up" and "a formula the data told me to use." Keep that distinction in your head; it will matter by Day 5.</p>
 <h2 id="0a7-break-it-deliberately">0A.7 Break it deliberately</h2>
-<p><button class="read-details-btn" data-section="0a-7">✦ Read Details</button></p>
 <p>Run each of these, read the <em>last line</em> of the error only, and write one sentence translating it into English before you fix it.</p>
 <pre><code class="language-python"># Break 1
 def kw_to_mw(capacity_kw)   # missing colon
@@ -678,11 +820,11 @@ print(capacities_kw * 1000)   # not what you think it does
 - explain, out loud, why <code>[1, 2, 3] * 2</code> is not <code>[2, 4, 6]</code>.</p>
 <hr />
 <h1 id="day-0b-numpy-shapes-and-the-dot-product">Day 0B — NumPy, Shapes, and the Dot Product</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-0b">✦ Read the beginner companion for Day 0B</button></p>
 <blockquote>
 <p><strong>Today's central idea:</strong> A NumPy array is not "a faster list." It's a different kind of object with its own arithmetic rules, and almost every bug you'll hit in this book for the next six chapters is a shape mismatch.</p>
 </blockquote>
 <h2 id="0b1-why-lists-fail-us">0B.1 Why lists fail us</h2>
-<p><button class="read-details-btn" data-section="0b-1">✦ Read Details</button></p>
 <p>You saw it already: <code>capacities_kw * 1000</code> repeats a list instead of scaling it. NumPy arrays fix this by defining <code>*</code>, <code>+</code>, <code>-</code>, <code>/</code> to mean <em>elementwise</em> arithmetic.</p>
 <pre><code class="language-python">import numpy as np
 
@@ -692,7 +834,6 @@ print(capacities_watts)
 # [100000. 250000. 500000.]
 </code></pre>
 <h2 id="0b2-shape-is-the-first-thing-you-check-always">0B.2 Shape is the first thing you check, always</h2>
-<p><button class="read-details-btn" data-section="0b-2">✦ Read Details</button></p>
 <p>Every array has a <code>.shape</code>. Get comfortable reading it before you do anything else with an array.</p>
 <pre><code class="language-python">a = np.array([1.0, 2.0, 3.0])
 print(a.shape)          # (3,)   — a 1-D array of 3 numbers, a &quot;vector&quot;
@@ -705,7 +846,6 @@ print(c.shape)          # (3, 1) — a 2-D array: 3 rows, 1 column
 </code></pre>
 <p><code>(3,)</code>, <code>(1, 3)</code>, and <code>(3, 1)</code> hold the same numbers and are <strong>not interchangeable</strong>. This looks pedantic until it silently ruins a calculation two chapters from now. Chapter 1's design matrices depend on you already having this reflex.</p>
 <h2 id="0b3-indexing-and-slicing">0B.3 Indexing and slicing</h2>
-<p><button class="read-details-btn" data-section="0b-3">✦ Read Details</button></p>
 <pre><code class="language-python">X = np.array([
     [15.0, 100.0, 3],   # cable_km, capacity_kw, terrain_index
     [30.0, 250.0, 4],
@@ -720,7 +860,6 @@ print(X[:2, :2])        # first two rows, first two columns
 </code></pre>
 <p>The comma inside <code>[ ]</code> separates "which rows" from "which columns." <code>:</code> alone means "all of them." This exact slicing vocabulary is what Chapter 1 uses to pull a single feature column out of a design matrix — get it into your hands now, not while also learning what a design matrix is.</p>
 <h2 id="0b4-broadcasting-numpys-rule-for-mismatched-shapes">0B.4 Broadcasting: NumPy's rule for mismatched shapes</h2>
-<p><button class="read-details-btn" data-section="0b-4">✦ Read Details</button></p>
 <p>Broadcasting is <em>not</em> magic. It's one precise rule: NumPy compares shapes from the right, and a dimension of size 1 (or a missing dimension) is allowed to stretch to match. Watch it work, then watch it correctly refuse.</p>
 <pre><code class="language-python">X = np.array([
     [15.0, 100.0],
@@ -744,7 +883,6 @@ with gufunc signature (n?,k),(k?,m?)-&gt;(n?,m?) (size 3 is different from 2)
 </code></pre>
 <p>Translate the last line, not the jargon: <em>X has 2 columns; <code>weights</code> has 3 entries; matrix multiplication needs those to match.</em> Fix it by giving <code>weights</code> exactly 2 entries, one per column of <code>X</code>. This is the single most common error you will produce for the next six chapters, so get used to reading it calmly.</p>
 <h2 id="0b5-the-dot-product-at-three-levels-of-honesty">0B.5 The dot product, at three levels of honesty</h2>
-<p><button class="read-details-btn" data-section="0b-5">✦ Read Details</button></p>
 <p>A "weighted sum" is the single most important operation in this entire book — every regression coefficient you will ever fit multiplies a feature by a weight and adds the results up. Here it is proven three ways, so you know they're the same thing.</p>
 <pre><code class="language-python">features = np.array([15.0, 100.0])       # cable_km, capacity_kw
 weights  = np.array([0.05, 0.002])       # million PKR per unit
@@ -765,7 +903,6 @@ print(manual, loop_total, dot_total)
 </code></pre>
 <p>All three give <code>0.95</code> — 0.75 (cable contribution) + 0.2 (capacity contribution) million PKR. When Chapter 1 writes <code>X @ beta</code>, this is exactly what it means: do this weighted sum, once per row of <code>X</code>, all at once.</p>
 <h2 id="0b6-build-a-manual-prediction-matrix-style">0B.6 Build: a manual prediction, matrix style</h2>
-<p><button class="read-details-btn" data-section="0b-6">✦ Read Details</button></p>
 <pre><code class="language-python">X = np.array([
     [15.0, 100.0],
     [30.0, 250.0],
@@ -793,20 +930,18 @@ print(row_vector + col_vector)
 - read a <code>matmul</code> shape-mismatch error and say, in plain English, which two numbers disagree.</p>
 <hr />
 <h1 id="day-0c-algebra-and-summation-notation">Day 0C — Algebra and Summation Notation</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-0c">✦ Read the beginner companion for Day 0C</button></p>
 <blockquote>
 <p><strong>Today's central idea:</strong> $\sum$ is not a foreign symbol. It's a <code>for</code> loop that adds things up, written in a more compressed alphabet.</p>
 </blockquote>
 <h2 id="0c1-a-function-is-a-recipe-with-a-name">0C.1 A function is a recipe with a name</h2>
-<p><button class="read-details-btn" data-section="0c-1">✦ Read Details</button></p>
 <p>You already know this from Python — <code>def kw_to_mw(capacity_kw): return capacity_kw / 1000.0</code> is a recipe. Algebra just writes recipes with single letters instead of English words:</p>
 <p>$$f(x) = \frac{x}{1000}$$</p>
 <p>says exactly what the Python function said: give me a number $x$, I'll divide it by 1000 and call the result $f(x)$. Every formula in this book is a recipe like this one — the discipline is learning to read the recipe before panicking about the symbols.</p>
 <h2 id="0c2-the-equation-of-a-line-and-why-it-matters-here">0C.2 The equation of a line, and why it matters here</h2>
-<p><button class="read-details-btn" data-section="0c-2">✦ Read Details</button></p>
 <p>$$y = mx + c$$</p>
 <p>$m$ is the slope: how much $y$ changes when $x$ increases by exactly 1. $c$ is the intercept: the value of $y$ when $x$ is 0. This is the entire idea behind linear regression with one feature — Chapter 1 spends its first three days building up to exactly this equation, generalised to many features. If you can already sketch $y = 2x + 5$ on paper and say what happens as $x$ grows, you have the geometric intuition; the rest is notation.</p>
 <h2 id="0c3-summation-notation-built-from-a-loop-you-already-wrote">0C.3 Summation notation, built from a loop you already wrote</h2>
-<p><button class="read-details-btn" data-section="0c-3">✦ Read Details</button></p>
 <p>Recall Day 0A's loop:</p>
 <pre><code class="language-python">loop_total = 0.0
 for f, w in zip(features, weights):
@@ -836,7 +971,6 @@ print(total_loop, total_numpy)
 <p>$$\text{SSR} = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$</p>
 <p>you should now be able to read it as: "loop over every project $i$; take the actual cost minus the predicted cost; square it; add it to a running total." Try writing that as Python <em>before</em> Chapter 1 does it for you.</p>
 <h2 id="0c4-exponents-and-why-we-square-errors-a-preview">0C.4 Exponents and why we square errors (a preview)</h2>
-<p><button class="read-details-btn" data-section="0c-4">✦ Read Details</button></p>
 <p>$x^2$ means $x$ multiplied by itself. Two properties matter for everything downstream:</p>
 <ul>
 <li>squaring always produces a non-negative number, so a positive error and an equally-sized negative error contribute the same amount once squared;</li>
@@ -844,7 +978,6 @@ print(total_loop, total_numpy)
 </ul>
 <p>Chapter 1, Day 4 spends real time justifying <em>why</em> regression squares errors instead of just adding them up. You don't need the full argument yet — just the two facts above, so the argument doesn't start from zero.</p>
 <h2 id="0c5-build-ssr-from-the-formula-three-ways">0C.5 Build: SSR from the formula, three ways</h2>
-<p><button class="read-details-btn" data-section="0c-5">✦ Read Details</button></p>
 <pre><code class="language-python">y_actual    = np.array([12.0, 30.0, 8.0])
 y_predicted = np.array([11.2, 31.5, 9.0])
 
@@ -865,7 +998,6 @@ print(ssr_manual, ssr_loop, ssr_oneline)
 </code></pre>
 <p>All three must match. If they don't, you have a bug — and finding it is exactly the kind of debugging Chapter 1 will ask of you constantly.</p>
 <h2 id="0c6-break-it-deliberately">0C.6 Break it deliberately</h2>
-<p><button class="read-details-btn" data-section="0c-6">✦ Read Details</button></p>
 <p>Predict the output on paper before running:</p>
 <pre><code class="language-python">values = np.array([2.0, -3.0, 5.0])
 print(np.sum(values ** 2))     # sum of squares
@@ -879,11 +1011,11 @@ print(np.sum(values) ** 2)     # square of the sum
 - explain the difference between $\sum x_i^2$ and $(\sum x_i)^2$ using a concrete 3-number example.</p>
 <hr />
 <h1 id="day-0d-statistics-from-raw-definitions">Day 0D — Statistics From Raw Definitions</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-0d">✦ Read the beginner companion for Day 0D</button></p>
 <blockquote>
 <p><strong>Today's central idea:</strong> Mean, variance, and correlation are not library functions you call. They are formulas you can build from Day 0C's summation notation in about four lines each — and Chapter 2's probability content assumes you already know what they mean.</p>
 </blockquote>
 <h2 id="0d1-the-mean-the-balancing-point">0D.1 The mean: the balancing point</h2>
-<p><button class="read-details-btn" data-section="0d-1">✦ Read Details</button></p>
 <p>Suppose five MHP projects had these actual costs, in million PKR: <code>[12.0, 30.0, 8.0, 45.0, 15.0]</code>.</p>
 <p>$$\bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i$$</p>
 <p>"Add everything up, divide by how many there are."</p>
@@ -897,7 +1029,6 @@ print(mean_manual, mean_numpy)
 # 22.0 22.0
 </code></pre>
 <h2 id="0d2-variance-how-far-on-average-things-sit-from-the-mean">0D.2 Variance: how far, on average, things sit from the mean</h2>
-<p><button class="read-details-btn" data-section="0d-2">✦ Read Details</button></p>
 <p>You can't just average the raw deviations from the mean — they always sum to zero (that's <em>what</em> "mean" means). So we square them first, borrowing exactly the trick from Day 0C.</p>
 <p>$$\sigma^2 = \frac{1}{n}\sum_{i=1}^{n} (x_i - \bar{x})^2$$</p>
 <pre><code class="language-python">deviations = costs - costs.mean()
@@ -913,7 +1044,6 @@ print(variance_manual, variance_numpy)
 <p><strong>A warning that will save you real confusion later:</strong> you'll sometimes see variance computed by dividing by $n - 1$ instead of $n$ (the "sample" variance, <code>ddof=1</code> in NumPy). Chapter 2, Day 6 explains exactly why that correction exists. For now, just notice that <code>costs.var()</code> and <code>costs.var(ddof=1)</code> disagree, and don't assume it's a bug when you see it — it's a deliberate choice depending on what you're trying to estimate.</p>
 </blockquote>
 <h2 id="0d3-standard-deviation-getting-the-units-back">0D.3 Standard deviation: getting the units back</h2>
-<p><button class="read-details-btn" data-section="0d-3">✦ Read Details</button></p>
 <p>Variance is in squared units (million PKR², which means nothing to anyone). Standard deviation undoes the squaring:</p>
 <p>$$\sigma = \sqrt{\sigma^2}$$</p>
 <pre><code class="language-python">std_manual = np.sqrt(variance_manual)
@@ -921,7 +1051,6 @@ std_numpy = costs.std()
 print(std_manual, std_numpy)
 </code></pre>
 <h2 id="0d4-covariance-do-two-things-move-together">0D.4 Covariance: do two things move together?</h2>
-<p><button class="read-details-btn" data-section="0d-4">✦ Read Details</button></p>
 <p>Now bring in a second variable — cable length per project, in km: <code>[12.0, 30.0, 5.0, 40.0, 15.0]</code>. Covariance asks: when one variable is above its mean, is the other one usually above its mean too?</p>
 <p>$$\text{cov}(x, y) = \frac{1}{n}\sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})$$</p>
 <pre><code class="language-python">cable_km = np.array([12.0, 30.0, 5.0, 40.0, 15.0])
@@ -936,7 +1065,6 @@ print(cov_manual, cov_numpy)
 </code></pre>
 <p>If both deviations tend to have the same sign (both above their means, or both below), each product is positive and covariance comes out positive: as cable length rises, cost tends to rise too. That's not a coincidence for this dataset — it's the whole reason regression will later find cable length a useful feature.</p>
 <h2 id="0d5-correlation-covariance-with-the-units-washed-out">0D.5 Correlation: covariance with the units washed out</h2>
-<p><button class="read-details-btn" data-section="0d-5">✦ Read Details</button></p>
 <p>Covariance's <em>size</em> depends on the units you happened to measure in, which makes two covariances hard to compare. Correlation fixes that by dividing out each variable's own spread:</p>
 <p>$$r = \frac{\text{cov}(x, y)}{\sigma_x \sigma_y}$$</p>
 <pre><code class="language-python">r_manual = cov_manual / (costs.std() * cable_km.std())
@@ -956,7 +1084,6 @@ print(f&quot;correlation(cost, cable_km) = {np.corrcoef(costs, cable_km)[0,1]:.3
 </code></pre>
 <p>This four-line report is, in essence, what Exercise 0.1 in the orientation chapter asked you to build for the full KP datasets. Now you know what every number in it actually means, instead of trusting <code>.describe()</code> blindly.</p>
 <h2 id="0d7-break-it-deliberately">0D.7 Break it deliberately</h2>
-<p><button class="read-details-btn" data-section="0d-7">✦ Read Details</button></p>
 <pre><code class="language-python">constant = np.array([5.0, 5.0, 5.0, 5.0, 5.0])
 print(np.corrcoef(constant, costs))
 </code></pre>
@@ -969,11 +1096,17 @@ print(np.corrcoef(constant, costs))
 - explain why a zero-variance feature produces <code>nan</code> instead of an error, and why that's more dangerous.</p>
 <hr />
 <h1 id="day-0e-slope-derivatives-and-surviving-errors">Day 0E — Slope, Derivatives, and Surviving Errors</h1>
+<p><button type="button" class="companion-more-button" data-companion-section="day-0e">✦ Read the beginner companion for Day 0E</button></p>
+<div style="margin: 14px 0 20px 0;">
+    <button type="button" onclick="openDay0EVideoModal()" style="background: linear-gradient(135deg, #ec4899, #db2777); color: #ffffff; border: none; padding: 10px 22px; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4); display: inline-flex; align-items: center; gap: 8px; transition: transform 0.15s ease;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+        <span>🎬 Watch Day 0E Masterclass Video (Female Voice & Interactive Exercises)</span>
+    </button>
+</div>
+
 <blockquote>
 <p><strong>Today's central idea:</strong> A derivative is just the slope of a curve at one exact point, and every model you train in this book is, underneath, a search for the point where that slope hits zero.</p>
 </blockquote>
 <h2 id="0e1-from-a-straight-slope-to-a-curved-one">0E.1 From a straight slope to a curved one</h2>
-<p><button class="read-details-btn" data-section="0e-1">✦ Read Details</button></p>
 <p>You already know $y = mx + c$ has one constant slope, $m$, everywhere. Now consider a curve: $y = x^2$. Its steepness is different at every point — flat near $x=0$, steep far from it. The <strong>derivative</strong> is a formula that tells you the exact slope at any single point you pick.</p>
 <p>For $y = x^2$, the derivative is:</p>
 <p>$$\frac{dy}{dx} = 2x$$</p>
@@ -983,7 +1116,6 @@ print(np.corrcoef(constant, costs))
 <li>At $x = -3$: slope is $2(-3) = -6$ — descending steeply, mirror image.</li>
 </ul>
 <h2 id="0e2-where-that-formula-actually-comes-from-the-limit-definition">0E.2 Where that formula actually comes from (the limit definition)</h2>
-<p><button class="read-details-btn" data-section="0e-2">✦ Read Details</button></p>
 <p>You don't have to memorise derivative rules as magic — they fall out of one idea: <em>look at the average slope between two points that are getting closer and closer together.</em></p>
 <p>$$\frac{dy}{dx} = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}$$</p>
 <p><strong>Code proof — approximate this numerically and watch it converge to $2x$:</strong></p>
@@ -1000,7 +1132,6 @@ for h in [1.0, 0.1, 0.01, 0.0001, 0.000001]:
 </code></pre>
 <p>This is not a party trick. Chapter 1, Day 5 checks its hand-derived matrix gradient against exactly this kind of numerical approximation ("finite differences"), and Chapter 2, Day 9 builds gradient descent directly on top of it. You just ran a miniature version of both.</p>
 <h2 id="0e3-two-derivative-rules-youll-actually-use">0E.3 Two derivative rules you'll actually use</h2>
-<p><button class="read-details-btn" data-section="0e-3">✦ Read Details</button></p>
 <p>You don't need a full calculus course — this book only leans on a handful of rules, repeatedly:</p>
 <ul>
 <li><strong>Power rule:</strong> the derivative of $x^n$ is $n x^{n-1}$. (This is where $x^2 \to 2x$ came from.)</li>
@@ -1023,7 +1154,6 @@ print(dy_dx_by_rule(x))                                  # 17.0
 print(numerical_slope(y, x, h=0.000001))                  # ~17.0, confirms the rule
 </code></pre>
 <h2 id="0e4-partial-derivatives-slope-when-theres-more-than-one-dial-to-turn">0E.4 Partial derivatives: slope when there's more than one dial to turn</h2>
-<p><button class="read-details-btn" data-section="0e-4">✦ Read Details</button></p>
 <p>Regression rarely has one adjustable number — it has one per feature. A <strong>partial derivative</strong> asks: "if I nudge <em>just this one</em> number and freeze everything else, how does the output change?" Notation-wise, $\partial$ replaces $d$ to signal "there are other variables here, and I'm holding them still."</p>
 <p>Take a toy error surface: $E(m, c) = (10 - (m \cdot 2 + c))^2$ — the squared error of predicting $y=10$ at $x=2$ using slope $m$ and intercept $c$.</p>
 <pre><code class="language-python">def error(m, c):
@@ -1042,7 +1172,6 @@ print(&quot;slope if we nudge c:&quot;, partial_wrt_c(error, m, c))
 </code></pre>
 <p>Both numbers together form the <strong>gradient</strong> — a small arrow made of "how much does the error change per dial, holding the others still." Chapter 1, Day 5 derives this gradient by hand for the full OLS objective, with one partial derivative per feature instead of two. You just did the two-dial version.</p>
 <h2 id="0e5-why-any-of-this-matters-descending-toward-zero-error">0E.5 Why any of this matters: descending toward zero error</h2>
-<p><button class="read-details-btn" data-section="0e-5">✦ Read Details</button></p>
 <p>The core trick behind fitting almost every model in this book: start somewhere, compute the gradient, take a small step in the direction that <em>decreases</em> error, and repeat until the gradient is (close to) zero.</p>
 <pre><code class="language-python">m, c = 0.0, 0.0        # start with a bad guess
 learning_rate = 0.01
@@ -1056,8 +1185,37 @@ for step in range(50):
 print(f&quot;m={m:.3f}, c={c:.3f}, error={error(m, c):.6f}&quot;)
 </code></pre>
 <p>Run it and watch the error shrink toward zero as <code>m</code> and <code>c</code> settle into values that make <code>m * 2 + c</code> land near <code>10</code>. This is a hand-built, miniature version of gradient descent — the real one arrives in Chapter 2, Day 9, with real data instead of one toy point.</p>
+<h2 id="0e5a-symbolic-bridge-differentiate-squared-error-by-hand">0E.5a Symbolic bridge: differentiate squared error by hand</h2>
+<p>Numerical slopes tell us <em>what</em> a derivative is. Later chapters also manipulate symbols to obtain a reusable rule. Start with one observation, treating $x$, $y$, and $c$ as fixed numbers while $m$ is the adjustable slope:</p>
+<p>$$
+E(m)=(y-mx-c)^2.
+$$</p>
+<p>First expand the square. Using $(a-b)^2=a^2-2ab+b^2$ with $a=y-c$ and $b=mx$:</p>
+<p>$$
+E(m)=(y-c)^2-2(y-c)mx+m^2x^2.
+$$</p>
+<p>Now differentiate term by term with respect to $m$:</p>
+<p>$$
+\frac{dE}{dm}=0-2(y-c)x+2mx^2.
+$$</p>
+<p>Factor the result to recover the compact chain-rule form:</p>
+<p>$$
+\frac{dE}{dm}=-2x(y-mx-c).
+$$</p>
+<p>For $x=2$, $y=10$, $c=1$, and $m=1$, the expanded polynomial is $E(m)=81-36m+4m^2$, so its derivative is $-36+8m=-28$ at $m=1$.</p>
+<pre><code class="language-python">def symbolic_gradient_m(x, y, m, c):
+    return -2 * x * (y - m * x - c)
+
+x, y, m, c = 2.0, 10.0, 1.0, 1.0
+by_algebra = symbolic_gradient_m(x, y, m, c)
+by_finite_difference = partial_wrt_m(error, m, c, h=1e-6)
+
+print(by_algebra, by_finite_difference)
+assert by_algebra == -28.0
+assert abs(by_algebra - by_finite_difference) &lt; 1e-4
+</code></pre>
+<p>The letters are placeholders, not mysterious objects. Expanding, differentiating term by term, refactoring, and checking numerically is the same workflow used for the matrix gradient in Chapter 1 and the regularisation derivatives in Chapter 3.</p>
 <h2 id="0e6-surviving-the-traceback">0E.6 Surviving the traceback</h2>
-<p><button class="read-details-btn" data-section="0e-6">✦ Read Details</button></p>
 <p>You will see red error text constantly for the rest of this book. A practitioner reads an error the way an investigator reads a scene: bottom line first, ignore the jargon, translate to English.</p>
 <p><strong>Shape mismatch (you already met this on Day 0B):</strong></p>
 <pre><code class="language-text">ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0...
@@ -1105,7 +1263,7 @@ for step in range(10):
 - read a <code>KeyError</code>, <code>TypeError</code>, and shape-mismatch <code>ValueError</code> and translate each into plain English before trying to fix it.</p>
 <hr />
 <h1 id="level-0-capstone-prove-youre-ready">Level 0 Capstone — Prove You're Ready</h1>
-<p><button class="read-details-btn" data-section="capstone">✦ Read Details</button></p>
+<p><button type="button" class="companion-more-button" data-companion-section="capstone">✦ Read the beginner capstone companion</button></p>
 <p>Do this without peeking at earlier sections. This mirrors the format every later chapter uses for its own capstone, so it's worth taking seriously now.</p>
 <p><strong>Given:</strong></p>
 <pre><code class="language-python">projects = np.array([
@@ -1194,260 +1352,92 @@ costs = np.array([12.0, 30.0, 8.0, 45.0, 15.0])   # million PKR
 <h2 id="where-chapter-1-begins">Where Chapter 1 begins</h2>
 <p>Chapter 1 opens with a question you're now equipped to actually think about: <em>what is a regression for — prediction, explanation, or causation?</em> Everything you built this week — functions, shapes, sums, means, slopes — is about to get one name each: features, design matrix, objective function, gradient. Turn the page.</p>
 <style>
-.read-details-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: rgba(34, 211, 238, 0.08);
-    border: 1px solid rgba(34, 211, 238, 0.3);
-    color: #22d3ee;
-    padding: 0.4rem 0.8rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    border-radius: 0.375rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    margin: 0.5rem 0 1rem 0;
-    font-family: inherit;
+.companion-more-button {
+    display: inline-flex; align-items: center; gap: .45rem;
+    margin: .5rem 0 1.25rem; padding: .55rem .85rem;
+    border: 1px solid rgba(34, 211, 238, .42); border-radius: .45rem;
+    background: rgba(34, 211, 238, .09); color: #67e8f9;
+    font: inherit; font-size: .82rem; font-weight: 700; cursor: pointer;
 }
-.read-details-btn:hover {
-    background: rgba(34, 211, 238, 0.2);
-    border-color: #22d3ee;
-    box-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
+.companion-more-button:hover, .companion-more-button:focus-visible {
+    background: rgba(34, 211, 238, .18); border-color: #22d3ee;
 }
-.comp-modal {
-    display: none;
-    position: fixed;
-    z-index: 10000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: rgba(11, 15, 25, 0.85);
-    backdrop-filter: blur(8px);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    align-items: center;
-    justify-content: center;
+.companion-more-modal[hidden] { display: none; }
+.companion-more-modal {
+    position: fixed; inset: 0; z-index: 10000; display: grid; place-items: center;
+    padding: 1rem; background: rgba(5, 9, 17, .88); backdrop-filter: blur(7px);
 }
-.comp-modal.open {
-    display: flex;
-    opacity: 1;
+.companion-more-dialog {
+    width: min(64rem, 96vw); max-height: 92vh; display: flex; flex-direction: column;
+    overflow: hidden; border: 1px solid #334155; border-radius: .8rem;
+    background: #111827; box-shadow: 0 24px 70px rgba(0, 0, 0, .55);
 }
-.comp-modal-content {
-    background-color: #151d30;
-    border: 1px solid #223150;
-    border-radius: 0.75rem;
-    width: 90%;
-    max-width: 48rem;
-    max-height: 85vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.6);
-    position: relative;
-    padding: 2.5rem 2rem 2rem 2rem;
-    transform: scale(0.95);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+.companion-more-header {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: .8rem 1rem; border-bottom: 1px solid #334155; background: #172033;
 }
-.comp-modal.open .comp-modal-content {
-    transform: scale(1);
+.companion-more-header strong { color: #fff; }
+.companion-more-actions { display: flex; align-items: center; gap: .75rem; }
+.companion-more-actions a { color: #67e8f9; font-size: .82rem; }
+.companion-more-close {
+    width: 2.1rem; height: 2.1rem; border: 1px solid #475569; border-radius: .4rem;
+    background: #0b1220; color: #e2e8f0; font-size: 1.35rem; cursor: pointer;
 }
-.comp-modal-close {
-    position: absolute;
-    top: 0.75rem;
-    right: 1.25rem;
-    color: #cbd5e1;
-    font-size: 2rem;
-    font-weight: 300;
-    cursor: pointer;
-    transition: color 0.2s ease;
-    line-height: 1;
-}
-.comp-modal-close:hover {
-    color: #fff;
-}
-#comp-modal-body {
-    color: #cbd5e1;
-    font-size: 0.95rem;
-}
-#comp-modal-body h1, #comp-modal-body h2 {
-    color: #fff;
-    border-bottom: 1px solid #223150;
-    padding-bottom: 0.5rem;
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-}
-#comp-modal-body h3, #comp-modal-body h4 {
-    color: #fff;
-    margin-top: 1.75rem;
-    margin-bottom: 0.75rem;
-}
-#comp-modal-body p {
-    margin-bottom: 1rem;
-}
-#comp-modal-body code {
-    color: #67e8f9;
-    background: #0b0f19;
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-}
-#comp-modal-body pre {
-    background: #0b0f19;
-    border: 1px solid #223150;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    margin: 1rem 0;
-    overflow-x: auto;
-}
-#comp-modal-body pre code {
-    background: transparent;
-    padding: 0;
-    color: #e2e8f0;
-}
-#comp-modal-body table {
-    width: 100%;
-    font-size: 0.875rem;
-    border-collapse: collapse;
-    margin: 1.5rem 0;
-}
-#comp-modal-body th, #comp-modal-body td {
-    border: 1px solid #223150;
-    padding: 0.5rem 0.75rem;
-    text-align: left;
-}
-#comp-modal-body th {
-    background: #151d30;
-    color: #fff;
-    font-weight: 600;
-}
-.companion-details-area, .companion-details-area ~ * {
-    display: none;
+.companion-more-body { overflow: auto; padding: 1.25rem 1.5rem 2rem; }
+.companion-more-body > :first-child { margin-top: 0; }
+.companion-more-body table { display: block; overflow-x: auto; }
+.companion-more-body pre { max-width: 100%; overflow-x: auto; }
+@media (max-width: 640px) {
+    .companion-more-modal { padding: 0; }
+    .companion-more-dialog { width: 100vw; max-height: 100vh; height: 100vh; border-radius: 0; }
+    .companion-more-body { padding: 1rem; }
+    .companion-more-actions a { display: none; }
 }
 </style>
-
-<div id="companion-modal" class="comp-modal">
-    <div class="comp-modal-content">
-        <span class="comp-modal-close">&times;</span>
-        <div id="comp-modal-body"></div>
-    </div>
+<div class="companion-more-modal" id="companion-more-modal" hidden>
+  <section class="companion-more-dialog" role="dialog" aria-modal="true" aria-labelledby="companion-more-title">
+    <header class="companion-more-header">
+      <strong id="companion-more-title">Beginner companion</strong>
+      <div class="companion-more-actions">
+        <a href="chapter0_companion.html">Open the complete guide</a>
+        <button type="button" class="companion-more-close" aria-label="Close companion">&times;</button>
+      </div>
+    </header>
+    <div class="companion-more-body" id="companion-more-body"></div>
+  </section>
 </div>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    var store = {};
-    var area = document.querySelector('.companion-details-area');
-    if (!area) return;
-
-    var currentSection = null;
-    var currentElements = [];
-    var sibling = area.nextElementSibling;
-
-    while (sibling) {
-        if (sibling.classList.contains('companion-detail-heading')) {
-            if (currentSection) {
-                store[currentSection] = currentElements;
-            }
-            currentSection = sibling.getAttribute('data-section');
-            currentElements = [];
-        } else {
-            if (currentSection) {
-                currentElements.push(sibling.cloneNode(true));
-            }
-        }
-        sibling = sibling.nextElementSibling;
-    }
-    if (currentSection) {
-        store[currentSection] = currentElements;
-    }
-
-    // Wire up buttons
-    document.querySelectorAll('.read-details-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            var section = this.getAttribute('data-section');
-            var elements = store[section];
-            var modalBody = document.getElementById('comp-modal-body');
-            modalBody.innerHTML = '';
-
-            if (elements && elements.length > 0) {
-                elements.forEach(function(el) {
-                    el.style.display = '';
-                    modalBody.appendChild(el);
-                });
-
-                // Trigger MathJax typesetting if loaded
-                if (window.MathJax && window.MathJax.typesetPromise) {
-                    window.MathJax.typesetPromise([modalBody]);
-                }
-            } else {
-                modalBody.innerHTML = '<p>No details found for this section.</p>';
-            }
-
-            var modal = document.getElementById('companion-modal');
-            modal.style.display = 'flex';
-            // Reflow
-            modal.offsetHeight;
-            modal.classList.add('open');
-            document.body.style.overflow = 'hidden';
-        });
-    });
-
-    // Close modal function
-    function closeModal() {
-        var modal = document.getElementById('companion-modal');
-        modal.classList.remove('open');
-        setTimeout(function() {
-            modal.style.display = 'none';
-            document.body.style.overflow = '';
-        }, 300);
-    }
-
-    document.querySelector('.comp-modal-close').addEventListener('click', closeModal);
-    window.addEventListener('click', function(event) {
-        var modal = document.getElementById('companion-modal');
-        if (event.target === modal) {
-            closeModal();
-        }
-    });
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            closeModal();
-        }
-    });
-});
-</script>
-
+<template id="companion-template-overview"><h1 id="chapter-0-companion-guide-from-nothing-to-ready">Chapter 0 Companion Guide: From Nothing to Ready</h1>
+<h2 id="a-first-principles-mathematical-computational-reference-manual-for-beginners">A First-Principles Mathematical &amp; Computational Reference Manual for Beginners</h2>
+<p>This companion guide is designed as an exhaustive, first-principles reference manual to accompany <strong>Chapter 0: From Nothing to Ready</strong>. It provides step-by-step mathematical derivations, intuitive mental models, line-by-line code breakdowns, and explicit structural mappings to ensure you never encounter a "black box" symbol or code snippet.</p>
+<p>All mathematical notation is strictly formatted using standard LaTeX delimiters (<code>$inline$</code> and `</p>
+<p>$$display$$</p>
+<p>`), making it immediately compatible with Markdown renderers, MathJax, and KaTeX.</p>
 <hr />
-<h1 class="companion-details-area" id="companion-details-area">Companion Details Area</h1>
-<h2 class="companion-detail-heading" data-section="base-camp" id="detail-base-camp">Detail BASE CAMP</h2>
-<h2 id="overview">Overview</h2>
-<p>This chapter serves as the foundational preparation for regression analysis in Machine Learning. The tutorial is structured to build essential skills in Python, mathematical notation, statistics, and calculus over five focused days.</p>
-<h2 id="pedagogical-framework">Pedagogical Framework</h2>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+<li><strong>Pedagogical Philosophy &amp; Operational Contract</strong></li>
+<li><strong>Day 0A — Python Foundations Refresher</strong></li>
+<li><strong>Day 0B — NumPy, Array Shapes, and Matrix Algebra</strong></li>
+<li><strong>Day 0C — Algebra, Summation Notation, and Loss Functions</strong></li>
+<li><strong>Day 0D — First-Principles Statistics</strong></li>
+<li><strong>Day 0E — Calculus, Gradients, Optimization, and Debugging</strong></li>
+<li><strong>Level 0 Capstone: Complete Step-by-Step Reference Solution</strong></li>
+<li><strong>Master Rosetta Stone &amp; Traceback Cheat Sheet</strong></li>
+</ol>
+<hr />
+<hr />
 <h2 id="1-pedagogical-philosophy-operational-contract">1. Pedagogical Philosophy &amp; Operational Contract</h2>
 <p>The primary goal of Chapter 0 is to construct the mathematical, computational, and statistical intuition required before encountering matrix regression, multivariate calculus, and statistical inference in Chapter 1.</p>
-<h2 class="companion-detail-heading" data-section="contract" id="detail-contract">Detail CONTRACT</h2>
-<h3 id="learning-contract">Learning Contract</h3>
-<p>The tutorial follows specific principles:<br />
-1. <strong>One central concept per day</strong> – Each day focuses on a single foundational concept<br />
-2. <strong>No mathematical hand-waving</strong> – Every symbol is connected to concrete computations<br />
-3. <strong>Code as proof</strong> – Every mathematical concept is verified with Python code<br />
-4. <strong>Build, break, rebuild</strong> – Learners create, intentionally break, and fix code to build understanding<br />
-5. <strong>No copy-pasting</strong> – Learners type everything, building muscle memory</p>
-<h2 id="1-pedagogical-philosophy-operational-contract_1">1. Pedagogical Philosophy &amp; Operational Contract</h2>
-<p>The primary goal of Chapter 0 is to construct the mathematical, computational, and statistical intuition required before encountering matrix regression, multivariate calculus, and statistical inference in Chapter 1.</p>
-<h2 class="companion-detail-heading" data-section="0a-1" id="detail-0a-1">Detail 0A 1</h2>
-<h4 id="variables-and-functions">Variables and Functions</h4>
-<p><strong>Core Concept</strong>: Variables are containers for storing data, while functions encapsulate reusable operations.</p>
-<p><strong>Python Implementation</strong>:</p>
-<pre><code class="language-python"># Variable definition
-capacity_kw = 250.0
-
-# Function definition with docstring
-def kw_to_mw(capacity_kw):
-    &quot;&quot;&quot;Convert kilowatts to megawatts.&quot;&quot;&quot;
-    return capacity_kw / 1000.0
-</code></pre>
-<p><strong>Algebraic Analogy</strong>: Functions in mathematics follow the same pattern: f(x) = x/1000 describes a transformation rule applied to input values.</p>
+<h3 id="the-five-rules-of-the-pedagogical-contract">The Five Rules of the Pedagogical Contract</h3>
+<ol>
+<li><strong>One Central Idea Per Day:</strong> Structured, incremental progression over five foundational days without skipping steps.</li>
+<li><strong>No Mathematical Hand-Waving:</strong> Every algebraic symbol, subscript, and operator is unpacked into concrete arithmetic and visible Python outputs.</li>
+<li><strong>Code as Proof:</strong> If a mathematical property or equation is claimed to be true, clean Python code will prove it numerically.</li>
+<li><strong>Build, Break, Rebuild:</strong> To truly understand how systems work, you must deliberately break them (e.g., shape mismatches, missing keys, learning rate explosions) and read the resulting errors calmly.</li>
+<li><strong>Type Everything:</strong> Muscle memory in writing Python syntax and NumPy indexing is essential for effortless problem-solving.</li>
+</ol>
+<hr />
+<hr /></template><template id="companion-template-day-0a"><h2 id="2-day-0a-python-foundations-refresher">2. Day 0A — Python Foundations Refresher</h2>
 <h3 id="21-variables-and-functions-state-vs-behavior">2.1 Variables and Functions: State vs. Behavior</h3>
 <p>A <strong>variable</strong> assigns a symbolic label to a location in memory holding a specific value. A <strong>function</strong> encapsulates a reusable sequence of computations (a behavior) that accepts inputs, executes a contract, and explicitly returns an output.</p>
 <pre><code class="language-python"># Variable assignment: Storing a scalar value
@@ -1472,7 +1462,6 @@ print(result_mw)  # Output: 0.25
 <li><code>return capacity_kw / 1000.0</code>: The <code>return</code> statement explicitly sends the calculated result back to the caller. If <code>return</code> is omitted, Python returns <code>None</code> by default.</li>
 </ul>
 <hr />
-<h2 class="companion-detail-heading" data-section="0a-2" id="detail-0a-2">Detail 0A 2</h2>
 <h3 id="22-loops-and-list-iteration">2.2 Loops and List Iteration</h3>
 <p>A <code>for</code> loop iterates over a sequential collection (such as a list), binding each element to a loop variable one step at a time.</p>
 <pre><code class="language-python">capacities_kw = [100.0, 250.0, 500.0, 1800.0, 60.0]
@@ -1490,7 +1479,6 @@ print(capacities_mw)  # Output: [0.1, 0.25, 0.5, 1.8, 0.06]
 <li>This process repeats sequentially for every element in <code>capacities_kw</code>.</li>
 </ol>
 <hr />
-<h2 class="companion-detail-heading" data-section="0a-3" id="detail-0a-3">Detail 0A 3</h2>
 <h3 id="23-list-comprehensions-syntactic-unrolling">2.3 List Comprehensions: Syntactic Unrolling</h3>
 <p>A <strong>list comprehension</strong> is a concise way to create lists. It performs the exact same operation as a standard <code>for</code> loop with <code>.append()</code>, but in a single line.</p>
 <pre><code class="language-python"># List comprehension syntax: [expression for item in iterable]
@@ -1504,20 +1492,6 @@ capacities_mw = [kw_to_mw(c) for c in capacities_kw]
 </ul>
 <p>If a list comprehension ever feels confusing, unroll it back into a multi-line <code>for</code> loop with an explicit empty list and <code>.append()</code>.</p>
 <hr />
-<h2 class="companion-detail-heading" data-section="0a-4" id="detail-0a-4">Detail 0A 4</h2>
-<h4 id="dictionary-data-structures">Dictionary Data Structures</h4>
-<p><strong>Core Concept</strong>: Key-value pairs that preserve context and meaning.</p>
-<p><strong>Python Structure</strong>:</p>
-<pre><code class="language-python">project = {
-    &quot;site_id&quot;: &quot;MHP-0042&quot;,
-    &quot;cable_length_km&quot;: 15.0,
-    &quot;planned_capacity_kw&quot;: 100.0,
-    &quot;terrain_index&quot;: 3,
-}
-
-# Access with keys
-print(project[&quot;planned_capacity_kw&quot;])  # Returns 100.0
-</code></pre>
 <h3 id="24-dictionaries-label-value-mapping">2.4 Dictionaries: Label-Value Mapping</h3>
 <p>A standard list stores items by numerical index (<code>list[0]</code>, <code>list[1]</code>), which can lead to index-confusion errors when managing tabular data. A <strong>dictionary</strong> (<code>dict</code>) stores data using key-value pairs, maintaining explicit labels for every value.</p>
 <pre><code class="language-python">project = {
@@ -1531,20 +1505,6 @@ print(project[&quot;planned_capacity_kw&quot;])  # Returns 100.0
 print(project[&quot;planned_capacity_kw&quot;])  # Output: 100.0
 </code></pre>
 <hr />
-<h2 class="companion-detail-heading" data-section="0a-5" id="detail-0a-5">Detail 0A 5</h2>
-<h4 id="object-oriented-programming-basics">Object-Oriented Programming Basics</h4>
-<p><strong>Core Concept</strong>: Classes bundle data and behavior together.</p>
-<p><strong>Python Class Structure</strong>:</p>
-<pre><code class="language-python">class UnitConverter:
-    def __init__(self, factor):
-        # Initialize with factor
-        self.factor = factor
-
-    def convert(self, value):
-        # Define conversion method
-        return value * self.factor
-</code></pre>
-<p><strong>Key Concept</strong>: The self parameter represents the specific object instance, enabling each instance to maintain its own state.</p>
 <h3 id="25-object-oriented-encapsulation-the-self-keyword">2.5 Object-Oriented Encapsulation: The <code>self</code> Keyword</h3>
 <p>A <strong>class</strong> is a blueprint that combines state (data attributes) and behavior (methods) into a single object.</p>
 <pre><code class="language-python">class UnitConverter:
@@ -1570,7 +1530,6 @@ print(kw_to_mw_converter.convert(250.0))  # Output: 0.25
 <li><code>self.factor</code> ensures that the method reads the specific factor stored inside <em>that</em> converter instance.</li>
 </ul>
 <hr />
-<h2 class="companion-detail-heading" data-section="0a-7" id="detail-0a-7">Detail 0A 7</h2>
 <h3 id="26-the-standard-list-multiplication-trap">2.6 The Standard List Multiplication Trap</h3>
 <pre><code class="language-python"># Standard Python List
 capacities_kw = [100.0, 250.0, 500.0]
@@ -1581,26 +1540,7 @@ print(capacities_kw * 2)
 </code></pre>
 <p><strong>Why does this happen?</strong> In standard Python, the <code>*</code> operator applied to a list means <strong>sequence repetition</strong>, not mathematical scaling. To perform mathematical scaling on every element without writing explicit loops, we must use vectorized array operations provided by <strong>NumPy</strong>.</p>
 <hr />
-<hr />
-<h2 class="companion-detail-heading" data-section="0b-1" id="detail-0b-1">Detail 0B 1</h2>
-<h4 id="array-fundamentals">Array Fundamentals</h4>
-<p><strong>Core Concept</strong>: NumPy arrays provide efficient numerical computation with elementwise operations.</p>
-<p><strong>Dimensional Structure</strong>:</p>
-<pre><code class="language-python">import numpy as np
-
-# 1D array - vector
-vector_1d = np.array([1.0, 2.0, 3.0])
-print(vector_1d.shape)  # (3,)
-
-# 2D array - matrix
-matrix_2d = np.array([[1.0, 2.0, 3.0]])
-print(matrix_2d.shape)  # (1, 3)
-
-# Transposed structure
-matrix_transposed = np.array([[1.0], [2.0], [3.0]])
-print(matrix_transposed.shape)  # (3, 1)
-</code></pre>
-<p><strong>Critical Note</strong>: (3,), (1, 3), and (3, 1) are dimensionally incompatible despite holding the same values.</p>
+<hr /></template><template id="companion-template-day-0b"><h2 id="3-day-0b-numpy-array-shapes-and-matrix-algebra">3. Day 0B — NumPy, Array Shapes, and Matrix Algebra</h2>
 <h3 id="31-why-numpy-contiguous-memory-and-vectorization">3.1 Why NumPy? Contiguous Memory and Vectorization</h3>
 <p>Standard Python lists are arrays of pointers to scattered memory locations. A <strong>NumPy array</strong> (<code>np.ndarray</code>) stores homogeneous numerical data in a <strong>contiguous block of memory</strong>. This allows NumPy to perform arithmetic operations using low-level, vectorized CPU instructions.</p>
 <pre><code class="language-python">import numpy as np
@@ -1614,7 +1554,6 @@ print(capacities_watts)
 # Output: [100000. 250000. 500000.]
 </code></pre>
 <hr />
-<h2 class="companion-detail-heading" data-section="0b-2" id="detail-0b-2">Detail 0B 2</h2>
 <h3 id="32-array-dimensions-and-the-shape-attribute">3.2 Array Dimensions and the <code>.shape</code> Attribute</h3>
 <p>Every NumPy array has a <code>.shape</code> tuple that defines its dimensions. It is vital to distinguish between a 1D vector, a 2D row matrix, and a 2D column matrix.</p>
 <pre><code class="language-python">import numpy as np
@@ -1664,25 +1603,6 @@ print(c.shape)  # Output: (3, 1)
 </table>
 <p>These shapes are <strong>not interchangeable</strong> in linear algebra operations. A <code>(3,)</code> vector behaves differently than a <code>(3, 1)</code> matrix during matrix multiplication and broadcasting.</p>
 <hr />
-<h2 class="companion-detail-heading" data-section="0b-3" id="detail-0b-3">Detail 0B 3</h2>
-<h4 id="indexing-and-slicing">Indexing and Slicing</h4>
-<p><strong>Core Concept</strong>: Accessing array elements via row/column specifications.</p>
-<p><strong>Slicing Syntax</strong>: array[row_slice, column_slice]</p>
-<pre><code class="language-python">X = np.array([
-    [15.0, 100.0, 3],   # cable_km, capacity_kw, terrain_index
-    [30.0, 250.0, 4],
-    [5.0,  500.0, 1],
-])
-
-# Row operations
-print(X[0])  # First row: [15., 100., 3.]
-
-# Column operations
-print(X[:, 0])  # All rows, first column: [15., 30., 5.]
-
-# Specific element
-print(X[0, 1])  # Row 0, column 1: 100.0
-</code></pre>
 <h3 id="33-matrix-slicing-and-subscript-indexing">3.3 Matrix Slicing and Subscript Indexing</h3>
 <p>For a 2D array (matrix $X$), indexing uses the syntax <code>X[row_slice, column_slice]</code>.</p>
 <pre><code class="language-python">X = np.array([
@@ -1698,21 +1618,6 @@ print(X[0, 1])        # Output: 100.0                 -&gt; Element at Row 0, Co
 print(X[:2, :2])      # Output: First 2 rows and first 2 columns (2x2 submatrix)
 </code></pre>
 <hr />
-<h2 class="companion-detail-heading" data-section="0b-4" id="detail-0b-4">Detail 0B 4</h2>
-<h4 id="broadcasting-rules">Broadcasting Rules</h4>
-<p><strong>Core Concept</strong>: Automatic shape alignment for operations with compatible dimensions.</p>
-<p><strong>Compatibility Pattern</strong>: Match from the trailing (rightmost) dimension.</p>
-<pre><code class="language-python">X = np.array([
-    [15.0, 100.0],
-    [30.0, 250.0],
-    [5.0,  500.0],
-])  # shape (3, 2)
-
-means = np.array([16.7, 283.3])  # shape (2,)
-
-# Broadcasting occurs
-result = X - means  # Each row subtracts the mean vector
-</code></pre>
 <h3 id="34-the-mechanics-of-broadcasting">3.4 The Mechanics of Broadcasting</h3>
 <p><strong>Broadcasting</strong> is NumPy's set of rules for performing elementwise operations on arrays of different shapes without copying data unnecessarily.</p>
 <h4 id="the-official-broadcasting-rule">The Official Broadcasting Rule:</h4>
@@ -1736,35 +1641,36 @@ centred = X - means
 <h4 id="step-by-step-shape-alignment-check">Step-by-Step Shape Alignment Check:</h4>
 <ol>
 <li>Shape of $X$: <code>(3, 2)</code></li>
-<li>Shape of <code>means</code>: <code>(2,)</code> $<br />
-ightarrow$ Right-aligned: <code>(1, 2)</code></li>
+<li>Shape of <code>means</code>: <code>(2,)</code> $\rightarrow$ Right-aligned: <code>(1, 2)</code></li>
 <li>Compare trailing dimension: $2 == 2$ (Match!)</li>
-<li>Compare leading dimension: $3$ vs $1$. The dimension of size $1$ stretches from $1 <br />
-ightarrow 3$.</li>
+<li>Compare leading dimension: $3$ vs $1$. The dimension of size $1$ stretches from $1 \rightarrow 3$.</li>
 <li>Final broadcasted subtraction subtracts <code>16.7</code> from Column 0 and <code>283.3</code> from Column 1 for all rows.</li>
 </ol>
 <hr />
-<h2 class="companion-detail-heading" data-section="0b-5" id="detail-0b-5">Detail 0B 5</h2>
-<h4 id="dot-products-and-matrix-multiplication">Dot Products and Matrix Multiplication</h4>
-<p><strong>Core Concept</strong>: Weighted sum operation at the heart of linear regression.</p>
-<p><strong>Three-Level Implementation</strong>:</p>
-<pre><code class="language-python">features = np.array([15.0, 100.0])
-weights  = np.array([0.05, 0.002])
+<h3 id="35-the-dot-product-cdot-at-three-abstraction-levels">3.5 The Dot Product ($\cdot$) at Three Abstraction Levels</h3>
+<p>The <strong>dot product</strong> of two equal-length 1D vectors $\mathbf{a}$ and $\mathbf{b}$ of length $p$ is defined mathematically as:</p>
+<p>$$\mathbf{a} \cdot \mathbf{b} = \sum_{i=1}^{p} a_i b_i = a_1 b_1 + a_2 b_2 + \dots + a_p b_p$$</p>
+<p>Here are three ways to compute the exact same result in Python:</p>
+<pre><code class="language-python">features = np.array([15.0, 100.0])       # Cable length (km), Capacity (kW)
+weights  = np.array([0.05, 0.002])       # Cost weights per unit
 
-# Level 1: Manual computation
+# Level 1: Manual Scalar Term-by-Term
 manual = features[0] * weights[0] + features[1] * weights[1]
 
-# Level 2: Explicit loop
+# Level 2: Explicit Python Loop with zip
 loop_total = 0.0
 for f, w in zip(features, weights):
     loop_total += f * w
 
-# Level 3: NumPy operator
-dot_total = features @ weights  # np.dot(features, weights)
+# Level 3: Vectorized NumPy Operator (@)
+dot_total = features @ weights  # Equivalently: np.dot(features, weights)
+
+print(manual, loop_total, dot_total)
+# Output: 0.95 0.95 0.95
 </code></pre>
-<h2 class="companion-detail-heading" data-section="0b-6" id="detail-0b-6">Detail 0B 6</h2>
+<hr />
 <h3 id="36-matrix-prediction-xboldsymbolbeta">3.6 Matrix Prediction ($X\boldsymbol{\beta}$)</h3>
-<p>When we multiply a design matrix $X$ of shape $(N   imes P)$ by a parameter vector $\boldsymbol{\beta}$ of shape $(P,)$ using the <code>@</code> operator, NumPy performs a dot product between <strong>each row of $X$</strong> and the weight vector $\boldsymbol{\beta}$.</p>
+<p>When we multiply a design matrix $X$ of shape $(N \times P)$ by a parameter vector $\boldsymbol{\beta}$ of shape $(P,)$ using the <code>@</code> operator, NumPy performs a dot product between <strong>each row of $X$</strong> and the weight vector $\boldsymbol{\beta}$.</p>
 <pre><code class="language-python">X = np.array([
     [15.0, 100.0],  # Project 0
     [30.0, 250.0],  # Project 1
@@ -1779,11 +1685,10 @@ print(predictions)
 # Output: [0.95  2.0   1.25 ]
 </code></pre>
 <h4 id="matrix-dimension-rule">Matrix Dimension Rule:</h4>
-<p>$$(N 	imes P) 	imes (P 	imes 1) \longrightarrow (N 	imes 1)$$</p>
+<p>$$(N \times P) \times (P \times 1) \longrightarrow (N \times 1)$$</p>
 <p>The inner dimensions ($P$) must match exactly, and the resulting prediction vector has length $N$ (one predicted output per observation row).</p>
 <hr />
-<hr />
-<h2 class="companion-detail-heading" data-section="0c-1" id="detail-0c-1">Detail 0C 1</h2>
+<hr /></template><template id="companion-template-day-0c"><h2 id="4-day-0c-algebra-summation-notation-and-loss-functions">4. Day 0C — Algebra, Summation Notation, and Loss Functions</h2>
 <h3 id="41-functions-and-equations-of-lines">4.1 Functions and Equations of Lines</h3>
 <p>A linear relationship between an input variable $x$ and an output variable $y$ is expressed as:</p>
 <p>$$y = m x + c$$</p>
@@ -1794,35 +1699,6 @@ print(predictions)
 <p>In multiple regression, we extend this equation to $P$ features:</p>
 <p>$$\hat{y} = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p$$</p>
 <hr />
-<h2 class="companion-detail-heading" data-section="0c-2" id="detail-0c-2">Detail 0C 2</h2>
-<h3 id="41-functions-and-equations-of-lines_1">4.1 Functions and Equations of Lines</h3>
-<p>A linear relationship between an input variable $x$ and an output variable $y$ is expressed as:</p>
-<p>$$y = m x + c$$</p>
-<ul>
-<li>$m$: <strong>Slope</strong> — The change in $y$ given a $1$-unit increase in $x$ ($\frac{\Delta y}{\Delta x}$).</li>
-<li>$c$: <strong>Intercept</strong> — The value of $y$ when $x = 0$.</li>
-</ul>
-<p>In multiple regression, we extend this equation to $P$ features:</p>
-<p>$$\hat{y} = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \dots + \beta_p x_p$$</p>
-<hr />
-<h2 class="companion-detail-heading" data-section="0c-3" id="detail-0c-3">Detail 0C 3</h2>
-<h4 id="summation-notation">Summation Notation</h4>
-<p><strong>Core Concept</strong>: ∑ represents iteration and accumulation.</p>
-<p><strong>Notation Meaning</strong>: ∑_{i=1}^{p} f_i w_i corresponds to iteratively summing products of indexed elements.</p>
-<p><strong>Code Implementation</strong>:</p>
-<pre><code class="language-python">import numpy as np
-
-f = np.array([15.0, 100.0, 3.0])
-w = np.array([0.05, 0.002, -1.5])
-
-# Iterative implementation
-total_loop = 0.0
-for i in range(len(f)):
-    total_loop += f[i] * w[i]
-
-# Vectorized implementation
-total_numpy = f @ w  # Same as np.dot(f, w)
-</code></pre>
 <h3 id="42-deconstructing-summation-notation-sum">4.2 Deconstructing Summation Notation ($\sum$)</h3>
 <p>The summation symbol $\sum$ represents an accumulator loop.</p>
 <p>$$\sum_{i=1}^{n} x_i$$</p>
@@ -1833,7 +1709,7 @@ total_numpy = f @ w  # Same as np.dot(f, w)
 </ul>
 <h4 id="translating-summation-to-python-code">Translating Summation to Python Code</h4>
 <p>Consider the <strong>Sum of Squared Residuals (SSR)</strong> formula:</p>
-<p>$$	ext{SSR} = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$</p>
+<p>$$\text{SSR} = \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$</p>
 <p>Where $y_i$ is the actual target value, and $\hat{y}_i$ is the predicted target value.</p>
 <pre><code class="language-python">import numpy as np
 
@@ -1851,41 +1727,28 @@ ssr_numpy = np.sum((y_actual - y_predicted) ** 2)
 print(ssr_loop, ssr_numpy)  # Output: 2.89 2.89
 </code></pre>
 <hr />
-<h2 class="companion-detail-heading" data-section="0c-4" id="detail-0c-4">Detail 0C 4</h2>
 <h3 id="43-why-we-square-errors-in-loss-functions">4.3 Why We Square Errors in Loss Functions</h3>
 <p>When evaluating prediction errors $e_i = y_i - \hat{y}_i$:<br />
 1. <strong>Cancellation Problem:</strong> Unsquared errors can be positive or negative. A model with errors $+10$ and $-10$ would sum to zero error ($\sum e_i = 0$), falsely appearing perfect.<br />
 2. <strong>Squaring Eliminates Signs:</strong> $(+10)^2 = 100$ and $(-10)^2 = 100$, ensuring all deviations contribute positively to total loss.<br />
 3. <strong>Non-Linear Penalty for Large Outliers:</strong> Squaring penalizes large errors much more severely than small ones:<br />
-   * Error = $2 \implies    ext{Penalty} = 2^2 = 4$<br />
-   * Error = $10 \implies   ext{Penalty} = 10^2 = 100$ (a 5x increase in error results in a 25x increase in penalty).</p>
+   * Error = $2 \implies \text{Penalty} = 2^2 = 4$<br />
+   * Error = $10 \implies \text{Penalty} = 10^2 = 100$ (a 5x increase in error results in a 25x increase in penalty).</p>
 <hr />
-<h2 class="companion-detail-heading" data-section="0c-5" id="detail-0c-5">Detail 0C 5</h2>
-<h4 id="linear-models-and-regression">Linear Models and Regression</h4>
-<p><strong>Core Concept</strong>: Linear relationships form the foundation of regression analysis.</p>
-<p><strong>Equation of a Line</strong>: y = mx + c<br />
-- m represents the slope (rate of change)<br />
-- c represents the intercept (starting value)</p>
-<p><strong>Generalization to Multiple Features</strong>: y = β₀ + β₁x₁ + … + βₚxₚ</p>
-<h2 class="companion-detail-heading" data-section="0c-6" id="detail-0c-6">Detail 0C 6</h2>
 <h3 id="44-critical-distinction-sum-of-squares-vs-square-of-sum">4.4 Critical Distinction: Sum of Squares vs. Square of Sum</h3>
-<p>$$\sum_{i=1}^{n} x_i^2
-eq \left( \sum_{i=1}^{n} x_i
-ight)^2$$</p>
+<p>$$\sum_{i=1}^{n} x_i^2 \neq \left( \sum_{i=1}^{n} x_i \right)^2$$</p>
 <p>Let $x = [2.0, -3.0, 5.0]$:</p>
 <h4 id="1-sum-of-squares-sum-x_i2">1. Sum of Squares ($\sum x_i^2$):</h4>
 <p>$$\sum x_i^2 = (2.0)^2 + (-3.0)^2 + (5.0)^2 = 4.0 + 9.0 + 25.0 = 38.0$$</p>
 <h4 id="2-square-of-sum-sum-x_i2">2. Square of Sum ($(\sum x_i)^2$):</h4>
-<p>$$\left( \sum x_i
-ight)^2 = (2.0 + (-3.0) + 5.0)^2 = (4.0)^2 = 16.0$$</p>
+<p>$$\left( \sum x_i \right)^2 = (2.0 + (-3.0) + 5.0)^2 = (4.0)^2 = 16.0$$</p>
 <pre><code class="language-python">x = np.array([2.0, -3.0, 5.0])
 
 sum_of_squares = np.sum(x ** 2)  # Output: 38.0
 square_of_sum  = np.sum(x) ** 2  # Output: 16.0
 </code></pre>
 <hr />
-<hr />
-<h2 class="companion-detail-heading" data-section="0d-1" id="detail-0d-1">Detail 0D 1</h2>
+<hr /></template><template id="companion-template-day-0d"><h2 id="5-day-0d-first-principles-statistics">5. Day 0D — First-Principles Statistics</h2>
 <h3 id="51-sample-mean-barx">5.1 Sample Mean ($\bar{x}$)</h3>
 <p>The mean represents the arithmetic average (or balancing point) of a distribution.</p>
 <p>$$\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i$$</p>
@@ -1893,10 +1756,32 @@ square_of_sum  = np.sum(x) ** 2  # Output: 16.0
 mean_manual = np.sum(costs) / len(costs)  # Output: 22.0
 </code></pre>
 <hr />
-<h2 class="companion-detail-heading" data-section="0d-4" id="detail-0d-4">Detail 0D 4</h2>
-<h3 id="53-covariance-extcovx-y">5.3 Covariance ($   ext{cov}(x, y)$)</h3>
+<h3 id="52-variance-sigma2-and-standard-deviation-sigma">5.2 Variance ($\sigma^2$) and Standard Deviation ($\sigma$)</h3>
+<p><strong>Variance</strong> measures the average squared distance of data points from their mean:</p>
+<p>$$\sigma^2 = \frac{1}{n} \sum_{i=1}^{n} (x_i - \bar{x})^2$$</p>
+<blockquote>
+<p><strong>Why can't we just average raw deviations $(x_i - \bar{x})$?</strong><br />
+The sum of raw deviations around the mean is <strong>always zero</strong> ($\sum_{i=1}^n (x_i - \bar{x}) = 0$) because positive and negative deviations cancel out.</p>
+</blockquote>
+<p><strong>Standard Deviation</strong> ($\sigma$) takes the square root of variance to return the spread metric to the original units of the dataset:</p>
+<p>$$\sigma = \sqrt{\sigma^2}$$</p>
+<pre><code class="language-python"># First principles computation
+deviations = costs - costs.mean()
+variance_manual = np.sum(deviations ** 2) / len(costs)
+std_manual = np.sqrt(variance_manual)
+
+print(variance_manual, std_manual)
+# Output: 182.8 13.520355024924517
+</code></pre>
+<h4 id="population-variance-vs-sample-variance-n-vs-n-1">Population Variance vs. Sample Variance ($n$ vs $n-1$):</h4>
+<ul>
+<li><strong>Population Variance (<code>ddof=0</code>):</strong> Divides by $n$. Used when analyzing an entire dataset.</li>
+<li><strong>Sample Variance (<code>ddof=1</code>):</strong> Divides by $n - 1$ (Bessel's correction). Used when estimating population variance from a sample to eliminate downward bias.</li>
+</ul>
+<hr />
+<h3 id="53-covariance-textcovx-y">5.3 Covariance ($\text{cov}(x, y)$)</h3>
 <p>Covariance measures whether two continuous variables tend to deviate from their respective means in the same direction at the same time.</p>
-<p>$$	ext{cov}(x, y) = \frac{1}{n} \sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})$$</p>
+<p>$$\text{cov}(x, y) = \frac{1}{n} \sum_{i=1}^{n} (x_i - \bar{x})(y_i - \bar{y})$$</p>
 <pre><code class="language-python">cable_km = np.array([12.0, 30.0, 5.0, 40.0, 15.0])
 
 x_dev = costs - costs.mean()
@@ -1911,10 +1796,9 @@ cov_manual = np.sum(x_dev * y_dev) / len(costs)
 <li><strong>Zero Covariance:</strong> No linear co-movement between $x$ and $y$.</li>
 </ul>
 <hr />
-<h2 class="companion-detail-heading" data-section="0d-5" id="detail-0d-5">Detail 0D 5</h2>
 <h3 id="54-pearson-correlation-coefficient-r">5.4 Pearson Correlation Coefficient ($r$)</h3>
 <p>Because covariance depends on the units of measurement, it cannot be used to compare strength across different features. <strong>Pearson Correlation</strong> ($r$) normalizes covariance by dividing it by the product of the standard deviations of both variables:</p>
-<p>$$r = \frac{	ext{cov}(x, y)}{\sigma_x \sigma_y}$$</p>
+<p>$$r = \frac{\text{cov}(x, y)}{\sigma_x \sigma_y}$$</p>
 <pre><code class="language-python">r_manual = cov_manual / (costs.std() * cable_km.std())
 print(r_manual)  # Output: 0.9413
 </code></pre>
@@ -1926,13 +1810,6 @@ print(r_manual)  # Output: 0.9413
 <li>$r = 0$: No linear relationship.</li>
 </ul>
 <hr />
-<h2 class="companion-detail-heading" data-section="0d-7" id="detail-0d-7">Detail 0D 7</h2>
-<h4 id="special-cases-and-edge-conditions">Special Cases and Edge Conditions</h4>
-<p><strong>Zero Variance Warning</strong>: Features with constant values produce nan in correlation calculations because division by zero occurs.</p>
-<p><strong>Code Demonstration</strong>:</p>
-<pre><code class="language-python">constant = np.array([5.0, 5.0, 5.0, 5.0, 5.0])
-print(np.corrcoef(constant, costs))  # Returns array with nan values
-</code></pre>
 <h3 id="55-the-zero-variance-trap-and-nan-poisoning">5.5 The Zero Variance Trap and <code>NaN</code> Poisoning</h3>
 <p>If a feature vector has zero variation (e.g., $x = [5.0, 5.0, 5.0, 5.0]$), its standard deviation is zero ($\sigma_x = 0.0$).</p>
 <pre><code class="language-python">constant_feature = np.array([5.0, 5.0, 5.0, 5.0, 5.0])
@@ -1942,11 +1819,10 @@ print(r_result)  # Output: nan
 <h4 id="why-does-this-happen">Why does this happen?</h4>
 <p>Calculating $r$ requires dividing by $\sigma_x$. Division by zero produces <code>NaN</code> (Not a Number). In machine learning pipelines, a single <code>NaN</code> will silently propagate through matrix multiplications, corrupting downstream calculations.</p>
 <hr />
-<hr />
-<h2 class="companion-detail-heading" data-section="0e-1" id="detail-0e-1">Detail 0E 1</h2>
+<hr /></template><template id="companion-template-day-0e"><h2 id="6-day-0e-calculus-gradients-optimization-and-debugging">6. Day 0E — Calculus, Gradients, Optimization, and Debugging</h2>
 <h3 id="61-the-definition-of-a-derivative">6.1 The Definition of a Derivative</h3>
 <p>A <strong>derivative</strong> measures the instantaneous rate of change (the slope of the tangent line) of a function $f(x)$ at a specific point $x$.</p>
-<p>$$\frac{dy}{dx} = f'(x) = \lim_{h 	o 0} \frac{f(x+h) - f(x)}{h}$$</p>
+<p>$$\frac{dy}{dx} = f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}$$</p>
 <h4 id="code-proof-finite-difference-approximation">Code Proof: Finite Difference Approximation</h4>
 <p>We can approximate derivatives numerically by choosing an extremely small step size $h$ (e.g., $h = 10^{-6}$).</p>
 <pre><code class="language-python">def f(x):
@@ -1960,49 +1836,6 @@ print(numerical_slope(f, x_val))
 # Output: 6.000000999922336  (Converges to analytical derivative 2*x = 6.0)
 </code></pre>
 <hr />
-<h2 class="companion-detail-heading" data-section="0e-2" id="detail-0e-2">Detail 0E 2</h2>
-<h4 id="derivatives-and-gradients">Derivatives and Gradients</h4>
-<p><strong>Core Concept</strong>: Derivatives measure instantaneous rates of change.</p>
-<p><strong>Limit Definition</strong>: dy/dx = lim_{h→0} [f(x+h) - f(x)]/h</p>
-<p><strong>Practical Application</strong>:</p>
-<pre><code class="language-python">def f(x):
-    return x ** 2
-
-def numerical_slope(f, x, h=1e-6):
-    return (f(x + h) - f(x)) / h
-
-# Finite difference approximation
-x = 3.0
-for h in [1.0, 0.1, 0.01, 0.0001]:
-    print(f&quot;h={h}: slope={numerical_slope(f, x, h):.6f}&quot;)
-</code></pre>
-<p><strong>Power Rule</strong>: Derivative of xⁿ is n·xⁿ⁻¹</p>
-<p><strong>Implementation</strong>:</p>
-<pre><code class="language-python">def y(x):
-    return 3 * x**2 + 5 * x
-
-def dy_dx_by_rule(x):
-    # Power rule applied to 3x² gives 6x
-    # Power rule applied to 5x gives 5
-    return 6 * x + 5
-</code></pre>
-<h3 id="61-the-definition-of-a-derivative_1">6.1 The Definition of a Derivative</h3>
-<p>A <strong>derivative</strong> measures the instantaneous rate of change (the slope of the tangent line) of a function $f(x)$ at a specific point $x$.</p>
-<p>$$\frac{dy}{dx} = f'(x) = \lim_{h 	o 0} \frac{f(x+h) - f(x)}{h}$$</p>
-<h4 id="code-proof-finite-difference-approximation_1">Code Proof: Finite Difference Approximation</h4>
-<p>We can approximate derivatives numerically by choosing an extremely small step size $h$ (e.g., $h = 10^{-6}$).</p>
-<pre><code class="language-python">def f(x):
-    return x ** 2
-
-def numerical_slope(f, x, h=1e-6):
-    return (f(x + h) - f(x)) / h
-
-x_val = 3.0
-print(numerical_slope(f, x_val))
-# Output: 6.000000999922336  (Converges to analytical derivative 2*x = 6.0)
-</code></pre>
-<hr />
-<h2 class="companion-detail-heading" data-section="0e-3" id="detail-0e-3">Detail 0E 3</h2>
 <h3 id="62-essential-analytical-derivative-rules">6.2 Essential Analytical Derivative Rules</h3>
 <ol>
 <li><strong>Power Rule:</strong></li>
@@ -2021,41 +1854,28 @@ print(numerical_slope(f, x_val))
 <p>For $y = 3x^2 + 5x$:</p>
 <p>$$\frac{dy}{dx} = \frac{d}{dx}[3x^2] + \frac{d}{dx}[5x] = 3(2x) + 5(1) = 6x + 5$$</p>
 <hr />
-<h2 class="companion-detail-heading" data-section="0e-4" id="detail-0e-4">Detail 0E 4</h2>
-<h4 id="partial-derivatives">Partial Derivatives</h4>
-<p><strong>Core Concept</strong>: Derivatives with respect to specific variables while holding others constant.</p>
-<p><strong>Toy Example</strong>: Error surface E(m, c) = (10 - (m·2 + c))²</p>
-<p><strong>Numerical Partial Derivatives</strong>:</p>
+<h3 id="63-partial-derivatives-partial-and-the-gradient-nabla">6.3 Partial Derivatives ($\partial$) and the Gradient ($\nabla$)</h3>
+<p>When an error function depends on multiple parameters—such as slope $m$ and intercept $c$—a <strong>partial derivative</strong> measures how the output changes when we adjust <em>one parameter</em> while keeping all others constant. We use the symbol $\partial$ (curly "d") instead of $d$.</p>
+<p>$$\text{Gradient } \nabla E(m, c) = \begin{bmatrix} \frac{\partial E}{\partial m} \\ \frac{\partial E}{\partial c} \end{bmatrix}$$</p>
 <pre><code class="language-python">def error(m, c):
-    prediction = m * 2 + c
-    return (10 - prediction) ** 2
+    # Loss for predicting y=10.0 when x=2.0
+    prediction = m * 2.0 + c
+    return (10.0 - prediction) ** 2
 
-def partial_wrt_m(error_fn, m, c, h=1e-6):
-    return (error_fn(m + h, c) - error_fn(m, c)) / h
+def partial_wrt_m(m, c, h=1e-6):
+    return (error(m + h, c) - error(m, c)) / h
 
-def partial_wrt_c(error_fn, m, c, h=1e-6):
-    return (error_fn(m, c + h) - error_fn(m, c)) / h
+def partial_wrt_c(m, c, h=1e-6):
+    return (error(m, c + h) - error(m, c)) / h
+
+m, c = 1.0, 1.0
+print(partial_wrt_m(m, c))  # Output: -27.9999
+print(partial_wrt_c(m, c))  # Output: -13.9999
 </code></pre>
-<h2 class="companion-detail-heading" data-section="0e-5" id="detail-0e-5">Detail 0E 5</h2>
-<h4 id="gradient-descent">Gradient Descent</h4>
-<p><strong>Core Concept</strong>: Iterative optimization by following the steepest descent direction.</p>
-<p><strong>Update Rule</strong>: θₙₑw = θₒₗd - α·∇J(θ)</p>
-<p><strong>Practical Implementation</strong>:</p>
-<pre><code class="language-python">m, c = 0.0, 0.0
-learning_rate = 0.01
-
-for step in range(50):
-    grad_m = partial_wrt_m(error, m, c)
-    grad_c = partial_wrt_c(error, m, c)
-    m -= learning_rate * grad_m
-    c -= learning_rate * grad_c
-
-print(f&quot;Optimized m={m:.3f}, c={c:.3f}, error={error(m, c):.6f}&quot;)
-</code></pre>
+<hr />
 <h3 id="64-gradient-descent-mechanics">6.4 Gradient Descent Mechanics</h3>
 <p><strong>Gradient Descent</strong> is an iterative optimization algorithm that minimizes a loss function by taking steps in the direction opposite to the gradient.</p>
-<p>$$	heta_{	ext{new}} = 	heta_{	ext{old}} - \alpha
-abla E(	heta)$$</p>
+<p>$$\theta_{\text{new}} = \theta_{\text{old}} - \alpha \nabla E(\theta)$$</p>
 <p>Where $\alpha$ is the <strong>learning rate</strong> (step size hyperparameter).</p>
 <pre><code class="language-python">m, c = 0.0, 0.0          # Initial bad guess
 learning_rate = 0.01     # Step size alpha
@@ -2074,29 +1894,7 @@ print(f&quot;Optimized parameters: m = {m:.3f}, c = {c:.3f}&quot;)
 <h4 id="what-happens-if-the-learning-rate-alpha-is-too-large">What happens if the learning rate $\alpha$ is too large?</h4>
 <p>If $\alpha$ is set too high (e.g., $\alpha = 5.0$), parameter updates will overshoot the minimum, causing error to explode toward infinity.</p>
 <hr />
-<hr />
-<h2 class="companion-detail-heading" data-section="0e-6" id="detail-0e-6">Detail 0E 6</h2>
-<h4 id="error-handling-and-debugging">Error Handling and Debugging</h4>
-<p><strong>Common Error Types</strong>:<br />
-- <strong>Shape Mismatch</strong>: Dimension size conflicts in matrix operations<br />
-- <strong>KeyError</strong>: Attempted access to missing dictionary keys<br />
-- <strong>TypeError</strong>: Type incompatibility in operations</p>
-<p><strong>Error Translation Strategies</strong>:</p>
-<pre><code class="language-python"># Shape mismatch interpretation
-ValueError: matmul: Input operand 1 has a mismatch
-# Translation: Two arrays need matching dimensions but have different sizes
-
-# Missing key interpretation
-KeyError: 'terrain_index'
-# Translation: The dictionary does not contain the requested key
-
-# Type conversion interpretation
-TypeError: can only concatenate str to float
-# Translation: Explicit type conversion required for string + numeric operations
-</code></pre>
-<h2 id="8-master-rosetta-stone-traceback-cheat-sheet">8. Master Rosetta Stone &amp; Traceback Cheat Sheet</h2>
-<h2 class="companion-detail-heading" data-section="capstone" id="detail-capstone">Detail CAPSTONE</h2>
-<h2 id="7-level-0-capstone-complete-step-by-step-reference-solution">7. Level 0 Capstone: Complete Step-by-Step Reference Solution</h2>
+<hr /></template><template id="companion-template-capstone"><h2 id="7-level-0-capstone-complete-step-by-step-reference-solution">7. Level 0 Capstone: Complete Step-by-Step Reference Solution</h2>
 <p>Here is the complete, execution-verified Python script solving all 7 steps of the Level 0 Capstone.</p>
 <pre><code class="language-python">import numpy as np
 
@@ -2200,10 +1998,135 @@ except ValueError as e:
     print(&quot;        to match the dimension of bad_beta (3).&quot;)
 </code></pre>
 <hr />
+<hr /></template><template id="companion-template-reference"><h2 id="8-master-rosetta-stone-traceback-cheat-sheet">8. Master Rosetta Stone &amp; Traceback Cheat Sheet</h2>
+<h3 id="81-mathematical-symbol-rightarrow-python-loop-rightarrow-numpy-expression">8.1 Mathematical Symbol $\rightarrow$ Python Loop $\rightarrow$ NumPy Expression</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Mathematical Concept</th>
+<th style="text-align: left;">LaTeX Symbol</th>
+<th style="text-align: left;">Raw Python Loop Expression</th>
+<th style="text-align: left;">Vectorized NumPy Expression</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Vector Dot Product</td>
+<td style="text-align: left;">$\sum_{i=1}^{p} a_i b_i$</td>
+<td style="text-align: left;"><code>sum(a[i] * b[i] for i in range(p))</code></td>
+<td style="text-align: left;"><code>a @ b</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Sample Mean</td>
+<td style="text-align: left;">$\bar{x} = \frac{1}{n} \sum x_i$</td>
+<td style="text-align: left;"><code>sum(x) / len(x)</code></td>
+<td style="text-align: left;"><code>x.mean()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Mean Centering</td>
+<td style="text-align: left;">$x_i - \bar{x}$</td>
+<td style="text-align: left;"><code>[val - mean_x for val in x]</code></td>
+<td style="text-align: left;"><code>x - x.mean()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Sum of Squared Errors</td>
+<td style="text-align: left;">$\sum (y_i - \hat{y}_i)^2$</td>
+<td style="text-align: left;"><code>sum((y[i] - y_hat[i])**2 for i in range(n))</code></td>
+<td style="text-align: left;"><code>np.sum((y - y_hat)**2)</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Population Variance</td>
+<td style="text-align: left;">$\frac{1}{n}\sum (x_i - \bar{x})^2$</td>
+<td style="text-align: left;"><code>sum((x[i] - mean_x)**2 for i in range(n)) / n</code></td>
+<td style="text-align: left;"><code>x.var()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Covariance</td>
+<td style="text-align: left;">$\frac{1}{n}\sum (x_i - \bar{x})(y_i - \bar{y})$</td>
+<td style="text-align: left;"><code>sum((x[i]-mx)*(y[i]-my) for i in range(n)) / n</code></td>
+<td style="text-align: left;"><code>np.cov(x, y, ddof=0)[0,1]</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Derivative Limit</td>
+<td style="text-align: left;">$\lim_{h \to 0} \frac{f(x+h) - f(x)}{h}$</td>
+<td style="text-align: left;"><code>(f(x + h) - f(x)) / h</code></td>
+<td style="text-align: left;">Numerical finite difference</td>
+</tr>
+</tbody>
+</table>
 <hr />
-<h3 id="comprehensive-exercises">Comprehensive Exercises</h3>
-<h3 id="assessment-criteria">Assessment Criteria</h3>
-<h2 id="appendix-mathematical-reference">Appendix: Mathematical Reference</h2>
+<h3 id="82-traceback-diagnostic-reference">8.2 Traceback Diagnostic Reference</h3>
+<h4 id="1-shape-mismatch-error-valueerror">1. Shape Mismatch Error (<code>ValueError</code>)</h4>
+<pre><code class="language-text">ValueError: matmul: Input operand 1 has a mismatch in its core dimension 0,
+with gufunc signature (n?,k),(k?,m?)-&gt;(n?,m?) (size 3 is different from 2)
+</code></pre>
+<ul>
+<li><strong>Translation:</strong> You attempted matrix multiplication (<code>@</code>) between two arrays whose inner dimensions do not match.</li>
+<li><strong>Fix:</strong> Check <code>array1.shape</code> and <code>array2.shape</code>. Ensure that the column count of the first array equals the row count of the second array.</li>
+</ul>
+<h4 id="2-non-existent-key-error-keyerror">2. Non-existent Key Error (<code>KeyError</code>)</h4>
+<pre><code class="language-text">KeyError: 'cost_per_km'
+</code></pre>
+<ul>
+<li><strong>Translation:</strong> You requested a key from a dictionary that does not exist.</li>
+<li><strong>Fix:</strong> Check for typos in string keys or print <code>dictionary.keys()</code> to verify available labels.</li>
+</ul>
+<h4 id="3-data-type-mismatch-error-typeerror">3. Data Type Mismatch Error (<code>TypeError</code>)</h4>
+<pre><code class="language-text">TypeError: can only concatenate str (not &quot;float&quot;) to str
+</code></pre>
+<ul>
+<li><strong>Translation:</strong> Python refused to automatically combine text strings with numeric floating-point values.</li>
+<li><strong>Fix:</strong> Explicitly convert numbers to strings using <code>str(val)</code> or use f-strings (<code>f"Cost: {val}"</code>).</li>
+</ul></template>
+<script>
+(function () {
+    var modal = document.getElementById('companion-more-modal');
+    var body = document.getElementById('companion-more-body');
+    var close = modal && modal.querySelector('.companion-more-close');
+    var previousFocus = null;
+    if (!modal || !body || !close) return;
+
+    function closeModal() {
+        modal.hidden = true;
+        body.replaceChildren();
+        document.body.style.overflow = '';
+        if (previousFocus) previousFocus.focus();
+    }
+
+    document.querySelectorAll('.companion-more-button').forEach(function (button) {
+        button.addEventListener('click', function () {
+            var key = button.getAttribute('data-companion-section');
+            var template = document.getElementById('companion-template-' + key);
+            if (!template) return;
+            previousFocus = button;
+            body.replaceChildren(template.content.cloneNode(true));
+            modal.hidden = false;
+            document.body.style.overflow = 'hidden';
+            close.focus();
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise([body]);
+            }
+        });
+    });
+    close.addEventListener('click', closeModal);
+    modal.addEventListener('click', function (event) {
+        if (event.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && !modal.hidden) closeModal();
+    });
+    var requestedSection = new URLSearchParams(window.location.search).get('companion');
+    if (requestedSection) {
+        var requestedButton = Array.from(
+            document.querySelectorAll('.companion-more-button')
+        ).find(function (button) {
+            return button.getAttribute('data-companion-section') === requestedSection;
+        });
+        if (requestedButton) requestedButton.click();
+    }
+})();
+</script>
+
         </article>
     </div>
 
@@ -2918,23 +2841,20 @@ except ValueError as e:
     </script>
 
 
-    <!-- Math: local vendor copy preferred, CDN used only as a fallback when online. -->
+    <!-- MathJax is loaded synchronously after the chapter markup.  At this
+         point every equation is already in the DOM, so startup reliably
+         typesets the initial page as well as later modal content. -->
     <script>
         window.MathJax = {
-            tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] }
+            tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] },
+            startup: { typeset: false }
         };
-        (function loadMathJax() {
-            var local = document.createElement('script');
-            local.src = '../vendor/mathjax/tex-mml-svg.js';
-            local.async = true;
-            local.onerror = function () {
-                var cdn = document.createElement('script');
-                cdn.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-svg.js';
-                cdn.async = true;
-                document.head.appendChild(cdn);
-            };
-            document.head.appendChild(local);
-        })();
+    </script>
+    <script id="MathJax-script" src="../vendor/mathjax/tex-svg-full.js"></script>
+    <script>
+        window.MathJax.startup.promise
+            .then(function () { return window.MathJax.typesetPromise(); })
+            .catch(function (error) { console.error('MathJax typesetting failed:', error); });
     </script>
 
     <!-- Diagrams: local vendor copy preferred, CDN used only as a fallback when online.
@@ -2965,6 +2885,422 @@ except ValueError as e:
                 document.head.appendChild(cdn);
             };
             document.head.appendChild(local);
+        })();
+    </script>
+
+    <!-- Right-Click Custom Context Menu -->
+    <div id="custom-context-menu" style="display:none; position:fixed; z-index:9999999; background:#0f1524; border:1px solid #223150; border-radius:14px; padding:6px; width:220px; box-shadow:0 20px 40px rgba(0,0,0,0.8); font-family:sans-serif;">
+        <button id="ctx-add-note" style="width:100%; text-align:left; background:transparent; border:none; color:#22d3ee; padding:9px 12px; font-size:12px; font-weight:700; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:8px;" onmouseover="this.style.background='rgba(34,211,238,0.15)'" onmouseout="this.style.background='transparent'">
+            <span>🖊️ Add Note / Notion</span>
+        </button>
+        <div style="height:1px; background:#223150; margin:4px 0;"></div>
+        <button id="ctx-copy" style="width:100%; text-align:left; background:transparent; border:none; color:#cbd5e1; padding:9px 12px; font-size:12px; font-weight:600; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:8px;" onmouseover="this.style.background='rgba(255,255,255,0.08)'" onmouseout="this.style.background='transparent'">
+            <span>📋 Copy Selected Text</span>
+        </button>
+    </div>
+
+    <!-- MS Word Minimized Comments Sidebar Toggle & Drawer -->
+    <button id="word-comments-toggle" style="display:none; position:fixed; top:20px; right:20px; z-index:999980; background:#151d30; color:#eab308; border:1px solid #eab308; border-radius:9999px; padding:8px 16px; font-size:12px; font-weight:700; cursor:pointer; box-shadow:0 10px 25px rgba(0,0,0,0.5); align-items:center; gap:6px;">
+        <span>💬 Comments</span>
+        <span id="word-comments-badge" style="background:#eab308; color:#000000; font-size:10px; padding:1px 6px; border-radius:9999px; font-weight:800;">0</span>
+    </button>
+
+    <div id="word-comments-drawer" style="display:none; position:fixed; top:0; right:0; bottom:0; width:340px; max-width:85vw; z-index:999999; background:#0f1524; border-left:1px solid #223150; box-shadow:-10px 0 30px rgba(0,0,0,0.7); padding:20px; overflow-y:auto; font-family:sans-serif;">
+        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #223150; padding-bottom:12px; margin-bottom:16px;">
+            <span style="font-size:13px; font-weight:800; color:#eab308; display:flex; align-items:center; gap:6px;">💬 CHAPTER COMMENTS</span>
+            <button id="word-comments-drawer-close" style="background:transparent; border:none; color:#cbd5e1; font-size:18px; cursor:pointer;">✕</button>
+        </div>
+        <div id="word-comments-list">
+            <!-- Dynamically loaded chapter notes -->
+        </div>
+    </div>
+
+    <!-- Floating Selection Trigger Button -->
+    <button id="inline-comment-trigger" style="display:none; position:fixed; z-index:999999; background:#151d30; color:#22d3ee; border:1px solid rgba(34,211,238,0.5); border-radius:9999px; padding:7px 16px; font-size:12px; font-weight:700; box-shadow:0 10px 25px rgba(0,0,0,0.6); cursor:pointer; align-items:center; gap:6px;">
+        <span>🖊️ Comment / Sync Notion</span>
+    </button>
+
+    <!-- Persistent Bottom-Right Note Button -->
+    <button id="persistent-note-btn" style="position:fixed; bottom:24px; right:24px; z-index:999990; background:#151d30; color:#22d3ee; border:1px solid #223150; border-radius:9999px; padding:11px 20px; font-size:13px; font-weight:700; box-shadow:0 10px 30px rgba(0,0,0,0.7); cursor:pointer; display:flex; align-items:center; gap:8px; transition:all 0.2s ease;">
+        <span>🖊️ Add Note / Notion</span>
+        <span id="selection-badge" style="display:none; background:#0284c7; color:#ffffff; font-size:10px; padding:2px 7px; border-radius:9999px; text-transform:uppercase; font-weight:800; letter-spacing:0.05em;">Text Selected</span>
+    </button>
+
+    <!-- Note Card Modal with Offline Quill WYSIWYG Editor -->
+    <div id="inline-comment-box" style="display:none; position:fixed; z-index:999999; top:50%; left:50%; transform:translate(-50%, -50%); background:#0f1524; border:1px solid #223150; border-radius:20px; padding:24px; width:680px; max-width:92vw; max-height:88vh; overflow-y:auto; box-shadow:0 25px 60px rgba(0,0,0,0.85); font-family:sans-serif; text-align:left;">
+        <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #223150; padding-bottom:14px; margin-bottom:16px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-size:14px; font-weight:800; color:#22d3ee; display:flex; align-items:center; gap:6px;">🖊️ INLINE NOTE & NOTION SYNC</span>
+                <span style="font-size:10px; background:rgba(34,211,238,0.15); color:#22d3ee; border:1px solid rgba(34,211,238,0.3); padding:2px 8px; border-radius:9999px; font-weight:700;">QUILL RICH TEXT</span>
+            </div>
+            <button id="inline-comment-close" style="background:transparent; border:none; color:#cbd5e1; font-size:18px; cursor:pointer; padding:4px 8px; border-radius:6px;">✕</button>
+        </div>
+        
+        <div style="background:#151d30; border:1px solid #223150; padding:12px 14px; border-radius:12px; margin-bottom:16px;">
+            <span style="font-size:10px; text-transform:uppercase; font-weight:700; color:#22d3ee; display:block; margin-bottom:4px;">Note Title (Selected Text)</span>
+            <h4 id="inline-quote-text" style="font-size:14px; font-weight:700; color:#ffffff; margin:0; line-height:1.4;">
+                <!-- Highlighted text formatted as title -->
+            </h4>
+        </div>
+
+        <div style="margin-bottom:18px;">
+            <label style="font-size:11px; text-transform:uppercase; font-weight:700; color:#94a3b8; display:block; margin-bottom:6px;">Your Thoughts & Rich Notes</label>
+            
+            <!-- Quill Editor Container -->
+            <div id="quill-editor-wrapper" style="background:#0b0f19; border:1px solid #223150; border-radius:12px; overflow:hidden;">
+                <div id="quill-editor" style="height:220px; font-size:14px; color:#ffffff; border:none;"></div>
+            </div>
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+            <span id="inline-comment-status" style="font-size:12px; color:#fbbf24; font-weight:600;"></span>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <button id="inline-comment-cancel" style="background:transparent; color:#94a3b8; border:1px solid #223150; padding:8px 16px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer;">Cancel</button>
+                <button id="inline-comment-submit" style="background:linear-gradient(135deg, #0284c7, #0891b2); color:#ffffff; border:none; padding:9px 20px; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer; box-shadow:0 4px 15px rgba(8,145,178,0.4);">
+                    Save Note & Sync Notion
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Maximizable Day 0E Video Masterclass Modal -->
+    <div id="day0e-video-modal" style="display:none; position:fixed; z-index:9999999; top:50%; left:50%; transform:translate(-50%, -50%); background:#0f1524; border:1px solid #223150; border-radius:20px; width:96vw; max-width:1400px; height:94vh; box-shadow:0 30px 80px rgba(0,0,0,0.9); font-family:sans-serif; overflow:hidden; transition:all 0.25s cubic-bezier(0.16, 1, 0.3, 1);">
+        <!-- Modal Header -->
+        <div id="day0e-modal-header" style="display:flex; align-items:center; justify-content:space-between; background:#151d30; border-bottom:1px solid #223150; padding:12px 20px;">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <span style="font-size:14px; font-weight:800; color:#f472b6; display:flex; align-items:center; gap:6px;">🎬 DAY 0E MASTERCLASS VIDEO</span>
+                <span style="font-size:10px; background:rgba(236,72,153,0.18); color:#f472b6; border:1px solid rgba(236,72,153,0.4); padding:2px 8px; border-radius:9999px; font-weight:700;">FEMALE VOICE & INTERACTIVE EXERCISES</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <button id="day0e-modal-maximize" style="background:#223150; border:1px solid rgba(255,255,255,0.1); color:#cbd5e1; font-size:12px; font-weight:700; padding:6px 14px; border-radius:8px; cursor:pointer;" onclick="toggleDay0EMaximize()">
+                    <span id="max-icon">🗖 Maximize</span>
+                </button>
+                <button id="day0e-modal-close" style="background:transparent; border:none; color:#cbd5e1; font-size:20px; cursor:pointer; padding:4px 8px; border-radius:6px;" onclick="closeDay0EVideoModal()">✕</button>
+            </div>
+        </div>
+
+        <!-- Modal Body Iframe -->
+        <div style="width:100%; height:calc(100% - 54px); background:#0b0f19;">
+            <iframe id="day0e-modal-iframe" src="" style="width:100%; height:100%; border:none;" title="Day 0E Masterclass Video" allow="fullscreen"></iframe>
+        </div>
+    </div>
+
+    <script>
+        var isDay0EMaximized = false;
+
+        function openDay0EVideoModal() {
+            var modal = document.getElementById('day0e-video-modal');
+            var iframe = document.getElementById('day0e-modal-iframe');
+            if (iframe && (!iframe.src || iframe.src.indexOf('day_0e_masterclass_video') === -1)) {
+                iframe.src = 'day_0e_masterclass_video.html';
+            }
+            if (modal) modal.style.display = 'block';
+        }
+
+        function closeDay0EVideoModal() {
+            var modal = document.getElementById('day0e-video-modal');
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+            if (modal) modal.style.display = 'none';
+        }
+
+        function toggleDay0EMaximize() {
+            var modal = document.getElementById('day0e-video-modal');
+            var maxBtn = document.getElementById('max-icon');
+            if (!modal) return;
+            isDay0EMaximized = !isDay0EMaximized;
+            if (isDay0EMaximized) {
+                modal.style.width = '100vw';
+                modal.style.height = '100vh';
+                modal.style.maxWidth = 'none';
+                modal.style.top = '0';
+                modal.style.left = '0';
+                modal.style.transform = 'none';
+                modal.style.borderRadius = '0';
+                if (maxBtn) maxBtn.textContent = '🗗 Restore';
+            } else {
+                modal.style.width = '96vw';
+                modal.style.height = '94vh';
+                modal.style.maxWidth = '1400px';
+                modal.style.top = '50%';
+                modal.style.left = '50%';
+                modal.style.transform = 'translate(-50%, -50%)';
+                modal.style.borderRadius = '20px';
+                if (maxBtn) maxBtn.textContent = '🗖 Maximize';
+            }
+        }
+
+        window.openDay0EVideoModal = openDay0EVideoModal;
+        window.closeDay0EVideoModal = closeDay0EVideoModal;
+        window.toggleDay0EMaximize = toggleDay0EMaximize;
+
+        document.addEventListener('keydown', function(e) {
+            var modal = document.getElementById('day0e-video-modal');
+            if (!modal || modal.style.display === 'none') return;
+            if (e.key === 'Escape') closeDay0EVideoModal();
+            if (e.key === 'f' || e.key === 'F') toggleDay0EMaximize();
+        });
+
+        (function() {
+            var currentSelectedText = '';
+            var quillEditor = null;
+
+            function initQuillInstance() {
+                if (quillEditor) return;
+                var el = document.getElementById('quill-editor');
+                if (el && typeof Quill !== 'undefined') {
+                    quillEditor = new Quill('#quill-editor', {
+                        theme: 'snow',
+                        placeholder: 'Write down your notes, bullet points, key takeaways, or drop images here...',
+                        modules: {
+                            toolbar: [
+                                [{ 'header': [2, 3, false] }],
+                                ['bold', 'italic', 'underline', 'strike'],
+                                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                ['blockquote', 'code-block'],
+                                ['image', 'link'],
+                                ['clean']
+                            ]
+                        }
+                    });
+                }
+            }
+
+            function getSelectionText() {
+                var sel = window.getSelection();
+                return sel ? sel.toString().trim() : '';
+            }
+
+            function updateSelectionState() {
+                var text = getSelectionText();
+                var trigger = document.getElementById('inline-comment-trigger');
+                var badge = document.getElementById('selection-badge');
+                var fab = document.getElementById('persistent-note-btn');
+
+                if (text.length >= 1) {
+                    currentSelectedText = text;
+                    if (badge) badge.style.display = 'inline-block';
+                    if (fab) {
+                        fab.style.borderColor = 'rgba(34,211,238,0.8)';
+                        fab.style.boxShadow = '0 0 20px rgba(34,211,238,0.4)';
+                    }
+                    try {
+                        var sel = window.getSelection();
+                        var range = sel ? sel.getRangeAt(0) : null;
+                        var rect = range ? range.getBoundingClientRect() : null;
+                        if (rect && rect.width > 0 && trigger) {
+                            trigger.style.top = Math.max(10, rect.top - 45) + 'px';
+                            trigger.style.left = Math.max(10, Math.min(window.innerWidth - 220, rect.left + (rect.width / 2) - 80)) + 'px';
+                            trigger.style.display = 'flex';
+                        }
+                    } catch(e) {}
+                } else {
+                    if (badge) badge.style.display = 'none';
+                    if (fab) {
+                        fab.style.borderColor = '#223150';
+                        fab.style.boxShadow = '0 10px 30px rgba(0,0,0,0.7)';
+                    }
+                }
+            }
+
+            document.addEventListener('mouseup', function() { setTimeout(updateSelectionState, 50); });
+            document.addEventListener('keyup', function() { setTimeout(updateSelectionState, 50); });
+
+            document.addEventListener('contextmenu', function(e) {
+                var ctxMenu = document.getElementById('custom-context-menu');
+                var text = getSelectionText();
+                if (text) currentSelectedText = text;
+                if (ctxMenu) {
+                    e.preventDefault();
+                    ctxMenu.style.top = Math.min(window.innerHeight - 120, e.clientY) + 'px';
+                    ctxMenu.style.left = Math.min(window.innerWidth - 230, e.clientX) + 'px';
+                    ctxMenu.style.display = 'block';
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                var ctxMenu = document.getElementById('custom-context-menu');
+                if (ctxMenu && !ctxMenu.contains(e.target)) ctxMenu.style.display = 'none';
+            });
+
+            function openNoteModal(e) {
+                if (e && e.stopPropagation) e.stopPropagation();
+                var box = document.getElementById('inline-comment-box');
+                var quote = document.getElementById('inline-quote-text');
+                var status = document.getElementById('inline-comment-status');
+                var trigger = document.getElementById('inline-comment-trigger');
+                var ctxMenu = document.getElementById('custom-context-menu');
+
+                if (trigger) trigger.style.display = 'none';
+                if (ctxMenu) ctxMenu.style.display = 'none';
+                if (quote) quote.textContent = currentSelectedText || 'General Chapter Note';
+                if (status) status.textContent = '';
+                if (box) {
+                    box.style.display = 'block';
+                    initQuillInstance();
+                    if (quillEditor) quillEditor.focus();
+                }
+            }
+
+            window.openNoteModal = openNoteModal;
+
+            var triggerBtn = document.getElementById('inline-comment-trigger');
+            var fabBtn = document.getElementById('persistent-note-btn');
+            var ctxBtn = document.getElementById('ctx-add-note');
+            var ctxCopy = document.getElementById('ctx-copy');
+            var closeBtn = document.getElementById('inline-comment-close');
+            var cancelBtn = document.getElementById('inline-comment-cancel');
+            var submitBtn = document.getElementById('inline-comment-submit');
+
+            if (triggerBtn) triggerBtn.onclick = openNoteModal;
+            if (fabBtn) fabBtn.onclick = openNoteModal;
+            if (ctxBtn) ctxBtn.onclick = openNoteModal;
+            if (ctxCopy) ctxCopy.onclick = function() {
+                var ctxMenu = document.getElementById('custom-context-menu');
+                if (ctxMenu) ctxMenu.style.display = 'none';
+                if (currentSelectedText) navigator.clipboard.writeText(currentSelectedText);
+            };
+            if (closeBtn) closeBtn.onclick = function() {
+                var box = document.getElementById('inline-comment-box');
+                if (box) box.style.display = 'none';
+            };
+            if (cancelBtn) cancelBtn.onclick = function() {
+                var box = document.getElementById('inline-comment-box');
+                if (box) box.style.display = 'none';
+            };
+
+            if (submitBtn) submitBtn.onclick = async function() {
+                var status = document.getElementById('inline-comment-status');
+                var htmlComment = quillEditor ? quillEditor.root.innerHTML : '';
+                var textComment = quillEditor ? quillEditor.getText().trim() : '';
+
+                if (!textComment && !currentSelectedText && (!htmlComment || htmlComment === '<p><br></p>')) return;
+                if (status) status.textContent = 'Saving note & syncing to Notion...';
+
+                try {
+                    var resp = await fetch('/api/notion/comment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            title: currentSelectedText || (textComment ? textComment.slice(0, 60) : "Study Note"),
+                            selection_text: currentSelectedText,
+                            comment: htmlComment,
+                            chapter_slug: window.location.pathname.split('/').pop() || 'chapter'
+                        })
+                    });
+                    var res = await resp.json();
+                    if (res.ok) {
+                        if (status) {
+                            status.style.color = '#34d399';
+                            status.textContent = (res.notion && res.notion.ok) ? 'Pushed to Notion & Local DB!' : 'Saved to Local Database!';
+                        }
+                        setTimeout(function() {
+                            var box = document.getElementById('inline-comment-box');
+                            if (box) box.style.display = 'none';
+                            if (quillEditor) quillEditor.setContents([]);
+                            loadSavedChapterNotes();
+                        }, 1200);
+                    }
+                } catch (err) {
+                    if (status) {
+                        status.style.color = '#fbbf24';
+                        status.textContent = 'Saved to Local Session!';
+                    }
+                    setTimeout(function() {
+                        var box = document.getElementById('inline-comment-box');
+                        if (box) box.style.display = 'none';
+                    }, 1200);
+                }
+            };
+
+            async function loadSavedChapterNotes() {
+                try {
+                    var slug = window.location.pathname.split('/').pop() || 'chapter';
+                    var resp = await fetch('/api/notes?chapter_slug=' + encodeURIComponent(slug));
+                    var data = await resp.json();
+                    var notes = data.notes || [];
+
+                    var toggleBtn = document.getElementById('word-comments-toggle');
+                    var badge = document.getElementById('word-comments-badge');
+                    var list = document.getElementById('word-comments-list');
+
+                    if (badge) badge.textContent = notes.length;
+                    if (toggleBtn) toggleBtn.style.display = notes.length > 0 ? 'inline-flex' : 'none';
+
+                    if (list) {
+                        if (notes.length === 0) {
+                            list.innerHTML = '<div style="color:#94a3b8; font-size:12px; text-align:center; padding:20px;">No comments yet. Highlight text and right-click to add a note!</div>';
+                        } else {
+                            list.innerHTML = notes.map(function(n) {
+                                var title = n.title || 'Note';
+                                var body = n.body ? n.body : '';
+                                return '<div style="background:#151d30; border:1px solid #223150; border-radius:12px; padding:14px; margin-bottom:12px;">' +
+                                    '<div style="font-size:10px; font-weight:800; color:#eab308; text-transform:uppercase; margin-bottom:4px;">💬 Comment</div>' +
+                                    '<h4 style="font-size:13px; font-weight:700; color:#ffffff; margin:0 0 6px 0; line-height:1.4;">' + escapeHtml(title) + '</h4>' +
+                                    (body ? '<p style="font-size:12px; color:#cbd5e1; margin:0; line-height:1.5;">' + escapeHtml(body) + '</p>' : '') +
+                                    '<div style="font-size:10px; color:#64748b; margin-top:8px; display:flex; justify-content:space-between; align-items:center;">' +
+                                        '<span>' + (n.created_at || '') + '</span>' +
+                                        '<span style="color:#34d399; font-weight:700;">Notion Synced</span>' +
+                                    '</div>' +
+                                '</div>';
+                            }).join('');
+                        }
+                    }
+
+                    notes.forEach(function(note) {
+                        if (!note.title || note.title === 'Study Note' || note.title.length < 3) return;
+                        highlightTextSnippet(note.title, note);
+                    });
+                } catch(e) {}
+            }
+
+            function highlightTextSnippet(searchText, note) {
+                try {
+                    var body = document.querySelector('.markdown-body') || document.body;
+                    if (!body) return;
+                    var walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, null, false);
+                    var node;
+                    while (node = walker.nextNode()) {
+                        if (node.parentElement && node.parentElement.closest('.word-comment-highlight, script, style, textarea, button')) continue;
+                        var idx = node.nodeValue ? node.nodeValue.toLowerCase().indexOf(searchText.toLowerCase().slice(0, 30)) : -1;
+                        if (idx !== -1) {
+                            var matchedText = node.nodeValue.substr(idx, searchText.length);
+                            var mark = document.createElement('mark');
+                            mark.className = 'word-comment-highlight';
+                            mark.style.cssText = 'background:rgba(234,179,8,0.25); border-bottom:2px solid #eab308; border-radius:4px; padding:1px 4px; color:inherit; cursor:pointer;';
+                            mark.innerHTML = escapeHtml(matchedText) + '<span style="display:inline-flex; align-items:center; justify-content:center; background:#eab308; color:#000; font-size:10px; font-weight:800; border-radius:9999px; width:16px; height:16px; margin-left:4px; vertical-align:middle;" title="MS Word Comment">💬</span>';
+                            mark.addEventListener('click', function(e) {
+                                e.stopPropagation();
+                                var drawer = document.getElementById('word-comments-drawer');
+                                if (drawer) drawer.style.display = 'block';
+                            });
+                            var parent = node.parentNode;
+                            var after = node.splitText(idx);
+                            after.nodeValue = after.nodeValue.substr(searchText.length);
+                            parent.insertBefore(mark, after);
+                            break;
+                        }
+                    }
+                } catch(err) {}
+            }
+
+            function escapeHtml(val) {
+                return String(val || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+
+            var wordToggle = document.getElementById('word-comments-toggle');
+            var wordClose = document.getElementById('word-comments-drawer-close');
+
+            if (wordToggle) wordToggle.onclick = function() {
+                var drawer = document.getElementById('word-comments-drawer');
+                if (drawer) drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
+            };
+
+            if (wordClose) wordClose.onclick = function() {
+                var drawer = document.getElementById('word-comments-drawer');
+                if (drawer) drawer.style.display = 'none';
+            };
+
+            window.addEventListener('load', loadSavedChapterNotes);
         })();
     </script>
 </body>

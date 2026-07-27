@@ -1445,7 +1445,7 @@ A spline-logistic model uses basis functions:
 
 $$
 \operatorname{logit}(p)
-=\beta_0+sum_{m=1}^{M}\theta_mB_m(x).
+=\beta_0+\sum_{m=1}^{M}\theta_mB_m(x).
 $$
 
 A generalized additive model (GAM) extends this to
@@ -1508,6 +1508,19 @@ spline_logistic = Pipeline([
 ])
 ```
 
+`SplineTransformer(n_knots=5, degree=3, include_bias=False)` places five knots across each fitted training feature (quantiles by default) and evaluates overlapping cubic basis functions around them. One original number therefore becomes several basis-column values; with these settings, each smooth input produces `n_knots + degree - 2 = 6` output columns. Four smooth inputs produce 24 spline columns before the linear and categorical blocks are added. Inspect this rather than guessing:
+
+```python
+spline_only = SplineTransformer(n_knots=5, degree=3, include_bias=False)
+demo_basis = spline_only.fit_transform(df[smooth_columns])
+print("input shape:", df[smooth_columns].shape)
+print("spline-basis shape:", demo_basis.shape)
+print("learned knot arrays:", [bs.t for bs in spline_only.bsplines_])
+assert demo_basis.shape[1] == 6 * len(smooth_columns)
+```
+
+The model learns coefficients for basis columns, not one global slope per original feature. Knot locations must therefore be fitted inside each training fold.
+
 Knot count, degree, penalty, and selected smooth features form a candidate procedure and must be tuned within development data. Curves should be plotted with data support and uncertainty. Splines can extrapolate poorly beyond boundary knots; “smooth” does not mean “scientifically safe.”
 
 ## 25.4 K-nearest-neighbour classification
@@ -1569,7 +1582,24 @@ Only observations on or inside the margin contribute directly to the hinge-loss 
 
 ## 25.6 The kernel idea
 
-The dual solution depends on inner products between observations. Replace $x_i^\top x_j$ with a kernel $K(x_i,x_j)$ corresponding to an implicit feature space.
+Why does a kernel appear? Introduce one nonnegative multiplier $\alpha_i$ for each margin constraint. Minimising the SVM's primal expression over $w$ gives
+
+$$
+w=\sum_i \alpha_i y_i x_i.
+$$
+
+Substituting this representation back into the optimisation removes explicit coordinates of $w$. The resulting dual objective contains training observations only through pairwise inner products:
+
+$$
+\max_\alpha
+\sum_i\alpha_i-
+\frac12\sum_i\sum_j
+\alpha_i\alpha_jy_iy_j\,x_i^\top x_j,
+$$
+
+subject to bounds on $\alpha_i$ and $\sum_i\alpha_i y_i=0$. Predictions have the same structure, $f(x)=\sum_i\alpha_i y_i x_i^\top x+b$; only support vectors have nonzero multipliers.
+
+Now the kernel trick is a literal substitution: replace every $x_i^\top x_j$ with $K(x_i,x_j)=\phi(x_i)^\top\phi(x_j)$. The algorithm behaves as if it constructed possibly many nonlinear features $\phi(x)$, while computing only similarities. This buys nonlinear boundaries without explicitly materialising the enlarged feature matrix; it does not remove the need for scaling, tuning, or adequate local support.
 
 The radial-basis-function kernel is
 
@@ -1628,6 +1658,37 @@ $$
 $$
 
 One class score must be constrained or treated as a reference because adding the same constant to every score leaves probabilities unchanged.
+
+### Numeric three-class example
+
+Suppose one project receives scores $z=(2,1,0)$. Subtracting the maximum gives $(0,-1,-2)$ without changing probabilities:
+
+$$
+p=\frac{(e^0,e^{-1},e^{-2})}{e^0+e^{-1}+e^{-2}}
+\approx(0.665,0.245,0.090).
+$$
+
+If the true class is the second class, its one-hot vector is $y=(0,1,0)$ and the cross-entropy for this row is
+
+$$
+-\sum_{k=1}^3y_k\log p_k=-\log(0.245)\approx1.408.
+$$
+
+```python
+import numpy as np
+
+scores = np.array([2.0, 1.0, 0.0])
+shifted = scores - scores.max()
+probabilities = np.exp(shifted) / np.exp(shifted).sum()
+one_hot = np.array([0.0, 1.0, 0.0])
+cross_entropy = -(one_hot * np.log(probabilities)).sum()
+
+print(probabilities, cross_entropy)
+assert np.isclose(probabilities.sum(), 1.0)
+assert np.isclose(cross_entropy, -np.log(probabilities[1]))
+```
+
+Raising the true class's score raises its probability and lowers this loss; raising a competing score does the opposite.
 
 Alternative decompositions include one-versus-rest and one-versus-one. Their probability outputs and calibration behaviour differ from joint multinomial softmax.
 
@@ -2830,6 +2891,30 @@ Freeze the following protocol before fitting candidates.
 The $1/6$ threshold follows the simplified cost ratio. It is a teaching policy, not a real economic valuation.
 
 ## 29.11 End-to-end locked benchmark
+
+### How to read the capstone pipeline
+
+The long block below combines familiar pieces under one frozen protocol. Read it in this order before executing it:
+
+1. **Constants** freeze the target, years, costs, threshold, and seed.
+2. **`ClassificationFeatureEngineer`** follows scikit-learn's transformer contract: `fit` learns training-only centres and returns `self`; `transform` applies those saved values to any later frame.
+3. **`ColumnTransformer`** sends named column groups through different preprocessing paths and concatenates their outputs.
+4. **Candidate pipelines** bind preprocessing to each estimator so validation folds cannot leak fitted transformations.
+5. **`clone(candidate)`** creates a fresh unfitted object with the same settings for every fold; fitted state is never carried between folds.
+6. **The locked test** is evaluated once only after the development procedure selects a candidate.
+
+After executing the class definition in the block below, pause before the benchmark loop and verify the custom transformer's basic contract:
+
+```python
+engineer = ClassificationFeatureEngineer()
+small_train = make_mhp_overrun_data().iloc[:20]
+engineer.fit(small_train)
+transformed = engineer.transform(small_train.iloc[:3])
+assert len(transformed) == 3
+assert engineer.capacity_center_ == small_train["planned_capacity_kw"].median()
+```
+
+If you cannot yet explain the difference between `fit` and `transform`, revisit Chapter 2's pipeline boundary before attempting the full block.
 
 The code assumes `chapter2_data.py`, `chapter3_data.py`, and `chapter4_data.py` have been saved from the three chapters.
 

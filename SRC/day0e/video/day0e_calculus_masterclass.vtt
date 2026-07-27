@@ -1,0 +1,793 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:21.818
+Segment 1.
+
+00:00:21.818 --> 00:00:43.636
+What a slope is, and why a curve does not have one.
+
+00:00:43.636 --> 00:01:05.455
+A derivative is the slope at one exact point.
+
+00:01:05.455 --> 00:01:27.273
+The formula on screen is dy/dx = 2x.
+
+00:01:27.273 --> 00:01:49.091
+Read it slowly and connect each symbol to a number.
+
+00:01:49.091 --> 00:02:10.909
+In our running microhydro power example, MHP cable length and cost form a line before we study curves.
+
+00:02:10.909 --> 00:02:32.727
+Now type the smallest version yourself; do not copy it.
+
+00:02:32.727 --> 00:02:54.545
+Pause the video now.
+
+00:02:54.545 --> 00:03:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+00:03:16.364 --> 00:03:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+00:03:38.182 --> 00:03:60.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+00:04:00.000 --> 00:04:21.818
+Segment 2.
+
+00:04:21.818 --> 00:04:43.636
+The limit definition, derived not asserted.
+
+00:04:43.636 --> 00:05:05.455
+A derivative is a limit of nearby average slopes.
+
+00:05:05.455 --> 00:05:27.273
+The formula on screen is f'(x) = lim h→0 [f(x+h)-f(x)]/h.
+
+00:05:27.273 --> 00:05:49.091
+Read it slowly and connect each symbol to a number.
+
+00:05:49.091 --> 00:06:10.909
+In our running microhydro power example, At a terrain index of 3, the numerical slope approaches 6.
+
+00:06:10.909 --> 00:06:32.727
+Now type the smallest version yourself; do not copy it.
+
+00:06:32.727 --> 00:06:54.545
+Pause the video now.
+
+00:06:54.545 --> 00:07:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+00:07:16.364 --> 00:07:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+00:07:38.182 --> 00:08:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+00:08:00.000 --> 00:08:21.818
+Segment 3.
+
+00:08:21.818 --> 00:08:43.636
+The rules you will actually use.
+
+00:08:43.636 --> 00:09:05.455
+Power, constant-multiple, and sum rules are compressed limit calculations.
+
+00:09:05.455 --> 00:09:27.273
+The formula on screen is d(xⁿ)/dx = n xⁿ⁻¹.
+
+00:09:27.273 --> 00:09:49.091
+Read it slowly and connect each symbol to a number.
+
+00:09:49.091 --> 00:10:10.909
+In our running microhydro power example, A cost curve with cable length and terrain index is differentiated term by term.
+
+00:10:10.909 --> 00:10:32.727
+Now type the smallest version yourself; do not copy it.
+
+00:10:32.727 --> 00:10:54.545
+Pause the video now.
+
+00:10:54.545 --> 00:11:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+00:11:16.364 --> 00:11:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+00:11:38.182 --> 00:12:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+00:12:00.000 --> 00:12:21.818
+Segment 4.
+
+00:12:21.818 --> 00:12:43.636
+Product, quotient, and chain rules.
+
+00:12:43.636 --> 00:13:05.455
+Nested functions pass sensitivity through each layer.
+
+00:13:05.455 --> 00:13:27.273
+The formula on screen is d f(g(x))/dx = f'(g(x))g'(x).
+
+00:13:27.273 --> 00:13:49.091
+Read it slowly and connect each symbol to a number.
+
+00:13:49.091 --> 00:14:10.909
+In our running microhydro power example, The squared MHP cost error gives the same gradient by two roads.
+
+00:14:10.909 --> 00:14:32.727
+Now type the smallest version yourself; do not copy it.
+
+00:14:32.727 --> 00:14:54.545
+Pause the video now.
+
+00:14:54.545 --> 00:15:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+00:15:16.364 --> 00:15:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+00:15:38.182 --> 00:16:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+00:16:00.000 --> 00:16:21.818
+Segment 5.
+
+00:16:21.818 --> 00:16:43.636
+Exponential and logarithm.
+
+00:16:43.636 --> 00:17:05.455
+Exponential growth reproduces itself; logarithms undo it.
+
+00:17:05.455 --> 00:17:27.273
+The formula on screen is d eˣ/dx=eˣ; d ln(x)/dx=1/x.
+
+00:17:27.273 --> 00:17:49.091
+Read it slowly and connect each symbol to a number.
+
+00:17:49.091 --> 00:18:10.909
+In our running microhydro power example, Log-transformed million-PKR costs change the derivative scale.
+
+00:18:10.909 --> 00:18:32.727
+Now type the smallest version yourself; do not copy it.
+
+00:18:32.727 --> 00:18:54.545
+Pause the video now.
+
+00:18:54.545 --> 00:19:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+00:19:16.364 --> 00:19:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+00:19:38.182 --> 00:20:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+00:20:00.000 --> 00:20:21.818
+Segment 6.
+
+00:20:21.818 --> 00:20:43.636
+Sigmoid, tanh, and ReLU.
+
+00:20:43.636 --> 00:21:05.455
+Activation derivatives explain saturation and vanishing gradients.
+
+00:21:05.455 --> 00:21:27.273
+The formula on screen is σ'(x)=σ(x)(1−σ(x)).
+
+00:21:27.273 --> 00:21:49.091
+Read it slowly and connect each symbol to a number.
+
+00:21:49.091 --> 00:22:10.909
+In our running microhydro power example, A risk score for an MHP warning can become insensitive in a saturated tail.
+
+00:22:10.909 --> 00:22:32.727
+Now type the smallest version yourself; do not copy it.
+
+00:22:32.727 --> 00:22:54.545
+Pause the video now.
+
+00:22:54.545 --> 00:23:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+00:23:16.364 --> 00:23:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+00:23:38.182 --> 00:24:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+00:24:00.000 --> 00:24:21.818
+Segment 7.
+
+00:24:21.818 --> 00:24:43.636
+Second derivatives, curvature, and convexity.
+
+00:24:43.636 --> 00:25:05.455
+Curvature tells us how the slope changes.
+
+00:25:05.455 --> 00:25:27.273
+The formula on screen is E''(m)=8>0.
+
+00:25:27.273 --> 00:25:49.091
+Read it slowly and connect each symbol to a number.
+
+00:25:49.091 --> 00:26:10.909
+In our running microhydro power example, The squared MHP error is a bowl with one bottom.
+
+00:26:10.909 --> 00:26:32.727
+Now type the smallest version yourself; do not copy it.
+
+00:26:32.727 --> 00:26:54.545
+Pause the video now.
+
+00:26:54.545 --> 00:27:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+00:27:16.364 --> 00:27:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+00:27:38.182 --> 00:28:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+00:28:00.000 --> 00:28:21.818
+Segment 8.
+
+00:28:21.818 --> 00:28:43.636
+Taylor expansion.
+
+00:28:43.636 --> 00:29:05.455
+Zooming in turns a smooth function into a local polynomial.
+
+00:29:05.455 --> 00:29:27.273
+The formula on screen is f(x+h)≈f(x)+f'(x)h+½f''(x)h².
+
+00:29:27.273 --> 00:29:49.091
+Read it slowly and connect each symbol to a number.
+
+00:29:49.091 --> 00:30:10.909
+In our running microhydro power example, A local cost approximation is useful only near the appraisal point.
+
+00:30:10.909 --> 00:30:32.727
+Now type the smallest version yourself; do not copy it.
+
+00:30:32.727 --> 00:30:54.545
+Pause the video now.
+
+00:30:54.545 --> 00:31:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+00:31:16.364 --> 00:31:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+00:31:38.182 --> 00:32:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+00:32:00.000 --> 00:32:21.818
+Segment 9.
+
+00:32:21.818 --> 00:32:43.636
+Partial derivatives.
+
+00:32:43.636 --> 00:33:05.455
+Freeze every dial except the one being nudged.
+
+00:33:05.455 --> 00:33:27.273
+The formula on screen is ∂E/∂m and ∂E/∂c.
+
+00:33:27.273 --> 00:33:49.091
+Read it slowly and connect each symbol to a number.
+
+00:33:49.091 --> 00:34:10.909
+In our running microhydro power example, Cable length and terrain index are separate directions on an error surface.
+
+00:34:10.909 --> 00:34:32.727
+Now type the smallest version yourself; do not copy it.
+
+00:34:32.727 --> 00:34:54.545
+Pause the video now.
+
+00:34:54.545 --> 00:35:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+00:35:16.364 --> 00:35:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+00:35:38.182 --> 00:36:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+00:36:00.000 --> 00:36:21.818
+Segment 10.
+
+00:36:21.818 --> 00:36:43.636
+The gradient and directional derivatives.
+
+00:36:43.636 --> 00:37:05.455
+The gradient points toward steepest ascent.
+
+00:37:05.455 --> 00:37:27.273
+The formula on screen is ∇E=[∂E/∂m,∂E/∂c].
+
+00:37:27.273 --> 00:37:49.091
+Read it slowly and connect each symbol to a number.
+
+00:37:49.091 --> 00:38:10.909
+In our running microhydro power example, Negative gradient reduces the MHP cost error.
+
+00:38:10.909 --> 00:38:32.727
+Now type the smallest version yourself; do not copy it.
+
+00:38:32.727 --> 00:38:54.545
+Pause the video now.
+
+00:38:54.545 --> 00:39:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+00:39:16.364 --> 00:39:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+00:39:38.182 --> 00:40:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+00:40:00.000 --> 00:40:21.818
+Segment 11.
+
+00:40:21.818 --> 00:40:43.636
+Jacobian and Hessian.
+
+00:40:43.636 --> 00:41:05.455
+Jacobians describe vector outputs; Hessians describe curvature.
+
+00:41:05.455 --> 00:41:27.273
+The formula on screen is H=∇²E.
+
+00:41:27.273 --> 00:41:49.091
+Read it slowly and connect each symbol to a number.
+
+00:41:49.091 --> 00:42:10.909
+In our running microhydro power example, A positive-semidefinite MHP Hessian means convexity in every direction.
+
+00:42:10.909 --> 00:42:32.727
+Now type the smallest version yourself; do not copy it.
+
+00:42:32.727 --> 00:42:54.545
+Pause the video now.
+
+00:42:54.545 --> 00:43:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+00:43:16.364 --> 00:43:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+00:43:38.182 --> 00:44:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+00:44:00.000 --> 00:44:21.818
+Segment 12.
+
+00:44:21.818 --> 00:44:43.636
+Multivariable chain rule and backpropagation.
+
+00:44:43.636 --> 00:45:05.455
+Backpropagation is the chain rule applied right to left.
+
+00:45:05.455 --> 00:45:27.273
+The formula on screen is J_total=J_outer J_inner.
+
+00:45:27.273 --> 00:45:49.091
+Read it slowly and connect each symbol to a number.
+
+00:45:49.091 --> 00:46:10.909
+In our running microhydro power example, A prediction pipeline passes MHP feature sensitivity through layers.
+
+00:46:10.909 --> 00:46:32.727
+Now type the smallest version yourself; do not copy it.
+
+00:46:32.727 --> 00:46:54.545
+Pause the video now.
+
+00:46:54.545 --> 00:47:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+00:47:16.364 --> 00:47:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+00:47:38.182 --> 00:48:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+00:48:00.000 --> 00:48:21.818
+Segment 13.
+
+00:48:21.818 --> 00:48:43.636
+Differentiating with respect to a vector.
+
+00:48:43.636 --> 00:49:05.455
+A vector gradient stacks one partial per entry of β.
+
+00:49:05.455 --> 00:49:27.273
+The formula on screen is ∇β(aᵀβ)=a.
+
+00:49:27.273 --> 00:49:49.091
+Read it slowly and connect each symbol to a number.
+
+00:49:49.091 --> 00:50:10.909
+In our running microhydro power example, β holds the cable and terrain coefficients.
+
+00:50:10.909 --> 00:50:32.727
+Now type the smallest version yourself; do not copy it.
+
+00:50:32.727 --> 00:50:54.545
+Pause the video now.
+
+00:50:54.545 --> 00:51:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+00:51:16.364 --> 00:51:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+00:51:38.182 --> 00:52:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+00:52:00.000 --> 00:52:21.818
+Segment 14.
+
+00:52:21.818 --> 00:52:43.636
+Derive the OLS normal equations.
+
+00:52:43.636 --> 00:53:05.455
+Setting the squared-error gradient to zero yields the normal equations.
+
+00:53:05.455 --> 00:53:27.273
+The formula on screen is β̂=(XᵀX)⁻¹Xᵀy.
+
+00:53:27.273 --> 00:53:49.091
+Read it slowly and connect each symbol to a number.
+
+00:53:49.091 --> 00:54:10.909
+In our running microhydro power example, Use the book's MHP projects and million-PKR costs.
+
+00:54:10.909 --> 00:54:32.727
+Now type the smallest version yourself; do not copy it.
+
+00:54:32.727 --> 00:54:54.545
+Pause the video now.
+
+00:54:54.545 --> 00:55:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+00:55:16.364 --> 00:55:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+00:55:38.182 --> 00:56:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+00:56:00.000 --> 00:56:21.818
+Segment 15.
+
+00:56:21.818 --> 00:56:43.636
+Critical points and the first-order condition.
+
+00:56:43.636 --> 00:57:05.455
+A zero gradient is a candidate, not automatically a minimum.
+
+00:57:05.455 --> 00:57:27.273
+The formula on screen is ∇E=0.
+
+00:57:27.273 --> 00:57:49.091
+Read it slowly and connect each symbol to a number.
+
+00:57:49.091 --> 00:58:10.909
+In our running microhydro power example, Use curvature to classify an MHP fitting solution.
+
+00:58:10.909 --> 00:58:32.727
+Now type the smallest version yourself; do not copy it.
+
+00:58:32.727 --> 00:58:54.545
+Pause the video now.
+
+00:58:54.545 --> 00:59:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+00:59:16.364 --> 00:59:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+00:59:38.182 --> 01:00:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+01:00:00.000 --> 01:00:21.818
+Segment 16.
+
+01:00:21.818 --> 01:00:43.636
+Gradient descent, built by hand.
+
+01:00:43.636 --> 01:01:05.455
+Repeated small negative-gradient steps reduce error.
+
+01:01:05.455 --> 01:01:27.273
+The formula on screen is β_new=β_old−η∇E.
+
+01:01:27.273 --> 01:01:49.091
+Read it slowly and connect each symbol to a number.
+
+01:01:49.091 --> 01:02:10.909
+In our running microhydro power example, The MHP toy loop shrinks error at η=.01 and explodes at η=5.
+
+01:02:10.909 --> 01:02:32.727
+Now type the smallest version yourself; do not copy it.
+
+01:02:32.727 --> 01:02:54.545
+Pause the video now.
+
+01:02:54.545 --> 01:03:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+01:03:16.364 --> 01:03:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+01:03:38.182 --> 01:04:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+01:04:00.000 --> 01:04:21.818
+Segment 17.
+
+01:04:21.818 --> 01:04:43.636
+Batch, stochastic, and mini-batch variants.
+
+01:04:43.636 --> 01:05:05.455
+The gradient can use all, one, or a small batch of projects.
+
+01:05:05.455 --> 01:05:27.273
+The formula on screen is full batch / SGD / mini-batch.
+
+01:05:27.273 --> 01:05:49.091
+Read it slowly and connect each symbol to a number.
+
+01:05:49.091 --> 01:06:10.909
+In our running microhydro power example, The data unit remains an MHP project.
+
+01:06:10.909 --> 01:06:32.727
+Now type the smallest version yourself; do not copy it.
+
+01:06:32.727 --> 01:06:54.545
+Pause the video now.
+
+01:06:54.545 --> 01:07:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+01:07:16.364 --> 01:07:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+01:07:38.182 --> 01:08:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+01:08:00.000 --> 01:08:21.818
+Segment 18.
+
+01:08:21.818 --> 01:08:43.636
+Constrained optimisation and Lagrange multipliers.
+
+01:08:43.636 --> 01:09:05.455
+At a constrained optimum, objective and constraint gradients align.
+
+01:09:05.455 --> 01:09:27.273
+The formula on screen is ∇E=λ∇g.
+
+01:09:27.273 --> 01:09:49.091
+Read it slowly and connect each symbol to a number.
+
+01:09:49.091 --> 01:10:10.909
+In our running microhydro power example, Ridge and lasso are constrained least-squares ideas.
+
+01:10:10.909 --> 01:10:32.727
+Now type the smallest version yourself; do not copy it.
+
+01:10:32.727 --> 01:10:54.545
+Pause the video now.
+
+01:10:54.545 --> 01:11:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+01:11:16.364 --> 01:11:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+01:11:38.182 --> 01:12:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+01:12:00.000 --> 01:12:21.818
+Segment 19.
+
+01:12:21.818 --> 01:12:43.636
+Finite differences and gradient checking.
+
+01:12:43.636 --> 01:13:05.455
+Numerical derivatives are a debugging instrument.
+
+01:13:05.455 --> 01:13:27.273
+The formula on screen is relative error = ‖gₐ−gₙ‖/(‖gₐ‖+‖gₙ‖).
+
+01:13:27.273 --> 01:13:49.091
+Read it slowly and connect each symbol to a number.
+
+01:13:49.091 --> 01:14:10.909
+In our running microhydro power example, Check an MHP gradient before trusting a training loop.
+
+01:14:10.909 --> 01:14:32.727
+Now type the smallest version yourself; do not copy it.
+
+01:14:32.727 --> 01:14:54.545
+Pause the video now.
+
+01:14:54.545 --> 01:15:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+01:15:16.364 --> 01:15:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+01:15:38.182 --> 01:16:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+01:16:00.000 --> 01:16:21.818
+Segment 20.
+
+01:16:21.818 --> 01:16:43.636
+Symbolic differentiation with SymPy.
+
+01:16:43.636 --> 01:17:05.455
+Symbolic tools check reasoning; they do not replace it.
+
+01:17:05.455 --> 01:17:27.273
+The formula on screen is sympy.diff(E,m).
+
+01:17:27.273 --> 01:17:49.091
+Read it slowly and connect each symbol to a number.
+
+01:17:49.091 --> 01:18:10.909
+In our running microhydro power example, Confirm the symbolic MHP squared-error gradient.
+
+01:18:10.909 --> 01:18:32.727
+Now type the smallest version yourself; do not copy it.
+
+01:18:32.727 --> 01:18:54.545
+Pause the video now.
+
+01:18:54.545 --> 01:19:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+01:19:16.364 --> 01:19:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+01:19:38.182 --> 01:20:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+01:20:00.000 --> 01:20:21.818
+Segment 21.
+
+01:20:21.818 --> 01:20:43.636
+A tiny autodiff engine from scratch.
+
+01:20:43.636 --> 01:21:05.455
+A computation graph stores local derivatives and walks backward.
+
+01:21:05.455 --> 01:21:27.273
+The formula on screen is loss.backward().
+
+01:21:27.273 --> 01:21:49.091
+Read it slowly and connect each symbol to a number.
+
+01:21:49.091 --> 01:22:10.909
+In our running microhydro power example, Re-solve the MHP toy error without an autodiff library.
+
+01:22:10.909 --> 01:22:32.727
+Now type the smallest version yourself; do not copy it.
+
+01:22:32.727 --> 01:22:54.545
+Pause the video now.
+
+01:22:54.545 --> 01:23:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+01:23:16.364 --> 01:23:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+01:23:38.182 --> 01:24:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+01:24:00.000 --> 01:24:21.818
+Segment 22.
+
+01:24:21.818 --> 01:24:43.636
+Integrals as accumulated area.
+
+01:24:43.636 --> 01:25:05.455
+Integration accumulates; differentiation gives the local rate.
+
+01:25:05.455 --> 01:25:27.273
+The formula on screen is ∫ density = 1; E[X]=∫x f(x)dx.
+
+01:25:27.273 --> 01:25:49.091
+Read it slowly and connect each symbol to a number.
+
+01:25:49.091 --> 01:26:10.909
+In our running microhydro power example, Later survival and probability chapters use this accumulation.
+
+01:26:10.909 --> 01:26:32.727
+Now type the smallest version yourself; do not copy it.
+
+01:26:32.727 --> 01:26:54.545
+Pause the video now.
+
+01:26:54.545 --> 01:27:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+01:27:16.364 --> 01:27:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+01:27:38.182 --> 01:28:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+01:28:00.000 --> 01:28:21.818
+Segment 23.
+
+01:28:21.818 --> 01:28:43.636
+Reading a traceback.
+
+01:28:43.636 --> 01:29:05.455
+The last line translates a failure into plain English.
+
+01:29:05.455 --> 01:29:27.273
+The formula on screen is symptom → cause → check.
+
+01:29:27.273 --> 01:29:49.091
+Read it slowly and connect each symbol to a number.
+
+01:29:49.091 --> 01:30:10.909
+In our running microhydro power example, Use shape, key, and type failures with MHP records.
+
+01:30:10.909 --> 01:30:32.727
+Now type the smallest version yourself; do not copy it.
+
+01:30:32.727 --> 01:30:54.545
+Pause the video now.
+
+01:30:54.545 --> 01:31:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+01:31:16.364 --> 01:31:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+01:31:38.182 --> 01:32:00.000
+This is code as proof: a rule is not finished until a number confirms it.
+
+01:32:00.000 --> 01:32:21.818
+Segment 24.
+
+01:32:21.818 --> 01:32:43.636
+Rubber duck and the Day 0E exit check.
+
+01:32:43.636 --> 01:33:05.455
+Explain each line, then prove the calculus with a capstone.
+
+01:33:05.455 --> 01:33:27.273
+The formula on screen is slope → gradient → update → claim.
+
+01:33:27.273 --> 01:33:49.091
+Read it slowly and connect each symbol to a number.
+
+01:33:49.091 --> 01:34:10.909
+In our running microhydro power example, Return to MHP projects, cable length, terrain, and cost.
+
+01:34:10.909 --> 01:34:32.727
+Now type the smallest version yourself; do not copy it.
+
+01:34:32.727 --> 01:34:54.545
+Pause the video now.
+
+01:34:54.545 --> 01:35:16.364
+When you resume, run the self-check and explain in one sentence what the result means.
+
+01:35:16.364 --> 01:35:38.182
+Break one line deliberately, read the last error line, translate it into plain English, and rebuild it.
+
+01:35:38.182 --> 01:36:00.000
+This is code as proof: a rule is not finished until a number confirms it.

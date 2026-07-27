@@ -38,7 +38,7 @@
             <div id="pipeline-template" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-4">
                 <h3 class="text-xl font-bold text-white">Pipeline Template</h3>
                 <p class="text-base text-[#cbd5e1]">General preprocessor and model training pipeline boilerplate code:</p>
-                <pre class="bg-[#0b0f19] border border-[#223150] rounded-lg p-4 font-mono text-sm text-cyan-400 overflow-x-auto"><code>from sklearn.compose import ColumnTransformer
+                <pre class="bg-[#0b0f19] border border-[#223150] rounded-lg p-4 font-mono text-[1.05rem] text-cyan-400 overflow-x-auto"><code>from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
@@ -61,7 +61,7 @@ def build_pipeline(X, model):
             <div id="group-cv-template" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-4">
                 <h3 class="text-xl font-bold text-white">GroupKFold Cross-Validation Template</h3>
                 <p class="text-base text-[#cbd5e1]">Clean code to validate models across unseen regional groups:</p>
-                <pre class="bg-[#0b0f19] border border-[#223150] rounded-lg p-4 font-mono text-sm text-cyan-400 overflow-x-auto"><code>from sklearn.model_selection import GroupKFold
+                <pre class="bg-[#0b0f19] border border-[#223150] rounded-lg p-4 font-mono text-[1.05rem] text-cyan-400 overflow-x-auto"><code>from sklearn.model_selection import GroupKFold
 from sklearn.base import clone
 
 def evaluate_group_cv(X, y, groups, pipeline, n_splits=5):
@@ -80,7 +80,7 @@ def evaluate_group_cv(X, y, groups, pipeline, n_splits=5):
             <div id="robust-ols-template" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-4">
                 <h3 class="text-xl font-bold text-white">Robust statsmodels OLS Template</h3>
                 <p class="text-base text-[#cbd5e1]">Check VIF and fit OLS models with robust standard errors:</p>
-                <pre class="bg-[#0b0f19] border border-[#223150] rounded-lg p-4 font-mono text-sm text-cyan-400 overflow-x-auto"><code>import statsmodels.api as sm
+                <pre class="bg-[#0b0f19] border border-[#223150] rounded-lg p-4 font-mono text-[1.05rem] text-cyan-400 overflow-x-auto"><code>import statsmodels.api as sm
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 # Calculate VIF values
@@ -95,7 +95,7 @@ print(model.summary())</code></pre>
             <div id="conformal-template" class="bg-[#151d30] border border-[#223150] rounded-xl p-6 space-y-4">
                 <h3 class="text-xl font-bold text-white">Split Conformal Prediction Interval Template</h3>
                 <p class="text-base text-[#cbd5e1]">Calibrate prediction intervals from scratch using proper split splits:</p>
-                <pre class="bg-[#0b0f19] border border-[#223150] rounded-lg p-4 font-mono text-sm text-cyan-400 overflow-x-auto"><code># 1. Fit model on training set
+                <pre class="bg-[#0b0f19] border border-[#223150] rounded-lg p-4 font-mono text-[1.05rem] text-cyan-400 overflow-x-auto"><code># 1. Fit model on training set
 model.fit(X_train, y_train)
 
 # 2. Predict on calibration set

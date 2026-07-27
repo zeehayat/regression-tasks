@@ -366,6 +366,8 @@ if __name__ == "__main__":
     print(MHPCostEstimator(contract))
 ```
 
+`@dataclass` asks Python to generate routine methods such as `__init__` and `__repr__` from the listed fields. `frozen=True` prevents those fields from being reassigned after creation, which protects the analysis contract from accidental mid-analysis changes. `Literal[...]` is a type hint saying that readers and type-checking tools should expect exactly one of the three listed strings; the runtime check in `__post_init__` still performs the actual enforcement.
+
 The class begins with a contract because a technically correct model can still be unfit for its intended use.
 
 ## 1.9 Break it deliberately
@@ -700,6 +702,26 @@ Given `X.shape == (40, 6)` and `beta.shape == (5,)`, you should immediately say:
 # Day 3 — Linear Algebra as a System of Predictions
 
 > **Today’s central idea:** A linear model forms each prediction by adding weighted features. Matrix notation performs that same operation for every project at once.
+
+## 3.0 Matplotlib in five lines
+
+Matplotlib turns arrays into figures. `plt.figure()` starts a canvas, `scatter` draws points, `plot` joins coordinates with a line, `legend` labels the layers, and `show` displays the finished result.
+
+```python
+import matplotlib.pyplot as plt
+
+x_demo = [0, 1, 2]
+y_demo = [1, 3, 5]
+plt.figure(figsize=(5, 3))
+plt.scatter(x_demo, y_demo, label="observations")
+plt.plot(x_demo, y_demo, color="darkorange", label="joined points")
+plt.xlabel("x")
+plt.ylabel("y")
+plt.legend()
+plt.show()
+```
+
+Every later figure repeats this pattern with different drawing commands. Run this tiny example first; if no window or notebook figure appears, fix the plotting setup before continuing.
 
 ## 3.1 From a verbal rule to a linear equation
 <button class="read-details-btn" data-section="1c-1">✦ Read Details</button>
@@ -1292,6 +1314,8 @@ This block verifies three equations: the normal-equation orthogonality condition
 
 ## 4.8 Figure lab: draw the projection in three dimensions
 
+> **Optional visual extension.** This 3D plot is useful intuition but uses advanced plotting APIs that are not required for the algebra, code, or exit check. Skip it on a first pass if `quiver`, `plot_surface`, or 3D axes distract from the projection idea.
+
 Three observations allow the target and prediction vectors to be drawn in $\mathbb{R}^3$.
 
 ```python
@@ -1329,6 +1353,8 @@ ax.legend()
 plt.tight_layout()
 plt.show()
 ```
+
+Here `[..., None]` keeps every existing axis and adds one new length-one axis at the end. That makes NumPy broadcast each grid coefficient across the three coordinates of the vector it multiplies.
 
 **Figure 4.2 — OLS geometry in observation space.** The residual begins at $\hat{y}$ and ends at $y$; it is perpendicular to the surface of attainable predictions.
 
@@ -1623,6 +1649,51 @@ $$
 
 ## 5.4 The matrix derivative without hand-waving
 <button class="read-details-btn" data-section="1e-4">✦ Read Details</button>
+
+### A numeric $2\times2$ quadratic before index notation
+
+Let
+
+$$
+A=\begin{bmatrix}2&1\\3&4\end{bmatrix},
+\qquad
+\beta=\begin{bmatrix}\beta_1\\\beta_2\end{bmatrix}.
+$$
+
+Writing all four double-sum terms gives
+
+$$
+\beta^TA\beta
+=2\beta_1^2+\beta_1\beta_2+3\beta_2\beta_1+4\beta_2^2
+=2\beta_1^2+4\beta_1\beta_2+4\beta_2^2.
+$$
+
+Differentiate that ordinary polynomial one coordinate at a time:
+
+$$
+\frac{\partial}{\partial\beta_1}=4\beta_1+4\beta_2,
+\qquad
+\frac{\partial}{\partial\beta_2}=4\beta_1+8\beta_2.
+$$
+
+At $\beta=(5,6)^T$, the gradient is $(44,68)^T$. Now verify that the matrix rule produces the same result:
+
+```python
+import numpy as np
+
+A = np.array([[2.0, 1.0], [3.0, 4.0]])
+beta = np.array([5.0, 6.0])
+gradient_by_expansion = np.array([
+    4 * beta[0] + 4 * beta[1],
+    4 * beta[0] + 8 * beta[1],
+])
+gradient_by_matrix_rule = (A + A.T) @ beta
+
+print(gradient_by_expansion)
+assert np.allclose(gradient_by_expansion, gradient_by_matrix_rule)
+```
+
+The general argument below says exactly the same thing for any matrix size.
 
 Three derivative facts are needed.
 
@@ -2370,511 +2441,3 @@ flowchart TD
 ```
 
 You now know enough to be dangerous if you report coefficients carelessly—and enough to begin becoming useful if you preserve the chain from question to judgement.
-<style>
-.read-details-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: rgba(34, 211, 238, 0.08);
-    border: 1px solid rgba(34, 211, 238, 0.3);
-    color: #22d3ee;
-    padding: 0.4rem 0.8rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    border-radius: 0.375rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    margin: 0.5rem 0 1rem 0;
-    font-family: inherit;
-}
-.read-details-btn:hover {
-    background: rgba(34, 211, 238, 0.2);
-    border-color: #22d3ee;
-    box-shadow: 0 0 10px rgba(34, 211, 238, 0.2);
-}
-.comp-modal {
-    display: none;
-    position: fixed;
-    z-index: 10000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: rgba(11, 15, 25, 0.85);
-    backdrop-filter: blur(8px);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    align-items: center;
-    justify-content: center;
-}
-.comp-modal.open {
-    display: flex;
-    opacity: 1;
-}
-.comp-modal-content {
-    background-color: #151d30;
-    border: 1px solid #223150;
-    border-radius: 0.75rem;
-    width: 90%;
-    max-width: 48rem;
-    max-height: 85vh;
-    overflow-y: auto;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.6);
-    position: relative;
-    padding: 2.5rem 2rem 2rem 2rem;
-    transform: scale(0.95);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.comp-modal.open .comp-modal-content {
-    transform: scale(1);
-}
-.comp-modal-close {
-    position: absolute;
-    top: 0.75rem;
-    right: 1.25rem;
-    color: #cbd5e1;
-    font-size: 2rem;
-    font-weight: 300;
-    cursor: pointer;
-    transition: color 0.2s ease;
-    line-height: 1;
-}
-.comp-modal-close:hover {
-    color: #fff;
-}
-#comp-modal-body {
-    color: #cbd5e1;
-    font-size: 0.95rem;
-}
-#comp-modal-body h1, #comp-modal-body h2 {
-    color: #fff;
-    border-bottom: 1px solid #223150;
-    padding-bottom: 0.5rem;
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-}
-#comp-modal-body h3, #comp-modal-body h4 {
-    color: #fff;
-    margin-top: 1.75rem;
-    margin-bottom: 0.75rem;
-}
-#comp-modal-body p {
-    margin-bottom: 1rem;
-}
-#comp-modal-body code {
-    color: #67e8f9;
-    background: #0b0f19;
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-}
-#comp-modal-body pre {
-    background: #0b0f19;
-    border: 1px solid #223150;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    margin: 1rem 0;
-    overflow-x: auto;
-}
-#comp-modal-body pre code {
-    background: transparent;
-    padding: 0;
-    color: #e2e8f0;
-}
-#comp-modal-body table {
-    width: 100%;
-    font-size: 0.875rem;
-    border-collapse: collapse;
-    margin: 1.5rem 0;
-}
-#comp-modal-body th, #comp-modal-body td {
-    border: 1px solid #223150;
-    padding: 0.5rem 0.75rem;
-    text-align: left;
-}
-#comp-modal-body th {
-    background: #151d30;
-    color: #fff;
-    font-weight: 600;
-}
-.companion-details-area, .companion-details-area ~ * {
-    display: none;
-}
-</style>
-
-<div id="companion-modal" class="comp-modal">
-    <div class="comp-modal-content">
-        <span class="comp-modal-close">&times;</span>
-        <div id="comp-modal-body"></div>
-    </div>
-</div>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    var store = {};
-    var area = document.querySelector('.companion-details-area');
-    if (!area) return;
-    
-    var currentSection = null;
-    var currentElements = [];
-    var sibling = area.nextElementSibling;
-    
-    while (sibling) {
-        if (sibling.classList.contains('companion-detail-heading')) {
-            if (currentSection) {
-                store[currentSection] = currentElements;
-            }
-            currentSection = sibling.getAttribute('data-section');
-            currentElements = [];
-        } else {
-            if (currentSection) {
-                currentElements.push(sibling.cloneNode(true));
-            }
-        }
-        sibling = sibling.nextElementSibling;
-    }
-    if (currentSection) {
-        store[currentSection] = currentElements;
-    }
-    
-    // Wire up buttons
-    document.querySelectorAll('.read-details-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            var section = this.getAttribute('data-section');
-            var elements = store[section];
-            var modalBody = document.getElementById('comp-modal-body');
-            modalBody.innerHTML = '';
-            
-            if (elements && elements.length > 0) {
-                elements.forEach(function(el) {
-                    el.style.display = '';
-                    modalBody.appendChild(el);
-                });
-                
-                // Trigger MathJax typesetting if loaded
-                if (window.MathJax && window.MathJax.typesetPromise) {
-                    window.MathJax.typesetPromise([modalBody]);
-                }
-            } else {
-                modalBody.innerHTML = '<p>No details found for this section.</p>';
-            }
-            
-            var modal = document.getElementById('companion-modal');
-            modal.style.display = 'flex';
-            // Reflow
-            modal.offsetHeight;
-            modal.classList.add('open');
-            document.body.style.overflow = 'hidden';
-        });
-    });
-    
-    // Close modal function
-    function closeModal() {
-        var modal = document.getElementById('companion-modal');
-        modal.classList.remove('open');
-        setTimeout(function() {
-            modal.style.display = 'none';
-            document.body.style.overflow = '';
-        }, 300);
-    }
-    
-    document.querySelector('.comp-modal-close').addEventListener('click', closeModal);
-    window.addEventListener('click', function(event) {
-        var modal = document.getElementById('companion-modal');
-        if (event.target === modal) {
-            closeModal();
-        }
-    });
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            closeModal();
-        }
-    });
-});
-</script>
-
-
----
-
-# Companion Details Area {: .companion-details-area}
-## Detail 1A 2 {: .companion-detail-heading data-section="1a-2"}
-### The Three Jobs of Regression
-* **Prediction:** Estimating an unknown outcome based on observed features [cite: 12].
-  * *Success:* Low error on genuinely new projects [cite: 12].
-  * *Danger:* The model may fail when external conditions change [cite: 12].
-* **Explanation:** Describing the conditional association between variables [cite: 12].
-  * *Success:* Stable, interpretable coefficients with measured uncertainty [cite: 12].
-  * *Danger:* Omitted variables and correlated features can distort interpretation [cite: 12].
-* **Causal Inference:** Estimating the effect of a specific intervention [cite: 12].
-  * *Success:* A credible estimate comparing observed outcomes to an unobserved counterfactual [cite: 12].
-  * *Danger:* Mistaking a mere association for the effect of a direct action [cite: 12].
-
-
-## Detail 1A 3 {: .companion-detail-heading data-section="1a-3"}
-### The Three Jobs of Regression
-* **Prediction:** Estimating an unknown outcome based on observed features [cite: 12].
-  * *Success:* Low error on genuinely new projects [cite: 12].
-  * *Danger:* The model may fail when external conditions change [cite: 12].
-* **Explanation:** Describing the conditional association between variables [cite: 12].
-  * *Success:* Stable, interpretable coefficients with measured uncertainty [cite: 12].
-  * *Danger:* Omitted variables and correlated features can distort interpretation [cite: 12].
-* **Causal Inference:** Estimating the effect of a specific intervention [cite: 12].
-  * *Success:* A credible estimate comparing observed outcomes to an unobserved counterfactual [cite: 12].
-  * *Danger:* Mistaking a mere association for the effect of a direct action [cite: 12].
-
-
-## Detail 1A 4 {: .companion-detail-heading data-section="1a-4"}
-### The Three Jobs of Regression
-* **Prediction:** Estimating an unknown outcome based on observed features [cite: 12].
-  * *Success:* Low error on genuinely new projects [cite: 12].
-  * *Danger:* The model may fail when external conditions change [cite: 12].
-* **Explanation:** Describing the conditional association between variables [cite: 12].
-  * *Success:* Stable, interpretable coefficients with measured uncertainty [cite: 12].
-  * *Danger:* Omitted variables and correlated features can distort interpretation [cite: 12].
-* **Causal Inference:** Estimating the effect of a specific intervention [cite: 12].
-  * *Success:* A credible estimate comparing observed outcomes to an unobserved counterfactual [cite: 12].
-  * *Danger:* Mistaking a mere association for the effect of a direct action [cite: 12].
-
-
-## Detail 1A 5 {: .companion-detail-heading data-section="1a-5"}
-### Confounding and Simpson's Paradox
-* A **confounder** is a hidden common cause related to both the decision/exposure and the outcome [cite: 12].
-* For example, rugged terrain might cause both the use of helicopter transport and higher cost overruns [cite: 12].
-* Ignoring this confounder makes helicopters look like the cause of the expense, even if they actually saved money compared to manual labor [cite: 12].
-* **Simpson's Paradox** occurs when an aggregated dataset shows one trend (e.g., a downward slope), but the trend reverses within specific subgroups (e.g., an upward slope for both accessible and remote terrain groups) [cite: 12].
-
----
-
-
-## Detail 1A 6 {: .companion-detail-heading data-section="1a-6"}
-### Confounding and Simpson's Paradox
-* A **confounder** is a hidden common cause related to both the decision/exposure and the outcome [cite: 12].
-* For example, rugged terrain might cause both the use of helicopter transport and higher cost overruns [cite: 12].
-* Ignoring this confounder makes helicopters look like the cause of the expense, even if they actually saved money compared to manual labor [cite: 12].
-* **Simpson's Paradox** occurs when an aggregated dataset shows one trend (e.g., a downward slope), but the trend reverses within specific subgroups (e.g., an upward slope for both accessible and remote terrain groups) [cite: 12].
-
----
-
-
-## Detail 1B 1 {: .companion-detail-heading data-section="1b-1"}
-### The Vocabulary of Regression
-* **Observation:** One unit represented by a single row in the data (e.g., one completed MHP project) [cite: 12].
-* **Feature:** An input measured *before* the target is known (e.g., planned capacity) [cite: 12].
-* **Target:** The outcome variable to be estimated (e.g., actual project cost) [cite: 12].
-* **Parameter:** A value learned from the data by the fitting algorithm (e.g., cost coefficient for road distance) [cite: 12].
-* **Hyperparameter:** A setting chosen by the analyst outside the fitting calculation (e.g., whether to include an intercept) [cite: 12].
-
-
-## Detail 1B 2 {: .companion-detail-heading data-section="1b-2"}
-### Mathematical Array Shapes
-* $X \in \mathbb{R}^{n 	imes p}$: A real-valued design matrix with $n$ rows (projects) and $p$ feature columns [cite: 12].
-* $y \in \mathbb{R}^{n}$: A real-valued target vector with $n$ entries [cite: 12].
-* $\beta \in \mathbb{R}^{p}$: A parameter vector with one entry per feature [cite: 12].
-
-**Shape Validation in Code:**
-NumPy strictly distinguishes between shapes [cite: 12].
-* `(3,)` is a 1D vector [cite: 12].
-* `(3, 1)` is a 2D column matrix [cite: 12].
-* `(1, 3)` is a 2D row matrix [cite: 12].
-
-
-## Detail 1B 3 {: .companion-detail-heading data-section="1b-3"}
-### Mathematical Array Shapes
-* $X \in \mathbb{R}^{n 	imes p}$: A real-valued design matrix with $n$ rows (projects) and $p$ feature columns [cite: 12].
-* $y \in \mathbb{R}^{n}$: A real-valued target vector with $n$ entries [cite: 12].
-* $\beta \in \mathbb{R}^{p}$: A parameter vector with one entry per feature [cite: 12].
-
-**Shape Validation in Code:**
-NumPy strictly distinguishes between shapes [cite: 12].
-* `(3,)` is a 1D vector [cite: 12].
-* `(3, 1)` is a 2D column matrix [cite: 12].
-* `(1, 3)` is a 2D row matrix [cite: 12].
-
-
-## Detail 1B 4 {: .companion-detail-heading data-section="1b-4"}
-### Mathematical Array Shapes
-* $X \in \mathbb{R}^{n 	imes p}$: A real-valued design matrix with $n$ rows (projects) and $p$ feature columns [cite: 12].
-* $y \in \mathbb{R}^{n}$: A real-valued target vector with $n$ entries [cite: 12].
-* $\beta \in \mathbb{R}^{p}$: A parameter vector with one entry per feature [cite: 12].
-
-**Shape Validation in Code:**
-NumPy strictly distinguishes between shapes [cite: 12].
-* `(3,)` is a 1D vector [cite: 12].
-* `(3, 1)` is a 2D column matrix [cite: 12].
-* `(1, 3)` is a 2D row matrix [cite: 12].
-
-
-## Detail 1B 8 {: .companion-detail-heading data-section="1b-8"}
-### Target Leakage
-* Including a feature recorded *after* the outcome is known (e.g., "number of contract amendments" to predict final cost) is called **target leakage** [cite: 12].
-* This creates a deceptively accurate model that cannot be used for early-stage prediction [cite: 12].
-
----
-
-
-## Detail 1C 1 {: .companion-detail-heading data-section="1c-1"}
-### The Linear Equation
-For a single project $i$ with a single feature, the linear model is [cite: 12]:
-$$\hat{y}_i = \beta_0 + \beta_1x_i$$
-* $\beta_0$ is the **intercept**: the model's predicted target when $x_i = 0$ [cite: 12].
-* $\beta_1$ is the **slope**: the predicted change in $y$ associated with a one-unit increase in $x$ [cite: 12].
-
-
-## Detail 1C 2 {: .companion-detail-heading data-section="1c-2"}
-### The Linear Equation
-For a single project $i$ with a single feature, the linear model is [cite: 12]:
-$$\hat{y}_i = \beta_0 + \beta_1x_i$$
-* $\beta_0$ is the **intercept**: the model's predicted target when $x_i = 0$ [cite: 12].
-* $\beta_1$ is the **slope**: the predicted change in $y$ associated with a one-unit increase in $x$ [cite: 12].
-
-
-## Detail 1C 3 {: .companion-detail-heading data-section="1c-3"}
-### Why We Add a Column of Ones
-* To compute predictions using matrix multiplication ($\hat{y} = X\beta$), we prepend a column of $1$s to the design matrix $X$ [cite: 12].
-* When multiplying $X\beta$, the parameter $\beta_0$ is multiplied by $1$ and added to every project's prediction, effectively creating an affine transformation (translation + scaling) [cite: 12].
-* Without this column of ones, the model is forced through the origin ($\hat{y} = 0$ when $x = 0$), which may not fit the observed baseline [cite: 12].
-
-
-## Detail 1C 8 {: .companion-detail-heading data-section="1c-8"}
-### Unit Scaling
-* Changing a feature's units changes its coefficient, not the final prediction [cite: 12].
-* If cable length is measured in meters instead of kilometers ($x_{metres} = 1000 x_{km}$), the parameter scales inversely ($\beta_{metres} = \frac{\beta_{km}}{1000}$) [cite: 12].
-* Therefore, comparing coefficient magnitudes across differently scaled features is misleading [cite: 12].
-
----
-
-
-## Detail 1D 1 {: .companion-detail-heading data-section="1d-1"}
-## 4. Day 4: Residuals, Loss, and OLS Geometry
-
-
-## Detail 1D 2 {: .companion-detail-heading data-section="1d-2"}
-### Error Metrics
-* **Sum of Squared Residuals (SSR):** $SSR = \sum_{i=1}^{n} e_i^2 = e^T e$ [cite: 12].
-  * *Why square?* It prevents positive and negative residuals from canceling out, heavily penalizes large outliers, and creates a smooth, differentiable surface [cite: 12].
-* **Mean Squared Error (MSE):** $\frac{1}{n} \sum e_i^2$ [cite: 12].
-* **Root Mean Squared Error (RMSE):** $\sqrt{MSE}$ (Interpretable in the original target units) [cite: 12].
-* **Mean Absolute Error (MAE):** $\frac{1}{n} \sum |e_i|$ (More robust to massive outliers than RMSE) [cite: 12].
-
-
-## Detail 1D 3 {: .companion-detail-heading data-section="1d-3"}
-### Error Metrics
-* **Sum of Squared Residuals (SSR):** $SSR = \sum_{i=1}^{n} e_i^2 = e^T e$ [cite: 12].
-  * *Why square?* It prevents positive and negative residuals from canceling out, heavily penalizes large outliers, and creates a smooth, differentiable surface [cite: 12].
-* **Mean Squared Error (MSE):** $\frac{1}{n} \sum e_i^2$ [cite: 12].
-* **Root Mean Squared Error (RMSE):** $\sqrt{MSE}$ (Interpretable in the original target units) [cite: 12].
-* **Mean Absolute Error (MAE):** $\frac{1}{n} \sum |e_i|$ (More robust to massive outliers than RMSE) [cite: 12].
-
-
-## Detail 1D 4 {: .companion-detail-heading data-section="1d-4"}
-### The Geometric Proof of OLS
-* **Goal:** OLS seeks the prediction vector $\hat{y}$ (in the column space of $X$) that is closest to the observed target $y$ [cite: 12].
-* **Orthogonality:** The shortest distance from $y$ to the column space is a perpendicular drop. Therefore, the residual vector $e$ must be perpendicular to every column of $X$ [cite: 12].
-  $$X^T e = 0$$
-* **Pythagorean Theorem:** For any other prediction $q$ in the column space, let the displacement be $d = \hat{y} - q$ [cite: 12].
-  * $y - q = e + d$ [cite: 12].
-  * Because $e$ is perpendicular to $d$ ($e^T d = 0$), expanding the squared length yields: $\lVert y - q 
-Vert_2^2 = \lVert e 
-Vert_2^2 + \lVert d 
-Vert_2^2$ [cite: 12].
-  * Since $\lVert d 
-Vert_2^2 \ge 0$, no alternative prediction $q$ can be closer to $y$ than $\hat{y}$ [cite: 12].
-
----
-
-
-## Detail 1D 5 {: .companion-detail-heading data-section="1d-5"}
-### The Geometric Proof of OLS
-* **Goal:** OLS seeks the prediction vector $\hat{y}$ (in the column space of $X$) that is closest to the observed target $y$ [cite: 12].
-* **Orthogonality:** The shortest distance from $y$ to the column space is a perpendicular drop. Therefore, the residual vector $e$ must be perpendicular to every column of $X$ [cite: 12].
-  $$X^T e = 0$$
-* **Pythagorean Theorem:** For any other prediction $q$ in the column space, let the displacement be $d = \hat{y} - q$ [cite: 12].
-  * $y - q = e + d$ [cite: 12].
-  * Because $e$ is perpendicular to $d$ ($e^T d = 0$), expanding the squared length yields: $\lVert y - q 
-Vert_2^2 = \lVert e 
-Vert_2^2 + \lVert d 
-Vert_2^2$ [cite: 12].
-  * Since $\lVert d 
-Vert_2^2 \ge 0$, no alternative prediction $q$ can be closer to $y$ than $\hat{y}$ [cite: 12].
-
----
-
-
-## Detail 1D 6 {: .companion-detail-heading data-section="1d-6"}
-### The Geometric Proof of OLS
-* **Goal:** OLS seeks the prediction vector $\hat{y}$ (in the column space of $X$) that is closest to the observed target $y$ [cite: 12].
-* **Orthogonality:** The shortest distance from $y$ to the column space is a perpendicular drop. Therefore, the residual vector $e$ must be perpendicular to every column of $X$ [cite: 12].
-  $$X^T e = 0$$
-* **Pythagorean Theorem:** For any other prediction $q$ in the column space, let the displacement be $d = \hat{y} - q$ [cite: 12].
-  * $y - q = e + d$ [cite: 12].
-  * Because $e$ is perpendicular to $d$ ($e^T d = 0$), expanding the squared length yields: $\lVert y - q 
-Vert_2^2 = \lVert e 
-Vert_2^2 + \lVert d 
-Vert_2^2$ [cite: 12].
-  * Since $\lVert d 
-Vert_2^2 \ge 0$, no alternative prediction $q$ can be closer to $y$ than $\hat{y}$ [cite: 12].
-
----
-
-
-## Detail 1E 3 {: .companion-detail-heading data-section="1e-3"}
-### The Matrix Derivative
-* The objective function is $S(\beta) = (y - X\beta)^T(y - X\beta)$ [cite: 12].
-* Expanded: $S(\beta) = y^Ty - 2\beta^TX^Ty + \beta^TX^TX\beta$ [cite: 12].
-* Differentiating with respect to $\beta$ yields the gradient: 
-  $$
-abla_\beta S(\beta) = -2X^Ty + 2X^TX\beta$$
-* Setting the gradient to zero at the minimum yields the **Normal Equations** [cite: 12]:
-  $$X^TX\hat{\beta} = X^Ty$$
-
-
-## Detail 1E 4 {: .companion-detail-heading data-section="1e-4"}
-### The Matrix Derivative
-* The objective function is $S(\beta) = (y - X\beta)^T(y - X\beta)$ [cite: 12].
-* Expanded: $S(\beta) = y^Ty - 2\beta^TX^Ty + \beta^TX^TX\beta$ [cite: 12].
-* Differentiating with respect to $\beta$ yields the gradient: 
-  $$
-abla_\beta S(\beta) = -2X^Ty + 2X^TX\beta$$
-* Setting the gradient to zero at the minimum yields the **Normal Equations** [cite: 12]:
-  $$X^TX\hat{\beta} = X^Ty$$
-
-
-## Detail 1E 5 {: .companion-detail-heading data-section="1e-5"}
-### The Matrix Derivative
-* The objective function is $S(\beta) = (y - X\beta)^T(y - X\beta)$ [cite: 12].
-* Expanded: $S(\beta) = y^Ty - 2\beta^TX^Ty + \beta^TX^TX\beta$ [cite: 12].
-* Differentiating with respect to $\beta$ yields the gradient: 
-  $$
-abla_\beta S(\beta) = -2X^Ty + 2X^TX\beta$$
-* Setting the gradient to zero at the minimum yields the **Normal Equations** [cite: 12]:
-  $$X^TX\hat{\beta} = X^Ty$$
-
-
-## Detail 1E 6 {: .companion-detail-heading data-section="1e-6"}
-### Fitting in Code: `lstsq` vs. Inverse
-* Mathematically, if $X^TX$ is invertible, the solution is $\hat{\beta} = (X^TX)^{-1}X^Ty$ [cite: 12].
-* Computationally, explicitly calculating the inverse squares the condition number and causes numerical instability [cite: 12].
-* **Best Practice:** Use `np.linalg.lstsq(X, y)` directly, which utilizes stable matrix decomposition rather than raw inversion [cite: 12].
-
-
-## Detail 1E 7 {: .companion-detail-heading data-section="1e-7"}
-### Perfect Multicollinearity (Rank Failure)
-* If one column in the design matrix is an exact multiple of another (e.g., having both cable length in km and cable length in meters), the matrix loses **full column rank** [cite: 12].
-* The model cannot uniquely identify the parameters because infinitely many coefficient pairs yield the exact same combined prediction [cite: 12].
-* The solution is to remove the redundant feature from the matrix [cite: 12].
-
----
-
-
-## Detail CAPSTONE {: .companion-detail-heading data-section="capstone"}
-## 6. Master Rosetta Stone & Formula Sheet
-
-
-## Detail FORMULA SHEET {: .companion-detail-heading data-section="formula-sheet"}
-## 6. Master Rosetta Stone & Formula Sheet
-
-
-## Detail GLOSSARY {: .companion-detail-heading data-section="glossary"}
-## 6. Master Rosetta Stone & Formula Sheet
-
