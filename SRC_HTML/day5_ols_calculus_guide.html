@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chapter 0: Level 0 Orientation — Landing on Planet Regression</title>
+    <title>Day 5 Part 1 Guide: Deriving OLS With Calculus</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -628,12 +628,12 @@
             <div class="sidebar-section-title">Book Chapters</div>
             <nav class="chapters">
                             <a href="chapter0.html" class="">Ch. 0</a>
-            <a href="level_0_orientation.html" class="active">Level 0 Orientation</a>
+            <a href="level_0_orientation.html" class="">Level 0 Orientation</a>
             <a href="calculus_derivatives_micro_videos.html" class="">🎥 Calculus Micro-Videos</a>
             <a href="day_0e_masterclass_video.html" class="">🎬 Day 0E Masterclass Video</a>
             <a href="chapter1_read_first.html" class="">Read this before jumping into Chapter 1</a>
             <a href="chapter1_exercise_notebook.html" class="">Chapter 1 exercise notebook</a>
-            <a href="day5_ols_calculus_guide.html" class="">Day 5 Part 1 OLS calculus guide</a>
+            <a href="day5_ols_calculus_guide.html" class="active">Day 5 Part 1 OLS calculus guide</a>
             <a href="chapter1.html" class="">Ch. 1</a>
             <a href="chapter2_concept_help.html" class="">Chapter 2 concept help (open only when stuck)</a>
             <a href="chapter2.html" class="">Ch. 2</a>
@@ -665,831 +665,876 @@
     </aside>
     
         <article class="markdown-body">
-<h1 id="chapter-0-level-0-orientation-landing-on-planet-regression">Chapter 0: Level 0 Orientation — Landing on Planet Regression</h1>
-<p>Hey there! Welcome. If you've ever looked at a messy spreadsheet and thought, <em>"I wonder if we can predict one column using the others without losing my mind,"</em> you're in the right place. </p>
-<p>This guide is designed to take you from a complete beginner—someone who doesn't know their features from their targets—to someone who can confidently sit down with PhD researchers, discuss causal estimation, and not break a sweat. All in about a week of focused work.</p>
-<p>But we have a strict rule here: <strong>no passive reading</strong>. You don't learn swimming by reading a manual on hydrodynamics; you learn it by jumping into the pool and swallowing a bit of water. In our case, the pool is full of data, and the water is Python code. </p>
-<p>Let's get oriented.</p>
-<hr />
-<h2 id="1-how-to-use-this-guide">1. How to Use This Guide</h2>
-<p>This is a self-paced, project-based curriculum. Instead of using toy datasets like Boston Housing (which has been beaten to death and has some pretty sketchy history anyway) or Iris flowers, we are going to work with three custom-built datasets based on Khyber Pakhtunkhwa (KP), Pakistan. </p>
-<p>For every single chapter, you should follow this rhythm:<br />
-1. <strong>Read the theory</strong> (informal, conceptual, but mathematically honest).<br />
-2. <strong>Explain it back</strong> (tell a rubber duck or your cat what the concept means).<br />
-3. <strong>Run the experiments</strong> (write the code yourself—no copy-pasting allowed).<br />
-4. <strong>Break it on purpose</strong> (what happens if you scale the target? what if you pass ID columns? find out!).<br />
-5. <strong>Solve the exercises</strong> (thoughtful, structured problems designed to build muscle memory).</p>
-<h3 id="your-toolkit">Your Toolkit</h3>
-<p>Make sure you have a working Python installation. We'll be using:<br />
-- <code>pandas</code> &amp; <code>numpy</code> (the bread and butter of data manipulation)<br />
-- <code>matplotlib</code> &amp; <code>seaborn</code> (for making plots that actually look good)<br />
-- <code>scikit-learn</code> (for machine learning)<br />
-- <code>statsmodels</code> (for statistical tests and classical econometrics)<br />
-- Advanced tools (which we will introduce as we go: <code>XGBoost</code>, <code>Optuna</code>, <code>SHAP</code>, <code>MAPIE</code>, etc.)</p>
-<hr />
-<h2 id="2-setup-and-data-generation">2. Setup and Data Generation</h2>
-<p>Suppose someone collected data across the beautiful valleys and plains of KP. Before we can do any math or fit any lines, we need to generate this data. </p>
-<h3 id="step-21-the-command-line-ritual">Step 2.1: The Command Line Ritual</h3>
-<p>Open your terminal and run the following commands to set up a clean, isolated environment. Don't install packages globally; that's how you break other projects and end up crying over dependency conflicts at 2 AM.</p>
-<pre><code class="language-bash"># Clone or navigate to your workspace
-cd /var/www/documentation/regression-tasks
-
-# Create a virtual environment
-python3 -m venv .venv
-
-# Activate the virtual environment
-source .venv/bin/activate
-
-# Install the essentials
-pip install --upgrade pip
-pip install pandas numpy matplotlib seaborn scikit-learn statsmodels
-</code></pre>
-<h3 id="step-22-generate-the-synthetic-kp-datasets">Step 2.2: Generate the Synthetic KP Datasets</h3>
-<p>The project directory contains a script called <a href="file:///var/www/documentation/regression-tasks/generate_data.py">generate_data.py</a>. This script simulates a mini-world with realistic statistical dependencies. Let's run it:</p>
-<pre><code class="language-bash">python generate_data.py
-</code></pre>
-<p>If successful, you will see output like this:</p>
-<pre><code class="language-text">Generating development dataset: data/kp_subdistrict_development_index.csv with 100000 records...
-Finished generating data/kp_subdistrict_development_index.csv.
-Generating agricultural dataset: data/kp_agricultural_yields.csv with 100000 records...
-Finished generating data/kp_agricultural_yields.csv.
-Generating infrastructure dataset: data/kp_infrastructure_projects.csv with 100000 records...
-Finished generating data/kp_infrastructure_projects.csv.
-All datasets generated successfully in the 'data' directory!
-</code></pre>
+<h1 id="day-5-part-1-guide-deriving-ols-with-calculus">Day 5 Part 1 Guide: Deriving OLS With Calculus</h1>
+<h2 id="conceptual-heavy-lifting-before-building-fit">Conceptual heavy-lifting before building <code>fit()</code></h2>
+<p>This guide accompanies <code>SRC/chapter1.md</code>, especially Day 1 and Day 5. It is designed for one purpose: make the calculus derivation of ordinary least squares feel connected, checkable, and interpretable before any implementation work begins.</p>
+<p>The central message is:</p>
 <blockquote>
-<p>[!WARNING]<br />
-These datasets are <strong>synthetic</strong>. They are mathematically designed to teach you regression. They reflect realistic terrain constraints, crop scales, and budget overruns of Pakistan, but they are <strong>not</strong> real survey data. Do not present these as actual policy evidence to the KP Planning and Development Department unless you want to get laughed out of the room.</p>
+<p>OLS chooses the parameter values that minimise squared residuals. Geometry says the fitted vector is the projection of <code>y</code> onto the column space of <code>X</code>. Calculus says the minimum is where the derivative or gradient of the squared-error objective is zero. Both routes lead to the same normal equations.</p>
 </blockquote>
+<p>Those normal equations are:</p>
+<p>$$
+X^TX\hat{\beta}=X^Ty.
+$$</p>
+<p>If a calculus derivation gives a different equation, the likely problem is algebra, shape handling, or a mistaken derivative rule.</p>
+<div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart LR
+    G["Geometry route"] --> N["Normal equations"]
+    C["Calculus route"] --> N
+    N --> S["Same OLS minimum"]
+</pre></div>
+
 <hr />
-<h2 id="3-the-three-kp-regression-datasets">3. The Three KP Regression Datasets</h2>
-<p>Let's meet our three main characters. Each represents a distinct style of regression problem.</p>
-<h3 id="31-the-development-index-dataset">3.1 The Development Index Dataset</h3>
+<h2 id="1-the-day-1-thread-what-are-we-trying-to-estimate">1. The Day 1 Thread: What Are We Trying To Estimate?</h2>
+<p>Before deriving anything, keep the Day 1 distinction visible.</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Question</th>
+<th>What OLS can settle by itself</th>
+<th>What OLS cannot settle by itself</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Algebra</td>
+<td>Did we minimise squared residuals correctly?</td>
+<td>Yes, if the numerical problem is well posed and solved correctly</td>
+<td>Whether the coefficient is stable, generalisable, or causal</td>
+</tr>
+<tr>
+<td>Statistical generalisation</td>
+<td>Does this sample support claims about other projects?</td>
+<td>Not by algebra alone</td>
+<td>Sampling bias, future drift, uncertainty, heteroskedasticity, clustered errors</td>
+</tr>
+<tr>
+<td>Causal interpretation</td>
+<td>What would happen under an intervention?</td>
+<td>Not by algebra alone</td>
+<td>Counterfactual identification, confounding, design validity</td>
+</tr>
+</tbody>
+</table>
+<p>An <strong>estimand</strong> is the exact quantity the analysis is trying to estimate. Without an estimand, a regression coefficient is just a number produced by a calculation.</p>
+<p>Examples from the MHP cost setting:</p>
 <ul>
-<li><strong>File:</strong> <code>data/kp_subdistrict_development_index.csv</code></li>
-<li><strong>Target (What we want to find):</strong> <code>development_score</code> (a bounded index from 0 to 100).</li>
-<li><strong>Concept:</strong> <em>Suppose someone collected survey data from 100,000 communities in KP. They have indicators like literacy rate, school enrollment, average household income, distance to health facilities, and public funding. Now, they want to predict the overall community development score. What do we do?</em></li>
-<li><strong>The Reality Inside:</strong> This dataset is highly linear with some terrain-based penalties (e.g., mountainous regions face structural challenges). However, it contains severe <strong>multicollinearity</strong> (literacy rate and school enrollment are almost copies of each other).</li>
+<li>Prediction estimand: expected final project cost, in million PKR, for a newly approved project using design-stage information.</li>
+<li>Explanation estimand: adjusted cost difference associated with one extra kilometre from an all-weather road, conditional on planned capacity and measured terrain.</li>
+<li>Causal estimand: average change in final cost caused by completing access-road improvement before civil works among approved remote projects.</li>
 </ul>
-<h3 id="32-the-agricultural-yields-dataset">3.2 The Agricultural Yields Dataset</h3>
+<p>OLS can help with all three only after the job is defined. The same formula does not make the same claim in all three settings.</p>
+<hr />
+<h2 id="2-the-object-being-minimized">2. The Object Being Minimized</h2>
+<p>For each project:</p>
+<p>$$
+\text{residual}_i = y_i-\hat{y}_i.
+$$</p>
+<p>OLS minimises the sum of squared residuals:</p>
+<p>$$
+S=\sum_i(y_i-\hat{y}_i)^2.
+$$</p>
+<p>Why square the residuals?</p>
 <ul>
-<li><strong>File:</strong> <code>data/kp_agricultural_yields.csv</code></li>
-<li><strong>Target:</strong> <code>crop_yield_tons_per_acre</code> (a positive continuous value).</li>
-<li><strong>Concept:</strong> <em>Suppose a researcher collected farm-level data including crop types (wheat, maize, sugarcane, apples, peaches), soil pH, rainfall, elevation, fertilizer application, and whether the farm is organic. They want to predict the yield per acre to advise farmers. What do we do?</em></li>
-<li><strong>The Reality Inside:</strong> This dataset is highly <strong>nonlinear</strong> and filled with <strong>interactions</strong>. Soil pH has an optimal point (curves downwards if pH is too acidic or basic). Apples and peaches die in high temperatures, while sugarcane thrives. Organic farms have strictly zero fertilizer and pesticides. A simple straight line will fail miserably here.</li>
+<li>Positive and negative errors do not cancel.</li>
+<li>Large errors are penalised more strongly.</li>
+<li>The resulting objective is smooth and differentiable.</li>
+<li>The matrix version leads to a clean projection and optimisation problem.</li>
 </ul>
-<h3 id="33-the-infrastructure-projects-dataset">3.3 The Infrastructure Projects Dataset</h3>
-<ul>
-<li><strong>File:</strong> <code>data/kp_infrastructure_projects.csv</code></li>
-<li><strong>Targets:</strong> <code>actual_cost_million_pkr</code> and <code>actual_duration_months</code> (two continuous values!).</li>
-<li><strong>Concept:</strong> <em>Suppose the government of KP tracked 100,000 public works projects (roads, schools, water supply). They have the approved budget, estimated duration, contractor experience, and year of initiation. They want to predict the actual final cost and duration before building starts to prevent budget overruns. What do we do?</em></li>
-<li><strong>The Reality Inside:</strong> The targets are heavily <strong>right-skewed</strong> (most projects are small, but a few mega-projects cost billions). It is a <strong>multi-output</strong> problem where cost and duration are intimately related, but actual duration is unknown when planning.</li>
-</ul>
-<hr />
-<h2 id="chapter-0-exercises-a-dress-rehearsal-not-a-preview">Chapter 0 Exercises: A Dress Rehearsal, Not a Preview</h2>
-<p>Here are your first hands-on challenges. Write python scripts (save them under <code>scratch/</code> or run them in an interactive environment) to solve them.</p>
-<blockquote>
-<p><strong>What this rehearsal is for.</strong> These three datasets are large, realistic, and deliberately disconnected from the running case the rest of the book uses. That's on purpose. Chapter 1 onward follows a single narrower thread — the MHP Cost Estimator — built from small, hand-inspectable datasets that grow chapter by chapter, not from these CSVs. You will not see <code>kp_subdistrict_development_index.csv</code>, <code>kp_agricultural_yields.csv</code>, or <code>kp_infrastructure_projects.csv</code> again after this chapter, and that's fine. The point here is to build the reflex — load it, check its shape, find the ID columns, read the generating code — on data with real scale and real messiness, <em>before</em> the stakes go up and that reflex has to be automatic. Think of it as a practice scrimmage before the season starts, not the season itself.</p>
-</blockquote>
-<h3 id="exercise-01-the-data-handshake">Exercise 0.1: The Data Handshake</h3>
-<p>Write a Python script <code>verify_setup.py</code> to load all three datasets and print their shapes, columns, and target variable ranges (minimum and maximum values).</p>
-<p><strong>Helpful Comments:</strong><br />
-* Use <code>pd.read_csv()</code> to load.<br />
-* Use <code>.shape</code>, <code>.columns</code>, and <code>.describe()</code> to extract statistics.<br />
-* <em>Comic Relief:</em> If your script throws a <code>FileNotFoundError</code>, verify you ran <code>generate_data.py</code> first. Data does not materialize out of thin air, no matter how hard you stare at the screen.</p>
-<h3 id="exercise-02-spotting-the-imposters-identifiers">Exercise 0.2: Spotting the Imposters (Identifiers)</h3>
-<p>Look closely at the columns of all three datasets. Identify the columns that represent unique IDs (identifiers). <br />
-1. Why must we drop these columns before feeding them to a regression model?<br />
-2. What happens if a model "memorizes" <code>community_id</code> to predict <code>development_score</code>?</p>
-<p><strong>Helpful Comments:</strong><br />
-* Unique identifiers have high cardinality (almost every row has a unique value).<br />
-* If you train a model with ID columns, it might find a spurious pattern (e.g., ID <code>COM-00042</code> has a high score just by luck) and fail when predicting on a new community <code>COM-99999</code>. This is the ultimate form of cheating and overfitting.</p>
-<h3 id="exercise-03-tracing-the-data-generating-code">Exercise 0.3: Tracing the Data-Generating Code</h3>
-<p>Open <a href="file:///var/www/documentation/regression-tasks/generate_data.py">generate_data.py</a> and search for the function <code>generate_development_dataset</code>. Look at how <code>raw_score</code> is calculated.<br />
-Write down the exact formula used to build <code>raw_score</code>.<br />
-What weights are given to <code>literacy_rate</code> vs <code>public_funding_allocated_million_pkr</code>?</p>
-<hr />
-<h2 id="handing-off-to-chapter-1">Handing Off to Chapter 1</h2>
-<p>One last thing before you turn the page. Everything in this chapter — the three CSVs, <code>generate_data.py</code>, the exercises above — belongs to this chapter alone. Chapter 1 opens a new, separate running case: the <strong>MHP Cost Estimator</strong>, predicting the cost of microhydro power projects from a handful of hand-built rows (eight, to start). It does not load anything you generated here, and it doesn't need to. Different dataset, same rules: read the theory, run the code yourself, break it on purpose. If Chapter 1 feels like a fresh start rather than a continuation, that's expected — you're not missing a step.</p>
-<hr />
-<h2 id="references">References</h2>
+<p>The calculus plan is always the same:</p>
 <ol>
-<li><strong>Python Virtual Environments:</strong> <a href="https://docs.python.org/3/library/venv.html">Python venv Docs</a> - Read this if you still don't know why we use virtual environments.</li>
-<li><strong>pandas Basics:</strong> <a href="https://pandas.pydata.org/docs/getting_started/index.html">pandas Getting Started Guide</a> - Essential reading for data loading.</li>
-<li><strong>Pakistan Development Context:</strong> Planning &amp; Development Department, Khyber Pakhtunkhwa <a href="https://pndkp.gov.pk/">KP P&amp;D Website</a> - For background on how development funding and infrastructure projects are managed in KP.</li>
+<li>Write the objective as a function of the unknown parameter or parameter vector.</li>
+<li>Differentiate.</li>
+<li>Set the derivative or gradient to zero.</li>
+<li>Check that the stationary point is a minimum.</li>
+<li>State the conditions under which the solution is unique and meaningful.</li>
+</ol>
+<div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart TD
+    A["Candidate parameters"] --> B["Predictions"]
+    B --> C["Residuals"]
+    C --> D["SSR"]
+    D --> E["Derivative or gradient"]
+    E --> F["Set equal to zero"]
+    F --> G["Check rank and curvature"]
+</pre></div>
+
+<hr />
+<h2 id="3-warm-up-one-parameter-no-intercept">3. Warm-Up: One Parameter, No Intercept</h2>
+<p>Start with the simplest linear model:</p>
+<p>$$
+\hat{y}_i=\beta x_i.
+$$</p>
+<p>The objective is:</p>
+<p>$$
+S(\beta)=\sum_i(y_i-\beta x_i)^2.
+$$</p>
+<p>Expand one squared term:</p>
+<p>$$
+(y_i-\beta x_i)^2
+=y_i^2-2\beta x_iy_i+\beta^2x_i^2.
+$$</p>
+<p>Sum over all observations:</p>
+<p>$$
+S(\beta)
+=\sum_i y_i^2
+-2\beta\sum_i x_iy_i
++\beta^2\sum_i x_i^2.
+$$</p>
+<p>This is a one-variable quadratic in <code>\beta</code>:</p>
+<p>$$
+S(\beta)=a-2b\beta+c\beta^2,
+$$</p>
+<p>where:</p>
+<p>$$
+a=\sum_i y_i^2,\qquad
+b=\sum_i x_iy_i,\qquad
+c=\sum_i x_i^2.
+$$</p>
+<p>Differentiate:</p>
+<p>$$
+\frac{dS}{d\beta}
+=-2\sum_i x_iy_i
++2\beta\sum_i x_i^2.
+$$</p>
+<p>Set the derivative to zero:</p>
+<p>$$
+-2\sum_i x_iy_i
++2\hat{\beta}\sum_i x_i^2=0.
+$$</p>
+<p>Solve:</p>
+<p>$$
+\hat{\beta}
+=
+\frac{\sum_i x_iy_i}{\sum_i x_i^2}.
+$$</p>
+<p>The second derivative is:</p>
+<p>$$
+\frac{d^2S}{d\beta^2}=2\sum_i x_i^2.
+$$</p>
+<p>If at least one <code>x_i</code> is not zero, then <code>\sum_i x_i^2&gt;0</code>, so the stationary point is a true minimum.</p>
+<h3 id="plain-language-meaning">Plain-Language Meaning</h3>
+<p>The numerator, <code>\sum_i x_iy_i</code>, measures how much <code>x</code> and <code>y</code> point in the same direction when the fitted line is forced through the origin. The denominator, <code>\sum_i x_i^2</code>, measures how much <code>x</code> is available to scale.</p>
+<p>If every <code>x_i=0</code>, then all predictions are:</p>
+<p>$$
+\hat{y}_i=\beta\cdot0=0.
+$$</p>
+<p>Changing <code>\beta</code> changes nothing. The data contain no information about the slope through the origin.</p>
+<div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart LR
+    B1["Small beta"] --> P["Same predictions"]
+    B2["Large beta"] --> P
+    B3["Negative beta"] --> P
+    P --> U["Slope unidentified"]
+</pre></div>
+
+<hr />
+<h2 id="4-one-feature-with-an-intercept">4. One Feature With an Intercept</h2>
+<p>Now use the usual one-feature regression line:</p>
+<p>$$
+\hat{y}_i=\beta_0+\beta_1x_i.
+$$</p>
+<p>The objective is:</p>
+<p>$$
+S(\beta_0,\beta_1)
+=\sum_i(y_i-\beta_0-\beta_1x_i)^2.
+$$</p>
+<p>There are two unknowns, so there are two partial derivatives.</p>
+<h3 id="41-intercept-partial">4.1 Intercept Partial</h3>
+<p>Differentiate with respect to <code>\beta_0</code>:</p>
+<p>$$
+\frac{\partial S}{\partial\beta_0}
+=-2\sum_i(y_i-\beta_0-\beta_1x_i).
+$$</p>
+<p>Set it to zero:</p>
+<p>$$
+\sum_i(y_i-\hat{\beta}_0-\hat{\beta}_1x_i)=0.
+$$</p>
+<p>Expand:</p>
+<p>$$
+\sum_i y_i-n\hat{\beta}_0-\hat{\beta}_1\sum_i x_i=0.
+$$</p>
+<p>Divide by <code>n</code>:</p>
+<p>$$
+\bar{y}-\hat{\beta}_0-\hat{\beta}_1\bar{x}=0.
+$$</p>
+<p>Rearrange:</p>
+<p>$$
+\hat{\beta}_0=\bar{y}-\hat{\beta}_1\bar{x}.
+$$</p>
+<p>This proves:</p>
+<p>$$
+\hat{\beta}_0+\hat{\beta}_1\bar{x}=\bar{y}.
+$$</p>
+<p>So the fitted line with an intercept passes exactly through:</p>
+<p>$$
+(\bar{x},\bar{y}).
+$$</p>
+<p>This is not an approximation. It follows directly from the intercept first-order condition.</p>
+<h3 id="42-slope-partial">4.2 Slope Partial</h3>
+<p>The slope partial is:</p>
+<p>$$
+\frac{\partial S}{\partial\beta_1}
+=-2\sum_i x_i(y_i-\beta_0-\beta_1x_i).
+$$</p>
+<p>After substituting:</p>
+<p>$$
+\hat{\beta}_0=\bar{y}-\hat{\beta}_1\bar{x},
+$$</p>
+<p>and simplifying, the slope becomes:</p>
+<p>$$
+\hat{\beta}_1
+=
+\frac{\sum_i(x_i-\bar{x})(y_i-\bar{y})}
+{\sum_i(x_i-\bar{x})^2}.
+$$</p>
+<h3 id="43-what-the-slope-formula-is-saying">4.3 What the Slope Formula Is Saying</h3>
+<p>The numerator is centered co-movement:</p>
+<p>$$
+\sum_i(x_i-\bar{x})(y_i-\bar{y}).
+$$</p>
+<p>It is large and positive when projects with above-average <code>x</code> tend to have above-average <code>y</code>, and projects with below-average <code>x</code> tend to have below-average <code>y</code>.</p>
+<p>The denominator is centered variation in <code>x</code>:</p>
+<p>$$
+\sum_i(x_i-\bar{x})^2.
+$$</p>
+<p>It tells us whether <code>x</code> actually changes across observations.</p>
+<p>If every <code>x_i</code> is identical, then:</p>
+<p>$$
+x_i-\bar{x}=0
+$$</p>
+<p>for every observation, so:</p>
+<p>$$
+\sum_i(x_i-\bar{x})^2=0.
+$$</p>
+<p>The slope is not merely numerically unstable. It is unidentified. The question "how does <code>y</code> change as <code>x</code> changes?" has no empirical content when <code>x</code> never changes.</p>
+<hr />
+<h2 id="5-matrix-ols-the-real-generalization">5. Matrix OLS: The Real Generalization</h2>
+<p>For many features at once, collect all fitted parameters into a vector:</p>
+<p>$$
+\beta=
+\begin{bmatrix}
+\beta_0\\
+\beta_1\\
+\vdots\\
+\beta_p
+\end{bmatrix}.
+$$</p>
+<p>The design matrix <code>X</code> contains one row per project and one column per parameter. If the model includes an intercept, the first column is usually all ones.</p>
+<p>Predictions are:</p>
+<p>$$
+\hat{y}=X\beta.
+$$</p>
+<p>Residuals are:</p>
+<p>$$
+r=y-X\beta.
+$$</p>
+<p>The squared-error objective is:</p>
+<p>$$
+S(\beta)=(y-X\beta)^T(y-X\beta).
+$$</p>
+<p>This is the vector version of squaring and summing residuals:</p>
+<p>$$
+r^Tr=\sum_i r_i^2.
+$$</p>
+<h3 id="51-expand-the-matrix-objective">5.1 Expand the Matrix Objective</h3>
+<p>Use:</p>
+<p>$$
+(y-X\beta)^T=y^T-\beta^TX^T.
+$$</p>
+<p>Then:</p>
+<p>$$
+\begin{aligned}
+S(\beta)
+&amp;=(y^T-\beta^TX^T)(y-X\beta)\\
+&amp;=y^Ty-y^TX\beta-\beta^TX^Ty+\beta^TX^TX\beta.
+\end{aligned}
+$$</p>
+<p>The middle two terms are equal because both are scalars and transposes of one another:</p>
+<p>$$
+y^TX\beta=(y^TX\beta)^T.
+$$</p>
+<p>Using the transpose rule:</p>
+<p>$$
+(ABC)^T=C^TB^TA^T,
+$$</p>
+<p>we get:</p>
+<p>$$
+(y^TX\beta)^T=\beta^TX^Ty.
+$$</p>
+<p>Since a scalar equals its own transpose:</p>
+<p>$$
+y^TX\beta=\beta^TX^Ty.
+$$</p>
+<p>Therefore:</p>
+<p>$$
+S(\beta)=y^Ty-2\beta^TX^Ty+\beta^TX^TX\beta.
+$$</p>
+<h3 id="shape-check">Shape Check</h3>
+<p>If <code>X</code> has shape <code>(n, p)</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Object</th>
+<th style="text-align: right;">Shape</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>y</code></td>
+<td style="text-align: right;"><code>(n,)</code> or <code>(n, 1)</code></td>
+</tr>
+<tr>
+<td><code>X</code></td>
+<td style="text-align: right;"><code>(n, p)</code></td>
+</tr>
+<tr>
+<td><code>\beta</code></td>
+<td style="text-align: right;"><code>(p,)</code> or <code>(p, 1)</code></td>
+</tr>
+<tr>
+<td><code>X\beta</code></td>
+<td style="text-align: right;"><code>(n,)</code> or <code>(n, 1)</code></td>
+</tr>
+<tr>
+<td><code>X^Ty</code></td>
+<td style="text-align: right;"><code>(p,)</code> or <code>(p, 1)</code></td>
+</tr>
+<tr>
+<td><code>X^TX</code></td>
+<td style="text-align: right;"><code>(p, p)</code></td>
+</tr>
+<tr>
+<td><code>\beta^TX^TX\beta</code></td>
+<td style="text-align: right;">scalar</td>
+</tr>
+</tbody>
+</table>
+<p>The objective must be a scalar. If a derivation leaves a vector where <code>S(\beta)</code> should be, the shapes are wrong.</p>
+<hr />
+<h2 id="6-differentiating-with-respect-to-a-vector">6. Differentiating With Respect to a Vector</h2>
+<p>The matrix objective is:</p>
+<p>$$
+S(\beta)=y^Ty-2\beta^TX^Ty+\beta^TX^TX\beta.
+$$</p>
+<p>Now apply three derivative facts.</p>
+<h3 id="fact-1-constants-vanish">Fact 1: Constants Vanish</h3>
+<p>The term <code>y^Ty</code> does not contain <code>\beta</code>, so:</p>
+<p>$$
+\nabla_\beta(y^Ty)=0.
+$$</p>
+<h3 id="fact-2-linear-terms">Fact 2: Linear Terms</h3>
+<p>For a constant vector <code>c</code>:</p>
+<p>$$
+\nabla_\beta(\beta^Tc)=c.
+$$</p>
+<p>Here:</p>
+<p>$$
+c=X^Ty.
+$$</p>
+<p>So:</p>
+<p>$$
+\nabla_\beta(-2\beta^TX^Ty)=-2X^Ty.
+$$</p>
+<h3 id="fact-3-quadratic-terms">Fact 3: Quadratic Terms</h3>
+<p>For a constant matrix <code>A</code>:</p>
+<p>$$
+\nabla_\beta(\beta^TA\beta)=(A+A^T)\beta.
+$$</p>
+<p>In OLS:</p>
+<p>$$
+A=X^TX.
+$$</p>
+<p>This matrix is symmetric:</p>
+<p>$$
+(X^TX)^T=X^T(X^T)^T=X^TX.
+$$</p>
+<p>So:</p>
+<p>$$
+\nabla_\beta(\beta^TX^TX\beta)=2X^TX\beta.
+$$</p>
+<h3 id="combine-the-pieces">Combine the Pieces</h3>
+<p>Therefore:</p>
+<p>$$
+\nabla_\beta S(\beta)
+=-2X^Ty+2X^TX\beta.
+$$</p>
+<p>Set the gradient to zero:</p>
+<p>$$
+-2X^Ty+2X^TX\hat{\beta}=0.
+$$</p>
+<p>Divide by 2 and rearrange:</p>
+<p>$$
+X^TX\hat{\beta}=X^Ty.
+$$</p>
+<p>These are the normal equations.</p>
+<hr />
+<h2 id="7-why-the-quadratic-rule-has-aat">7. Why the Quadratic Rule Has <code>A+A^T</code></h2>
+<p>The rule:</p>
+<p>$$
+\nabla_\beta(\beta^TA\beta)=(A+A^T)\beta
+$$</p>
+<p>can look mysterious until you expand it.</p>
+<p>For two parameters:</p>
+<p>$$
+A=
+\begin{bmatrix}
+a_{11} &amp; a_{12}\\
+a_{21} &amp; a_{22}
+\end{bmatrix},
+\qquad
+\beta=
+\begin{bmatrix}
+\beta_1\\
+\beta_2
+\end{bmatrix}.
+$$</p>
+<p>Then:</p>
+<p>$$
+\beta^TA\beta
+=a_{11}\beta_1^2
++a_{12}\beta_1\beta_2
++a_{21}\beta_2\beta_1
++a_{22}\beta_2^2.
+$$</p>
+<p>Differentiate with respect to <code>\beta_1</code>:</p>
+<p>$$
+\frac{\partial}{\partial\beta_1}
+=2a_{11}\beta_1+a_{12}\beta_2+a_{21}\beta_2.
+$$</p>
+<p>The cross-product appears twice: once from the upper-right term and once from the lower-left term. That is why both <code>A</code> and <code>A^T</code> appear.</p>
+<p>If <code>A</code> is symmetric, then <code>a_{12}=a_{21}</code>, and the rule simplifies to:</p>
+<p>$$
+2A\beta.
+$$</p>
+<p>Because <code>X^TX</code> is always symmetric, OLS gets the simpler form.</p>
+<hr />
+<h2 id="8-minimum-convexity-and-positive-semidefiniteness">8. Minimum, Convexity, and Positive Semidefiniteness</h2>
+<p>Setting the gradient to zero finds a stationary point. We still need to know whether it is a minimum.</p>
+<p>The Hessian of the squared-error objective is:</p>
+<p>$$
+\nabla_\beta^2S(\beta)=2X^TX.
+$$</p>
+<p>A matrix <code>M</code> is <strong>positive semidefinite</strong> if, for every vector <code>z</code>:</p>
+<p>$$
+z^TMz\ge0.
+$$</p>
+<p>For <code>X^TX</code>:</p>
+<p>$$
+z^TX^TXz=(Xz)^T(Xz)=\lVert Xz\rVert_2^2\ge0.
+$$</p>
+<p>This is always nonnegative because it is a squared length.</p>
+<p>So <code>X^TX</code> is positive semidefinite, and the SSR surface is convex. Convex means the surface has no fake local minima. Any local minimum is a global minimum.</p>
+<p>If <code>X</code> has full column rank, then for every nonzero <code>z</code>:</p>
+<p>$$
+Xz\ne0.
+$$</p>
+<p>So:</p>
+<p>$$
+\lVert Xz\rVert_2^2&gt;0.
+$$</p>
+<p>Then the Hessian is positive definite on parameter directions, the objective is strictly convex, and the coefficient vector is unique.</p>
+<h3 id="important-distinction">Important Distinction</h3>
+<p>Rank deficiency can make coefficients non-unique even when fitted predictions are still uniquely determined as a projection. The model may know the fitted vector but not how to assign credit among redundant columns.</p>
+<hr />
+<h2 id="9-when-can-we-solve-for-hatbeta">9. When Can We Solve for <code>\hat{\beta}</code>?</h2>
+<p>The normal equations are:</p>
+<p>$$
+X^TX\hat{\beta}=X^Ty.
+$$</p>
+<p>If <code>X^TX</code> is invertible:</p>
+<p>$$
+\hat{\beta}=(X^TX)^{-1}X^Ty.
+$$</p>
+<p>This requires <code>X</code> to have full column rank.</p>
+<p>Plain language:</p>
+<ul>
+<li>no feature column is an exact copy of another;</li>
+<li>no feature column is an exact multiple of another;</li>
+<li>no feature column can be built by adding or scaling other columns;</li>
+<li>there are enough independent rows to estimate every parameter;</li>
+<li>the intercept column must not be made redundant by other columns.</li>
+</ul>
+<p>If these conditions fail, the algebraic question "which coefficient vector is the unique minimiser?" may not have a unique answer.</p>
+<hr />
+<h2 id="10-why-real-code-avoids-the-explicit-inverse">10. Why Real Code Avoids the Explicit Inverse</h2>
+<p>The closed form:</p>
+<p>$$
+\hat{\beta}=(X^TX)^{-1}X^Ty
+$$</p>
+<p>is mathematically useful, but application code should usually not compute the inverse directly.</p>
+<p>Preferred hierarchy:</p>
+<ol>
+<li>Best for least squares: use a least-squares solver such as <code>np.linalg.lstsq(X, y, rcond=None)</code>.</li>
+<li>Acceptable for well-conditioned full-rank normal equations: solve the system with <code>np.linalg.solve(X.T @ X, X.T @ y)</code>.</li>
+<li>Avoid in application code: explicitly compute <code>np.linalg.inv(X.T @ X) @ X.T @ y</code>.</li>
+</ol>
+<p>Reasons:</p>
+<ul>
+<li>Forming <code>X^TX</code> squares the condition number.</li>
+<li>Squaring the condition number can amplify floating-point error.</li>
+<li>Explicit inversion does unnecessary work.</li>
+<li>A least-squares solver can report rank and singular values.</li>
+<li>Rank and singular values help diagnose whether coefficients are separately meaningful.</li>
+</ul>
+<p>This is a numerical issue, not a change in the estimand. The objective is still the same SSR minimisation problem.</p>
+<hr />
+<h2 id="11-perfect-multicollinearity-the-rank-failure-trap">11. Perfect Multicollinearity: The Rank-Failure Trap</h2>
+<p>Suppose the design matrix includes both:</p>
+<p>$$
+x_{\text{km}}
+$$</p>
+<p>and:</p>
+<p>$$
+x_{\text{m}}=1000x_{\text{km}}.
+$$</p>
+<p>The two columns contain the same information in different units. The model cannot separately identify both coefficients.</p>
+<p>The combined contribution is:</p>
+<p>$$
+\beta_{\text{km}}x_{\text{km}}
++\beta_{\text{m}}x_{\text{m}}.
+$$</p>
+<p>Substitute <code>x_m=1000x_km</code>:</p>
+<p>$$
+\beta_{\text{km}}x_{\text{km}}
++\beta_{\text{m}}(1000x_{\text{km}})
+=
+(\beta_{\text{km}}+1000\beta_{\text{m}})x_{\text{km}}.
+$$</p>
+<p>Only the combined quantity:</p>
+<p>$$
+\beta_{\text{km}}+1000\beta_{\text{m}}
+$$</p>
+<p>is identified by the predictions. Infinitely many coefficient pairs can produce the same fitted values.</p>
+<p>Example:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;"><code>\beta_{\text{km}}</code></th>
+<th style="text-align: right;"><code>\beta_{\text{m}}</code></th>
+<th style="text-align: right;">Combined contribution per km</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0.002</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.005</td>
+<td style="text-align: right;">5</td>
+</tr>
+</tbody>
+</table>
+<p>All four rows imply the same combined effect per kilometre, but the individual coefficients differ. Reading either individual coefficient as a meaningful separate estimate would be wrong.</p>
+<p><code>np.linalg.solve</code> may fail because <code>X^TX</code> is singular. <code>np.linalg.lstsq</code> may return one solution, often a minimum-norm solution, but "a number was returned" does not mean "the coefficient has a defensible interpretation."</p>
+<p>The fix is conceptual and design-based:</p>
+<ul>
+<li>remove one redundant column;</li>
+<li>choose one unit system;</li>
+<li>redesign the features;</li>
+<li>state the estimand in terms of the identifiable quantity.</li>
+</ul>
+<div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart LR
+    K["km column"] --> M["x 1000"]
+    M --> R["metres column"]
+    K --> D["Rank deficiency"]
+    R --> D
+    D --> C["Coefficients not separate"]
+</pre></div>
+
+<hr />
+<h2 id="12-connecting-back-to-day-1-algebra-is-not-explanation">12. Connecting Back to Day 1: Algebra Is Not Explanation</h2>
+<p>Imagine OLS estimates that road distance has a positive coefficient in a cost model.</p>
+<p>Layer 1, algebra:</p>
+<blockquote>
+<p>Given the specified <code>X</code> and <code>y</code>, the program found coefficients minimising SSR.</p>
+</blockquote>
+<p>That says nothing yet about whether road distance explains cost in a defensible way.</p>
+<p>Layer 2, statistical generalisation:</p>
+<blockquote>
+<p>Are these projects representative of the future or target population? Are uncertainty intervals wide? Are some districts missing? Is the relationship stable across terrain and procurement regimes?</p>
+</blockquote>
+<p>Layer 3, causal interpretation:</p>
+<blockquote>
+<p>Would reducing road distance by building an access road cause cost to fall? Or is road distance partly standing in for terrain, remoteness, weather exposure, political selection, contractor availability, and transport method?</p>
+</blockquote>
+<p>This is why the Day 1 estimand matters. If the estimand is predictive, a non-causal signal may still be useful. If the estimand is explanatory, omitted variables and correlated features threaten interpretation. If the estimand is causal, regression must be embedded in a credible causal design.</p>
+<p>The fitted line is an algebraic object. The claim attached to it is a research-design object.</p>
+<hr />
+<h2 id="13-common-mistakes-and-corrections">13. Common Mistakes and Corrections</h2>
+<table>
+<thead>
+<tr>
+<th>Mistake</th>
+<th>Correction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"The normal equations are just a formula to memorise."</td>
+<td>They come from setting the SSR gradient to zero, and also from residual orthogonality.</td>
+</tr>
+<tr>
+<td>"If <code>lstsq</code> returns coefficients, the model worked."</td>
+<td>It found a least-squares solution; rank failure may still make individual coefficients unidentified.</td>
+</tr>
+<tr>
+<td>"OLS needs normally distributed residuals to fit."</td>
+<td>Normality is not needed to minimise SSR. It enters some inference procedures, not the algebraic fit.</td>
+</tr>
+<tr>
+<td>"A positive coefficient proves causation."</td>
+<td>A coefficient is conditional association unless the design identifies a causal effect.</td>
+</tr>
+<tr>
+<td>"More columns always mean more information."</td>
+<td>Redundant columns can add no information and destroy coefficient uniqueness.</td>
+</tr>
+<tr>
+<td>"The intercept is just a nuisance."</td>
+<td>With an intercept, the residuals sum to zero and the fitted line passes through the data means.</td>
+</tr>
+<tr>
+<td>"Positive semidefinite means all entries are positive."</td>
+<td>It means <code>z^TMz &gt;= 0</code> for every vector <code>z</code>. Entries themselves may be negative.</td>
+</tr>
+<tr>
+<td>"A denominator of zero is a computer problem."</td>
+<td>It is an identification problem: the data contain no variation in the required direction.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="14-study-exercises">14. Study Exercises</h2>
+<p>These exercises are no-code. Write answers in complete sentences before checking the answer key.</p>
+<h3 id="exercise-1-the-no-variation-slope">Exercise 1: The No-Variation Slope</h3>
+<p>Suppose all projects have exactly 3 km of cable. Explain why the one-feature-with-intercept slope:</p>
+<p>$$
+\hat{\beta}_1
+=
+\frac{\sum_i(x_i-\bar{x})(y_i-\bar{y})}
+{\sum_i(x_i-\bar{x})^2}
+$$</p>
+<p>cannot be computed. Do not say only "division by zero." Explain what the zero denominator means about the data and the estimand.</p>
+<h3 id="exercise-2-the-mean-point">Exercise 2: The Mean Point</h3>
+<p>Starting from:</p>
+<p>$$
+\hat{\beta}_0=\bar{y}-\hat{\beta}_1\bar{x},
+$$</p>
+<p>show in one line why the fitted line passes through <code>(\bar{x},\bar{y})</code>.</p>
+<h3 id="exercise-3-scalar-transpose-rule">Exercise 3: Scalar Transpose Rule</h3>
+<p>In the expansion:</p>
+<p>$$
+S(\beta)=y^Ty-y^TX\beta-\beta^TX^Ty+\beta^TX^TX\beta,
+$$</p>
+<p>explain why:</p>
+<p>$$
+y^TX\beta=\beta^TX^Ty.
+$$</p>
+<p>State the actual transpose rule being used.</p>
+<h3 id="exercise-4-shape-audit">Exercise 4: Shape Audit</h3>
+<p>Assume <code>X</code> is <code>(8, 3)</code>, <code>y</code> is <code>(8, 1)</code>, and <code>\beta</code> is <code>(3, 1)</code>. Write the shapes of:</p>
+<ul>
+<li><code>X\beta</code></li>
+<li><code>y-X\beta</code></li>
+<li><code>X^Ty</code></li>
+<li><code>X^TX</code></li>
+<li><code>X^TX\beta</code></li>
+<li><code>\beta^TX^Ty</code></li>
+</ul>
+<p>Which of these must be a scalar?</p>
+<h3 id="exercise-5-the-gradient">Exercise 5: The Gradient</h3>
+<p>Starting from:</p>
+<p>$$
+S(\beta)=y^Ty-2\beta^TX^Ty+\beta^TX^TX\beta,
+$$</p>
+<p>write the gradient:</p>
+<p>$$
+\nabla_\beta S(\beta)=?
+$$</p>
+<p>Then set it to zero and recover the normal equations.</p>
+<h3 id="exercise-6-positive-semidefinite">Exercise 6: Positive Semidefinite</h3>
+<p>Define positive semidefinite precisely. Then explain why:</p>
+<p>$$
+z^TX^TXz=\lVert Xz\rVert_2^2
+$$</p>
+<p>proves that <code>X^TX</code> is positive semidefinite.</p>
+<h3 id="exercise-7-convexity">Exercise 7: Convexity</h3>
+<p>Why does positive semidefiniteness of the Hessian imply that SSR has no local minimum that is not also global?</p>
+<h3 id="exercise-8-full-rank-and-uniqueness">Exercise 8: Full Rank and Uniqueness</h3>
+<p>What extra condition changes positive semidefinite curvature into strict curvature for OLS? Explain the condition in matrix language and plain language.</p>
+<h3 id="exercise-9-kilometres-and-metres">Exercise 9: Kilometres and Metres</h3>
+<p>A model includes cable length in km and cable length in metres. Explain why individual coefficients on those two columns are not separately meaningful, even if <code>lstsq</code> returns numbers.</p>
+<h3 id="exercise-10-estimand-check">Exercise 10: Estimand Check</h3>
+<p>A project director says:</p>
+<blockquote>
+<p>"The road-distance coefficient is positive, so bad roads cause higher MHP costs."</p>
+</blockquote>
+<p>Rewrite this claim as:</p>
+<ol>
+<li>a prediction claim;</li>
+<li>an explanation claim;</li>
+<li>a causal claim.</li>
+</ol>
+<p>For each version, state what extra evidence or assumption would be needed beyond the algebraic OLS fit.</p>
+<h3 id="exercise-11-algebra-vs-statistical-generalisation">Exercise 11: Algebra vs Statistical Generalisation</h3>
+<p>Explain why a model can minimise SSR perfectly on the eight training projects and still be a poor guide for future projects.</p>
+<h3 id="exercise-12-algebra-vs-causation">Exercise 12: Algebra vs Causation</h3>
+<p>Explain why solving OLS correctly does not tell us whether reducing road distance by building an access road would reduce cost.</p>
+<hr />
+<h2 id="15-answer-key">15. Answer Key</h2>
+<h3 id="answer-1">Answer 1</h3>
+<p>If all <code>x_i</code> values are identical, then every <code>x_i-\bar{x}</code> equals zero. The denominator is the total variation in <code>x</code>, and that variation is zero. The data never show projects at different cable lengths, so they cannot answer how expected cost changes when cable length changes. The slope is unidentified, not merely hard for the computer to estimate.</p>
+<h3 id="answer-2">Answer 2</h3>
+<p>Evaluate the fitted line at <code>\bar{x}</code>:</p>
+<p>$$
+\hat{\beta}_0+\hat{\beta}_1\bar{x}
+=
+(\bar{y}-\hat{\beta}_1\bar{x})+\hat{\beta}_1\bar{x}
+=\bar{y}.
+$$</p>
+<p>So the line passes through <code>(\bar{x},\bar{y})</code>.</p>
+<h3 id="answer-3">Answer 3</h3>
+<p>The term <code>y^TX\beta</code> is a scalar. A scalar equals its own transpose. Using:</p>
+<p>$$
+(ABC)^T=C^TB^TA^T,
+$$</p>
+<p>we have:</p>
+<p>$$
+(y^TX\beta)^T=\beta^TX^Ty.
+$$</p>
+<p>Therefore:</p>
+<p>$$
+y^TX\beta=\beta^TX^Ty.
+$$</p>
+<h3 id="answer-4">Answer 4</h3>
+<p>Shapes:</p>
+<table>
+<thead>
+<tr>
+<th>Object</th>
+<th style="text-align: right;">Shape</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>X\beta</code></td>
+<td style="text-align: right;"><code>(8, 1)</code></td>
+</tr>
+<tr>
+<td><code>y-X\beta</code></td>
+<td style="text-align: right;"><code>(8, 1)</code></td>
+</tr>
+<tr>
+<td><code>X^Ty</code></td>
+<td style="text-align: right;"><code>(3, 1)</code></td>
+</tr>
+<tr>
+<td><code>X^TX</code></td>
+<td style="text-align: right;"><code>(3, 3)</code></td>
+</tr>
+<tr>
+<td><code>X^TX\beta</code></td>
+<td style="text-align: right;"><code>(3, 1)</code></td>
+</tr>
+<tr>
+<td><code>\beta^TX^Ty</code></td>
+<td style="text-align: right;"><code>(1, 1)</code>, a scalar</td>
+</tr>
+</tbody>
+</table>
+<p>The objective terms such as <code>\beta^TX^Ty</code>, <code>y^Ty</code>, and <code>\beta^TX^TX\beta</code> must be scalars.</p>
+<h3 id="answer-5">Answer 5</h3>
+<p>The gradient is:</p>
+<p>$$
+\nabla_\beta S(\beta)
+=-2X^Ty+2X^TX\beta.
+$$</p>
+<p>Set it to zero:</p>
+<p>$$
+-2X^Ty+2X^TX\hat{\beta}=0.
+$$</p>
+<p>Divide by 2 and rearrange:</p>
+<p>$$
+X^TX\hat{\beta}=X^Ty.
+$$</p>
+<h3 id="answer-6">Answer 6</h3>
+<p>A matrix <code>M</code> is positive semidefinite if:</p>
+<p>$$
+z^TMz\ge0
+$$</p>
+<p>for every vector <code>z</code>. For <code>M=X^TX</code>:</p>
+<p>$$
+z^TX^TXz=(Xz)^T(Xz)=\lVert Xz\rVert_2^2.
+$$</p>
+<p>A squared length cannot be negative, so <code>X^TX</code> is positive semidefinite.</p>
+<h3 id="answer-7">Answer 7</h3>
+<p>The Hessian describes curvature. If the Hessian is positive semidefinite everywhere, the objective is convex. A convex bowl may have a flat bottom, but it cannot have a separate false valley. Therefore any local minimum is also a global minimum.</p>
+<h3 id="answer-8">Answer 8</h3>
+<p>The extra condition is full column rank of <code>X</code>. In matrix language, <code>Xz=0</code> only when <code>z=0</code>. In plain language, no column of <code>X</code> can be built exactly from the other columns. Then:</p>
+<p>$$
+\lVert Xz\rVert_2^2&gt;0
+$$</p>
+<p>for every nonzero <code>z</code>, giving strict curvature and a unique coefficient vector.</p>
+<h3 id="answer-9">Answer 9</h3>
+<p>Since:</p>
+<p>$$
+x_{\text{m}}=1000x_{\text{km}},
+$$</p>
+<p>the two columns carry the same information. Predictions depend only on:</p>
+<p>$$
+\beta_{\text{km}}+1000\beta_{\text{m}}.
+$$</p>
+<p>Many coefficient pairs produce the same fitted values. <code>lstsq</code> can return one solution, but the separate km and metre coefficients are not identifiable as distinct quantities.</p>
+<h3 id="answer-10">Answer 10</h3>
+<p>Prediction claim:</p>
+<blockquote>
+<p>Road distance helps predict final MHP cost for new projects similar to the training data.</p>
+</blockquote>
+<p>Needed beyond algebra: validation on genuinely new or held-out projects, stable measurement, and evidence that the target cases resemble the training cases.</p>
+<p>Explanation claim:</p>
+<blockquote>
+<p>Among projects with the same included features, greater road distance is associated with higher final cost.</p>
+</blockquote>
+<p>Needed beyond algebra: a clearly stated conditioning set, uncertainty estimates, sensitivity to omitted variables, and checks for multicollinearity or instability.</p>
+<p>Causal claim:</p>
+<blockquote>
+<p>Reducing road distance through access-road improvement would reduce final MHP cost.</p>
+</blockquote>
+<p>Needed beyond algebra: a credible causal design, counterfactual comparison, confounding control, timing discipline, and assumptions connecting the observed comparison to the intervention effect.</p>
+<h3 id="answer-11">Answer 11</h3>
+<p>Training SSR measures fit to the projects used to estimate the coefficients. A model can fit those projects well because of chance patterns, unusual district composition, repeated design templates, or overfitting. Generalisation asks whether the relationship holds for future or target-population projects, which requires validation and sampling assumptions beyond the algebraic fit.</p>
+<h3 id="answer-12">Answer 12</h3>
+<p>OLS estimates conditional associations in the observed data. Building an access road is an intervention. To know its effect, we need to compare what would happen under road improvement with what would happen without it for the same target projects. That counterfactual is not supplied by the normal equations. Terrain, remoteness, contractor availability, and project selection may affect both road distance and cost, so a correct OLS calculation alone cannot identify the causal effect.</p>
+<hr />
+<h2 id="16-final-mental-checklist">16. Final Mental Checklist</h2>
+<p>Before moving to the <code>fit()</code> implementation, you should be able to say:</p>
+<ol>
+<li>The scalar OLS solution comes from differentiating a quadratic in one parameter.</li>
+<li>With an intercept, the fitted line passes exactly through <code>(\bar{x},\bar{y})</code>.</li>
+<li>The matrix objective expands to a scalar quadratic in <code>\beta</code>.</li>
+<li>The gradient is <code>-2X^Ty+2X^TX\beta</code>.</li>
+<li>Setting that gradient to zero gives <code>X^TX\hat{\beta}=X^Ty</code>.</li>
+<li><code>X^TX</code> is positive semidefinite because <code>z^TX^TXz</code> is a squared length.</li>
+<li>Full column rank gives a unique coefficient vector.</li>
+<li><code>lstsq</code> returning numbers does not make rank-deficient coefficients meaningful.</li>
+<li>Algebraic correctness is not statistical generalisation.</li>
+<li>Algebraic correctness is not causal identification.</li>
 </ol>
         </article>
     </div>
 
-    <aside id="platform-shell" class="platform-shell" aria-label="Learning tools">
-        <div class="platform-header">
-            <div>
-                <div class="platform-title">Learning Tools</div>
-                <div id="platform-section" class="platform-section">Current section</div>
-            </div>
-            <button id="platform-toggle" class="platform-button" type="button" title="Collapse tools">Tools</button>
-        </div>
-        <div class="platform-body">
-            <section class="platform-group">
-                <label class="platform-row"><input id="progress-complete" type="checkbox"> Mark current section complete</label>
-                <div class="platform-row">
-                    <div class="platform-label">Section notes</div>
-                    <button id="note-new" class="platform-button" type="button">New note</button>
-                </div>
-                <div id="notes-list" class="notes-list"></div>
-            </section>
-            <section class="platform-group">
-                <div class="platform-label">AI Tutor</div>
-                <div class="platform-row">
-                    <button id="tutor-explain" class="platform-button" type="button">Explain differently</button>
-                    <button id="tutor-check" class="platform-button" type="button">Check reasoning</button>
-                </div>
-                <div id="tutor-history" class="platform-history"></div>
-                <textarea id="tutor-question" class="platform-textarea" placeholder="Ask about this section or paste your reasoning"></textarea>
-                <button id="tutor-submit" class="platform-button" type="button">Ask tutor</button>
-                <div class="platform-message" data-service-message="tutor"></div>
-                <div id="tutor-output" class="platform-output"></div>
-            </section>
-            <section class="platform-group">
-                <div class="platform-label">Exercise grading</div>
-                <textarea id="grade-submission" class="platform-textarea" placeholder="Paste your answer, code, or derivation"></textarea>
-                <button id="grade-submit" class="platform-button" type="button">Grade my answer</button>
-                <div class="platform-message" data-service-message="grading"></div>
-                <div id="grade-output" class="platform-output"></div>
-            </section>
-            <section class="platform-group">
-                <div class="platform-label">Narration</div>
-                <button id="tts-submit" class="platform-button" type="button">Listen to this section</button>
-                <div class="platform-message" data-service-message="tts"></div>
-                <div id="tts-output" class="platform-output"></div>
-            </section>
-            <section class="platform-group">
-                <div class="platform-label">Cross-device sync</div>
-                <div class="platform-row">
-                    <button id="sync-push" class="platform-button" type="button">Push</button>
-                    <button id="sync-pull" class="platform-button" type="button">Pull</button>
-                    <button id="status-retry" class="platform-button" type="button">Retry services</button>
-                </div>
-                <div class="platform-message" data-service-message="sync"></div>
-                <div id="sync-output" class="platform-output">Opt-in only. Notes, progress, and tutor history stay local unless you push.</div>
-            </section>
-            <section class="platform-group">
-                <div class="platform-label">Spaced repetition</div>
-                <div class="platform-output">Stretch goal: reminder delivery is not built in this pass.</div>
-            </section>
-        </div>
-    </aside>
-    <div id="note-modal-backdrop" class="modal-backdrop">
-        <div id="note-modal" class="note-modal" role="dialog" aria-modal="true" aria-label="Edit note">
-            <div class="note-modal-header">
-                <input id="note-title" class="note-title-input" type="text" value="Untitled note" aria-label="Note title">
-                <button id="note-close" class="platform-button" type="button">Close</button>
-            </div>
-            <div id="note-quill-toolbar" class="note-toolbar">
-                <span class="ql-formats">
-                    <select class="ql-header">
-                        <option value="1"></option>
-                        <option value="2"></option>
-                        <option selected></option>
-                    </select>
-                </span>
-                <span class="ql-formats">
-                    <button class="ql-bold" type="button"></button>
-                    <button class="ql-italic" type="button"></button>
-                    <button class="ql-underline" type="button"></button>
-                    <button class="ql-strike" type="button"></button>
-                </span>
-                <span class="ql-formats">
-                    <button class="ql-list" value="ordered" type="button"></button>
-                    <button class="ql-list" value="bullet" type="button"></button>
-                    <button class="ql-blockquote" type="button"></button>
-                    <button class="ql-code-block" type="button"></button>
-                </span>
-                <span class="ql-formats">
-                    <button class="ql-link" type="button"></button>
-                    <button class="ql-clean" type="button"></button>
-                </span>
-            </div>
-            <div id="note-editor" class="note-editor" data-placeholder="Write a full note for this section"></div>
-            <div class="note-attachments">
-                <div class="platform-row">
-                    <div class="platform-label">Attachments</div>
-                    <input id="note-attachment-input" class="attachment-input" type="file" multiple>
-                </div>
-                <div id="note-attachments-list" class="attachment-list"></div>
-            </div>
-            <div class="note-modal-footer">
-                <div id="note-modal-status" class="settings-status"></div>
-                <button id="note-save" class="platform-button" type="button">Save note</button>
-            </div>
-        </div>
-    </div>
-
-
-    <script>
-        window.KP_PLATFORM = {
-            chapterSlug: "level_0_orientation",
-            serviceStatus: {},
-            statusTimer: null,
-            currentSectionId: null,
-            currentHeading: null,
-            noteQuill: null,
-            quillPromise: null
-        };
-
-        (function platform() {
-            var state = window.KP_PLATFORM;
-            var reasonText = {
-                no_connectivity: "no internet connection",
-                no_api_key: "no API key configured",
-                provider_error: "provider error",
-                disabled: "service disabled"
-            };
-            var featureNames = {
-                tutor: "AI Tutor",
-                grading: "Exercise grading",
-                papers: "Research paper lookup",
-                tts: "Read-aloud narration",
-                sync: "Cross-device sync"
-            };
-
-            function qs(sel) { return document.querySelector(sel); }
-            function qsa(sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); }
-            function sectionKey(sectionId) { return state.chapterSlug + "::" + sectionId; }
-            function loadStylesheet(localHref, cdnHref) {
-                if (document.querySelector("link[href='" + localHref + "'], link[href='" + cdnHref + "']")) return;
-                var link = document.createElement("link");
-                link.rel = "stylesheet";
-                link.href = localHref;
-                link.onerror = function () {
-                    var fallback = document.createElement("link");
-                    fallback.rel = "stylesheet";
-                    fallback.href = cdnHref;
-                    document.head.appendChild(fallback);
-                };
-                document.head.appendChild(link);
-            }
-            function loadScript(localSrc, cdnSrc) {
-                return new Promise(function (resolve, reject) {
-                    if (window.Quill) {
-                        resolve(window.Quill);
-                        return;
-                    }
-                    var script = document.createElement("script");
-                    script.src = localSrc;
-                    script.onload = function () { resolve(window.Quill); };
-                    script.onerror = function () {
-                        var fallback = document.createElement("script");
-                        fallback.src = cdnSrc;
-                        fallback.onload = function () { resolve(window.Quill); };
-                        fallback.onerror = reject;
-                        document.head.appendChild(fallback);
-                    };
-                    document.head.appendChild(script);
-                });
-            }
-            function loadQuill() {
-                if (!state.quillPromise) {
-                    loadStylesheet("../vendor/quill/quill.snow.css", "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css");
-                    state.quillPromise = loadScript("../vendor/quill/quill.js", "https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js");
-                }
-                return state.quillPromise;
-            }
-            function displayReason(reason) { return reasonText[reason] || "provider error"; }
-            function disabledMessage(service) {
-                return featureNames[service] + " is not available — " + displayReason((state.serviceStatus[service] || {}).reason) + ".";
-            }
-            function setMessage(id, text) {
-                var el = qs(id);
-                if (el) el.textContent = text || "";
-            }
-            function setAvailable(service, selectors) {
-                var status = state.serviceStatus[service] || { available: false, reason: "no_connectivity" };
-                selectors.forEach(function (selector) {
-                    qsa(selector).forEach(function (el) { el.disabled = !status.available; });
-                });
-                var msg = qs("[data-service-message='" + service + "']");
-                if (msg) msg.textContent = status.available ? "" : disabledMessage(service);
-            }
-            function statusFallback() {
-                ["tutor", "grading", "papers", "tts", "sync"].forEach(function (service) {
-                    state.serviceStatus[service] = { available: false, reason: "no_connectivity" };
-                });
-            }
-            async function fetchJson(url, options, timeoutMs) {
-                var controller = new AbortController();
-                var timer = setTimeout(function () { controller.abort(); }, timeoutMs || 3000);
-                try {
-                    var response = await fetch(url, Object.assign({}, options || {}, { signal: controller.signal }));
-                    var text = await response.text();
-                    var data = text ? JSON.parse(text) : {};
-                    if (!response.ok) {
-                        var error = new Error(data.error || response.statusText);
-                        error.status = response.status;
-                        error.data = data;
-                        throw error;
-                    }
-                    return data;
-                } finally {
-                    clearTimeout(timer);
-                }
-            }
-            async function refreshStatus() {
-                try {
-                    state.serviceStatus = await fetchJson("/api/services/status", {}, 6500);
-                } catch (err) {
-                    statusFallback();
-                }
-                applyStatus();
-                loadPaperCards();
-            }
-            function applyStatus() {
-                setAvailable("tutor", ["#tutor-submit", "#tutor-explain", "#tutor-check"]);
-                setAvailable("grading", ["#grade-submit"]);
-                setAvailable("tts", ["#tts-submit"]);
-                setAvailable("sync", ["#sync-push", "#sync-pull"]);
-                qsa(".paper-card[data-live='pending']").forEach(function (card) {
-                    card.querySelector(".paper-status").textContent = disabledMessage("papers");
-                });
-            }
-
-            function headingText(el) { return el ? el.textContent.replace(/\s+/g, " ").trim() : "Current section"; }
-            function chooseInitialSection() {
-                var headings = qsa(".markdown-body h1[id], .markdown-body h2[id], .markdown-body h3[id]");
-                state.currentHeading = headings[0] || null;
-                state.currentSectionId = state.currentHeading ? state.currentHeading.id : "top";
-                updateSectionUi();
-                if ("IntersectionObserver" in window && headings.length) {
-                    var visible = new Map();
-                    var observer = new IntersectionObserver(function (entries) {
-                        entries.forEach(function (entry) { visible.set(entry.target, entry.isIntersecting); });
-                        var active = headings.find(function (h) {
-                            return h.getBoundingClientRect().top >= 0 && h.getBoundingClientRect().top < window.innerHeight * 0.45;
-                        }) || headings.filter(function (h) { return h.getBoundingClientRect().top < window.innerHeight * 0.45; }).pop();
-                        if (active && active.id !== state.currentSectionId) {
-                            state.currentHeading = active;
-                            state.currentSectionId = active.id;
-                            updateSectionUi();
-                        }
-                    }, { rootMargin: "-10% 0px -65% 0px", threshold: [0, 1] });
-                    headings.forEach(function (h) { observer.observe(h); });
-                }
-            }
-            function getSectionText() {
-                var heading = state.currentHeading;
-                if (!heading) return qs(".markdown-body").textContent.slice(0, 5000);
-                var level = Number(heading.tagName.substring(1));
-                var parts = [headingText(heading)];
-                var node = heading.nextElementSibling;
-                while (node) {
-                    if (/^H[1-3]$/.test(node.tagName) && Number(node.tagName.substring(1)) <= level) break;
-                    parts.push(node.innerText || node.textContent || "");
-                    node = node.nextElementSibling;
-                }
-                return parts.join("\n").replace(/\n{3,}/g, "\n\n").slice(0, 9000);
-            }
-            function updateSectionUi() {
-                var id = state.currentSectionId || "top";
-                qs("#platform-section").textContent = headingText(state.currentHeading);
-                loadNote(id);
-                loadProgress(id);
-                loadTutorHistory(id);
-                setMessage("#grade-output", "");
-                setMessage("#tts-output", "");
-            }
-
-            async function loadNote(sectionId) {
-                var list = qs("#notes-list");
-                if (!list) return;
-                list.innerHTML = '<div class="platform-output">Loading notes...</div>';
-                try {
-                    var data = await fetchJson("/api/notes?chapter_slug=" + encodeURIComponent(state.chapterSlug) + "&section_id=" + encodeURIComponent(sectionId), {}, 1200);
-                    renderNotesList(data.notes || []);
-                } catch (err) {
-                    var localNotes = JSON.parse(localStorage.getItem("kp-notes::" + sectionKey(sectionId)) || "[]");
-                    renderNotesList(localNotes);
-                }
-            }
-            function stripHtml(html) {
-                var div = document.createElement("div");
-                div.innerHTML = html || "";
-                return div.textContent || div.innerText || "";
-            }
-            function renderNotesList(notes) {
-                var list = qs("#notes-list");
-                list.innerHTML = "";
-                if (!notes.length) {
-                    list.innerHTML = '<div class="platform-output">No notes for this section yet.</div>';
-                    return;
-                }
-                notes.forEach(function (note) {
-                    var button = document.createElement("button");
-                    button.type = "button";
-                    button.className = "note-link";
-                    button.dataset.noteId = note.id || "";
-                    var preview = stripHtml(note.preview || note.body || "").slice(0, 90);
-                    button.innerHTML = escapeHtml(note.title || "Untitled note") + (preview ? "<small>" + escapeHtml(preview) + "</small>" : "");
-                    button.addEventListener("click", function () { openNote(note.id); });
-                    list.appendChild(button);
-                });
-            }
-            async function ensureNoteEditor() {
-                var editor = qs("#note-editor");
-                if (state.noteQuill) return state.noteQuill;
-                editor.removeAttribute("contenteditable");
-                try {
-                    var QuillLib = await loadQuill();
-                    if (!QuillLib) throw new Error("Quill unavailable");
-                    state.noteQuill = new QuillLib("#note-editor", {
-                        theme: "snow",
-                        placeholder: "Write a full note for this section",
-                        modules: {
-                            toolbar: "#note-quill-toolbar",
-                            history: { delay: 800, maxStack: 150, userOnly: true }
-                        }
-                    });
-                    qs("#note-quill-toolbar").style.display = "";
-                    qs("#note-modal-status").textContent = "";
-                    return state.noteQuill;
-                } catch (err) {
-                    qs("#note-quill-toolbar").style.display = "none";
-                    editor.setAttribute("contenteditable", "true");
-                    qs("#note-modal-status").textContent = "Quill editor is not available; using basic editor.";
-                    return null;
-                }
-            }
-            function setEditorHtml(html) {
-                var editor = qs("#note-editor");
-                if (state.noteQuill) {
-                    state.noteQuill.clipboard.dangerouslyPasteHTML(html || "");
-                } else {
-                    editor.innerHTML = html || "";
-                }
-            }
-            function getEditorHtml() {
-                if (state.noteQuill) return state.noteQuill.root.innerHTML;
-                return qs("#note-editor").innerHTML;
-            }
-            function formatBytes(bytes) {
-                var value = Number(bytes || 0);
-                if (value < 1024) return value + " B";
-                if (value < 1024 * 1024) return (value / 1024).toFixed(1) + " KB";
-                return (value / (1024 * 1024)).toFixed(1) + " MB";
-            }
-            function renderAttachments(attachments) {
-                var list = qs("#note-attachments-list");
-                if (!list) return;
-                list.innerHTML = "";
-                if (!attachments.length) {
-                    list.innerHTML = '<div class="platform-output">No attachments yet.</div>';
-                    return;
-                }
-                attachments.forEach(function (item) {
-                    var row = document.createElement("div");
-                    row.className = "attachment-item";
-                    var preview = item.is_image
-                        ? '<img src="' + encodeURI(item.url) + '" alt="">'
-                        : escapeHtml((item.original_name || "file").split(".").pop().toUpperCase().slice(0, 6) || "FILE");
-                    row.innerHTML =
-                        '<div class="attachment-preview">' + preview + '</div>' +
-                        '<div class="attachment-meta">' +
-                            '<a href="' + encodeURI(item.url) + '" target="_blank" rel="noopener">' + escapeHtml(item.original_name || "Attachment") + '</a>' +
-                            '<small>' + escapeHtml(item.content_type || "file") + " · " + formatBytes(item.size_bytes) + '</small>' +
-                        '</div>';
-                    list.appendChild(row);
-                });
-            }
-            function setAttachmentMessage(message) {
-                var list = qs("#note-attachments-list");
-                if (list) list.innerHTML = '<div class="platform-output">' + escapeHtml(message) + '</div>';
-            }
-            async function loadAttachments(noteId) {
-                if (!noteId || String(noteId).indexOf("local-") === 0) {
-                    setAttachmentMessage("Save this note to the local server before attaching files.");
-                    return;
-                }
-                setAttachmentMessage("Loading attachments...");
-                try {
-                    var data = await fetchJson("/api/notes/" + encodeURIComponent(noteId) + "/attachments", {}, 2500);
-                    renderAttachments(data.attachments || []);
-                } catch (err) {
-                    setAttachmentMessage("Attachments are unavailable because the local server could not be reached.");
-                }
-            }
-            async function uploadAttachments() {
-                var input = qs("#note-attachment-input");
-                var files = Array.prototype.slice.call((input && input.files) || []);
-                if (!files.length) return;
-                var modal = qs("#note-modal");
-                var noteId = modal.dataset.noteId || "";
-                if (!noteId || noteId.indexOf("local-") === 0) {
-                    noteId = await saveNoteModal();
-                }
-                if (!noteId || String(noteId).indexOf("local-") === 0) {
-                    qs("#note-modal-status").textContent = "Attachments require a saved SQLite note. Start the local server and try again.";
-                    input.value = "";
-                    return;
-                }
-                qs("#note-modal-status").textContent = "Uploading attachments...";
-                try {
-                    for (var i = 0; i < files.length; i += 1) {
-                        var form = new FormData();
-                        form.append("file", files[i], files[i].name);
-                        await fetchJson("/api/notes/" + encodeURIComponent(noteId) + "/attachments", {
-                            method: "POST",
-                            body: form
-                        }, 60000);
-                    }
-                    input.value = "";
-                    await loadAttachments(noteId);
-                    loadNote(state.currentSectionId || "top");
-                    qs("#note-modal-status").textContent = "Attachments uploaded.";
-                } catch (err) {
-                    qs("#note-modal-status").textContent = err.status === 413 ? "Attachment is too large. Maximum size is 25 MB per file." : "Could not upload attachment.";
-                }
-            }
-            async function openNote(noteId) {
-                qs("#note-modal-backdrop").classList.add("open");
-                qs("#note-modal-status").textContent = "";
-                await ensureNoteEditor();
-                if (!noteId) {
-                    qs("#note-modal").dataset.noteId = "";
-                    qs("#note-title").value = "Untitled note";
-                    setEditorHtml("");
-                    loadAttachments(null);
-                    if (state.noteQuill) state.noteQuill.focus();
-                    else qs("#note-editor").focus();
-                    return;
-                }
-                try {
-                    var data = await fetchJson("/api/notes/" + encodeURIComponent(noteId), {}, 1500);
-                    var note = data.note;
-                    qs("#note-modal").dataset.noteId = note.id;
-                    qs("#note-title").value = note.title || "Untitled note";
-                    setEditorHtml(note.body || "");
-                    loadAttachments(note.id);
-                    if (state.noteQuill) state.noteQuill.focus();
-                    else qs("#note-editor").focus();
-                } catch (err) {
-                    qs("#note-modal-status").textContent = "Could not load this note.";
-                }
-            }
-            function closeNoteModal() {
-                qs("#note-modal-backdrop").classList.remove("open");
-            }
-            function commandNote(action, value) {
-                document.execCommand(action, false, value || null);
-                qs("#note-editor").focus();
-            }
-            async function saveNoteModal() {
-                var sectionId = state.currentSectionId || "top";
-                var modal = qs("#note-modal");
-                var noteId = modal.dataset.noteId;
-                var title = qs("#note-title").value.trim() || "Untitled note";
-                var body = getEditorHtml();
-                var payload = { chapter_slug: state.chapterSlug, section_id: sectionId, title: title, body: body };
-                qs("#note-modal-status").textContent = "Saving...";
-                try {
-                    var url = noteId ? "/api/notes/" + encodeURIComponent(noteId) : "/api/notes";
-                    var data = await fetchJson(url, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(payload)
-                    }, 3000);
-                    if (!noteId && data.id) {
-                        modal.dataset.noteId = data.id;
-                        noteId = data.id;
-                    }
-                    qs("#note-modal-status").textContent = "Saved.";
-                    loadNote(sectionId);
-                    loadAttachments(noteId);
-                    return noteId;
-                } catch (err) {
-                    var key = "kp-notes::" + sectionKey(sectionId);
-                    var notes = JSON.parse(localStorage.getItem(key) || "[]");
-                    var localId = noteId || "local-" + Date.now();
-                    var existing = notes.find(function (n) { return String(n.id) === String(localId); });
-                    if (existing) {
-                        existing.title = title;
-                        existing.body = body;
-                        existing.preview = body;
-                    } else {
-                        notes.unshift({ id: localId, title: title, body: body, preview: body });
-                    }
-                    localStorage.setItem(key, JSON.stringify(notes));
-                    modal.dataset.noteId = localId;
-                    qs("#note-modal-status").textContent = "Saved locally in this browser. Start the server to sync to SQLite.";
-                    renderNotesList(notes);
-                    loadAttachments(localId);
-                    return localId;
-                }
-            }
-            async function loadProgress(sectionId) {
-                var checkbox = qs("#progress-complete");
-                var localKey = "kp-progress::" + sectionKey(sectionId);
-                try {
-                    var data = await fetchJson("/api/progress?chapter_slug=" + encodeURIComponent(state.chapterSlug) + "&section_id=" + encodeURIComponent(sectionId), {}, 1200);
-                    checkbox.checked = Boolean(data.completed);
-                } catch (err) {
-                    checkbox.checked = localStorage.getItem(localKey) === "1";
-                }
-            }
-            function saveProgress() {
-                var sectionId = state.currentSectionId || "top";
-                var completed = qs("#progress-complete").checked;
-                localStorage.setItem("kp-progress::" + sectionKey(sectionId), completed ? "1" : "0");
-                fetchJson("/api/progress", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ chapter_slug: state.chapterSlug, section_id: sectionId, completed: completed })
-                }, 1500).catch(function () {});
-            }
-
-            function renderHistory(messages) {
-                var history = qs("#tutor-history");
-                history.innerHTML = "";
-                messages.forEach(function (msg) {
-                    var div = document.createElement("div");
-                    div.className = "platform-turn";
-                    div.innerHTML = "<strong>" + (msg.role === "assistant" ? "Tutor" : "You") + ":</strong> " + escapeHtml(msg.body);
-                    history.appendChild(div);
-                });
-                history.scrollTop = history.scrollHeight;
-            }
-            async function loadTutorHistory(sectionId) {
-                try {
-                    var data = await fetchJson("/api/tutor/history?chapter_slug=" + encodeURIComponent(state.chapterSlug) + "&section_id=" + encodeURIComponent(sectionId), {}, 1400);
-                    renderHistory(data.messages || []);
-                } catch (err) {
-                    renderHistory([]);
-                }
-            }
-            async function askTutor(mode) {
-                if (!(state.serviceStatus.tutor || {}).available) return;
-                var input = qs("#tutor-question");
-                var question = input.value.trim();
-                if (!question && mode === "explain") question = "Explain this section differently, with a concrete example.";
-                if (!question) return;
-                setMessage("#tutor-output", "Thinking...");
-                var payload = {
-                    chapter_slug: state.chapterSlug,
-                    section_id: state.currentSectionId || "top",
-                    question: question,
-                    mode: mode || "ask",
-                    section_text: getSectionText()
-                };
-                try {
-                    var response = await fetch("/api/tutor/ask", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(payload)
-                    });
-                    if (!response.ok) throw new Error("Tutor request failed");
-                    var reader = response.body.getReader();
-                    var decoder = new TextDecoder();
-                    var text = "";
-                    while (true) {
-                        var chunk = await reader.read();
-                        if (chunk.done) break;
-                        text += decoder.decode(chunk.value, { stream: true });
-                        setMessage("#tutor-output", text);
-                    }
-                    input.value = "";
-                    loadTutorHistory(payload.section_id);
-                } catch (err) {
-                    setMessage("#tutor-output", disabledMessage("tutor"));
-                }
-            }
-            async function gradeSubmission() {
-                if (!(state.serviceStatus.grading || {}).available) return;
-                var submission = qs("#grade-submission").value.trim();
-                if (!submission) return;
-                setMessage("#grade-output", "Grading...");
-                try {
-                    var data = await fetchJson("/api/exercises/grade", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            chapter_slug: state.chapterSlug,
-                            section_id: state.currentSectionId || "top",
-                            submission: submission,
-                            exercise_text: getSectionText()
-                        })
-                    }, 30000);
-                    setMessage("#grade-output", data.feedback || "");
-                } catch (err) {
-                    setMessage("#grade-output", disabledMessage("grading"));
-                }
-            }
-            async function playTts() {
-                if (!(state.serviceStatus.tts || {}).available) return;
-                setMessage("#tts-output", "Preparing audio...");
-                try {
-                    var response = await fetch("/api/tts", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            chapter_slug: state.chapterSlug,
-                            section_id: state.currentSectionId || "top",
-                            section_text: getSectionText()
-                        })
-                    });
-                    if (!response.ok) throw new Error("TTS request failed");
-                    var blob = await response.blob();
-                    var audio = new Audio(URL.createObjectURL(blob));
-                    audio.play();
-                    setMessage("#tts-output", "Playing this section.");
-                } catch (err) {
-                    setMessage("#tts-output", disabledMessage("tts"));
-                }
-            }
-            function slugify(text) {
-                return text.toLowerCase().replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 90) || "paper";
-            }
-            function createPaperCards() {
-                if (state.chapterSlug === "settings") return;
-                qsa(".markdown-body h2, .markdown-body h3").forEach(function (heading) {
-                    if (!/Research paper/i.test(heading.textContent) || heading.dataset.paperCard) return;
-                    heading.dataset.paperCard = "1";
-                    var card = document.createElement("div");
-                    card.className = "paper-card";
-                    card.dataset.key = slugify(heading.textContent);
-                    card.dataset.query = heading.textContent.replace(/Research papers?:?/i, "").trim() || heading.textContent.trim();
-                    card.dataset.live = "pending";
-                    card.innerHTML = '<div class="paper-status">Research paper lookup is loading.</div>';
-                    heading.insertAdjacentElement("afterend", card);
-                });
-            }
-            async function loadPaperCards() {
-                createPaperCards();
-                qsa(".paper-card").forEach(async function (card) {
-                    var key = card.dataset.key;
-                    var query = card.dataset.query;
-                    try {
-                        var data = await fetchJson("/api/papers/" + encodeURIComponent(key) + "?query=" + encodeURIComponent(query), {}, 4500);
-                        var meta = data.metadata || {};
-                        card.dataset.live = "loaded";
-                        card.innerHTML = '<div class="paper-meta">' + (data.cached ? "cached — available offline" : "live scholarly lookup") + '</div>' +
-                            '<h4>' + escapeHtml(meta.title || query || "Research paper") + '</h4>' +
-                            '<p>' + escapeHtml([meta.authors, meta.year].filter(Boolean).join(" · ")) + '</p>' +
-                            '<p>' + escapeHtml(meta.abstract || "No abstract returned by the provider.") + '</p>' +
-                            (meta.url ? '<p><a href="' + meta.url + '" target="_blank" rel="noopener">Open paper</a></p>' : "");
-                    } catch (err) {
-                        card.dataset.live = "pending";
-                        card.innerHTML = '<div class="paper-status">' + disabledMessage("papers") + '</div><button class="platform-button paper-retry" type="button">Retry</button>';
-                        var retry = card.querySelector(".paper-retry");
-                        retry.addEventListener("click", function () { refreshStatus(); });
-                    }
-                });
-            }
-            async function sync(direction) {
-                var service = state.serviceStatus.sync || {};
-                if (!service.available) return;
-                setMessage("#sync-output", direction === "push" ? "Pushing..." : "Pulling...");
-                try {
-                    var data = await fetchJson("/api/sync/" + direction, { method: "POST" }, 15000);
-                    setMessage("#sync-output", data.message || "Sync complete.");
-                } catch (err) {
-                    setMessage("#sync-output", disabledMessage("sync"));
-                }
-            }
-            function escapeHtml(value) {
-                return String(value || "").replace(/[&<>"']/g, function (ch) {
-                    return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch];
-                });
-            }
-            function bindUi() {
-                qs("#platform-toggle").addEventListener("click", function () {
-                    qs("#platform-shell").classList.toggle("collapsed");
-                });
-                qs("#status-retry").addEventListener("click", refreshStatus);
-                qs("#note-new").addEventListener("click", function () { openNote(null); });
-                qs("#note-close").addEventListener("click", closeNoteModal);
-                qs("#note-save").addEventListener("click", saveNoteModal);
-                qs("#note-attachment-input").addEventListener("change", uploadAttachments);
-                qs("#note-modal-backdrop").addEventListener("click", function (event) {
-                    if (event.target.id === "note-modal-backdrop") closeNoteModal();
-                });
-                qs("#progress-complete").addEventListener("change", saveProgress);
-                qs("#tutor-submit").addEventListener("click", function () { askTutor("ask"); });
-                qs("#tutor-explain").addEventListener("click", function () { askTutor("explain"); });
-                qs("#tutor-check").addEventListener("click", function () { askTutor("check"); });
-                qs("#grade-submit").addEventListener("click", gradeSubmission);
-                qs("#tts-submit").addEventListener("click", playTts);
-                qs("#sync-push").addEventListener("click", function () { sync("push"); });
-                qs("#sync-pull").addEventListener("click", function () { sync("pull"); });
-            }
-            document.addEventListener("DOMContentLoaded", function () {
-                bindUi();
-                chooseInitialSection();
-                createPaperCards();
-                statusFallback();
-                applyStatus();
-                refreshStatus();
-                state.statusTimer = setInterval(refreshStatus, 60000);
-            });
-        })();
-    </script>
 
 
     <!-- MathJax is loaded synchronously after the chapter markup.  At this

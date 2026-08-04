@@ -1,0 +1,1108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Day 5 Part 1 Guide: Deriving OLS With Calculus</title>
+<style>
+@page {
+  size: A4;
+  margin: 17mm 16mm 19mm;
+}
+* {
+  box-sizing: border-box;
+}
+html {
+  color: #182536;
+  background: #fff;
+  font-family: "Source Serif Pro", "Cambria", "Georgia", serif;
+}
+body {
+  margin: 0;
+  font-size: 11pt;
+  line-height: 1.62;
+}
+.cover {
+  min-height: 246mm;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  break-after: page;
+  padding: 16mm;
+}
+.cover-kicker {
+  color: #087f8c;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10pt;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+.cover h1 {
+  margin: 7mm 0 5mm;
+  color: #10243e;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 30pt;
+  line-height: 1.12;
+  border: 0;
+}
+.cover .subtitle {
+  max-width: 130mm;
+  margin: 0 auto;
+  color: #47627b;
+  font-size: 14pt;
+}
+.cover .source {
+  margin-top: 18mm;
+  color: #64748b;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 9.5pt;
+}
+main {
+  max-width: 178mm;
+  margin: 0 auto;
+}
+h1,
+h2,
+h3,
+h4 {
+  color: #122c49;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.25;
+  break-after: avoid;
+}
+h1 {
+  margin: 0 0 7mm;
+  padding-bottom: 3mm;
+  border-bottom: .6mm solid #b7d9dd;
+  font-size: 23pt;
+}
+h2 {
+  margin: 8mm 0 3mm;
+  font-size: 16.5pt;
+}
+h3 {
+  margin: 6mm 0 2mm;
+  font-size: 13.5pt;
+}
+h4 {
+  margin: 5mm 0 2mm;
+  font-size: 12pt;
+}
+p,
+li {
+  orphans: 3;
+  widows: 3;
+}
+blockquote {
+  margin: 4mm 0;
+  padding: 3mm 4.5mm;
+  border-left: 1.2mm solid #15949d;
+  background: #eef8f8;
+  color: #263f55;
+  break-inside: avoid;
+}
+pre {
+  margin: 3.5mm 0;
+  padding: 3.5mm;
+  border: .25mm solid #cbd6df;
+  border-radius: 1.5mm;
+  background: #f5f7f9;
+  color: #16212d;
+  font: 9pt/1.45 "DejaVu Sans Mono", "Consolas", monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  tab-size: 4;
+}
+code {
+  font-family: "DejaVu Sans Mono", "Consolas", monospace;
+  font-size: .92em;
+}
+p code,
+li code,
+td code {
+  background: #eef1f4;
+  padding: .2mm .7mm;
+  border-radius: .6mm;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 3.5mm 0 5.5mm;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 9.2pt;
+}
+thead {
+  display: table-header-group;
+}
+tr {
+  break-inside: avoid;
+}
+th,
+td {
+  border: .22mm solid #becbd6;
+  padding: 1.5mm 1.8mm;
+  vertical-align: top;
+}
+th {
+  background: #e7f2f4;
+  color: #18364d;
+  text-align: left;
+}
+hr {
+  border: 0;
+  border-top: .25mm solid #c9d5de;
+  margin: 7mm 0;
+}
+a {
+  color: #087f8c;
+  text-decoration: none;
+}
+img,
+svg,
+mjx-container {
+  max-width: 100% !important;
+}
+mjx-container[display="true"] {
+  margin: 3.5mm 0 !important;
+  break-inside: avoid;
+}
+.diagram-panel {
+  margin: 4mm 0;
+  padding: 3mm;
+  border: .3mm solid #bed5d8;
+  background: #fbfefe;
+  break-inside: avoid;
+}
+.diagram-panel__label {
+  display: none;
+}
+.mermaid {
+  text-align: center;
+}
+.mermaid svg {
+  width: 100%;
+  height: auto;
+  max-height: 175mm;
+}
+@media print {
+  a {
+    color: inherit;
+  }
+  .cover,
+  main,
+  blockquote,
+  th {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}
+</style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] },
+  startup: { typeset: false }
+};
+</script>
+<script src="../vendor/mathjax/tex-svg-full.js"></script>
+<script src="../vendor/mermaid.min.js"></script>
+</head>
+<body>
+<section class="cover">
+  <p class="cover-kicker">Regression Study Guide</p>
+  <h1>Day 5 Part 1 Guide: Deriving OLS With Calculus</h1>
+  <p class="subtitle">Print-ready study guide with browser-rendered mathematics and diagrams</p>
+  <p class="source">Source: SRC/Day_5_Part_1_OLS_Calculus_Guide.md</p>
+</section>
+<main><h1 id="day-5-part-1-guide-deriving-ols-with-calculus">Day 5 Part 1 Guide: Deriving OLS With Calculus</h1>
+<h2 id="conceptual-heavy-lifting-before-building-fit">Conceptual heavy-lifting before building <code>fit()</code></h2>
+<p>This guide accompanies <code>SRC/chapter1.md</code>, especially Day 1 and Day 5. It is designed for one purpose: make the calculus derivation of ordinary least squares feel connected, checkable, and interpretable before any implementation work begins.</p>
+<p>The central message is:</p>
+<blockquote>
+<p>OLS chooses the parameter values that minimise squared residuals. Geometry says the fitted vector is the projection of <code>y</code> onto the column space of <code>X</code>. Calculus says the minimum is where the derivative or gradient of the squared-error objective is zero. Both routes lead to the same normal equations.</p>
+</blockquote>
+<p>Those normal equations are:</p>
+<p>$$
+X^TX\hat{\beta}=X^Ty.
+$$</p>
+<p>If a calculus derivation gives a different equation, the likely problem is algebra, shape handling, or a mistaken derivative rule.</p>
+<div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart LR
+    G["Geometry route"] --> N["Normal equations"]
+    C["Calculus route"] --> N
+    N --> S["Same OLS minimum"]
+</pre></div>
+
+<hr />
+<h2 id="1-the-day-1-thread-what-are-we-trying-to-estimate">1. The Day 1 Thread: What Are We Trying To Estimate?</h2>
+<p>Before deriving anything, keep the Day 1 distinction visible.</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Question</th>
+<th>What OLS can settle by itself</th>
+<th>What OLS cannot settle by itself</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Algebra</td>
+<td>Did we minimise squared residuals correctly?</td>
+<td>Yes, if the numerical problem is well posed and solved correctly</td>
+<td>Whether the coefficient is stable, generalisable, or causal</td>
+</tr>
+<tr>
+<td>Statistical generalisation</td>
+<td>Does this sample support claims about other projects?</td>
+<td>Not by algebra alone</td>
+<td>Sampling bias, future drift, uncertainty, heteroskedasticity, clustered errors</td>
+</tr>
+<tr>
+<td>Causal interpretation</td>
+<td>What would happen under an intervention?</td>
+<td>Not by algebra alone</td>
+<td>Counterfactual identification, confounding, design validity</td>
+</tr>
+</tbody>
+</table>
+<p>An <strong>estimand</strong> is the exact quantity the analysis is trying to estimate. Without an estimand, a regression coefficient is just a number produced by a calculation.</p>
+<p>Examples from the MHP cost setting:</p>
+<ul>
+<li>Prediction estimand: expected final project cost, in million PKR, for a newly approved project using design-stage information.</li>
+<li>Explanation estimand: adjusted cost difference associated with one extra kilometre from an all-weather road, conditional on planned capacity and measured terrain.</li>
+<li>Causal estimand: average change in final cost caused by completing access-road improvement before civil works among approved remote projects.</li>
+</ul>
+<p>OLS can help with all three only after the job is defined. The same formula does not make the same claim in all three settings.</p>
+<hr />
+<h2 id="2-the-object-being-minimized">2. The Object Being Minimized</h2>
+<p>For each project:</p>
+<p>$$
+\text{residual}_i = y_i-\hat{y}_i.
+$$</p>
+<p>OLS minimises the sum of squared residuals:</p>
+<p>$$
+S=\sum_i(y_i-\hat{y}_i)^2.
+$$</p>
+<p>Why square the residuals?</p>
+<ul>
+<li>Positive and negative errors do not cancel.</li>
+<li>Large errors are penalised more strongly.</li>
+<li>The resulting objective is smooth and differentiable.</li>
+<li>The matrix version leads to a clean projection and optimisation problem.</li>
+</ul>
+<p>The calculus plan is always the same:</p>
+<ol>
+<li>Write the objective as a function of the unknown parameter or parameter vector.</li>
+<li>Differentiate.</li>
+<li>Set the derivative or gradient to zero.</li>
+<li>Check that the stationary point is a minimum.</li>
+<li>State the conditions under which the solution is unique and meaningful.</li>
+</ol>
+<div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart TD
+    A["Candidate parameters"] --> B["Predictions"]
+    B --> C["Residuals"]
+    C --> D["SSR"]
+    D --> E["Derivative or gradient"]
+    E --> F["Set equal to zero"]
+    F --> G["Check rank and curvature"]
+</pre></div>
+
+<hr />
+<h2 id="3-warm-up-one-parameter-no-intercept">3. Warm-Up: One Parameter, No Intercept</h2>
+<p>Start with the simplest linear model:</p>
+<p>$$
+\hat{y}_i=\beta x_i.
+$$</p>
+<p>The objective is:</p>
+<p>$$
+S(\beta)=\sum_i(y_i-\beta x_i)^2.
+$$</p>
+<p>Expand one squared term:</p>
+<p>$$
+(y_i-\beta x_i)^2
+=y_i^2-2\beta x_iy_i+\beta^2x_i^2.
+$$</p>
+<p>Sum over all observations:</p>
+<p>$$
+S(\beta)
+=\sum_i y_i^2
+-2\beta\sum_i x_iy_i
++\beta^2\sum_i x_i^2.
+$$</p>
+<p>This is a one-variable quadratic in <code>\beta</code>:</p>
+<p>$$
+S(\beta)=a-2b\beta+c\beta^2,
+$$</p>
+<p>where:</p>
+<p>$$
+a=\sum_i y_i^2,\qquad
+b=\sum_i x_iy_i,\qquad
+c=\sum_i x_i^2.
+$$</p>
+<p>Differentiate:</p>
+<p>$$
+\frac{dS}{d\beta}
+=-2\sum_i x_iy_i
++2\beta\sum_i x_i^2.
+$$</p>
+<p>Set the derivative to zero:</p>
+<p>$$
+-2\sum_i x_iy_i
++2\hat{\beta}\sum_i x_i^2=0.
+$$</p>
+<p>Solve:</p>
+<p>$$
+\hat{\beta}
+=
+\frac{\sum_i x_iy_i}{\sum_i x_i^2}.
+$$</p>
+<p>The second derivative is:</p>
+<p>$$
+\frac{d^2S}{d\beta^2}=2\sum_i x_i^2.
+$$</p>
+<p>If at least one <code>x_i</code> is not zero, then <code>\sum_i x_i^2&gt;0</code>, so the stationary point is a true minimum.</p>
+<h3 id="plain-language-meaning">Plain-Language Meaning</h3>
+<p>The numerator, <code>\sum_i x_iy_i</code>, measures how much <code>x</code> and <code>y</code> point in the same direction when the fitted line is forced through the origin. The denominator, <code>\sum_i x_i^2</code>, measures how much <code>x</code> is available to scale.</p>
+<p>If every <code>x_i=0</code>, then all predictions are:</p>
+<p>$$
+\hat{y}_i=\beta\cdot0=0.
+$$</p>
+<p>Changing <code>\beta</code> changes nothing. The data contain no information about the slope through the origin.</p>
+<div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart LR
+    B1["Small beta"] --> P["Same predictions"]
+    B2["Large beta"] --> P
+    B3["Negative beta"] --> P
+    P --> U["Slope unidentified"]
+</pre></div>
+
+<hr />
+<h2 id="4-one-feature-with-an-intercept">4. One Feature With an Intercept</h2>
+<p>Now use the usual one-feature regression line:</p>
+<p>$$
+\hat{y}_i=\beta_0+\beta_1x_i.
+$$</p>
+<p>The objective is:</p>
+<p>$$
+S(\beta_0,\beta_1)
+=\sum_i(y_i-\beta_0-\beta_1x_i)^2.
+$$</p>
+<p>There are two unknowns, so there are two partial derivatives.</p>
+<h3 id="41-intercept-partial">4.1 Intercept Partial</h3>
+<p>Differentiate with respect to <code>\beta_0</code>:</p>
+<p>$$
+\frac{\partial S}{\partial\beta_0}
+=-2\sum_i(y_i-\beta_0-\beta_1x_i).
+$$</p>
+<p>Set it to zero:</p>
+<p>$$
+\sum_i(y_i-\hat{\beta}_0-\hat{\beta}_1x_i)=0.
+$$</p>
+<p>Expand:</p>
+<p>$$
+\sum_i y_i-n\hat{\beta}_0-\hat{\beta}_1\sum_i x_i=0.
+$$</p>
+<p>Divide by <code>n</code>:</p>
+<p>$$
+\bar{y}-\hat{\beta}_0-\hat{\beta}_1\bar{x}=0.
+$$</p>
+<p>Rearrange:</p>
+<p>$$
+\hat{\beta}_0=\bar{y}-\hat{\beta}_1\bar{x}.
+$$</p>
+<p>This proves:</p>
+<p>$$
+\hat{\beta}_0+\hat{\beta}_1\bar{x}=\bar{y}.
+$$</p>
+<p>So the fitted line with an intercept passes exactly through:</p>
+<p>$$
+(\bar{x},\bar{y}).
+$$</p>
+<p>This is not an approximation. It follows directly from the intercept first-order condition.</p>
+<h3 id="42-slope-partial">4.2 Slope Partial</h3>
+<p>The slope partial is:</p>
+<p>$$
+\frac{\partial S}{\partial\beta_1}
+=-2\sum_i x_i(y_i-\beta_0-\beta_1x_i).
+$$</p>
+<p>After substituting:</p>
+<p>$$
+\hat{\beta}_0=\bar{y}-\hat{\beta}_1\bar{x},
+$$</p>
+<p>and simplifying, the slope becomes:</p>
+<p>$$
+\hat{\beta}_1
+=
+\frac{\sum_i(x_i-\bar{x})(y_i-\bar{y})}
+{\sum_i(x_i-\bar{x})^2}.
+$$</p>
+<h3 id="43-what-the-slope-formula-is-saying">4.3 What the Slope Formula Is Saying</h3>
+<p>The numerator is centered co-movement:</p>
+<p>$$
+\sum_i(x_i-\bar{x})(y_i-\bar{y}).
+$$</p>
+<p>It is large and positive when projects with above-average <code>x</code> tend to have above-average <code>y</code>, and projects with below-average <code>x</code> tend to have below-average <code>y</code>.</p>
+<p>The denominator is centered variation in <code>x</code>:</p>
+<p>$$
+\sum_i(x_i-\bar{x})^2.
+$$</p>
+<p>It tells us whether <code>x</code> actually changes across observations.</p>
+<p>If every <code>x_i</code> is identical, then:</p>
+<p>$$
+x_i-\bar{x}=0
+$$</p>
+<p>for every observation, so:</p>
+<p>$$
+\sum_i(x_i-\bar{x})^2=0.
+$$</p>
+<p>The slope is not merely numerically unstable. It is unidentified. The question "how does <code>y</code> change as <code>x</code> changes?" has no empirical content when <code>x</code> never changes.</p>
+<hr />
+<h2 id="5-matrix-ols-the-real-generalization">5. Matrix OLS: The Real Generalization</h2>
+<p>For many features at once, collect all fitted parameters into a vector:</p>
+<p>$$
+\beta=
+\begin{bmatrix}
+\beta_0\\
+\beta_1\\
+\vdots\\
+\beta_p
+\end{bmatrix}.
+$$</p>
+<p>The design matrix <code>X</code> contains one row per project and one column per parameter. If the model includes an intercept, the first column is usually all ones.</p>
+<p>Predictions are:</p>
+<p>$$
+\hat{y}=X\beta.
+$$</p>
+<p>Residuals are:</p>
+<p>$$
+r=y-X\beta.
+$$</p>
+<p>The squared-error objective is:</p>
+<p>$$
+S(\beta)=(y-X\beta)^T(y-X\beta).
+$$</p>
+<p>This is the vector version of squaring and summing residuals:</p>
+<p>$$
+r^Tr=\sum_i r_i^2.
+$$</p>
+<h3 id="51-expand-the-matrix-objective">5.1 Expand the Matrix Objective</h3>
+<p>Use:</p>
+<p>$$
+(y-X\beta)^T=y^T-\beta^TX^T.
+$$</p>
+<p>Then:</p>
+<p>$$
+\begin{aligned}
+S(\beta)
+&amp;=(y^T-\beta^TX^T)(y-X\beta)\\
+&amp;=y^Ty-y^TX\beta-\beta^TX^Ty+\beta^TX^TX\beta.
+\end{aligned}
+$$</p>
+<p>The middle two terms are equal because both are scalars and transposes of one another:</p>
+<p>$$
+y^TX\beta=(y^TX\beta)^T.
+$$</p>
+<p>Using the transpose rule:</p>
+<p>$$
+(ABC)^T=C^TB^TA^T,
+$$</p>
+<p>we get:</p>
+<p>$$
+(y^TX\beta)^T=\beta^TX^Ty.
+$$</p>
+<p>Since a scalar equals its own transpose:</p>
+<p>$$
+y^TX\beta=\beta^TX^Ty.
+$$</p>
+<p>Therefore:</p>
+<p>$$
+S(\beta)=y^Ty-2\beta^TX^Ty+\beta^TX^TX\beta.
+$$</p>
+<h3 id="shape-check">Shape Check</h3>
+<p>If <code>X</code> has shape <code>(n, p)</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Object</th>
+<th style="text-align: right;">Shape</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>y</code></td>
+<td style="text-align: right;"><code>(n,)</code> or <code>(n, 1)</code></td>
+</tr>
+<tr>
+<td><code>X</code></td>
+<td style="text-align: right;"><code>(n, p)</code></td>
+</tr>
+<tr>
+<td><code>\beta</code></td>
+<td style="text-align: right;"><code>(p,)</code> or <code>(p, 1)</code></td>
+</tr>
+<tr>
+<td><code>X\beta</code></td>
+<td style="text-align: right;"><code>(n,)</code> or <code>(n, 1)</code></td>
+</tr>
+<tr>
+<td><code>X^Ty</code></td>
+<td style="text-align: right;"><code>(p,)</code> or <code>(p, 1)</code></td>
+</tr>
+<tr>
+<td><code>X^TX</code></td>
+<td style="text-align: right;"><code>(p, p)</code></td>
+</tr>
+<tr>
+<td><code>\beta^TX^TX\beta</code></td>
+<td style="text-align: right;">scalar</td>
+</tr>
+</tbody>
+</table>
+<p>The objective must be a scalar. If a derivation leaves a vector where <code>S(\beta)</code> should be, the shapes are wrong.</p>
+<hr />
+<h2 id="6-differentiating-with-respect-to-a-vector">6. Differentiating With Respect to a Vector</h2>
+<p>The matrix objective is:</p>
+<p>$$
+S(\beta)=y^Ty-2\beta^TX^Ty+\beta^TX^TX\beta.
+$$</p>
+<p>Now apply three derivative facts.</p>
+<h3 id="fact-1-constants-vanish">Fact 1: Constants Vanish</h3>
+<p>The term <code>y^Ty</code> does not contain <code>\beta</code>, so:</p>
+<p>$$
+\nabla_\beta(y^Ty)=0.
+$$</p>
+<h3 id="fact-2-linear-terms">Fact 2: Linear Terms</h3>
+<p>For a constant vector <code>c</code>:</p>
+<p>$$
+\nabla_\beta(\beta^Tc)=c.
+$$</p>
+<p>Here:</p>
+<p>$$
+c=X^Ty.
+$$</p>
+<p>So:</p>
+<p>$$
+\nabla_\beta(-2\beta^TX^Ty)=-2X^Ty.
+$$</p>
+<h3 id="fact-3-quadratic-terms">Fact 3: Quadratic Terms</h3>
+<p>For a constant matrix <code>A</code>:</p>
+<p>$$
+\nabla_\beta(\beta^TA\beta)=(A+A^T)\beta.
+$$</p>
+<p>In OLS:</p>
+<p>$$
+A=X^TX.
+$$</p>
+<p>This matrix is symmetric:</p>
+<p>$$
+(X^TX)^T=X^T(X^T)^T=X^TX.
+$$</p>
+<p>So:</p>
+<p>$$
+\nabla_\beta(\beta^TX^TX\beta)=2X^TX\beta.
+$$</p>
+<h3 id="combine-the-pieces">Combine the Pieces</h3>
+<p>Therefore:</p>
+<p>$$
+\nabla_\beta S(\beta)
+=-2X^Ty+2X^TX\beta.
+$$</p>
+<p>Set the gradient to zero:</p>
+<p>$$
+-2X^Ty+2X^TX\hat{\beta}=0.
+$$</p>
+<p>Divide by 2 and rearrange:</p>
+<p>$$
+X^TX\hat{\beta}=X^Ty.
+$$</p>
+<p>These are the normal equations.</p>
+<hr />
+<h2 id="7-why-the-quadratic-rule-has-aat">7. Why the Quadratic Rule Has <code>A+A^T</code></h2>
+<p>The rule:</p>
+<p>$$
+\nabla_\beta(\beta^TA\beta)=(A+A^T)\beta
+$$</p>
+<p>can look mysterious until you expand it.</p>
+<p>For two parameters:</p>
+<p>$$
+A=
+\begin{bmatrix}
+a_{11} &amp; a_{12}\\
+a_{21} &amp; a_{22}
+\end{bmatrix},
+\qquad
+\beta=
+\begin{bmatrix}
+\beta_1\\
+\beta_2
+\end{bmatrix}.
+$$</p>
+<p>Then:</p>
+<p>$$
+\beta^TA\beta
+=a_{11}\beta_1^2
++a_{12}\beta_1\beta_2
++a_{21}\beta_2\beta_1
++a_{22}\beta_2^2.
+$$</p>
+<p>Differentiate with respect to <code>\beta_1</code>:</p>
+<p>$$
+\frac{\partial}{\partial\beta_1}
+=2a_{11}\beta_1+a_{12}\beta_2+a_{21}\beta_2.
+$$</p>
+<p>The cross-product appears twice: once from the upper-right term and once from the lower-left term. That is why both <code>A</code> and <code>A^T</code> appear.</p>
+<p>If <code>A</code> is symmetric, then <code>a_{12}=a_{21}</code>, and the rule simplifies to:</p>
+<p>$$
+2A\beta.
+$$</p>
+<p>Because <code>X^TX</code> is always symmetric, OLS gets the simpler form.</p>
+<hr />
+<h2 id="8-minimum-convexity-and-positive-semidefiniteness">8. Minimum, Convexity, and Positive Semidefiniteness</h2>
+<p>Setting the gradient to zero finds a stationary point. We still need to know whether it is a minimum.</p>
+<p>The Hessian of the squared-error objective is:</p>
+<p>$$
+\nabla_\beta^2S(\beta)=2X^TX.
+$$</p>
+<p>A matrix <code>M</code> is <strong>positive semidefinite</strong> if, for every vector <code>z</code>:</p>
+<p>$$
+z^TMz\ge0.
+$$</p>
+<p>For <code>X^TX</code>:</p>
+<p>$$
+z^TX^TXz=(Xz)^T(Xz)=\lVert Xz\rVert_2^2\ge0.
+$$</p>
+<p>This is always nonnegative because it is a squared length.</p>
+<p>So <code>X^TX</code> is positive semidefinite, and the SSR surface is convex. Convex means the surface has no fake local minima. Any local minimum is a global minimum.</p>
+<p>If <code>X</code> has full column rank, then for every nonzero <code>z</code>:</p>
+<p>$$
+Xz\ne0.
+$$</p>
+<p>So:</p>
+<p>$$
+\lVert Xz\rVert_2^2&gt;0.
+$$</p>
+<p>Then the Hessian is positive definite on parameter directions, the objective is strictly convex, and the coefficient vector is unique.</p>
+<h3 id="important-distinction">Important Distinction</h3>
+<p>Rank deficiency can make coefficients non-unique even when fitted predictions are still uniquely determined as a projection. The model may know the fitted vector but not how to assign credit among redundant columns.</p>
+<hr />
+<h2 id="9-when-can-we-solve-for-hatbeta">9. When Can We Solve for <code>\hat{\beta}</code>?</h2>
+<p>The normal equations are:</p>
+<p>$$
+X^TX\hat{\beta}=X^Ty.
+$$</p>
+<p>If <code>X^TX</code> is invertible:</p>
+<p>$$
+\hat{\beta}=(X^TX)^{-1}X^Ty.
+$$</p>
+<p>This requires <code>X</code> to have full column rank.</p>
+<p>Plain language:</p>
+<ul>
+<li>no feature column is an exact copy of another;</li>
+<li>no feature column is an exact multiple of another;</li>
+<li>no feature column can be built by adding or scaling other columns;</li>
+<li>there are enough independent rows to estimate every parameter;</li>
+<li>the intercept column must not be made redundant by other columns.</li>
+</ul>
+<p>If these conditions fail, the algebraic question "which coefficient vector is the unique minimiser?" may not have a unique answer.</p>
+<hr />
+<h2 id="10-why-real-code-avoids-the-explicit-inverse">10. Why Real Code Avoids the Explicit Inverse</h2>
+<p>The closed form:</p>
+<p>$$
+\hat{\beta}=(X^TX)^{-1}X^Ty
+$$</p>
+<p>is mathematically useful, but application code should usually not compute the inverse directly.</p>
+<p>Preferred hierarchy:</p>
+<ol>
+<li>Best for least squares: use a least-squares solver such as <code>np.linalg.lstsq(X, y, rcond=None)</code>.</li>
+<li>Acceptable for well-conditioned full-rank normal equations: solve the system with <code>np.linalg.solve(X.T @ X, X.T @ y)</code>.</li>
+<li>Avoid in application code: explicitly compute <code>np.linalg.inv(X.T @ X) @ X.T @ y</code>.</li>
+</ol>
+<p>Reasons:</p>
+<ul>
+<li>Forming <code>X^TX</code> squares the condition number.</li>
+<li>Squaring the condition number can amplify floating-point error.</li>
+<li>Explicit inversion does unnecessary work.</li>
+<li>A least-squares solver can report rank and singular values.</li>
+<li>Rank and singular values help diagnose whether coefficients are separately meaningful.</li>
+</ul>
+<p>This is a numerical issue, not a change in the estimand. The objective is still the same SSR minimisation problem.</p>
+<hr />
+<h2 id="11-perfect-multicollinearity-the-rank-failure-trap">11. Perfect Multicollinearity: The Rank-Failure Trap</h2>
+<p>Suppose the design matrix includes both:</p>
+<p>$$
+x_{\text{km}}
+$$</p>
+<p>and:</p>
+<p>$$
+x_{\text{m}}=1000x_{\text{km}}.
+$$</p>
+<p>The two columns contain the same information in different units. The model cannot separately identify both coefficients.</p>
+<p>The combined contribution is:</p>
+<p>$$
+\beta_{\text{km}}x_{\text{km}}
++\beta_{\text{m}}x_{\text{m}}.
+$$</p>
+<p>Substitute <code>x_m=1000x_km</code>:</p>
+<p>$$
+\beta_{\text{km}}x_{\text{km}}
++\beta_{\text{m}}(1000x_{\text{km}})
+=
+(\beta_{\text{km}}+1000\beta_{\text{m}})x_{\text{km}}.
+$$</p>
+<p>Only the combined quantity:</p>
+<p>$$
+\beta_{\text{km}}+1000\beta_{\text{m}}
+$$</p>
+<p>is identified by the predictions. Infinitely many coefficient pairs can produce the same fitted values.</p>
+<p>Example:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;"><code>\beta_{\text{km}}</code></th>
+<th style="text-align: right;"><code>\beta_{\text{m}}</code></th>
+<th style="text-align: right;">Combined contribution per km</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0.000</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0.001</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0.002</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0.005</td>
+<td style="text-align: right;">5</td>
+</tr>
+</tbody>
+</table>
+<p>All four rows imply the same combined effect per kilometre, but the individual coefficients differ. Reading either individual coefficient as a meaningful separate estimate would be wrong.</p>
+<p><code>np.linalg.solve</code> may fail because <code>X^TX</code> is singular. <code>np.linalg.lstsq</code> may return one solution, often a minimum-norm solution, but "a number was returned" does not mean "the coefficient has a defensible interpretation."</p>
+<p>The fix is conceptual and design-based:</p>
+<ul>
+<li>remove one redundant column;</li>
+<li>choose one unit system;</li>
+<li>redesign the features;</li>
+<li>state the estimand in terms of the identifiable quantity.</li>
+</ul>
+<div class="diagram-panel"><div class="diagram-panel__label">Diagram</div><pre class="mermaid-source">flowchart LR
+    K["km column"] --> M["x 1000"]
+    M --> R["metres column"]
+    K --> D["Rank deficiency"]
+    R --> D
+    D --> C["Coefficients not separate"]
+</pre></div>
+
+<hr />
+<h2 id="12-connecting-back-to-day-1-algebra-is-not-explanation">12. Connecting Back to Day 1: Algebra Is Not Explanation</h2>
+<p>Imagine OLS estimates that road distance has a positive coefficient in a cost model.</p>
+<p>Layer 1, algebra:</p>
+<blockquote>
+<p>Given the specified <code>X</code> and <code>y</code>, the program found coefficients minimising SSR.</p>
+</blockquote>
+<p>That says nothing yet about whether road distance explains cost in a defensible way.</p>
+<p>Layer 2, statistical generalisation:</p>
+<blockquote>
+<p>Are these projects representative of the future or target population? Are uncertainty intervals wide? Are some districts missing? Is the relationship stable across terrain and procurement regimes?</p>
+</blockquote>
+<p>Layer 3, causal interpretation:</p>
+<blockquote>
+<p>Would reducing road distance by building an access road cause cost to fall? Or is road distance partly standing in for terrain, remoteness, weather exposure, political selection, contractor availability, and transport method?</p>
+</blockquote>
+<p>This is why the Day 1 estimand matters. If the estimand is predictive, a non-causal signal may still be useful. If the estimand is explanatory, omitted variables and correlated features threaten interpretation. If the estimand is causal, regression must be embedded in a credible causal design.</p>
+<p>The fitted line is an algebraic object. The claim attached to it is a research-design object.</p>
+<hr />
+<h2 id="13-common-mistakes-and-corrections">13. Common Mistakes and Corrections</h2>
+<table>
+<thead>
+<tr>
+<th>Mistake</th>
+<th>Correction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"The normal equations are just a formula to memorise."</td>
+<td>They come from setting the SSR gradient to zero, and also from residual orthogonality.</td>
+</tr>
+<tr>
+<td>"If <code>lstsq</code> returns coefficients, the model worked."</td>
+<td>It found a least-squares solution; rank failure may still make individual coefficients unidentified.</td>
+</tr>
+<tr>
+<td>"OLS needs normally distributed residuals to fit."</td>
+<td>Normality is not needed to minimise SSR. It enters some inference procedures, not the algebraic fit.</td>
+</tr>
+<tr>
+<td>"A positive coefficient proves causation."</td>
+<td>A coefficient is conditional association unless the design identifies a causal effect.</td>
+</tr>
+<tr>
+<td>"More columns always mean more information."</td>
+<td>Redundant columns can add no information and destroy coefficient uniqueness.</td>
+</tr>
+<tr>
+<td>"The intercept is just a nuisance."</td>
+<td>With an intercept, the residuals sum to zero and the fitted line passes through the data means.</td>
+</tr>
+<tr>
+<td>"Positive semidefinite means all entries are positive."</td>
+<td>It means <code>z^TMz &gt;= 0</code> for every vector <code>z</code>. Entries themselves may be negative.</td>
+</tr>
+<tr>
+<td>"A denominator of zero is a computer problem."</td>
+<td>It is an identification problem: the data contain no variation in the required direction.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="14-study-exercises">14. Study Exercises</h2>
+<p>These exercises are no-code. Write answers in complete sentences before checking the answer key.</p>
+<h3 id="exercise-1-the-no-variation-slope">Exercise 1: The No-Variation Slope</h3>
+<p>Suppose all projects have exactly 3 km of cable. Explain why the one-feature-with-intercept slope:</p>
+<p>$$
+\hat{\beta}_1
+=
+\frac{\sum_i(x_i-\bar{x})(y_i-\bar{y})}
+{\sum_i(x_i-\bar{x})^2}
+$$</p>
+<p>cannot be computed. Do not say only "division by zero." Explain what the zero denominator means about the data and the estimand.</p>
+<h3 id="exercise-2-the-mean-point">Exercise 2: The Mean Point</h3>
+<p>Starting from:</p>
+<p>$$
+\hat{\beta}_0=\bar{y}-\hat{\beta}_1\bar{x},
+$$</p>
+<p>show in one line why the fitted line passes through <code>(\bar{x},\bar{y})</code>.</p>
+<h3 id="exercise-3-scalar-transpose-rule">Exercise 3: Scalar Transpose Rule</h3>
+<p>In the expansion:</p>
+<p>$$
+S(\beta)=y^Ty-y^TX\beta-\beta^TX^Ty+\beta^TX^TX\beta,
+$$</p>
+<p>explain why:</p>
+<p>$$
+y^TX\beta=\beta^TX^Ty.
+$$</p>
+<p>State the actual transpose rule being used.</p>
+<h3 id="exercise-4-shape-audit">Exercise 4: Shape Audit</h3>
+<p>Assume <code>X</code> is <code>(8, 3)</code>, <code>y</code> is <code>(8, 1)</code>, and <code>\beta</code> is <code>(3, 1)</code>. Write the shapes of:</p>
+<ul>
+<li><code>X\beta</code></li>
+<li><code>y-X\beta</code></li>
+<li><code>X^Ty</code></li>
+<li><code>X^TX</code></li>
+<li><code>X^TX\beta</code></li>
+<li><code>\beta^TX^Ty</code></li>
+</ul>
+<p>Which of these must be a scalar?</p>
+<h3 id="exercise-5-the-gradient">Exercise 5: The Gradient</h3>
+<p>Starting from:</p>
+<p>$$
+S(\beta)=y^Ty-2\beta^TX^Ty+\beta^TX^TX\beta,
+$$</p>
+<p>write the gradient:</p>
+<p>$$
+\nabla_\beta S(\beta)=?
+$$</p>
+<p>Then set it to zero and recover the normal equations.</p>
+<h3 id="exercise-6-positive-semidefinite">Exercise 6: Positive Semidefinite</h3>
+<p>Define positive semidefinite precisely. Then explain why:</p>
+<p>$$
+z^TX^TXz=\lVert Xz\rVert_2^2
+$$</p>
+<p>proves that <code>X^TX</code> is positive semidefinite.</p>
+<h3 id="exercise-7-convexity">Exercise 7: Convexity</h3>
+<p>Why does positive semidefiniteness of the Hessian imply that SSR has no local minimum that is not also global?</p>
+<h3 id="exercise-8-full-rank-and-uniqueness">Exercise 8: Full Rank and Uniqueness</h3>
+<p>What extra condition changes positive semidefinite curvature into strict curvature for OLS? Explain the condition in matrix language and plain language.</p>
+<h3 id="exercise-9-kilometres-and-metres">Exercise 9: Kilometres and Metres</h3>
+<p>A model includes cable length in km and cable length in metres. Explain why individual coefficients on those two columns are not separately meaningful, even if <code>lstsq</code> returns numbers.</p>
+<h3 id="exercise-10-estimand-check">Exercise 10: Estimand Check</h3>
+<p>A project director says:</p>
+<blockquote>
+<p>"The road-distance coefficient is positive, so bad roads cause higher MHP costs."</p>
+</blockquote>
+<p>Rewrite this claim as:</p>
+<ol>
+<li>a prediction claim;</li>
+<li>an explanation claim;</li>
+<li>a causal claim.</li>
+</ol>
+<p>For each version, state what extra evidence or assumption would be needed beyond the algebraic OLS fit.</p>
+<h3 id="exercise-11-algebra-vs-statistical-generalisation">Exercise 11: Algebra vs Statistical Generalisation</h3>
+<p>Explain why a model can minimise SSR perfectly on the eight training projects and still be a poor guide for future projects.</p>
+<h3 id="exercise-12-algebra-vs-causation">Exercise 12: Algebra vs Causation</h3>
+<p>Explain why solving OLS correctly does not tell us whether reducing road distance by building an access road would reduce cost.</p>
+<hr />
+<h2 id="15-answer-key">15. Answer Key</h2>
+<h3 id="answer-1">Answer 1</h3>
+<p>If all <code>x_i</code> values are identical, then every <code>x_i-\bar{x}</code> equals zero. The denominator is the total variation in <code>x</code>, and that variation is zero. The data never show projects at different cable lengths, so they cannot answer how expected cost changes when cable length changes. The slope is unidentified, not merely hard for the computer to estimate.</p>
+<h3 id="answer-2">Answer 2</h3>
+<p>Evaluate the fitted line at <code>\bar{x}</code>:</p>
+<p>$$
+\hat{\beta}_0+\hat{\beta}_1\bar{x}
+=
+(\bar{y}-\hat{\beta}_1\bar{x})+\hat{\beta}_1\bar{x}
+=\bar{y}.
+$$</p>
+<p>So the line passes through <code>(\bar{x},\bar{y})</code>.</p>
+<h3 id="answer-3">Answer 3</h3>
+<p>The term <code>y^TX\beta</code> is a scalar. A scalar equals its own transpose. Using:</p>
+<p>$$
+(ABC)^T=C^TB^TA^T,
+$$</p>
+<p>we have:</p>
+<p>$$
+(y^TX\beta)^T=\beta^TX^Ty.
+$$</p>
+<p>Therefore:</p>
+<p>$$
+y^TX\beta=\beta^TX^Ty.
+$$</p>
+<h3 id="answer-4">Answer 4</h3>
+<p>Shapes:</p>
+<table>
+<thead>
+<tr>
+<th>Object</th>
+<th style="text-align: right;">Shape</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>X\beta</code></td>
+<td style="text-align: right;"><code>(8, 1)</code></td>
+</tr>
+<tr>
+<td><code>y-X\beta</code></td>
+<td style="text-align: right;"><code>(8, 1)</code></td>
+</tr>
+<tr>
+<td><code>X^Ty</code></td>
+<td style="text-align: right;"><code>(3, 1)</code></td>
+</tr>
+<tr>
+<td><code>X^TX</code></td>
+<td style="text-align: right;"><code>(3, 3)</code></td>
+</tr>
+<tr>
+<td><code>X^TX\beta</code></td>
+<td style="text-align: right;"><code>(3, 1)</code></td>
+</tr>
+<tr>
+<td><code>\beta^TX^Ty</code></td>
+<td style="text-align: right;"><code>(1, 1)</code>, a scalar</td>
+</tr>
+</tbody>
+</table>
+<p>The objective terms such as <code>\beta^TX^Ty</code>, <code>y^Ty</code>, and <code>\beta^TX^TX\beta</code> must be scalars.</p>
+<h3 id="answer-5">Answer 5</h3>
+<p>The gradient is:</p>
+<p>$$
+\nabla_\beta S(\beta)
+=-2X^Ty+2X^TX\beta.
+$$</p>
+<p>Set it to zero:</p>
+<p>$$
+-2X^Ty+2X^TX\hat{\beta}=0.
+$$</p>
+<p>Divide by 2 and rearrange:</p>
+<p>$$
+X^TX\hat{\beta}=X^Ty.
+$$</p>
+<h3 id="answer-6">Answer 6</h3>
+<p>A matrix <code>M</code> is positive semidefinite if:</p>
+<p>$$
+z^TMz\ge0
+$$</p>
+<p>for every vector <code>z</code>. For <code>M=X^TX</code>:</p>
+<p>$$
+z^TX^TXz=(Xz)^T(Xz)=\lVert Xz\rVert_2^2.
+$$</p>
+<p>A squared length cannot be negative, so <code>X^TX</code> is positive semidefinite.</p>
+<h3 id="answer-7">Answer 7</h3>
+<p>The Hessian describes curvature. If the Hessian is positive semidefinite everywhere, the objective is convex. A convex bowl may have a flat bottom, but it cannot have a separate false valley. Therefore any local minimum is also a global minimum.</p>
+<h3 id="answer-8">Answer 8</h3>
+<p>The extra condition is full column rank of <code>X</code>. In matrix language, <code>Xz=0</code> only when <code>z=0</code>. In plain language, no column of <code>X</code> can be built exactly from the other columns. Then:</p>
+<p>$$
+\lVert Xz\rVert_2^2&gt;0
+$$</p>
+<p>for every nonzero <code>z</code>, giving strict curvature and a unique coefficient vector.</p>
+<h3 id="answer-9">Answer 9</h3>
+<p>Since:</p>
+<p>$$
+x_{\text{m}}=1000x_{\text{km}},
+$$</p>
+<p>the two columns carry the same information. Predictions depend only on:</p>
+<p>$$
+\beta_{\text{km}}+1000\beta_{\text{m}}.
+$$</p>
+<p>Many coefficient pairs produce the same fitted values. <code>lstsq</code> can return one solution, but the separate km and metre coefficients are not identifiable as distinct quantities.</p>
+<h3 id="answer-10">Answer 10</h3>
+<p>Prediction claim:</p>
+<blockquote>
+<p>Road distance helps predict final MHP cost for new projects similar to the training data.</p>
+</blockquote>
+<p>Needed beyond algebra: validation on genuinely new or held-out projects, stable measurement, and evidence that the target cases resemble the training cases.</p>
+<p>Explanation claim:</p>
+<blockquote>
+<p>Among projects with the same included features, greater road distance is associated with higher final cost.</p>
+</blockquote>
+<p>Needed beyond algebra: a clearly stated conditioning set, uncertainty estimates, sensitivity to omitted variables, and checks for multicollinearity or instability.</p>
+<p>Causal claim:</p>
+<blockquote>
+<p>Reducing road distance through access-road improvement would reduce final MHP cost.</p>
+</blockquote>
+<p>Needed beyond algebra: a credible causal design, counterfactual comparison, confounding control, timing discipline, and assumptions connecting the observed comparison to the intervention effect.</p>
+<h3 id="answer-11">Answer 11</h3>
+<p>Training SSR measures fit to the projects used to estimate the coefficients. A model can fit those projects well because of chance patterns, unusual district composition, repeated design templates, or overfitting. Generalisation asks whether the relationship holds for future or target-population projects, which requires validation and sampling assumptions beyond the algebraic fit.</p>
+<h3 id="answer-12">Answer 12</h3>
+<p>OLS estimates conditional associations in the observed data. Building an access road is an intervention. To know its effect, we need to compare what would happen under road improvement with what would happen without it for the same target projects. That counterfactual is not supplied by the normal equations. Terrain, remoteness, contractor availability, and project selection may affect both road distance and cost, so a correct OLS calculation alone cannot identify the causal effect.</p>
+<hr />
+<h2 id="16-final-mental-checklist">16. Final Mental Checklist</h2>
+<p>Before moving to the <code>fit()</code> implementation, you should be able to say:</p>
+<ol>
+<li>The scalar OLS solution comes from differentiating a quadratic in one parameter.</li>
+<li>With an intercept, the fitted line passes exactly through <code>(\bar{x},\bar{y})</code>.</li>
+<li>The matrix objective expands to a scalar quadratic in <code>\beta</code>.</li>
+<li>The gradient is <code>-2X^Ty+2X^TX\beta</code>.</li>
+<li>Setting that gradient to zero gives <code>X^TX\hat{\beta}=X^Ty</code>.</li>
+<li><code>X^TX</code> is positive semidefinite because <code>z^TX^TXz</code> is a squared length.</li>
+<li>Full column rank gives a unique coefficient vector.</li>
+<li><code>lstsq</code> returning numbers does not make rank-deficient coefficients meaningful.</li>
+<li>Algebraic correctness is not statistical generalisation.</li>
+<li>Algebraic correctness is not causal identification.</li>
+</ol></main>
+<script>
+(async function preparePrint() {
+  try {
+    await window.MathJax.startup.promise;
+    await window.MathJax.typesetPromise();
+    if (window.mermaid) {
+      window.mermaid.initialize({ startOnLoad: false, theme: 'neutral', securityLevel: 'strict' });
+      document.querySelectorAll('.mermaid-source').forEach(function (source) {
+        var diagram = document.createElement('div');
+        diagram.className = 'mermaid';
+        diagram.textContent = source.textContent;
+        source.replaceWith(diagram);
+      });
+      await window.mermaid.run({ nodes: document.querySelectorAll('.mermaid') });
+    }
+    document.documentElement.dataset.printReady = 'true';
+  } catch (error) {
+    console.error('Print preparation failed:', error);
+    document.documentElement.dataset.printReady = 'error';
+  }
+})();
+</script>
+</body>
+</html>

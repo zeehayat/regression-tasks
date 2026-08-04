@@ -51,6 +51,8 @@ READINESS_SLUG = "chapter1_read_first"
 READINESS_FILE = "Chapter_0_5_Regression_Readiness_Explanations.md"
 EXERCISE_SLUG = "chapter1_exercise_notebook"
 EXERCISE_FILE = "Chapter_0_5_Regression_Readiness_Workbook.md"
+DAY5_OLS_GUIDE_SLUG = "day5_ols_calculus_guide"
+DAY5_OLS_GUIDE_FILE = "Day_5_Part_1_OLS_Calculus_Guide.md"
 CHAPTER2_HELP_SLUG = "chapter2_concept_help"
 CHAPTER2_HELP_FILE = "Chapter_2_Concept_Help.md"
 CHAPTER3_HELP_SLUG = "chapter3_concept_help"
@@ -2128,6 +2130,15 @@ def build_nav(current_slug: str) -> str:
                     label="Chapter 1 exercise notebook",
                 )
             )
+            day5_ols_active = DAY5_OLS_GUIDE_SLUG == current_slug
+            day5_ols_classes = "active" if day5_ols_active else ""
+            chapter_links.append(
+                NAV_LINK.format(
+                    href=f"{DAY5_OLS_GUIDE_SLUG}.html",
+                    classes=day5_ols_classes,
+                    label="Day 5 Part 1 OLS calculus guide",
+                )
+            )
         if slug == "chapter2":
             help_active = CHAPTER2_HELP_SLUG == current_slug
             help_classes = "active" if help_active else ""
@@ -2685,6 +2696,7 @@ def main() -> None:
         compile_chapter(slug)
     compile_companion(READINESS_SLUG, READINESS_FILE)
     compile_companion(EXERCISE_SLUG, EXERCISE_FILE)
+    compile_companion(DAY5_OLS_GUIDE_SLUG, DAY5_OLS_GUIDE_FILE)
     compile_companion(CHAPTER2_HELP_SLUG, CHAPTER2_HELP_FILE)
     compile_companion(CHAPTER3_HELP_SLUG, CHAPTER3_HELP_FILE)
     compile_companion(CHAPTER4_HELP_SLUG, CHAPTER4_HELP_FILE)
